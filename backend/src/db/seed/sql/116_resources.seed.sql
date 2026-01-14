@@ -3,7 +3,7 @@
 -- Seed: resources (incl. capacity)
 -- - User-bound resources: title from users.full_name (auto refresh on rerun)
 -- - Requirement:
---   * ONLY "Anastasia Königs" is_active=1 as therapist
+--   * ONLY "Anastasia König" is_active=1 as therapist
 --   * All other resources inserted but is_active=0
 -- =============================================================
 
@@ -38,7 +38,7 @@ SET @U_NURI   = CONVERT('19a2bc26-63d1-43ad-ab56-d7f3c3719a34' USING utf8mb4) CO
 SET @U_MELIH1 = CONVERT('7129bc31-88dc-42da-ab80-415a21f2ea9a' USING utf8mb4) COLLATE utf8mb4_unicode_ci;
 
 -- -------------------------------------------------------------
--- 1) ACTIVE therapist: Anastasia Königs
+-- 1) ACTIVE therapist: Anastasia König
 -- -------------------------------------------------------------
 INSERT INTO `resources` (`id`,`type`,`title`,`capacity`,`external_ref_id`,`is_active`)
 SELECT

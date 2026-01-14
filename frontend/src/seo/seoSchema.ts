@@ -8,6 +8,10 @@ import { z } from 'zod';
 
 const nonEmpty = z.string().trim().min(1);
 
+/** -------------------------------------------------------------
+ * STRICT SCHEMAS
+ * ------------------------------------------------------------ */
+
 export const seoOpenGraphSchema = z
   .object({
     type: z.enum(['website', 'article', 'product']).default('website'),
@@ -74,16 +78,20 @@ export type SiteMetaDefaultObject = z.infer<typeof siteMetaDefaultSchema>;
 
 export const DEFAULT_OG_IMAGE = '/img/og-default.jpg';
 
+/** -------------------------------------------------------------
+ * GLOBAL FALLBACKS (DB boş/kırık ise)
+ * ------------------------------------------------------------ */
+
 /**
  * ✅ Global fallback – DB boş/kırık olduğunda kullanılır.
- * Asıl değerler site_settings.seo içinden gelir.
+ * Asıl değerler site_settings.seo / site_settings.site_seo içinden gelir.
  */
 export const DEFAULT_SEO_GLOBAL: SeoObject = {
-  site_name: 'konigsmassage Industrial Cooling Towers',
-  title_default: 'konigsmassage Industrial Cooling Towers and Engineering',
-  title_template: '%s – konigsmassage',
+  site_name: 'Königs Massage',
+  title_default: 'Königs Massage – Massage and Wellness',
+  title_template: '%s – Königs Massage',
   description:
-    'Industrial cooling towers, engineering, installation and service solutions for efficient process cooling.',
+    'Massage and wellness content with practical blog posts about relaxation, stress management, mobility and nutrition.',
   open_graph: {
     type: 'website',
     images: [DEFAULT_OG_IMAGE],
@@ -102,31 +110,34 @@ export const DEFAULT_SEO_GLOBAL: SeoObject = {
 
 /**
  * ✅ Locale bazlı meta fallback – DB’de locale karşılığı yoksa kullanılır.
- * Asıl değerler, varsa, site_settings.site_meta_default (veya benzeri) içinden gelecektir.
+ * Asıl değerler site_settings.site_meta_default içinden gelecektir.
  */
 export const DEFAULT_SITE_META_DEFAULT_BY_LOCALE: Record<string, SiteMetaDefaultObject> = {
   tr: {
-    title: 'konigsmassage – Endüstriyel Su Soğutma Kuleleri ve Mühendislik',
+    title: 'Königs Massage – Masaj ve Wellness',
     description:
-      'Endüstriyel soğutma kuleleri, modernizasyon ve enerji verimliliği çözümleri. Keşif, üretim, montaj, bakım ve yedek parça.',
-    keywords: 'konigsmassage, endüstriyel, soğutma kulesi, enerji verimliliği, b2b',
+      'Masaj ve wellness odakli icerikler. Blogda rahatlama, stres yonetimi, hareket ve beslenme uzerine pratik ipuclari ve rehberler.',
+    keywords:
+      'koenigs massage, masaj, wellness, rahatlama, stres yonetimi, hareket, beslenme, blog',
   },
   en: {
-    title: 'konigsmassage – Industrial Cooling Towers and Engineering',
+    title: 'Königs Massage – Massage and Wellness',
     description:
-      'Industrial cooling towers and energy efficiency solutions. Engineering, manufacturing, installation, modernization, testing and spare parts.',
-    keywords: 'konigsmassage, industrial, cooling towers, energy efficiency, b2b',
+      'Massage and wellness focused content. Blog posts with practical tips on relaxation, stress management, mobility and nutrition.',
+    keywords:
+      'koenigs massage, massage, wellness, relaxation, stress management, mobility, nutrition, blog',
   },
   de: {
-    title: 'konigsmassage – Industrielle Kuehltuerme und Engineering',
+    title: 'Königs Massage – Massage und Wellness',
     description:
-      'Industrielle Kuehlturmtechnik und Energieeffizienzloesungen. Planung, Fertigung, Montage, Modernisierung, Leistungstests und Ersatzteile.',
-    keywords: 'konigsmassage, industriell, kuehlturm, energieeffizienz, b2b',
+      'Inhalte zu Massage und Wellness. Blog mit praktischen Tipps zu Entspannung, Stressmanagement, Mobilität und Ernährung.',
+    keywords:
+      'koenigs massage, massage, wellness, entspannung, stressmanagement, mobilitaet, ernaehrung, blog',
   },
 };
 
 /* ------------------------------------------------------------------
- * HELPERS – DB site_settings.value -> Tip güvenli SEO objeleri
+ * HELPERS – DB site_settings.value -> Tip güvenli objeler
  * ------------------------------------------------------------------ */
 
 function tryParseJson(input: unknown): unknown {
@@ -144,27 +155,75 @@ function tryParseJson(input: unknown): unknown {
 }
 
 /**
- * site_settings.seo (veya site_seo) için parse helper:
+ * open_graph.images normalizer:
+ * - DB’de bazen images: [{url:"..."}] veya {images:[...]} gibi karışık format gelebilir
+ * - Bizim tek kabulümüz: string[]
+ */
+function normalizeOgImages(input: unknown): string[] {
+  const out: string[] = [];
+
+  const pushIfString = (v: unknown) => {
+    if (typeof v === 'string') {
+      const s = v.trim();
+      if (s) out.push(s);
+    }
+  };
+
+  if (!input) return out;
+
+  // direct array
+  if (Array.isArray(input)) {
+    for (const item of input) {
+      if (typeof item === 'string') pushIfString(item);
+      else if (item && typeof item === 'object' && !Array.isArray(item)) {
+        // common shapes: { url: "..." } or { src: "..." }
+        const anyObj = item as Record<string, unknown>;
+        pushIfString(anyObj.url);
+        pushIfString(anyObj.src);
+      }
+    }
+    return out;
+  }
+
+  // object { images: [...] } or { url: '...' }
+  if (typeof input === 'object') {
+    const obj = input as Record<string, unknown>;
+    if (Array.isArray(obj.images)) {
+      return normalizeOgImages(obj.images);
+    }
+    pushIfString(obj.url);
+    pushIfString(obj.src);
+    return out;
+  }
+
+  // string
+  pushIfString(input);
+  return out;
+}
+
+/**
+ * site_settings.seo / site_seo için parse helper:
  *
- *  - input: DB’den gelen value (JSON, text, object vs.)
+ *  - input: DB’den gelen value (JSON string, object, vs.)
  *  - output: SeoObject
  *  - davranış:
  *      * Zod ile validate eder
  *      * Eksik alanları DEFAULT_SEO_GLOBAL ile doldurur
+ *      * open_graph.images normalize edilir (string[])
  *      * Bozuk/parse edilemeyen durumda tam fallback: DEFAULT_SEO_GLOBAL
  */
 export function parseSeoFromSettings(input: unknown): SeoObject {
   const base = DEFAULT_SEO_GLOBAL;
 
-  if (input === null || input === undefined) {
-    return base;
-  }
+  if (input === null || input === undefined) return base;
 
   const raw = tryParseJson(input);
 
   try {
-    // DB value genelde "partial" olacağı için partial schema + merge kullanıyoruz
     const partial = seoSchema.partial().parse(raw) as Partial<SeoObject>;
+
+    // normalize images (single source)
+    const images = normalizeOgImages(partial.open_graph?.images);
 
     return {
       ...base,
@@ -172,6 +231,7 @@ export function parseSeoFromSettings(input: unknown): SeoObject {
       open_graph: {
         ...base.open_graph,
         ...(partial.open_graph ?? {}),
+        images: images.length ? images : base.open_graph.images,
       },
       twitter: {
         ...base.twitter,
@@ -188,32 +248,66 @@ export function parseSeoFromSettings(input: unknown): SeoObject {
 }
 
 /**
- * site_settings.site_meta_default (locale bazlı meta) için parse helper:
+ * site_settings.site_meta_default parse helper (Königs Massage uyumlu):
  *
- *  Beklenen format (DB value):
- *  {
- *    "tr": { "title": "...", "description": "...", "keywords": "..." },
- *    "en": { ... },
- *    "de": { ... }
- *  }
+ * Desteklenen DB formatları:
  *
- *  - Her locale için siteMetaDefaultSchema ile validate edilir.
- *  - Hatalı/bilinmeyen localeler için DEFAULT_SITE_META_DEFAULT_BY_LOCALE kullanılır.
+ * A) ✅ Yeni standart (senin seed’in): locale başına tek kayıt
+ *    value = { "title":"...", "description":"...", "keywords":"..." }
+ *
+ * B) Eski/alternatif: tek kayıtta map
+ *    value = {
+ *      "tr": { "title":"...", "description":"...", "keywords":"..." },
+ *      "en": { ... },
+ *      "de": { ... }
+ *    }
+ *
+ * Bu helper her iki formatı da normalize edip döndürür:
+ *   Record<string, SiteMetaDefaultObject>
  */
 export function parseSiteMetaDefaultByLocale(
   input: unknown,
 ): Record<string, SiteMetaDefaultObject> {
   const base = DEFAULT_SITE_META_DEFAULT_BY_LOCALE;
 
-  if (input === null || input === undefined) {
-    return base;
-  }
+  if (input === null || input === undefined) return base;
 
   const raw = tryParseJson(input);
 
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
-    return base;
+  // Case A: direct object {title,description,...}
+  // (DB'den locale bazlı tek kayıt okuyorsan bu fonksiyonu çağırırken locale'ı ayrıca biliyor olabilirsin,
+  // ama burada yine de map formatına normalize edeceğiz.)
+  const looksLikeSingle = (v: unknown) => {
+    return (
+      !!v &&
+      typeof v === 'object' &&
+      !Array.isArray(v) &&
+      'title' in (v as any) &&
+      'description' in (v as any)
+    );
+  };
+
+  // Case B: map { tr:{...}, en:{...} }
+  const looksLikeMap = (v: unknown) => {
+    return !!v && typeof v === 'object' && !Array.isArray(v) && !looksLikeSingle(v);
+  };
+
+  // If it's a single meta object, we cannot know locale here; return base merged with "en" override as safest.
+  // Prefer caller to use parseSiteMetaDefault(input) below when locale known.
+  if (looksLikeSingle(raw)) {
+    // validate single then merge as "en" override fallback
+    try {
+      const single = siteMetaDefaultSchema.parse(raw);
+      return {
+        ...base,
+        en: single,
+      };
+    } catch {
+      return base;
+    }
   }
+
+  if (!looksLikeMap(raw)) return base;
 
   const result: Record<string, SiteMetaDefaultObject> = {};
 
@@ -226,12 +320,29 @@ export function parseSiteMetaDefaultByLocale(
     }
   }
 
-  // En azından base’deki localelerin hepsi olsun
   for (const [loc, def] of Object.entries(base)) {
-    if (!result[loc]) {
-      result[loc] = def;
-    }
+    if (!result[loc]) result[loc] = def;
   }
 
   return result;
+}
+
+/**
+ * ✅ site_settings.site_meta_default tek kayıt (locale’ye göre okunuyorsa) için pratik helper:
+ * - input: o locale için value (tek obje)
+ * - locale: 'tr' | 'en' | 'de' | ...
+ */
+export function parseSiteMetaDefault(input: unknown, locale: string): SiteMetaDefaultObject {
+  const base =
+    DEFAULT_SITE_META_DEFAULT_BY_LOCALE[locale] || DEFAULT_SITE_META_DEFAULT_BY_LOCALE.en;
+
+  if (input === null || input === undefined) return base;
+
+  const raw = tryParseJson(input);
+
+  try {
+    return siteMetaDefaultSchema.parse(raw);
+  } catch {
+    return base;
+  }
 }
