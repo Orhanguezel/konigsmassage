@@ -1,6 +1,8 @@
 // =============================================================
 // FILE: src/components/home/Hero.tsx
 // Public Hero – Full-width Slider background + Bottom overlay (ui_hero)
+// - FIX: İlk açılışta slider image geç gelince boş kalmasın diye fallback background ekledik
+//   (fallback URL'yi sen düzelteceksin)
 // =============================================================
 'use client';
 
@@ -43,6 +45,10 @@ const Hero: React.FC = () => {
   const locale = useResolvedLocale();
   const { ui } = useUiSection('ui_hero', locale);
 
+  // ✅ Fallback: ilk açılışta boş görünmesin (adresini sen güncelle)
+  const FALLBACK_HERO_IMAGE =
+    'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp';
+
   const { data: sliderList, isLoading: slidersLoading } = useListSlidersQuery({
     locale,
     limit: 5,
@@ -57,7 +63,7 @@ const Hero: React.FC = () => {
     return active.map<HeroSlide>((s) => {
       const rawImage = (s.image || '').trim();
       const cdn = rawImage ? toCdnSrc(rawImage, 1920, 1080, 'fill') : '';
-      const src = cdn || rawImage;
+      const src = cdn || rawImage || FALLBACK_HERO_IMAGE;
 
       return {
         id: s.id,
@@ -70,6 +76,8 @@ const Hero: React.FC = () => {
       };
     });
   }, [sliderList]);
+
+  const hasSlides = slides.length > 0;
 
   const [activeIdx, setActiveIdx] = useState(0);
   const current = slides[activeIdx] || slides[0];
@@ -90,12 +98,26 @@ const Hero: React.FC = () => {
   const normalizedLink = rawLink.startsWith('/') ? rawLink : `/${rawLink}`;
   const ctaHref = localizePath(locale, normalizedLink);
 
-  const hasSlides = slides.length > 0;
+  // ✅ Her durumda gösterilecek en az bir background (ilk açılışta boş kalmaz)
+  const firstBgSrc =
+    (hasSlides ? (slides[0]?.src as any) : undefined) || (FALLBACK_HERO_IMAGE as any);
 
   return (
     <section className="hero__area hero__hight p-relative">
       {/* FULL-WIDTH BACKGROUND SLIDER */}
       <div className="hero__bg">
+        {/* ✅ Fallback BG: Swiper/remote image geç gelirse bile arkaplan boş görünmez */}
+        <div className="hero__bg-fallback" aria-hidden="true">
+          <Image
+            src={firstBgSrc}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
+
         <Swiper
           slidesPerView={1}
           spaceBetween={0}
@@ -122,7 +144,7 @@ const Hero: React.FC = () => {
               <SwiperSlide key={s.id}>
                 <div className="hero__bg-slide">
                   <Image
-                    src={s.src as any}
+                    src={(s.src as any) || (FALLBACK_HERO_IMAGE as any)}
                     alt={s.alt}
                     fill
                     priority={i === 0}
@@ -134,7 +156,16 @@ const Hero: React.FC = () => {
             ))
           ) : (
             <SwiperSlide key="fallback">
-              <div className="hero__bg-slide hero__bg-slide--empty" />
+              <div className="hero__bg-slide">
+                <Image
+                  src={FALLBACK_HERO_IMAGE as any}
+                  alt={ui('ui_hero_fallback_alt', 'Hero background')}
+                  fill
+                  priority
+                  sizes="100vw"
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
             </SwiperSlide>
           )}
         </Swiper>

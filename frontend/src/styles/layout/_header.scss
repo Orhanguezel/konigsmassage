@@ -372,7 +372,7 @@
     width: 132px;
     height: 48px;
     border-radius: 12px;
-    padding: 7px 9px;
+    padding: 2px 9px;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
   }
@@ -456,13 +456,280 @@
   }
 }
 
-/* Desktop header menu: primary + bold */
-.main-menu ul li > a {
-  color: var(--clr-theme-1);
-  font-weight: 700;
+
+/* =========================================================
+   HEADER NAV CONTRAST + INLINE FIX (FINAL)
+   - Desktop menu: flex + no wrap (consistent alignment)
+   - Transparent header: readable even before hero image loads
+   - Sticky: dark text on white bg
+   ========================================================= */
+
+@media (min-width: 992px) {
+  /* 1) UL: force flex layout (stop inline-block spacing + wrapping) */
+  .main-menu ul.nav-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 34px;
+  }
+
+  /* kill theme margin-right to prevent double spacing */
+  .main-menu ul.nav-inline > li {
+    margin-right: 0 !important;
+    display: flex;
+    align-items: center;
+  }
+
+  /* keep text always on one line */
+  .main-menu .header__nav-text {
+    white-space: nowrap;
+  }
+
+  /* 2) Transparent header: give a subtle dark gradient backdrop
+        so links stay readable while hero image is still loading */
+  .header__transparent:not(.sticky) {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.38) 0%,
+      rgba(0, 0, 0, 0.18) 55%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  /* 3) Link style: single source of truth (remove conflicting rules) */
+  .main-menu .header__nav-link {
+    display: inline-flex;
+    align-items: center;
+
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-transform: none;
+
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    /* keep theme padding rhythm */
+    padding: 40px 0 !important;
+
+    @include transition(0.22s);
+  }
+
+  /* transparent state -> light text */
+  .header__transparent:not(.sticky) .main-menu .header__nav-link {
+    color: rgba(255, 255, 255, 0.94);
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+  }
+
+  .header__transparent:not(.sticky) .main-menu .header__nav-link:hover,
+  .header__transparent:not(.sticky) .main-menu li:hover > .header__nav-link {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  /* sticky state -> dark text */
+  .sticky {
+    background: var(--clr-common-white) !important;
+  }
+
+  .sticky .main-menu .header__nav-link {
+    color: var(--clr-common-heading);
+    text-shadow: none;
+  }
+
+  .sticky .main-menu .header__nav-link:hover,
+  .sticky .main-menu li:hover > .header__nav-link {
+    color: var(--clr-theme-1);
+  }
+
+  /* submenu links keep readable */
+  .submenu__link {
+    display: block;
+    width: 100%;
+  }
 }
 
-.main-menu ul li:hover > a {
-  color: var(--clr-theme-5);
+/* ---------------------------------------------------------
+   IMPORTANT:
+   Eğer dosyanın en altında şunlar varsa KALDIR:
+   .main-menu ul li > a { color: var(--clr-theme-1); ... }
+   Çünkü yukarıdaki header__nav-link tek kaynak olmalı.
+--------------------------------------------------------- */
+/* =========================================================
+   HEADER NAV CONTRAST + INLINE FIX (FINAL)
+   - Desktop menu: flex + no wrap
+   - Transparent header: readable (gradient)
+   - Hover: PINK (var(--clr-theme-1)) geri geldi
+   - Sticky: dark text + hover pink
+   ========================================================= */
+
+@media (min-width: 992px) {
+  /* 1) UL: flex layout (no wrap) */
+  .main-menu ul.nav-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 34px;
+  }
+
+  /* kill theme inline-block spacing */
+  .main-menu ul.nav-inline > li {
+    margin-right: 0 !important;
+    display: flex;
+    align-items: center;
+  }
+
+  /* keep menu text single line */
+  .main-menu .header__nav-text {
+    white-space: nowrap;
+  }
+
+  /* 2) Transparent header: subtle dark gradient for readability */
+  .header__transparent:not(.sticky) {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.38) 0%,
+      rgba(0, 0, 0, 0.18) 55%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  /* 3) Link: single source of truth */
+  .main-menu .header__nav-link {
+    display: inline-flex;
+    align-items: center;
+
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-transform: none;
+
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    /* theme rhythm (senin header padding düzeninle uyumlu) */
+    padding: 40px 0 !important;
+
+    @include transition(0.22s);
+  }
+
+  /* Transparent state: white text */
+  .header__transparent:not(.sticky) .main-menu .header__nav-link {
+    color: rgba(255, 255, 255, 0.94);
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+  }
+
+  /* ✅ Hover: PINK geri geldi */
+  .header__transparent:not(.sticky) .main-menu .header__nav-link:hover,
+  .header__transparent:not(.sticky) .main-menu li:hover > .header__nav-link {
+    color: var(--clr-theme-1);
+  }
+
+  /* Sticky state: dark text on white bg */
+  .sticky {
+    background: var(--clr-common-white) !important;
+  }
+
+  .sticky .main-menu .header__nav-link {
+    color: var(--clr-common-heading);
+    text-shadow: none;
+  }
+
+  /* ✅ Sticky hover: PINK */
+  .sticky .main-menu .header__nav-link:hover,
+  .sticky .main-menu li:hover > .header__nav-link {
+    color: var(--clr-theme-1);
+  }
+
+  /* submenu */
+  .submenu__link {
+    display: block;
+    width: 100%;
+  }
 }
+
+/* ---------------------------------------------------------
+   IMPORTANT (çakışmayı bitir):
+   Aşağıdaki kuralları SİL veya yorum satırı yap:
+
+   .main-menu ul li > a {
+     color: var(--clr-theme-1);
+     font-weight: 700;
+   }
+   .main-menu ul li:hover > a {
+     color: var(--clr-theme-5);
+   }
+
+   Çünkü artık .header__nav-link tek kaynak.
+--------------------------------------------------------- */
+/* =========================================================
+   MOBILE HEADER COMPACT (FINAL)
+   - Fix: excessive vertical padding/height on mobile
+   - Only affects < 992px
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+  /* 1) header area: kill big template padding on mobile */
+  .header__area {
+    padding: 10px 0 !important;
+  }
+
+  /* 2) sticky: template adds extra padding on mobile, reduce it */
+  .sticky {
+    padding: 10px 0 !important;
+  }
+
+  /* 3) container row: remove accidental vertical stretching */
+  .header__area .row.align-items-center {
+    min-height: 56px;
+  }
+
+  /* 4) logo sizing: reduce wrap height so header shrinks */
+  .site-logo-wrap {
+    width: 170px !important;
+    height: 56px !important;
+    padding: 0 !important;
+  }
+
+  .site-logo-img {
+    transform: scale(1.04) !important; /* keep slight trim, avoid tall look */
+  }
+
+  /* 5) hamburger: keep hit area but reduce visual height */
+  .hamburger.cross.hamburger--trigger {
+    --hb-btn: 44px; /* was 52px */
+    --hb-w: 28px;
+    --hb-t: 3px;
+    --hb-gap: 7px;
+  }
+
+  /* 6) bootstrap spacing helpers can add unwanted height */
+  .header__hamburger.ml-60 {
+    margin-left: 0 !important;
+  }
+}
+
+/* tighter phones */
+@media (max-width: 575.98px) {
+  .header__area {
+    padding: 8px 0 !important;
+  }
+
+  .sticky {
+    padding: 8px 0 !important;
+  }
+
+  .site-logo-wrap {
+    width: 150px !important;
+    height: 52px !important;
+  }
+
+  .hamburger.cross.hamburger--trigger {
+    --hb-btn: 42px;
+  }
+}
+
 

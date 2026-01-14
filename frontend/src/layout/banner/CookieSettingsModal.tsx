@@ -13,19 +13,16 @@ import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 
 export type ConsentState = {
-  necessary: true; // always true
+  necessary: true;
   analytics: boolean;
 };
 
 type Props = {
   open: boolean;
-
-  // locale prop artık opsiyonel ama kullanılmıyor (PATTERN: locale hook)
   locale?: string;
 
   consent: ConsentState;
 
-  // optional overrides (prop > ui_cookie > fallback)
   title?: string;
   description?: string;
 
@@ -77,13 +74,11 @@ export default function CookieSettingsModal({
 
   const [analytics, setAnalytics] = useState<boolean>(!!consent.analytics);
 
-  // modal açılınca state sync
   useEffect(() => {
     if (!open) return;
     setAnalytics(!!consent.analytics);
   }, [open, consent.analytics]);
 
-  // ESC ile kapatma
   useEffect(() => {
     if (!open) return;
 
@@ -96,7 +91,6 @@ export default function CookieSettingsModal({
 
   const nextState: ConsentState = useMemo(() => ({ necessary: true, analytics }), [analytics]);
 
-  // UI defaults (ui_cookie)
   const uiTitle = ui('cc_title', 'Cookie Settings');
   const uiDesc = ui(
     'cc_description',
@@ -119,7 +113,6 @@ export default function CookieSettingsModal({
   const uiBtnCancel = ui('cc_btn_cancel', 'Cancel');
   const uiAriaClose = ui('cc_aria_close', 'Close');
 
-  // final: prop override > ui_cookie > fallback
   const finalTitle = pickText(title, uiTitle, 'Cookie Settings');
   const finalDesc = pickText(description, uiDesc, '');
 
@@ -142,7 +135,6 @@ export default function CookieSettingsModal({
       aria-modal="true"
       aria-label={finalTitle}
       onMouseDown={(e) => {
-        // modal dışına tıklayınca kapat
         if (e.target === e.currentTarget) onClose();
       }}
     >
@@ -200,15 +192,12 @@ export default function CookieSettingsModal({
         </div>
 
         <div className="ccm__actions">
-          <button type="button" className="ccm__btn ccm__btn--ghost" onClick={onClose}>
+          {/* ✅ Colors come from existing button system */}
+          <button type="button" className="ccm__btn border__btn s-2" onClick={onClose}>
             {finalBtnCancel}
           </button>
 
-          <button
-            type="button"
-            className="ccm__btn ccm__btn--primary"
-            onClick={() => onSave(nextState)}
-          >
+          <button type="button" className="ccm__btn solid__btn" onClick={() => onSave(nextState)}>
             {finalBtnSave}
           </button>
         </div>
