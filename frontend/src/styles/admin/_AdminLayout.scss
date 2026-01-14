@@ -1,0 +1,45 @@
+@use '../utils' as *;
+
+/* -------------------------------------------------------------
+   ADMIN PAGE WIDTH / OVERFLOW FIX (desktop dahil)
+------------------------------------------------------------- */
+
+.konigsmassage-admin-shell {
+  /* shell zaten min-height: 100vh */
+  > .flex-grow-1 {
+    min-width: 0; /* desktop'ta da shrink edebilsin */
+  }
+}
+
+.konigsmassage-admin-page {
+  width: 100%;
+}
+
+.konigsmassage-admin-page__inner {
+  width: 100%;
+  max-width: 1320px; /* desktop clamp: 1440+ ekranda “aşırı geniş” olmasın */
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 0;
+}
+
+.konigsmassage-admin-card {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden; /* card dışına taşmayı engeller */
+}
+
+.konigsmassage-admin-card__header,
+.konigsmassage-admin-card__body {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.konigsmassage-admin-card__title {
+  min-width: 0; /* text-truncate için şart */
+}
+
+.konigsmassage-admin-grid,
+.konigsmassage-admin-col {
+  min-width: 0; /* Bootstrap row/col içinde uzun içerik taşmasın */
+}

@@ -1,0 +1,178 @@
+/*----------------------------------------*/
+/*  HERO CSS (FINAL)
+/*----------------------------------------*/
+
+@use '../utils' as *;
+
+.hero__area {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  min-height: min(78vh, 820px);
+
+  &:before {
+    position: absolute;
+    content: "";
+    inset: 0;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(229, 84, 156, 0.06) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+  }
+}
+
+/* max-width container */
+.hero__container {
+  width: 100%;
+  max-width: 1320px !important;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* background slider layer */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ✅ allow touches on slider */
+.hero__bg,
+.hero__bg * {
+  pointer-events: auto;
+}
+
+.hero__swiper {
+  width: 100%;
+  height: 100%;
+
+  /* ✅ mobile gesture: allow vertical scroll, enable horizontal swipe */
+  touch-action: pan-y;
+}
+
+.hero__bg-slide {
+  position: relative;
+  width: 100%;
+  height: min(78vh, 820px);
+}
+
+.hero__bg-slide--empty {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ✅ readability overlay MUST NOT block touches */
+.hero__bg:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.18) 45%,
+    rgba(0, 0, 0, 0.00) 100%
+  );
+  z-index: 1;
+  pointer-events: none; /* ✅ CRITICAL */
+}
+
+/* overlay */
+.hero__overlay {
+  position: relative;
+  z-index: 2;
+  min-height: min(78vh, 820px);
+  display: flex;
+  pointer-events: none;
+}
+
+/* bottom placement */
+.hero__overlay--bottom {
+  align-items: flex-end;
+  padding: 0 0 48px 0;
+}
+
+.hero__overlay-inner--bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+/* TEXT (parlak + gölge) */
+.hero__content--overlay {
+  width: 100%;
+  max-width: 920px;
+  text-align: center;
+  padding: 0;
+
+  span {
+    font-weight: var(--bd-fw-sbold);
+    font-style: italic;
+    font-size: 18px;
+    letter-spacing: 0.03em;
+    display: inline-block;
+    margin-bottom: 12px;
+
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+
+    span {
+      color: #ffd1e6;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  h2 {
+    color: #ffffff;
+    text-shadow: 0 4px 22px rgba(0, 0, 0, 0.60);
+  }
+
+  p {
+    font-size: 20px;
+    line-height: 1.9;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.90);
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.55);
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* actions spacing */
+.hero__actions {
+  margin-top: 18px;
+}
+
+/* ✅ Butonlar/CTA tıklanabilir kalsın */
+.hero__actions,
+.hero__actions * {
+  pointer-events: auto;
+}
+
+/* loading line */
+.hero__loading {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: min(420px, calc(100% - 30px));
+  pointer-events: none;
+}
+
+/* mobile */
+@media (max-width: 576px) {
+  .hero__overlay--bottom {
+    padding-bottom: 26px;
+  }
+
+  .hero__content--overlay p {
+    line-height: 1.8;
+    font-size: 18px;
+  }
+}

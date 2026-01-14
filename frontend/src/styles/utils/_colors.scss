@@ -1,0 +1,56 @@
+$colors: (
+  common: (
+    'white': '#ffffff',
+    'black': '#000000',
+
+    // placeholder: theme.placeholder
+    'placeholder': '#a3939b',
+
+    // headings + body: theme.text / textAlt
+    'heading': '#40333d',
+    'body-text': '#52404b',
+  ),
+
+  // Theme palette -> Königs Massage (pink based)
+  theme: (
+    // primary
+    '1': '#e5549c',
+
+    // secondary (dark text tone)
+    '2': '#52404b',
+
+    // accent / warning-like highlight
+    '3': '#d95841',
+
+    // deep secondary/dark
+    '4': '#32272a',
+
+    // primary hover (contrast)
+    '5': '#d7428a',
+  ),
+
+  text: (
+    '1': '#40333d',
+  ),
+
+  bg: (
+    // soft surfaces
+    'gray-1': '#fdf5f9',  // backgroundAlt / skeletonBackground
+    'gray-2': '#fff0f6',  // backgroundSecondary / footerBackground
+    'gray-3': '#fff7fb',  // sectionBackground / inputBackgroundLight
+
+    // previously "sky" -> soft content background
+    'sky': '#f6f7fa',     // contentBackground
+
+    // footer background
+    'footer': '#fff0f6',
+  ),
+
+  border: (
+    '1': '#e6c2d3', // borderInput / borderBright family
+  ),
+
+  footer: (
+    '1': '#52404b', // readable footer text
+  )
+);
