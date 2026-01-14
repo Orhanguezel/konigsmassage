@@ -32,7 +32,8 @@ import { FiArrowRight, FiHeart, FiMoon, FiSun, FiZap, FiSmile, FiActivity } from
 const SHOW_COUNT = 3;
 
 // ✅ Replace later with your real path (public/...)
-const FALLBACK_IMG = '/images/fallback/service-640x420.jpg';
+const FALLBACK_IMG =
+  'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748870864/uploads/anastasia/service-images/50-1748870861414-723178027.webp';
 
 function safeStr(v: unknown): string {
   if (typeof v === 'string') return v.trim();
