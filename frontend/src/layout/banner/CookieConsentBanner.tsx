@@ -84,7 +84,6 @@ function makeKeys(version: number) {
 
 function normalizeConsent(input: any): ConsentState | null {
   if (!input || typeof input !== 'object') return null;
-  // we only store analytics choice; necessary always true
   const analytics = !!(input as any).analytics;
   return { necessary: true, analytics };
 }
@@ -123,11 +122,9 @@ function queueConsent(next: boolean) {
 
 function applyAnalyticsConsent(next: boolean) {
   try {
-    // UI tarafında da güncel tutalım (AnalyticsScripts de set ediyor)
     (window as any).__analyticsConsentGranted = next === true;
 
     if (typeof (window as any).__setAnalyticsConsent === 'function') {
-      // ✅ Final: boolean kullan
       (window as any).__setAnalyticsConsent(next);
     } else {
       queueConsent(next);
@@ -136,7 +133,6 @@ function applyAnalyticsConsent(next: boolean) {
 }
 
 function parseCookieConsentSetting(value: unknown): CookieConsentDb | null {
-  // site_settings.value bazen JSON string olarak gelebilir
   if (value === null || value === undefined) return null;
   if (typeof value === 'object') return value as CookieConsentDb;
   if (typeof value === 'string') return safeJsonParse<CookieConsentDb>(value);
@@ -147,7 +143,6 @@ export default function CookieConsentBanner() {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_cookie', locale as any);
 
-  // DB: cookie_consent (localized)
   const { data: consentSettingRaw, isLoading: isConsentLoading } = useGetSiteSettingByKeyQuery({
     key: 'cookie_consent',
     locale,
@@ -165,8 +160,8 @@ export default function CookieConsentBanner() {
 
   const keys = useMemo(() => makeKeys(consentVersion), [consentVersion]);
 
-  const enabled = consentSetting?.ui?.enabled !== false; // default enabled
-  const showRejectAll = consentSetting?.ui?.show_reject_all !== false; // default true
+  const enabled = consentSetting?.ui?.enabled !== false;
+  const showRejectAll = consentSetting?.ui?.show_reject_all !== false;
   const position = consentSetting?.ui?.position === 'top' ? 'top' : 'bottom';
 
   const defaultAnalytics = !!consentSetting?.defaults?.analytics;
@@ -177,10 +172,8 @@ export default function CookieConsentBanner() {
   const [hasChoice, setHasChoice] = useState<boolean>(false);
 
   useEffect(() => {
-    // DB gelmeden banner state başlatma (version bilgisi lazım)
     if (isConsentLoading) return;
 
-    // Eğer banner kapalıysa, privacy-by-default yine uygulanmalı.
     if (!enabled) {
       applyAnalyticsConsent(false);
       setReady(true);
@@ -195,14 +188,9 @@ export default function CookieConsentBanner() {
       setHasChoice(true);
       applyAnalyticsConsent(existing.analytics);
     } else {
-      // default: DB defaults (genelde false) ama privacy-by-default önerisi: false
       const initial: ConsentState = { necessary: true, analytics: !!defaultAnalytics };
       setConsent(initial);
       setHasChoice(false);
-
-      // Banner görünürken bile, analytics’i varsayılan olarak denied tutmak istersen:
-      // applyAnalyticsConsent(false);
-      // Sen DB defaults ile yönetmek istiyorsan:
       applyAnalyticsConsent(!!initial.analytics);
     }
 
@@ -241,13 +229,9 @@ export default function CookieConsentBanner() {
     [keys],
   );
 
-  // SSR/hydration güvenliği
   if (!ready) return null;
-
-  // Banner tamamen devre dışıysa hiçbir UI basma (ama modal da yok)
   if (!enabled) return null;
 
-  // Seçim yapıldıysa banner gizli kalsın; ayar modalı yine açılabilir.
   if (hasChoice) {
     return (
       <CookieSettingsModal
@@ -259,7 +243,6 @@ export default function CookieConsentBanner() {
     );
   }
 
-  // Text priority: DB(cookie_consent.texts) > ui_cookie > fallback
   const titleText =
     (consentSetting?.texts?.title ?? '').trim() || ui('cc_banner_title', 'Cookie Preferences');
 
@@ -298,21 +281,22 @@ export default function CookieConsentBanner() {
           </div>
 
           <div className="ccb__actions">
+            {/* ✅ Colors come from existing button system */}
             <button
               type="button"
-              className="ccb__btn ccb__btn--ghost"
+              className="ccb__btn border__btn white"
               onClick={() => setOpenSettings(true)}
             >
               {btnSettings}
             </button>
 
             {showRejectAll ? (
-              <button type="button" className="ccb__btn ccb__btn--outline" onClick={onRejectAll}>
+              <button type="button" className="ccb__btn border__btn white" onClick={onRejectAll}>
                 {btnReject}
               </button>
             ) : null}
 
-            <button type="button" className="ccb__btn ccb__btn--primary" onClick={onAcceptAll}>
+            <button type="button" className="ccb__btn solid__btn" onClick={onAcceptAll}>
               {btnAccept}
             </button>
           </div>

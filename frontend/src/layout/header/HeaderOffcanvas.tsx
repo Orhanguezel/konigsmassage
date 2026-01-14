@@ -21,7 +21,8 @@ import SocialLinks from '@/components/common/public/SocialLinks';
 import { getLanguageLabel, type SupportedLocale } from '@/types/common';
 import { useActiveLocales } from '@/i18n/activeLocales';
 
-import { FiSearch, FiGlobe, FiPhone, FiMail, FiLogIn, FiUserPlus } from 'react-icons/fi';
+import { FiSearch, FiGlobe, FiPhone, FiMail } from 'react-icons/fi';
+//import {FiLogIn, FiUserPlus } from 'react-icons/fi';
 
 import { useListMenuItemsQuery, useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
 import type { PublicMenuItemDto } from '@/integrations/types';
@@ -231,8 +232,8 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, logoSr
     );
   };
 
-  const loginHref = localizePath(resolvedLocale, '/login');
-  const registerHref = localizePath(resolvedLocale, '/register');
+  // const loginHref = localizePath(resolvedLocale, '/login');
+  // const registerHref = localizePath(resolvedLocale, '/register');
 
   return (
     <>
@@ -283,6 +284,7 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, logoSr
                 ))}
               </select>
 
+              {/*
               <div className="d-flex align-items-center gap-2">
                 <Link
                   href={loginHref}
@@ -300,6 +302,7 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, logoSr
                   <FiUserPlus /> {ui('ui_header_register', 'Register')}
                 </Link>
               </div>
+              */}
             </div>
 
             {/* Search */}

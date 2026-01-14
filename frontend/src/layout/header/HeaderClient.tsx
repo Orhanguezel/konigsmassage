@@ -25,7 +25,6 @@ type SimpleBrand = {
 
 type Props = { brand?: SimpleBrand; logoSrc?: StaticImageData | string };
 
-// Menü item + children (dropdown için local type)
 type MenuItemWithChildren = PublicMenuItemDto & {
   children?: MenuItemWithChildren[];
 };
@@ -34,10 +33,7 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // ✅ Tek kaynak: runtime locale resolver (app_locales + default + url/cookie)
   const locale = useResolvedLocale();
-
-  // ✅ UI stringleri
   const { ui, raw: uiHeaderJson } = useUiSection('ui_header', locale);
 
   const menuEmptyLabel =
@@ -50,7 +46,6 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
       String((uiHeaderJson as any).menu_loading).trim()) ||
     '(Menü yükleniyor...)';
 
-  // 🔹 site_settings - locale-aware
   const { data: contactInfoSetting } = useGetSiteSettingByKeyQuery({
     key: 'contact_info',
     locale,
@@ -71,7 +66,7 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
     const socials = (socialsSetting?.value ?? {}) as Record<string, string>;
     const brandVal = (companyBrandSetting?.value ?? {}) as any;
 
-    const name = (brandVal?.name as string) || (contact?.companyName as string) || 'ENSOTEK';
+    const name = (brandVal?.name as string) || (contact?.companyName as string) || 'KÖNIGS MASSAGE';
 
     const website =
       (brandVal?.website as string) ||
@@ -83,10 +78,10 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
       (phones[0] as string | undefined) ||
       (contact?.whatsappNumber as string | undefined) ||
       (brandVal?.phone as string | undefined) ||
-      '+90 212 000 00 00';
+      '';
 
     const email =
-      (contact?.email as string) || (brandVal?.email as string) || 'info@konigsmassage.com';
+      (contact?.email as string) || (brandVal?.email as string) || 'info@koenigsmassage.com';
 
     const mergedSocials: Record<string, string> = {
       ...(brandVal?.socials as Record<string, string> | undefined),
@@ -126,11 +121,9 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
     const fromSettings = brandFromSettings.logo?.url;
     if (fromSettings && String(fromSettings).trim()) return String(fromSettings).trim();
 
-    // hard fallback sadece logo url yoksa
-    return 'https://res.cloudinary.com/dbozv7wqd/image/upload/v1753707610/uploads/konigsmassage/company-images/logo-1753707609976-31353110.webp';
+    return 'https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221104/site-media/logo.png';
   }, [logoSrc, brandFromSettings.logo]);
 
-  // Menu items – locale-aware
   const { data: menuData, isLoading: isMenuLoading } = useListMenuItemsQuery({
     location: 'header',
     is_active: true,
@@ -162,10 +155,39 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
     return sortRecursive(list);
   }, [menuData]);
 
+  // ✅ FINAL: sticky threshold = header height + buffer (RAF throttled)
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    let raf = 0;
+
+    const computeThreshold = () => {
+      const el = document.getElementById('header-sticky');
+      const h = el?.getBoundingClientRect().height ?? 90;
+      return Math.max(80, Math.round(h + 24));
+    };
+
+    let threshold = 100;
+
+    const onScroll = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        setScrolled(window.scrollY > threshold);
+      });
+    };
+
+    const recalc = () => {
+      threshold = computeThreshold();
+      onScroll(); // anında güncelle
+    };
+
+    recalc();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', recalc);
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll as any);
+      window.removeEventListener('resize', recalc);
+    };
   }, []);
 
   const renderDesktopMenuItem = (item: MenuItemWithChildren) => {
@@ -173,36 +195,31 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
     const href = localizePath(locale, rawUrl);
     const hasChildren = !!item.children && item.children.length > 0;
 
-    const isNowrap = rawUrl === '/blog';
-
     if (!hasChildren) {
       return (
-        <li key={item.id}>
+        <li key={String(item.id ?? rawUrl)}>
           <Link href={href} className="header__nav-link">
-            <span className={isNowrap ? 'nowrap' : undefined}>{item.title || rawUrl}</span>
+            <span className="header__nav-text">{item.title || rawUrl}</span>
           </Link>
         </li>
       );
     }
 
     return (
-      <li key={item.id} className="has-dropdown">
+      <li key={String(item.id ?? rawUrl)} className="has-dropdown">
         <Link href={href} className="header__nav-link">
-          <span className={isNowrap ? 'nowrap' : undefined}>{item.title || rawUrl}</span>
+          <span className="header__nav-text">{item.title || rawUrl}</span>
         </Link>
 
         <ul className="submenu">
           {item.children!.map((child) => {
             const childRawUrl = child.url || (child as any).href || '#';
             const childHref = localizePath(locale, childRawUrl);
-            const childNowrap = childRawUrl === '/sparepart' || childRawUrl === '/blog';
 
             return (
-              <li key={child.id}>
+              <li key={String(child.id ?? childRawUrl)}>
                 <Link href={childHref} className="submenu__link">
-                  <span className={childNowrap ? 'nowrap' : undefined}>
-                    {child.title || childRawUrl}
-                  </span>
+                  <span className="header__nav-text">{child.title || childRawUrl}</span>
                 </Link>
               </li>
             );
@@ -211,6 +228,8 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
       </li>
     );
   };
+
+  const homeHref = localizePath(locale, '/');
 
   return (
     <Fragment>
@@ -224,18 +243,19 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
       <header>
         <div
           id="header-sticky"
-          className={(scrolled ? ' sticky' : ' ') + ' header__area header__transparent'}
+          className={(scrolled ? ' sticky' : '') + ' header__area header__transparent'}
         >
           <div className="container">
             <div className="row align-items-center">
               {/* Logo */}
               <div className="col-xl-2 col-lg-2 col-6">
                 <div className="header__logo">
-                  <Link href="/" aria-label={resolvedBrand.name}>
+                  <Link href={homeHref} aria-label={resolvedBrand.name}>
                     <SiteLogo alt={resolvedBrand.name} overrideSrc={effectiveLogo} />
                   </Link>
                 </div>
               </div>
+
               {/* Desktop menu */}
               <div className="col-xl-8 col-lg-9 d-none d-lg-block">
                 <div className="menu__main-wrapper d-flex justify-content-center">
@@ -260,6 +280,7 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
                   </div>
                 </div>
               </div>
+
               {/* Right */}
               <div className="col-xl-2 col-lg-1 col-6">
                 <div className="header__right d-flex align-items-center justify-content-end">
@@ -296,6 +317,7 @@ const HeaderClient: React.FC<Props> = ({ brand, logoSrc }) => {
                   </div>
                 </div>
               </div>
+              {/* /Right */}
             </div>
           </div>
         </div>
