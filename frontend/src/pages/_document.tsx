@@ -79,6 +79,9 @@ function getReqOrigin(ctx: DocumentContext): string {
  * - Prefer x-original-uri / x-forwarded-uri etc.
  * - Fallback to req.url
  * - If a full URL is provided, reduce to pathname+search
+ *
+ * IMPORTANT:
+ * - x-matched-path KULLANILMAZ (route pattern / template dönebilir)
  */
 function getPublicReqUrl(ctx: DocumentContext): string {
   const req = ctx.req;
@@ -88,7 +91,6 @@ function getPublicReqUrl(ctx: DocumentContext): string {
     getHeader(ctx, 'x-original-url'),
     getHeader(ctx, 'x-forwarded-uri'),
     getHeader(ctx, 'x-rewrite-url'),
-    getHeader(ctx, 'x-matched-path'),
     req?.url,
     '/',
   );

@@ -15,7 +15,7 @@ WHERE type = 'therapist';
 -- 2) Anastasia therapist kayıt (id sabit kalsın diye “aaaa...” kullandık)
 INSERT INTO resources (id, type, title, capacity, external_ref_id, is_active, created_at, updated_at)
 VALUES
-('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'therapist', 'Anastasia Königs', 1, '2b3b1d07-6c05-4f61-bf6b-2f9d0c4c01b2', 1, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3))
+('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'therapist', 'Anastasia König', 1, '2b3b1d07-6c05-4f61-bf6b-2f9d0c4c01b2', 1, CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3))
 ON DUPLICATE KEY UPDATE
   type = VALUES(type),
   title = VALUES(title),

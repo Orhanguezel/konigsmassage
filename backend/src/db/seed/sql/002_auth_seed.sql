@@ -21,7 +21,7 @@ INSERT IGNORE INTO profiles (id, full_name, phone, created_at, updated_at) VALUE
 ('4a8fb7f7-0668-4429-9309-fe88ac90eed2', 'Sultan Abdü',      '05427354197', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3)),
 ('7129bc31-88dc-42da-ab80-415a21f2ea9a', 'Melih Keçeci',     NULL,          CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3)),
 ('d279bb9d-797d-4972-a8bd-a77a40caba91', 'Keçeci Melih',     '05425547474', CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3)),
-('2b3b1d07-6c05-4f61-bf6b-2f9d0c4c01b2', 'Anastasia Königs', NULL,          CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3));
+('2b3b1d07-6c05-4f61-bf6b-2f9d0c4c01b2', 'Anastasia König', NULL,          CURRENT_TIMESTAMP(3), CURRENT_TIMESTAMP(3));
 
 COMMIT;
 
