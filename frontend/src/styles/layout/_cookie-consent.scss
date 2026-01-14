@@ -1,0 +1,419 @@
+/* ------------------------------------------------------------
+   konigsmassage – Cookie Consent (Banner + Modal)
+   - NO tailwind
+   - NO inline style
+   - Uses existing SCSS utils
+------------------------------------------------------------ */
+@use '../utils' as *;
+
+/* =========================
+   Banner (ccb__)
+========================= */
+.ccb__wrap {
+  position: fixed;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  pointer-events: none; // inner açınca aktif
+}
+
+.ccb__inner {
+  pointer-events: auto;
+  width: min(980px, 100%);
+  border-radius: 20px;
+
+  background: var(--clr-theme-4); /* senin ens-contactCta navy feel */
+  color: var(--clr-common-white);
+
+  box-shadow: 0px 12px 30px rgba(99, 99, 99, 0.25);
+  filter: drop-shadow(0px 12px 30px rgba(99, 99, 99, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  padding: 18px 16px;
+  overflow: hidden;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+
+  position: relative;
+}
+
+.ccb__text {
+  min-width: 0;
+}
+
+.ccb__title {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--clr-common-white);
+  margin-bottom: 6px;
+}
+
+.ccb__desc {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.84);
+  max-width: 680px;
+}
+
+.ccb__link {
+  display: inline-flex;
+  font-weight: 800;
+  color: var(--clr-common-white);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    opacity: 0.92;
+  }
+}
+
+.ccb__actions {
+  display: grid;
+  gap: 10px;
+  align-content: center;
+  justify-items: stretch;
+}
+
+.ccb__btn {
+  height: 46px;
+  padding: 0 14px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+
+  transition: all 140ms ease;
+  @include border-radius(12px);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.ccb__btn--primary {
+  background: var(--clr-common-white);
+  color: var(--clr-common-heading);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.92);
+  }
+}
+
+.ccb__btn--outline {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--clr-common-white);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+.ccb__btn--ghost {
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--clr-common-white);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.18);
+  }
+}
+
+.ccb__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  color: var(--clr-common-white);
+  font-size: 18px;
+  line-height: 1;
+
+  transition: all 140ms ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+/* Mobile */
+@media #{$xs, $sm} {
+  .ccb__inner {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px 14px;
+  }
+
+  .ccb__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .ccb__close {
+    top: 8px;
+    right: 8px;
+  }
+}
+
+/* =========================
+   Modal (ccm__)
+   + senin custom modal alias’ları
+========================= */
+
+/* Alias: senin verdiğin class’lar da aynı stile bağlansın */
+.ccm__backdrop,
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
+}
+
+.ccm__modal,
+.modal-card-custom {
+  width: min(760px, 100%);
+  background: var(--clr-common-white);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.ccm__head,
+.modal-head-custom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ccm__titles {
+  min-width: 0;
+}
+
+.ccm__title,
+.modal-title-custom {
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--clr-common-heading);
+  line-height: 1.25;
+}
+
+.ccm__desc {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.ccm__close,
+.modal-close-custom {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.03);
+
+  font-size: 18px;
+  line-height: 1;
+  color: var(--clr-common-heading);
+
+  transition: all 140ms ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+}
+
+.ccm__content,
+.modal-body-custom {
+  padding: 16px;
+}
+
+.ccm__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.ccm__rowTitle {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--clr-common-heading);
+  line-height: 1.25;
+}
+
+.ccm__rowDesc {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.62);
+}
+
+.ccm__divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.ccm__pill {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.ccm__pill--on {
+  background: rgba(56, 135, 254, 0.1);
+  border-color: rgba(56, 135, 254, 0.3);
+  color: #1f5fd6;
+}
+
+/* Switch */
+.ccm__switch {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ccm__switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ccm__slider {
+  width: 52px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  transition: all 140ms ease;
+  position: relative;
+}
+
+.ccm__slider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--clr-common-white);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  transition: all 140ms ease;
+}
+
+.ccm__switch input:checked + .ccm__slider {
+  background: rgba(56, 135, 254, 0.25);
+  border-color: rgba(56, 135, 254, 0.35);
+}
+
+.ccm__switch input:checked + .ccm__slider::after {
+  left: 25px;
+}
+
+/* Actions */
+.ccm__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ccm__btn {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 12px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: 800;
+  transition: all 140ms ease;
+  @include border-radius(12px);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.ccm__btn--primary {
+  background: var(--clr-theme-1);
+  color: var(--clr-common-white);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    filter: brightness(0.96);
+  }
+}
+
+.ccm__btn--ghost {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--clr-common-heading);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Optional helper */
+.ens-catalog-consents {
+  font-size: 14px;
+}

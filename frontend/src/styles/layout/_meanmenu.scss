@@ -1,0 +1,144 @@
+@use '../utils' as *;
+
+/*----------------------------------------*/
+/*  HAMBURGER (FINAL — HEADER TRIGGER)
+/*  - default: 3 bars
+/*  - hover / .is-open: → arrow (NOT X)
+/*----------------------------------------*/
+
+.hamburger.cross {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  display: inline-flex;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ✅ Header trigger only */
+.hamburger.cross.hamburger--trigger {
+  --hb-btn: 52px; /* click area */
+  --hb-w: 34px;   /* line width */
+  --hb-t: 3px;    /* thickness */
+  --hb-gap: 8px;  /* spacing */
+
+  width: var(--hb-btn);
+  height: var(--hb-btn);
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hb-gap);
+
+  color: var(--clr-theme-1); /* primary */
+}
+
+.hamburger.cross.hamburger--trigger .line {
+  width: var(--hb-w) !important;
+  height: var(--hb-t);
+  border: 0 !important;
+  background: currentColor;
+  display: block;
+
+  opacity: 1;
+  transform: none;
+  transform-origin: right center; /* ✅ ok ucu sağda dursun */
+  transition: transform 0.22s ease, opacity 0.18s ease, width 0.22s ease;
+}
+
+/* ----------------------------------------
+   HOVER/OPEN => RIGHT ARROW (→)
+   - top & bottom become arrow head
+   - middle becomes shaft
+---------------------------------------- */
+.hamburger.cross.hamburger--trigger:hover .line:nth-child(1),
+.hamburger.cross.hamburger--trigger.is-open .line:nth-child(1) {
+  /* üst çizgi: sağa doğru eğim */
+  transform: translateY(calc(var(--hb-gap) / 2)) rotate(35deg);
+  width: calc(var(--hb-w) * 0.62) !important;
+}
+
+.hamburger.cross.hamburger--trigger:hover .line:nth-child(2),
+.hamburger.cross.hamburger--trigger.is-open .line:nth-child(2) {
+  /* gövde: orta çizgi biraz kısalsın */
+  width: calc(var(--hb-w) * 0.78) !important;
+  opacity: 1;
+}
+
+.hamburger.cross.hamburger--trigger:hover .line:nth-child(3),
+.hamburger.cross.hamburger--trigger.is-open .line:nth-child(3) {
+  /* alt çizgi: sağa doğru eğim */
+  transform: translateY(calc(-1 * (var(--hb-gap) / 2))) rotate(-35deg);
+  width: calc(var(--hb-w) * 0.62) !important;
+}
+
+/* accessibility */
+.hamburger.cross.hamburger--trigger:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* alignment helpers */
+.header__right { align-items: center; }
+.header__hamburger,
+.header__toggle { display: inline-flex; align-items: center; }
+
+
+
+/* =========================================================
+   HEADER NAV (FINAL) — Clean links, readable on hero
+   ========================================================= */
+
+@media (min-width: 992px) {
+  .main-menu ul li {
+    margin-right: 34px;
+    &:last-child { margin-right: 0; }
+  }
+
+  /* base theme anchor */
+  .main-menu ul li > a,
+  .main-menu ul li > button {
+    padding: 40px 0;
+  }
+
+  /* our class: keep it clean, not pill */
+  .main-menu .header__nav-link {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-transform: none;
+
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+
+    @include transition(.22s);
+
+    /* ✅ pill olmasın */
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 40px 0 !important;
+  }
+
+  .main-menu .header__nav-link:hover,
+  .main-menu li:hover > .header__nav-link {
+    color: var(--clr-theme-1);
+  }
+
+  /* sticky (white bg) */
+  .sticky .main-menu .header__nav-link {
+    color: var(--clr-common-heading);
+    text-shadow: none;
+  }
+
+  .sticky .main-menu .header__nav-link:hover,
+  .sticky .main-menu li:hover > .header__nav-link {
+    color: var(--clr-theme-1);
+  }
+}
+
+/* submenu clean */
+.submenu__link { display: block; width: 100%; }

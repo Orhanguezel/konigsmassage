@@ -1,0 +1,26 @@
+// ===================================================================
+// FILE: src/modules/newsletter/router.ts
+// ===================================================================
+
+import type { FastifyInstance } from "fastify";
+import {
+  subscribeNewsletterPublic,
+  unsubscribeNewsletterPublic,
+} from "./controller";
+
+const BASE = "/newsletter";
+
+export async function registerNewsletter(app: FastifyInstance) {
+  // Public subscribe / unsubscribe
+  app.post(
+    `${BASE}/subscribe`,
+    { config: { public: true } },
+    subscribeNewsletterPublic,
+  );
+
+  app.post(
+    `${BASE}/unsubscribe`,
+    { config: { public: true } },
+    unsubscribeNewsletterPublic,
+  );
+}

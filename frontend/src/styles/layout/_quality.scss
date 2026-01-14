@@ -1,0 +1,297 @@
+
+@use '../utils' as *;
+
+/* ============================================================
+   ENSOTEK – QUALITY PAGE (Scoped)
+   - Removes "table/frames" look
+   - Clean certificate grid cards
+   ============================================================ */
+
+.ens-quality__page {
+  /* Bu sayfada blog wrapper'ın ağır border/padding etkisini kır */
+  .blog__content-wrapper {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  /* DB HTML içinde tablo kalırsa bile (biz TSX'te siliyoruz),
+     burada da görünümü "çerçevesiz" yap */
+  .tp-postbox-details {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 0 !important;
+    }
+    thead, tbody, tr, th, td {
+      border: 0 !important;
+    }
+    th, td {
+      padding: 6px 0;
+      vertical-align: top;
+    }
+  }
+}
+
+.ens-quality__section {
+  margin-bottom: 30px;
+}
+
+.ens-quality__head {
+  /* blog__content zaten span + h3 stilini veriyor */
+  margin-bottom: 10px;
+}
+
+.ens-quality__prose {
+  /* tp-postbox-details mevcut typography fix'lerinle uyumlu */
+  margin-top: 10px;
+}
+
+/* Sidebar sticky */
+.ens-quality__sideSticky {
+  position: sticky;
+  top: 110px;
+
+  @media #{$xs,$sm,$md} {
+    position: static;
+    top: auto;
+  }
+}
+
+/* Certificate grid */
+.ens-quality__certBtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+.ens-quality__certCard {
+  display: block;
+  background: var(--clr-common-white);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0px 10px 50px rgba(50, 73, 179, 0.08);
+  transform: translateY(0);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.ens-quality__certBtn:hover .ens-quality__certCard {
+  transform: translateY(-2px);
+}
+
+.ens-quality__thumb {
+  position: relative;
+  display: block;
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.ens-quality__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.45) 0%,
+    rgba(0,0,0,0.10) 45%,
+    rgba(0,0,0,0.55) 100%
+  );
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.ens-quality__certBtn:hover .ens-quality__overlay {
+  opacity: 1;
+}
+
+.ens-quality__badge {
+  align-self: flex-start;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.22);
+  backdrop-filter: blur(6px);
+}
+
+.ens-quality__cta {
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.92);
+  color: #1f2a37;
+}
+
+
+.ens-quality__page {
+  /* Blog template frame çok agresif: kalite sayfasında yumuşat */
+  .blog__content-wrapper {
+    border-width: 1px;                 /* 2px yerine */
+    border-color: rgba(199,199,199,.55);
+  }
+
+  /* DB HTML içindeki Tailwind class’lı kutular kalsın (içeriği azaltmıyoruz),
+     ama TABLE kaynaklı “satır satır çerçeve” görüntüsü olmasın */
+  .ens-quality__dbHtml {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    thead, tbody, tr, th, td {
+      border: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    th, td {
+      padding: 6px 0;
+      vertical-align: top;
+    }
+  }
+
+  /* Sertifika thumbnail overlay sınıfların zaten var, burada sadece güvence */
+  .ens-quality__thumb img {
+    border-radius: 20px; /* blog thumb radius ile uyum */
+  }
+}
+
+
+
+/* ===== Quality Metrics (hard scoped) ===== */
+.ens-quality__page {
+  .ens-quality__metrics {
+    background: var(--clr-common-white);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    padding: 18px;
+    margin-bottom: 30px;
+  }
+
+  .ens-quality__metricsHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 2px 12px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    margin-bottom: 12px;
+  }
+
+  .ens-quality__metricsHeadIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    background: rgba(56, 135, 254, 0.14);
+    border: 1px solid rgba(56, 135, 254, 0.22);
+    position: relative;
+
+    &:after {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 5px;
+      background: var(--clr-theme-1);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .ens-quality__metricsHeadTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--clr-common-heading);
+  }
+
+  .ens-quality__metricsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ens-quality__metricCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.02);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+
+    /* theme list/text reset insurance */
+    list-style: none;
+  }
+
+  .ens-quality__metricLeft {
+    min-width: 0;
+  }
+
+  .ens-quality__metricTitle {
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--clr-common-heading);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ens-quality__metricDesc {
+    margin-top: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #6b7280;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ens-quality__metricValue {
+    flex: 0 0 auto;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+    color: #0f172a;
+    white-space: nowrap;
+  }
+
+  @media #{$xs, $sm} {
+    .ens-quality__metrics {
+      padding: 16px;
+    }
+    .ens-quality__metricValue {
+      font-size: 15px;
+    }
+  }
+}
+
+
+
+

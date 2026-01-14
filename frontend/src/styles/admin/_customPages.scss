@@ -1,0 +1,201 @@
+@use '../utils' as *;
+
+/* =============================================================
+   Admin page clamp (default)
+============================================================= */
+
+.konigsmassage-admin-page__inner {
+  width: 100%;
+  max-width: 1320px;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 0;
+}
+
+/* ✅ FULL WIDTH modifier (CustomPageList gibi ekranlar için) */
+.konigsmassage-admin-page__inner--full {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* container-fluid padding sıfırlanınca içerik taşmasın */
+.konigsmassage-admin-page--full {
+  width: 100%;
+}
+
+/* =============================================================
+   Custom Page List
+============================================================= */
+
+.konigsmassage-cp-list {
+  width: 100%;
+  min-width: 0;
+
+  &__body {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  &__state {
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-size: 12px;
+  }
+}
+
+/* ✅ FULL width table/card: card’ın kendi margin/padding kaynaklı kaymalarını engelle */
+.konigsmassage-cp-list--full {
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0; /* istersen kapat */
+}
+
+.konigsmassage-minw-0 {
+  min-width: 0;
+}
+
+/* Views */
+.konigsmassage-cp-view--table {
+  display: none;
+}
+.konigsmassage-cp-view--cards {
+  display: block;
+}
+
+/* Very large screens: table */
+@media (min-width: 1700px) {
+  .konigsmassage-cp-view--table {
+    display: block;
+  }
+  .konigsmassage-cp-view--cards {
+    display: none;
+  }
+}
+
+/* TABLE */
+.konigsmassage-cp-tablewrap {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* ✅ full width + stable columns */
+.konigsmassage-cp-table {
+  width: 100%;
+  table-layout: fixed;
+  min-width: 0;
+}
+
+/* Column widths */
+.konigsmassage-cp-col--index {
+  width: 64px;
+}
+.konigsmassage-cp-col--slug {
+  width: 260px;
+}
+.konigsmassage-cp-col--cat {
+  width: 320px;
+}
+.konigsmassage-cp-col--status {
+  width: 120px;
+}
+.konigsmassage-cp-col--date {
+  width: 210px;
+}
+.konigsmassage-cp-col--actions {
+  width: 170px;
+}
+.konigsmassage-cp-col--title {
+  width: auto;
+}
+
+.konigsmassage-cp-table td,
+.konigsmassage-cp-table th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* DnD */
+.konigsmassage-cp-dnd {
+  cursor: move;
+}
+.konigsmassage-cp-dnd__handle {
+  display: inline-block;
+  opacity: 0.7;
+}
+
+/* Cards */
+.konigsmassage-cp-card {
+  min-width: 0;
+
+  &__main {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  &__actions {
+    width: 140px;
+    flex: 0 0 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__title,
+  &__seo,
+  &__line {
+    word-break: break-word;
+  }
+}
+
+.konigsmassage-cp-caption {
+  padding: 0.75rem 1rem;
+  caption-side: bottom;
+}
+
+/* =============================================================
+   konigsmassage Admin helpers (no inline styles)
+   ============================================================= */
+
+.konigsmassage-min-w-0 {
+  min-width: 0;
+}
+
+.konigsmassage-admin-img-cover {
+  object-fit: cover;
+}
+
+/* Public content image blocks (no inline styles) */
+.content-image-block {
+  margin: 1.25rem auto;
+  text-align: center;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.content-image-sm {
+  width: 50%;
+  max-width: 480px;
+}
+
+.content-image-md {
+  width: 75%;
+  max-width: 720px;
+}
+
+.content-image-lg {
+  width: 100%;
+  max-width: 900px;
+}
+
+.content-image-full {
+  width: 100%;
+  max-width: 100%;
+}
