@@ -8,7 +8,7 @@
     ],
     "jsx": "preserve",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
@@ -27,6 +27,11 @@
     "allowSyntheticDefaultImports": true,
     "types": [
       "node"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
     ]
   },
   "include": [

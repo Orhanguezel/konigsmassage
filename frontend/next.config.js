@@ -1,4 +1,3 @@
-// next.config.js
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
 
@@ -23,7 +22,7 @@ const nextConfig = {
   trailingSlash: false,
 
   images: {
-    // ✅ legacy allowlist (harmless + bazı ortamlarda daha stabil)
+    // legacy allowlist
     domains: [
       'res.cloudinary.com',
       'images.unsplash.com',
@@ -37,12 +36,10 @@ const nextConfig = {
       'your-real-cdn.com',
     ],
 
-    // ✅ modern allowlist
+    // modern allowlist
     remotePatterns: [
       { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
       { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
-
-      // ✅ FIX: picsum.photos allow
       { protocol: 'https', hostname: 'picsum.photos', pathname: '/**' },
 
       { protocol: 'http', hostname: 'localhost', pathname: '/**' },
@@ -87,6 +84,7 @@ const nextConfig = {
   },
 
   webpack: (config) => {
+    // keep as-is (dev hız/istikrar tercihi)
     config.cache = { type: 'memory' };
     return config;
   },

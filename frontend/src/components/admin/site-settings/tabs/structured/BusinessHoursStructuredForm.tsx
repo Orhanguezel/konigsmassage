@@ -1,17 +1,29 @@
 // =============================================================
 // FILE: src/components/admin/site-settings/structured/BusinessHoursStructuredForm.tsx
+// FINAL — Next 14 + TS strict friendly (no implicit any)
+// - zod refine callback typed
+// - seed/value normalization
+// - removes unnecessary `any` casts
 // =============================================================
 
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { z } from 'zod';
 
+// -------------------------------------------
+// Schema
+// -------------------------------------------
 const dayEnum = z.enum(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']);
+type DayKey = z.infer<typeof dayEnum>;
+
 const hhmm = z
   .string()
   .trim()
-  .refine((s) => /^\d{2}:\d{2}$/.test(s), 'Saat formatı HH:MM olmalı (örn 09:00)');
+  .refine(
+    (s: string) => /^\d{2}:\d{2}$/.test(s),
+    'Saat formatı HH:MM olmalı (örn 09:00)',
+  );
 
 export const businessHourRowSchema = z
   .object({
@@ -22,20 +34,38 @@ export const businessHourRowSchema = z
   })
   .strict();
 
+export type BusinessHourRow = z.infer<typeof businessHourRowSchema>;
+
 export const businessHoursSchema = z.array(businessHourRowSchema).default([]);
 
 export type BusinessHoursFormState = z.infer<typeof businessHoursSchema>;
 
+// -------------------------------------------
+// Props
+// -------------------------------------------
 export type BusinessHoursStructuredFormProps = {
-  value: any;
+  value: unknown;
   onChange: (next: BusinessHoursFormState) => void;
   errors?: Record<string, string>;
   disabled?: boolean;
   seed?: BusinessHoursFormState;
 };
 
+// -------------------------------------------
+// Helpers
+// -------------------------------------------
+const DEFAULT_SEED: BusinessHoursFormState = [
+  { day: 'mon', open: '09:00', close: '18:00', closed: false },
+  { day: 'tue', open: '09:00', close: '18:00', closed: false },
+  { day: 'wed', open: '09:00', close: '18:00', closed: false },
+  { day: 'thu', open: '09:00', close: '18:00', closed: false },
+  { day: 'fri', open: '09:00', close: '18:00', closed: false },
+  { day: 'sat', open: '10:00', close: '14:00', closed: false },
+  { day: 'sun', open: '00:00', close: '00:00', closed: true },
+];
+
 export function businessHoursObjToForm(
-  v: any,
+  v: unknown,
   seed: BusinessHoursFormState,
 ): BusinessHoursFormState {
   const base = Array.isArray(v) ? v : seed;
@@ -43,17 +73,21 @@ export function businessHoursObjToForm(
   return parsed.success ? parsed.data : seed;
 }
 
-export function businessHoursFormToObj(s: BusinessHoursFormState) {
+export function businessHoursFormToObj(s: BusinessHoursFormState): BusinessHoursFormState {
+  // Ensures strict schema shape + defaults
   return businessHoursSchema.parse(
-    (s || []).map((r) => ({
+    (s ?? []).map((r: BusinessHourRow) => ({
       day: r.day,
       open: r.open,
       close: r.close,
-      closed: !!r.closed,
+      closed: Boolean(r.closed),
     })),
   );
 }
 
+// -------------------------------------------
+// Component
+// -------------------------------------------
 export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormProps> = ({
   value,
   onChange,
@@ -61,20 +95,17 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
   disabled,
   seed,
 }) => {
-  const s = (seed ||
-    ([
-      { day: 'mon', open: '09:00', close: '18:00', closed: false },
-      { day: 'tue', open: '09:00', close: '18:00', closed: false },
-      { day: 'wed', open: '09:00', close: '18:00', closed: false },
-      { day: 'thu', open: '09:00', close: '18:00', closed: false },
-      { day: 'fri', open: '09:00', close: '18:00', closed: false },
-      { day: 'sat', open: '10:00', close: '14:00', closed: false },
-      { day: 'sun', open: '00:00', close: '00:00', closed: true },
-    ] as any)) as BusinessHoursFormState;
+  const seedResolved = useMemo<BusinessHoursFormState>(() => {
+    const base = Array.isArray(seed) && seed.length ? seed : DEFAULT_SEED;
+    const parsed = businessHoursSchema.safeParse(base);
+    return parsed.success ? parsed.data : DEFAULT_SEED;
+  }, [seed]);
 
-  const form = businessHoursObjToForm(value, s);
+  const form = useMemo<BusinessHoursFormState>(() => {
+    return businessHoursObjToForm(value, seedResolved);
+  }, [value, seedResolved]);
 
-  const dayLabel: Record<string, string> = {
+  const dayLabel: Record<DayKey, string> = {
     mon: 'Mon',
     tue: 'Tue',
     wed: 'Wed',
@@ -84,22 +115,23 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
     sun: 'Sun',
   };
 
-  const setRow = (idx: number, patch: Partial<(typeof form)[number]>) => {
-    const next = [...form];
-    next[idx] = { ...next[idx], ...patch } as any;
+  const setRow = (idx: number, patch: Partial<BusinessHourRow>) => {
+    const next: BusinessHoursFormState = form.map((row: BusinessHourRow, i: number) =>
+      i === idx ? ({ ...row, ...patch } as BusinessHourRow) : row,
+    );
     onChange(next);
   };
 
   const addRow = () => {
-    onChange([
-      ...(form || []),
-      { day: 'mon', open: '09:00', close: '18:00', closed: false } as any,
-    ]);
+    const next: BusinessHoursFormState = [
+      ...(form ?? []),
+      { day: 'mon', open: '09:00', close: '18:00', closed: false },
+    ];
+    onChange(next);
   };
 
   const removeRow = (idx: number) => {
-    const next = [...form];
-    next.splice(idx, 1);
+    const next: BusinessHoursFormState = (form ?? []).filter((i: number) => i !== idx);
     onChange(next);
   };
 
@@ -121,21 +153,22 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
             </tr>
           </thead>
           <tbody>
-            {form.map((r, idx) => (
+            {form.map((r: BusinessHourRow, idx: number) => (
               <tr key={`${r.day}_${idx}`}>
                 <td>
                   <select
                     className="form-select form-select-sm"
                     value={r.day}
-                    onChange={(e) => setRow(idx, { day: e.target.value as any })}
+                    onChange={(e) => setRow(idx, { day: e.target.value as DayKey })}
                     disabled={disabled}
                   >
-                    {(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const).map((d) => (
+                    {dayEnum.options.map((d: DayKey) => (
                       <option key={d} value={d}>
                         {dayLabel[d]}
                       </option>
                     ))}
                   </select>
+
                   {errors?.[`${idx}.day`] && (
                     <div className="text-danger small">{errors[`${idx}.day`]}</div>
                   )}
@@ -147,7 +180,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
                     value={r.open}
                     onChange={(e) => setRow(idx, { open: e.target.value })}
                     placeholder="09:00"
-                    disabled={disabled || !!r.closed}
+                    disabled={disabled || Boolean(r.closed)}
                   />
                   {errors?.[`${idx}.open`] && (
                     <div className="text-danger small">{errors[`${idx}.open`]}</div>
@@ -160,7 +193,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
                     value={r.close}
                     onChange={(e) => setRow(idx, { close: e.target.value })}
                     placeholder="18:00"
-                    disabled={disabled || !!r.closed}
+                    disabled={disabled || Boolean(r.closed)}
                   />
                   {errors?.[`${idx}.close`] && (
                     <div className="text-danger small">{errors[`${idx}.close`]}</div>
@@ -172,7 +205,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      checked={!!r.closed}
+                      checked={Boolean(r.closed)}
                       onChange={(e) => setRow(idx, { closed: e.target.checked })}
                       disabled={disabled}
                     />
