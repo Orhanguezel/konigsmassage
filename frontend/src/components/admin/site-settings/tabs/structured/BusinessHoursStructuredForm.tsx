@@ -1,9 +1,8 @@
 // =============================================================
-// FILE: src/components/admin/site-settings/structured/BusinessHoursStructuredForm.tsx
+// FILE: src/components/admin/site-settings/tabs/structured/BusinessHoursStructuredForm.tsx
 // FINAL — Next 14 + TS strict friendly (no implicit any)
-// - zod refine callback typed
-// - seed/value normalization
-// - removes unnecessary `any` casts
+// - Fixes filter predicate typing (removeRow) + noImplicitAny
+// - Keeps schema strict + normalization helpers
 // =============================================================
 
 'use client';
@@ -20,10 +19,9 @@ type DayKey = z.infer<typeof dayEnum>;
 const hhmm = z
   .string()
   .trim()
-  .refine(
-    (s: string) => /^\d{2}:\d{2}$/.test(s),
-    'Saat formatı HH:MM olmalı (örn 09:00)',
-  );
+  .refine((s: string) => /^\d{2}:\d{2}$/.test(s), {
+    message: 'Saat formatı HH:MM olmalı (örn 09:00)',
+  });
 
 export const businessHourRowSchema = z
   .object({
@@ -37,7 +35,6 @@ export const businessHourRowSchema = z
 export type BusinessHourRow = z.infer<typeof businessHourRowSchema>;
 
 export const businessHoursSchema = z.array(businessHourRowSchema).default([]);
-
 export type BusinessHoursFormState = z.infer<typeof businessHoursSchema>;
 
 // -------------------------------------------
@@ -74,7 +71,6 @@ export function businessHoursObjToForm(
 }
 
 export function businessHoursFormToObj(s: BusinessHoursFormState): BusinessHoursFormState {
-  // Ensures strict schema shape + defaults
   return businessHoursSchema.parse(
     (s ?? []).map((r: BusinessHourRow) => ({
       day: r.day,
@@ -92,7 +88,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
   value,
   onChange,
   errors,
-  disabled,
+  disabled = false,
   seed,
 }) => {
   const seedResolved = useMemo<BusinessHoursFormState>(() => {
@@ -117,21 +113,25 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
 
   const setRow = (idx: number, patch: Partial<BusinessHourRow>) => {
     const next: BusinessHoursFormState = form.map((row: BusinessHourRow, i: number) =>
-      i === idx ? ({ ...row, ...patch } as BusinessHourRow) : row,
+      i === idx ? { ...row, ...patch } : row,
     );
     onChange(next);
   };
 
   const addRow = () => {
     const next: BusinessHoursFormState = [
-      ...(form ?? []),
+      ...form,
       { day: 'mon', open: '09:00', close: '18:00', closed: false },
     ];
     onChange(next);
   };
 
   const removeRow = (idx: number) => {
-    const next: BusinessHoursFormState = (form ?? []).filter((i: number) => i !== idx);
+    // IMPORTANT: filter predicate receives (value, index)
+    // noImplicitAny-safe: explicitly type the first arg
+    const next: BusinessHoursFormState = form.filter(
+      (_row: BusinessHourRow, i: number) => i !== idx,
+    );
     onChange(next);
   };
 
@@ -152,6 +152,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
               <th className="text-end"> </th>
             </tr>
           </thead>
+
           <tbody>
             {form.map((r: BusinessHourRow, idx: number) => (
               <tr key={`${r.day}_${idx}`}>
