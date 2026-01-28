@@ -1,33 +1,33 @@
-/**
- * /var/www/konigsmassage/frontend/ecosystem.config.cjs
- * konigsmassage — Frontend (Next.js) PM2 config (orhan-safe)
- * - binds to 127.0.0.1:3055 (nginx reverse proxy only)
- * - logs under /home/orhan/.pm2/logs
- */
 module.exports = {
   apps: [
     {
       name: 'konigsmassage-frontend',
       cwd: '/var/www/konigsmassage/frontend',
 
-      // En stabil yöntem: package.json "start" script’i
-      script: 'npm',
-      args: 'run start -- -p 3055 -H 127.0.0.1',
+      interpreter: '/home/orhan/.bun/bin/bun',
+      script: 'run',
+      args: 'start -- -p 3055 -H 127.0.0.1',
 
       exec_mode: 'fork',
       instances: 1,
+
       watch: false,
       autorestart: true,
-      max_memory_restart: '500M',
 
-      min_uptime: '20s',
+      max_memory_restart: '450M',
+
+      min_uptime: '30s',
       max_restarts: 10,
-      restart_delay: 3000,
+      restart_delay: 5000,
+
+      kill_timeout: 8000,
+      listen_timeout: 10000,
 
       env: {
         NODE_ENV: 'production',
-        PORT: 3055,
+        PORT: '3055',
         HOSTNAME: '127.0.0.1',
+        NEXT_TELEMETRY_DISABLED: '1',
       },
 
       out_file: '/home/orhan/.pm2/logs/konigsmassage-frontend.out.log',

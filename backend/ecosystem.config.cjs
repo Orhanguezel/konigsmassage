@@ -6,30 +6,35 @@ module.exports = {
 
       // Node ile çalışıyorsa:
       script: 'dist/index.js',
-
       exec_mode: 'fork',
       instances: 1,
+
       watch: false,
       autorestart: true,
+
+      // Kaynak koruma
       max_memory_restart: '350M',
 
-      min_uptime: '20s',
+      // Crash-loop koruması (daha “sakin”)
+      min_uptime: '30s',
       max_restarts: 10,
-      restart_delay: 3000,
+      restart_delay: 5000,
+
+      // Graceful shutdown
+      kill_timeout: 8000,
+      listen_timeout: 10000,
 
       env: {
         NODE_ENV: 'production',
-
-        // Güvenlik: dışa açma, sadece localhost
         HOST: '127.0.0.1',
         PORT: 8093,
 
         // Puppeteer/Chromium
-        // Snap Chromium varsa:
         PUPPETEER_EXECUTABLE_PATH: '/snap/bin/chromium',
         PUPPETEER_NO_SANDBOX: '1',
       },
 
+      // Loglar (orhan home - sürtüşmesiz)
       out_file: '/home/orhan/.pm2/logs/konigsmassage-backend.out.log',
       error_file: '/home/orhan/.pm2/logs/konigsmassage-backend.err.log',
       combine_logs: true,
