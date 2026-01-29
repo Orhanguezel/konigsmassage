@@ -1,26 +1,26 @@
+// /var/www/konigsmassage/backend/ecosystem.config.cjs
 module.exports = {
   apps: [
     {
       name: 'konigsmassage-backend',
       cwd: '/var/www/konigsmassage/backend',
 
-      // Node ile çalışıyorsa:
+      // Bun runtime
+      interpreter: '/home/orhan/.bun/bin/bun',
       script: 'dist/index.js',
+
       exec_mode: 'fork',
       instances: 1,
 
       watch: false,
       autorestart: true,
 
-      // Kaynak koruma
       max_memory_restart: '350M',
 
-      // Crash-loop koruması (daha “sakin”)
       min_uptime: '30s',
       max_restarts: 10,
       restart_delay: 5000,
 
-      // Graceful shutdown
       kill_timeout: 8000,
       listen_timeout: 10000,
 
@@ -34,7 +34,6 @@ module.exports = {
         PUPPETEER_NO_SANDBOX: '1',
       },
 
-      // Loglar (orhan home - sürtüşmesiz)
       out_file: '/home/orhan/.pm2/logs/konigsmassage-backend.out.log',
       error_file: '/home/orhan/.pm2/logs/konigsmassage-backend.err.log',
       combine_logs: true,

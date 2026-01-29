@@ -1,12 +1,13 @@
+// /var/www/konigsmassage/frontend/ecosystem.config.cjs
 module.exports = {
   apps: [
     {
       name: 'konigsmassage-frontend',
       cwd: '/var/www/konigsmassage/frontend',
 
-      interpreter: '/home/orhan/.bun/bin/bun',
-      script: 'run',
-      args: 'start -- -p 3055 -H 127.0.0.1',
+      // Next.js start via Bun
+      script: '/home/orhan/.bun/bin/bun',
+      args: 'run start -- -p 3055 -H 127.0.0.1',
 
       exec_mode: 'fork',
       instances: 1,
