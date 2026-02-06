@@ -31,7 +31,6 @@ module.exports = {
 
         // Puppeteer/Chromium
         PUPPETEER_EXECUTABLE_PATH: '/snap/bin/chromium',
-        PUPPETEER_NO_SANDBOX: '1',
       },
 
       out_file: '/home/orhan/.pm2/logs/konigsmassage-backend.out.log',
