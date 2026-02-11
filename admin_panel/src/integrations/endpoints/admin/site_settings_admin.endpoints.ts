@@ -20,6 +20,13 @@ import {
 
 export type AdminSiteSetting = SiteSettingRow;
 
+export type GetSiteSettingAdminByKeyArg =
+  | string
+  | {
+      key: string;
+      locale?: string | null;
+    };
+
 const ADMIN_BASE = '/admin/site_settings';
 const ADMIN_LIST = '/admin/site_settings/list'; // ✅ List endpoint
 
@@ -44,11 +51,22 @@ export const siteSettingsAdminApi = extendedApi.injectEndpoints({
       keepUnusedDataFor: 60,
     }),
 
-    getSiteSettingAdminByKey: b.query<AdminSiteSetting | null, string>({
-      query: (key) => ({ url: `${ADMIN_BASE}/${encodeURIComponent(key)}` }),
+    getSiteSettingAdminByKey: b.query<AdminSiteSetting | null, GetSiteSettingAdminByKeyArg>({
+      query: (arg) => {
+        const key = typeof arg === 'string' ? arg : arg.key;
+        const locale = typeof arg === 'string' ? null : arg.locale;
+
+        return {
+          url: `${ADMIN_BASE}/${encodeURIComponent(key)}`,
+          params: locale ? { locale } : undefined,
+        };
+      },
       transformResponse: (res: unknown): AdminSiteSetting | null =>
         res ? (normalizeAdminSiteSettingRow(res as SiteSettingRow) as AdminSiteSetting) : null,
-      providesTags: (_r, _e, key) => [{ type: 'SiteSettings', id: key }],
+      providesTags: (_r, _e, arg) => {
+        const key = typeof arg === 'string' ? arg : arg.key;
+        return [{ type: 'SiteSettings', id: key }];
+      },
     }),
 
     // /admin/site_settings/app-locales

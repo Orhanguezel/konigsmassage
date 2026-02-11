@@ -8,10 +8,11 @@
 // =============================================================
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { resolveAdminApiLocale } from '../../../../../i18n/adminLocale';
 import { localeShortClient, localeShortClientOr } from '../../../../../i18n/localeShortClient';
 
@@ -30,7 +31,7 @@ function isUuidLike(v?: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 }
 
-function getErrMessage(err: unknown): string {
+function getErrMessage(err: unknown, fallback: string): string {
   const anyErr = err as any;
   const m1 = anyErr?.data?.error?.message;
   if (typeof m1 === 'string' && m1.trim()) return m1;
@@ -38,11 +39,13 @@ function getErrMessage(err: unknown): string {
   if (typeof m2 === 'string' && m2.trim()) return m2;
   const m3 = anyErr?.error;
   if (typeof m3 === 'string' && m3.trim()) return m3;
-  return 'İşlem başarısız. Lütfen tekrar deneyin.';
+  return fallback;
 }
 
 export default function AdminFaqsDetailClient({ id }: { id: string }) {
   const router = useRouter();
+  const sp = useSearchParams();
+  const t = useAdminT('admin.faqs');
   const isCreateMode = String(id) === 'new';
 
   const {
@@ -53,7 +56,7 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
   } = useAdminLocales();
 
   const apiLocaleFromDb = React.useMemo(() => {
-    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'tr');
+    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'de');
   }, [localeOptions, defaultLocaleFromDb]);
 
   const localeSet = React.useMemo(() => {
@@ -67,17 +70,20 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
   React.useEffect(() => {
     if (!localeOptions || localeOptions.length === 0) return;
 
+    const urlLocale = localeShortClient(sp?.get('locale'));
+
     setActiveLocale((prev) => {
       const p = localeShortClient(prev);
       if (p && localeSet.has(p)) return p;
-      return localeShortClientOr(apiLocaleFromDb, 'tr');
+      if (urlLocale && localeSet.has(urlLocale)) return urlLocale;
+      return localeShortClientOr(apiLocaleFromDb, 'de');
     });
-  }, [localeOptions, localeSet, apiLocaleFromDb]);
+  }, [localeOptions, localeSet, apiLocaleFromDb, sp]);
 
   const queryLocale = React.useMemo(() => {
     const l = localeShortClient(activeLocale);
     if (l && localeSet.has(l)) return l;
-    return localeShortClientOr(apiLocaleFromDb, 'tr');
+    return localeShortClientOr(apiLocaleFromDb, 'de');
   }, [activeLocale, localeSet, apiLocaleFromDb]);
 
   const localesReady = !localesLoading && !localesFetching;
@@ -136,10 +142,10 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
 
   const handleSubmit = async (values: FaqsFormValues) => {
     try {
-      const loc = localeShortClientOr(values.locale || queryLocale || apiLocaleFromDb, 'tr');
+      const loc = localeShortClientOr(values.locale || queryLocale || apiLocaleFromDb, 'de');
 
       if (localeSet.size > 0 && !localeSet.has(localeShortClient(loc))) {
-        toast.error('Geçerli bir locale seçilmedi. app_locales ve default_locale kontrol edin.');
+        toast.error(t('errors.invalidLocale'));
         return;
       }
 
@@ -157,11 +163,11 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
         const nextId = String((created as any)?.id ?? '').trim();
 
         if (!nextId || !isUuidLike(nextId)) {
-          toast.error("Oluşturuldu ama id dönmedi/UUID değil. Backend response'u kontrol et.");
+          toast.error(t('errors.createdButInvalidId'));
           return;
         }
 
-        toast.success('FAQ başarıyla oluşturuldu.');
+        toast.success(t('messages.created'));
         router.replace(`/admin/faqs/${encodeURIComponent(nextId)}`);
         router.refresh();
         return;
@@ -169,7 +175,7 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
 
       const baseId = faq?.id || values.id || id;
       if (!baseId || !isUuidLike(String(baseId))) {
-        toast.error('FAQ verisi yüklenemedi (id yok).');
+        toast.error(t('errors.missingId'));
         return;
       }
 
@@ -183,21 +189,32 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
       };
 
       await updateFaq({ id: String(baseId), patch } as any).unwrap();
-      toast.success('FAQ güncellendi.');
+      toast.success(t('messages.updated'));
 
       if (loc !== queryLocale) setActiveLocale(loc);
     } catch (err) {
-      toast.error(getErrMessage(err));
+      toast.error(getErrMessage(err, t('errors.generic')));
     }
   };
+
+  // locale -> URL sync (guard)
+  React.useEffect(() => {
+    if (!queryLocale) return;
+    const cur = localeShortClient(sp?.get('locale'));
+    if (cur === queryLocale) return;
+
+    const params = new URLSearchParams(sp?.toString() || '');
+    params.set('locale', queryLocale);
+    router.replace(`/admin/faqs/${encodeURIComponent(String(id))}?${params.toString()}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryLocale]);
 
   if (localesReady && !hasLocales) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <div className="text-sm font-semibold">Dil listesi bulunamadı</div>
+        <div className="text-sm font-semibold">{t('noLocales.title')}</div>
         <div className="mt-1 text-sm text-muted-foreground">
-          <code>site_settings.app_locales</code> boş veya geçersiz. Önce Site Settings’ten dilleri
-          ayarlayın.
+          {t('noLocales.description')}
         </div>
       </div>
     );
@@ -206,13 +223,13 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
   if (!isCreateMode && !isUuidLike(String(id || ''))) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <div className="text-sm font-semibold">Geçersiz ID</div>
+        <div className="text-sm font-semibold">{t('invalidId.title')}</div>
         <div className="mt-1 text-sm text-muted-foreground">
-          UUID değil: <code>{String(id || '-')}</code>
+          {t('invalidId.description')} <code>{String(id || '-')}</code>
         </div>
         <div className="mt-3">
           <button className="rounded-md border px-3 py-2 text-xs" onClick={onCancel}>
-            Listeye dön
+            {t('actions.backToList')}
           </button>
         </div>
       </div>
@@ -227,8 +244,8 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
       saving={saving}
       locales={localesForForm}
       localesLoading={localesLoading || localesFetching}
-      defaultLocale={queryLocale || apiLocaleFromDb || 'tr'}
-      onLocaleChange={(l) => setActiveLocale(localeShortClientOr(l, 'tr'))}
+      defaultLocale={queryLocale || apiLocaleFromDb || 'de'}
+      onLocaleChange={(l) => setActiveLocale(localeShortClientOr(l, 'de'))}
       onSubmit={handleSubmit}
       onCancel={onCancel}
     />

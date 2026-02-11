@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import {
   useLoginMutation,
   useOauthStartMutation,
+  useLazyStatusQuery,
 } from '@/integrations/rtk/hooks';
 import { tokenStore } from '@/integrations/core/token';
 import { normalizeError } from '@/integrations/core/errors';
@@ -25,24 +26,6 @@ import { localizePath } from '@/i18n/url';
 
 function trimSlash(x: string) {
   return String(x || '').replace(/\/+$/, '');
-}
-
-function isAdminUser(user: any): boolean {
-  const role = user?.role;
-  const roles = user?.roles;
-
-  const roleName =
-    typeof role === 'string'
-      ? role
-      : typeof role?.name === 'string'
-        ? role.name
-        : null;
-
-  if (roleName === 'admin') return true;
-
-  if (Array.isArray(roles)) return roles.map(String).includes('admin');
-  if (typeof roles === 'string') return roles.split(',').map((s) => s.trim()).includes('admin');
-  return false;
 }
 
 const Login: React.FC = () => {
@@ -58,6 +41,7 @@ const Login: React.FC = () => {
 
   const [login, loginState] = useLoginMutation();
   const [googleStart, googleState] = useOauthStartMutation();
+  const [fetchStatus] = useLazyStatusQuery();
 
   const isLoading = loginState.isLoading || googleState.isLoading;
 
@@ -79,7 +63,7 @@ const Login: React.FC = () => {
 
     try {
       const resp = await login({
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         password,
       }).unwrap();
 
@@ -92,9 +76,16 @@ const Login: React.FC = () => {
       }
 
       const adminBase = trimSlash(String(process.env.NEXT_PUBLIC_ADMIN_URL || '').trim());
-      if (typeof window !== 'undefined' && adminBase && isAdminUser(resp.user)) {
-        window.location.assign(`${adminBase}/admin`);
-        return;
+      if (typeof window !== 'undefined' && adminBase) {
+        try {
+          const status = await fetchStatus(undefined).unwrap();
+          if (status?.authenticated === true && status?.is_admin === true) {
+            window.location.assign(`${adminBase}/admin`);
+            return;
+          }
+        } catch {
+          // status check failed -> normal user flow
+        }
       }
 
       router.push(localizePath(locale, '/'));

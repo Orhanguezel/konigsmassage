@@ -228,6 +228,7 @@ export const {
   useRefreshMutation,
   useMeQuery,
   useStatusQuery,
+  useLazyStatusQuery,
   useLogoutMutation,
   useSignInWithGoogleMutation,
   useGoogleStartMutation,

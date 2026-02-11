@@ -91,6 +91,31 @@ function upsertDefaultLocale(rows: LocaleRow[], desired: string): string {
   return rows.find((r) => r.is_active)?.code || '';
 }
 
+const TOP_20_LOCALES_PRESET: LocaleRow[] = [
+  { code: 'de', label: 'Deutsch', is_active: true },
+  { code: 'en', label: 'English', is_active: true },
+  { code: 'tr', label: 'Türkçe', is_active: true },
+
+  // common languages (inactive by default)
+  { code: 'es', label: 'Español', is_active: false },
+  { code: 'fr', label: 'Français', is_active: false },
+  { code: 'it', label: 'Italiano', is_active: false },
+  { code: 'pt', label: 'Português', is_active: false },
+  { code: 'ru', label: 'Русский', is_active: false },
+  { code: 'ar', label: 'العربية', is_active: false },
+  { code: 'hi', label: 'हिन्दी', is_active: false },
+  { code: 'bn', label: 'বাংলা', is_active: false },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ', is_active: false },
+  { code: 'ja', label: '日本語', is_active: false },
+  { code: 'ko', label: '한국어', is_active: false },
+  { code: 'zh', label: '中文', is_active: false },
+  { code: 'id', label: 'Bahasa Indonesia', is_active: false },
+  { code: 'vi', label: 'Tiếng Việt', is_active: false },
+  { code: 'th', label: 'ไทย', is_active: false },
+  { code: 'nl', label: 'Nederlands', is_active: false },
+  { code: 'pl', label: 'Polski', is_active: false },
+];
+
 export function LocalesSettingsTab() {
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const t = useAdminTranslations(adminLocale || undefined);
@@ -195,6 +220,25 @@ export function LocalesSettingsTab() {
     }
   };
 
+  const onPresetTop20 = async () => {
+    const prevRows = rows;
+    const prevDefault = defaultLocale;
+
+    setTouched(true);
+    const nextRows = TOP_20_LOCALES_PRESET.slice();
+    const nextDefault = upsertDefaultLocale(nextRows, defaultLocale || 'de');
+    setRows(nextRows);
+    setDefaultLocale(nextDefault);
+
+    try {
+      await persist(nextRows, nextDefault);
+    } catch {
+      setRows(prevRows);
+      setDefaultLocale(prevDefault);
+      setTouched(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="gap-2">
@@ -230,9 +274,14 @@ export function LocalesSettingsTab() {
         {!rows.length ? (
           <div className="rounded-md border p-4 text-sm text-muted-foreground">
             <div className="mb-3">{t('admin.siteSettings.locales.empty')}</div>
-            <Button variant="outline" onClick={onPresetDeEnTr} disabled={busy}>
-              {t('admin.siteSettings.locales.presetDeEnTr')}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={onPresetDeEnTr} disabled={busy}>
+                {t('admin.siteSettings.locales.presetDeEnTr')}
+              </Button>
+              <Button variant="outline" onClick={onPresetTop20} disabled={busy}>
+                {t('admin.siteSettings.locales.presetTop20')}
+              </Button>
+            </div>
           </div>
         ) : (
           <>
@@ -256,9 +305,14 @@ export function LocalesSettingsTab() {
               </div>
 
               <div className="flex items-end justify-start md:justify-end">
-                <Button variant="outline" onClick={onPresetDeEnTr} disabled={busy}>
-                  {t('admin.siteSettings.locales.presetDeEnTr')}
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" onClick={onPresetDeEnTr} disabled={busy}>
+                    {t('admin.siteSettings.locales.presetDeEnTr')}
+                  </Button>
+                  <Button variant="outline" onClick={onPresetTop20} disabled={busy}>
+                    {t('admin.siteSettings.locales.presetTop20')}
+                  </Button>
+                </div>
               </div>
             </div>
 

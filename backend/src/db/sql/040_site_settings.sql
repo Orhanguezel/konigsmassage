@@ -45,8 +45,26 @@ VALUES
     JSON_ARRAY(
       JSON_OBJECT('code','de','label','Deutsch','is_default', TRUE,  'is_active', TRUE),
       JSON_OBJECT('code','en','label','English','is_default', FALSE, 'is_active', TRUE),
-      JSON_OBJECT('code','tr','label','Türkçe','is_default', FALSE, 'is_active', TRUE)
-    ) AS CHAR CHARACTER SET utf8mb4
+      JSON_OBJECT('code','tr','label','Türkçe','is_default', FALSE, 'is_active', TRUE),
+      JSON_OBJECT('code','es','label','Español','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','fr','label','Français','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','it','label','Italiano','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','pt','label','Português','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','ru','label','Русский','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','ar','label','العربية','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','hi','label','हिन्दी','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','bn','label','বাংলা','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','pa','label','ਪੰਜਾਬੀ','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','ja','label','日本語','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','ko','label','한국어','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','zh','label','中文','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','id','label','Bahasa Indonesia','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','vi','label','Tiếng Việt','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','th','label','ไทย','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','nl','label','Nederlands','is_default', FALSE, 'is_active', FALSE),
+      JSON_OBJECT('code','pl','label','Polski','is_default', FALSE, 'is_active', FALSE)
+    )
+  AS CHAR CHARACTER SET utf8mb4
   ),
   NOW(3),
   NOW(3)

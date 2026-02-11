@@ -278,6 +278,7 @@
           },
           "empty": "Dil konfigürasyonu bulunamadı.",
           "presetDeEnTr": "de/en/tr preset uygula",
+          "presetTop20": "20 yaygın dil ekle",
           "saved": "Diller güncellendi.",
           "saveError": "Diller güncellenemedi."
         },
@@ -333,6 +334,8 @@
           "backToList": "Listeye Dön",
           "localeLabel": "Locale",
           "loadingLocale": "Locale yükleniyor…",
+          "fallbackNotice": "<code>{selectedLocale}</code> için birebir kayıt yok. <code>{effectiveLocale}</code> fallback değeri gösteriliyor. Kaydetmek <code>{selectedLocale}</code> için kayıt oluşturur/günceller.",
+          "noRecordNotice": "<code>{key}</code> (<code>{locale}</code>) için kayıt bulunamadı. Kaydedince oluşturabilirsiniz.",
           "note": "Not: General/UI key’lerde structured form açılır. Diğer key’ler structured modda JSON editor fallback’tır.",
           "siteMetaDefaultGlobalGuard": "site_meta_default locale=\"*\" olamaz. Dil seçip kaydet.",
           "updated": "\"{key}\" ({locale}) güncellendi.",

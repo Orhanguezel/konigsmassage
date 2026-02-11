@@ -794,6 +794,7 @@
           },
           "empty": "Keine Sprachkonfiguration gefunden.",
           "presetDeEnTr": "Preset de/en/tr setzen",
+          "presetTop20": "20 Sprachen hinzufügen",
           "saved": "Sprachen aktualisiert.",
           "saveError": "Sprachen konnten nicht aktualisiert werden."
         },
@@ -849,6 +850,8 @@
           "backToList": "Zurück zur Liste",
           "localeLabel": "Locale",
           "loadingLocale": "Locale wird geladen…",
+          "fallbackNotice": "Kein exakter Eintrag für <code>{selectedLocale}</code>. Fallback von <code>{effectiveLocale}</code> wird angezeigt. Speichern erstellt/aktualisiert <code>{selectedLocale}</code>.",
+          "noRecordNotice": "Kein Eintrag gefunden für <code>{key}</code> (<code>{locale}</code>). Sie können ihn durch Speichern erstellen.",
           "note": "Hinweis: General/UI-Schlüssel öffnen ein Structured-Formular. Andere Schlüssel verwenden im Structured-Modus den JSON-Editor.",
           "siteMetaDefaultGlobalGuard": "site_meta_default kann nicht locale=\"*\" sein. Wählen Sie eine Locale und speichern Sie.",
           "updated": "\"{key}\" ({locale}) aktualisiert.",

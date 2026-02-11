@@ -15,6 +15,8 @@ import { toast } from 'sonner';
 import { ArrowUp, ArrowDown, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+
 import type { FaqDto } from '@/integrations/shared';
 import { useDeleteFaqAdminMutation } from '@/integrations/hooks';
 
@@ -63,6 +65,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
   onMoveDown,
   activeLocale,
 }) => {
+  const t = useAdminT('admin.faqs');
   const rows = items ?? [];
   const hasData = rows.length > 0;
 
@@ -79,38 +82,37 @@ export const FaqsList: React.FC<FaqsListProps> = ({
   const renderStatus = (p: FaqDto) =>
     isActive(p.is_active) ? (
       <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px]">
-        Aktif
+        {t('list.status.active')}
       </span>
     ) : (
       <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-        Pasif
+        {t('list.status.inactive')}
       </span>
     );
 
   const handleDelete = async (faq: FaqDto) => {
+    const qText = safeText(faq.question) || t('list.placeholders.noQuestion');
+    const slugText = safeText(faq.slug) || t('list.placeholders.noSlug');
     const ok = window.confirm(
-      `Bu FAQ kaydını silmek üzeresin.\n\n` +
-        `Question: ${faq.question ?? '(yok)'}\n` +
-        `ID: ${faq.id}\n` +
-        `Slug: ${faq.slug ?? '(yok)'}\n\n` +
-        `Devam etmek istiyor musun?`,
+      t('list.deleteConfirm', { question: qText, id: faq.id, slug: slugText }),
     );
     if (!ok) return;
 
     try {
       await deleteFaq(faq.id).unwrap();
-      toast.success('FAQ başarıyla silindi.');
+      toast.success(t('messages.deleted'));
     } catch (err: unknown) {
       const msg =
         (err as { data?: { error?: { message?: string } } })?.data?.error?.message ??
-        'FAQ silinirken bir hata oluştu.';
+        t('messages.deleteError');
       toast.error(msg);
     }
   };
 
   const renderEmptyOrLoading = () => {
-    if (loading) return <div className="p-6 text-sm text-muted-foreground">FAQ yükleniyor...</div>;
-    return <div className="p-6 text-sm text-muted-foreground">Henüz kayıtlı FAQ yok.</div>;
+    if (loading)
+      return <div className="p-6 text-sm text-muted-foreground">{t('list.loading')}</div>;
+    return <div className="p-6 text-sm text-muted-foreground">{t('list.empty')}</div>;
   };
 
   const MoveControls = ({ idx }: { idx: number }) => {
@@ -122,7 +124,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
           size="sm"
           onClick={() => onMoveUp?.(idx)}
           disabled={busy || idx === 0 || !onMoveUp}
-          title="Yukarı"
+          title={t('list.actions.moveUp')}
         >
           <ArrowUp className="size-4" />
         </Button>
@@ -131,7 +133,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
           size="sm"
           onClick={() => onMoveDown?.(idx)}
           disabled={busy || idx === rows.length - 1 || !onMoveDown}
-          title="Aşağı"
+          title={t('list.actions.moveDown')}
         >
           <ArrowDown className="size-4" />
         </Button>
@@ -159,11 +161,11 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                       {renderStatus(p)}
                       {localeResolved ? (
                         <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-                          Locale: <code className="ml-1">{localeResolved}</code>
+                          {t('list.meta.locale')}: <code className="ml-1">{localeResolved}</code>
                         </span>
                       ) : null}
                       <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-                        Order: <code className="ml-1">{String(p.display_order ?? 0)}</code>
+                        {t('list.meta.order')}: <code className="ml-1">{String(p.display_order ?? 0)}</code>
                       </span>
                     </div>
 
@@ -171,16 +173,24 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                       className="mt-2 truncate text-sm font-semibold"
                       title={safeText(p.question)}
                     >
-                      {p.question ?? <span className="text-muted-foreground">Question yok</span>}
+                      {p.question ?? (
+                        <span className="text-muted-foreground">
+                          {t('list.placeholders.noQuestion')}
+                        </span>
+                      )}
                     </div>
 
                     <div className="mt-1 truncate text-xs text-muted-foreground">
-                      Slug: <code>{p.slug ?? '-'}</code>
+                      {t('list.meta.slug')}: <code>{p.slug ?? '-'}</code>
                     </div>
 
                     <div className="mt-2 text-xs text-muted-foreground">
-                      <div>Oluşturulma: {formatDate(p.created_at)}</div>
-                      <div>Güncelleme: {formatDate(p.updated_at)}</div>
+                      <div>
+                        {t('list.meta.createdAt')}: {formatDate(p.created_at)}
+                      </div>
+                      <div>
+                        {t('list.meta.updatedAt')}: {formatDate(p.updated_at)}
+                      </div>
                     </div>
                   </div>
 
@@ -190,7 +200,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                       href={editHrefById(p.id)}
                       className="rounded-md border px-3 py-1 text-xs text-center"
                     >
-                      Düzenle
+                      {t('list.actions.edit')}
                     </Link>
                     <button
                       type="button"
@@ -198,7 +208,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                       disabled={busy}
                       onClick={() => handleDelete(p)}
                     >
-                      Sil
+                      {t('list.actions.delete')}
                     </button>
                   </div>
                 </div>
@@ -208,8 +218,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
         </div>
 
         <div className="mt-3 text-xs text-muted-foreground">
-          Varsayılan görünüm karttır. Çok büyük ekranlarda (≥ {VERY_LARGE_BP}px) tablo görünümü
-          açılır.
+          {t('list.viewNote', { bp: VERY_LARGE_BP })}
         </div>
       </div>
     );
@@ -224,12 +233,12 @@ export const FaqsList: React.FC<FaqsListProps> = ({
           <thead>
             <tr className="border-b bg-muted/30 text-left">
               <th className="px-3 py-2 text-xs text-muted-foreground">#</th>
-              <th className="px-3 py-2 text-xs">Question</th>
-              <th className="px-3 py-2 text-xs">Slug</th>
-              <th className="px-3 py-2 text-xs">Order</th>
-              <th className="px-3 py-2 text-xs">Durum</th>
-              <th className="px-3 py-2 text-xs">Tarih</th>
-              <th className="px-3 py-2 text-xs text-right">İşlemler</th>
+              <th className="px-3 py-2 text-xs">{t('list.columns.question')}</th>
+              <th className="px-3 py-2 text-xs">{t('list.columns.slug')}</th>
+              <th className="px-3 py-2 text-xs">{t('list.columns.order')}</th>
+              <th className="px-3 py-2 text-xs">{t('list.columns.status')}</th>
+              <th className="px-3 py-2 text-xs">{t('list.columns.date')}</th>
+              <th className="px-3 py-2 text-xs text-right">{t('list.columns.actions')}</th>
             </tr>
           </thead>
 
@@ -246,11 +255,11 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                   <td className="px-3 py-2 min-w-0">
                     <div className="min-w-0">
                       <div className="truncate font-semibold" title={safeText(p.question)}>
-                        {p.question ?? 'Question yok'}
+                        {p.question ?? t('list.placeholders.noQuestion')}
                       </div>
                       {localeResolved ? (
                         <div className="truncate text-xs text-muted-foreground">
-                          Locale: <code>{localeResolved}</code>
+                          {t('list.meta.locale')}: <code>{localeResolved}</code>
                         </div>
                       ) : null}
                     </div>
@@ -269,7 +278,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                   <td className="px-3 py-2 whitespace-nowrap text-xs">
                     <div>{formatDate(p.created_at)}</div>
                     <div className="text-muted-foreground">
-                      Güncelleme: {formatDate(p.updated_at)}
+                      {t('list.meta.updatedAt')}: {formatDate(p.updated_at)}
                     </div>
                   </td>
 
@@ -280,7 +289,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                         href={editHrefById(p.id)}
                         className="rounded-md border px-3 py-1 text-xs"
                       >
-                        Düzenle
+                        {t('list.actions.edit')}
                       </Link>
                       <button
                         type="button"
@@ -288,7 +297,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
                         disabled={busy}
                         onClick={() => handleDelete(p)}
                       >
-                        Sil
+                        {t('list.actions.delete')}
                       </button>
                     </div>
                   </td>
@@ -299,7 +308,7 @@ export const FaqsList: React.FC<FaqsListProps> = ({
         </table>
 
         <div className="p-3 text-xs text-muted-foreground">
-          Sıralama: Yukarı/Aşağı ile taşı, sonra kaydet.
+          {t('list.reorderHint')}
         </div>
       </div>
     );
@@ -310,16 +319,16 @@ export const FaqsList: React.FC<FaqsListProps> = ({
       <div className="border-b p-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <div className="text-sm font-semibold">Liste</div>
+            <div className="text-sm font-semibold">{t('list.title')}</div>
             <div className="text-xs text-muted-foreground">
-              {busy ? 'Yükleniyor…' : `${rows.length} kayıt`}
+              {busy ? t('list.loadingInline') : t('list.recordCount', { count: rows.length })}
             </div>
           </div>
 
           {onSaveOrder ? (
             <Button variant="outline" onClick={onSaveOrder} disabled={busy || !hasData}>
               <Save className="mr-2 size-4" />
-              {savingOrder ? 'Kaydediliyor…' : 'Sıralamayı Kaydet'}
+              {savingOrder ? t('list.savingOrder') : t('list.saveOrder')}
             </Button>
           ) : null}
         </div>

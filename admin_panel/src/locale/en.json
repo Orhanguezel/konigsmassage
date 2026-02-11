@@ -411,6 +411,167 @@
           }
         }
       },
+      "faqs": {
+        "header": {
+          "title": "FAQs",
+          "description": "Manage FAQ records by language, status, and search filters.",
+          "filters": {
+            "searchLabel": "Search (q)",
+            "searchPlaceholder": "Search in question/answer",
+            "slugLabel": "Slug",
+            "slugPlaceholder": "e.g. pricing",
+            "localeLabel": "Language",
+            "allLocalesOption": "All languages",
+            "localesLoading": "Loading languages...",
+            "noLocalesError": "No active language list. Check app_locales in Site Settings.",
+            "statusLabel": "Status",
+            "statusOptions": {
+              "all": "All",
+              "active": "Active",
+              "inactive": "Inactive"
+            },
+            "sortLabel": "Sort",
+            "sortOptions": {
+              "updatedAt": "Updated At",
+              "createdAt": "Created At",
+              "displayOrder": "Display Order"
+            },
+            "dirLabel": "Direction",
+            "dirOptions": {
+              "desc": "Descending",
+              "asc": "Ascending"
+            }
+          },
+          "summary": {
+            "totalLabel": "Total Records"
+          },
+          "actions": {
+            "refresh": "Refresh",
+            "create": "New FAQ"
+          }
+        },
+        "list": {
+          "title": "List",
+          "loadingInline": "Loading…",
+          "recordCount": "{count} records",
+          "saveOrder": "Save order",
+          "savingOrder": "Saving…",
+          "loading": "Loading FAQs...",
+          "empty": "No FAQs yet.",
+          "reorderHint": "Reorder: move up/down, then save.",
+          "viewNote": "Default view is cards. On very large screens (≥ {bp}px) table view is shown.",
+          "deleteConfirm": "You are about to delete this FAQ.\n\nQuestion: {question}\nID: {id}\nSlug: {slug}\n\nDo you want to continue?",
+          "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+          },
+          "actions": {
+            "edit": "Edit",
+            "delete": "Delete",
+            "moveUp": "Move up",
+            "moveDown": "Move down"
+          },
+          "meta": {
+            "locale": "Locale",
+            "order": "Order",
+            "slug": "Slug",
+            "createdAt": "Created",
+            "updatedAt": "Updated"
+          },
+          "columns": {
+            "question": "Question",
+            "slug": "Slug",
+            "order": "Order",
+            "status": "Status",
+            "date": "Date",
+            "actions": "Actions"
+          },
+          "placeholders": {
+            "noQuestion": "(no question)",
+            "noSlug": "(no slug)"
+          }
+        },
+        "form": {
+          "editorModes": {
+            "form": "Form",
+            "json": "JSON"
+          },
+          "editorStatus": {
+            "jsonInvalid": "JSON invalid",
+            "jsonReady": "JSON ready"
+          },
+          "titles": {
+            "create": "Create new FAQ",
+            "edit": "Edit FAQ"
+          },
+          "descriptions": {
+            "formMode": "Fill locale, status, order, question/answer and slug fields.",
+            "jsonMode": "Edit request payload as JSON and save."
+          },
+          "switchingLocale": "Switching language...",
+          "loading": "Loading...",
+          "fields": {
+            "locale": "Language",
+            "active": "Active",
+            "displayOrder": "Order (display_order)",
+            "question": "Question",
+            "slug": "Slug",
+            "answer": "Answer"
+          },
+          "validation": {
+            "requiredFields": "Question, Answer and Slug are required.",
+            "invalidJson": "JSON is invalid. Please fix the error.",
+            "requiredFieldsInJson": "In JSON, Question, Answer and Slug are required."
+          },
+          "notes": {
+            "title": "Notes",
+            "body": "FAQ module has no image/SEO fields. This form manages backend FAQ fields only.",
+            "jsonTip": "You can switch to JSON mode to edit the payload directly.",
+            "createdAt": "Created",
+            "updatedAt": "Updated"
+          }
+        },
+        "jsonEditor": {
+          "label": "FAQ JSON (create/update payload)",
+          "help": {
+            "intro": "This JSON matches the payload sent to /admin/faqs create/update endpoints.",
+            "mainFields": "Main fields:",
+            "localeNote": "Note: If you omit locale in JSON mode, the selected locale (from the form) is used."
+          }
+        },
+        "messages": {
+          "orderSaved": "Order saved.",
+          "orderSaveError": "Failed to save order.",
+          "created": "FAQ created.",
+          "updated": "FAQ updated.",
+          "deleted": "FAQ deleted.",
+          "deleteError": "Failed to delete FAQ.",
+          "noRecordForLocale": "No record found for selected language; you can create new content for this language.",
+          "loadForLocaleError": "Failed to load record for selected language."
+        },
+        "errors": {
+          "invalidLocale": "Invalid locale selected. Check app_locales and default_locale.",
+          "createdButInvalidId": "Created, but the response did not include a valid UUID id. Check backend response.",
+          "missingId": "FAQ data could not be loaded (missing id).",
+          "generic": "Operation failed. Please try again."
+        },
+        "noLocales": {
+          "title": "Language list not found",
+          "description": "<code>site_settings.app_locales</code> is empty or invalid. Configure languages in Site Settings first."
+        },
+        "invalidId": {
+          "title": "Invalid ID",
+          "description": "Not a UUID:"
+        },
+        "actions": {
+          "backToList": "Back to list",
+          "back": "Back",
+          "create": "Create",
+          "creating": "Creating...",
+          "save": "Save",
+          "saving": "Saving..."
+        }
+      },
       
       "customPage": {
         "title": "Custom Pages",
@@ -846,6 +1007,7 @@
           },
           "empty": "No locale configuration found.",
           "presetDeEnTr": "Set de/en/tr preset",
+          "presetTop20": "Add 20 common locales",
           "saved": "Locales updated.",
           "saveError": "Failed to update locales."
         },
@@ -901,6 +1063,8 @@
           "backToList": "Back to list",
           "localeLabel": "Locale",
           "loadingLocale": "Loading locale…",
+          "fallbackNotice": "No exact record for <code>{selectedLocale}</code>. Showing fallback from <code>{effectiveLocale}</code>. Saving will create/update <code>{selectedLocale}</code>.",
+          "noRecordNotice": "No record found for <code>{key}</code> (<code>{locale}</code>). You can create it by saving.",
           "note": "Note: General/UI keys open a structured form. Other keys fall back to JSON editor in structured mode.",
           "siteMetaDefaultGlobalGuard": "site_meta_default cannot be locale=\"*\". Select a locale and save.",
           "updated": "\"{key}\" ({locale}) updated.",

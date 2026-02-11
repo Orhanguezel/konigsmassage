@@ -13,6 +13,7 @@ import {
   AdminLocaleSelect,
   type AdminLocaleOption,
 } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 export type LocaleOption = { value: string; label: string };
 
@@ -46,6 +47,8 @@ export const FaqsHeader: React.FC<FaqsHeaderProps> = ({
   localesLoading,
   allowAllOption = false,
 }) => {
+  const t = useAdminT('admin.faqs');
+
   const localeOptions: AdminLocaleOption[] = React.useMemo(() => {
     const base = (locales || [])
       .map((l) => ({
@@ -57,8 +60,8 @@ export const FaqsHeader: React.FC<FaqsHeaderProps> = ({
       .filter((x) => x.value);
 
     if (!allowAllOption) return base;
-    return [{ value: '', label: 'Tüm diller' }, ...base];
-  }, [locales, allowAllOption]);
+    return [{ value: '', label: t('header.filters.allLocalesOption') }, ...base];
+  }, [locales, allowAllOption, t]);
 
   const disabledLocaleSelect = !!localesLoading || localeOptions.length === 0;
 
@@ -67,29 +70,33 @@ export const FaqsHeader: React.FC<FaqsHeaderProps> = ({
       <div className="border-b p-3">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-semibold">FAQ</div>
+            <div className="text-sm font-semibold">{t('header.title')}</div>
             <div className="text-xs text-muted-foreground">
-              FAQ kayıtlarını dil, aktiflik ve arama kriterlerine göre yönetebilirsin.
+              {t('header.description')}
             </div>
 
             <div className="mt-3 grid gap-2 md:grid-cols-12 md:items-end">
               <div className="md:col-span-4">
-                <label className="mb-1 block text-xs text-muted-foreground">Arama (q)</label>
+                <label className="mb-1 block text-xs text-muted-foreground">
+                  {t('header.filters.searchLabel')}
+                </label>
                 <input
                   type="search"
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  placeholder="question/answer içinde ara"
+                  placeholder={t('header.filters.searchPlaceholder')}
                   value={filters.q}
                   onChange={(e) => onFiltersChange({ ...filters, q: e.target.value })}
                 />
               </div>
 
               <div className="md:col-span-3">
-                <label className="mb-1 block text-xs text-muted-foreground">Slug</label>
+                <label className="mb-1 block text-xs text-muted-foreground">
+                  {t('header.filters.slugLabel')}
+                </label>
                 <input
                   type="text"
                   className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  placeholder="örn: fiyatlar"
+                  placeholder={t('header.filters.slugPlaceholder')}
                   value={filters.slug}
                   onChange={(e) => onFiltersChange({ ...filters, slug: e.target.value })}
                 />
@@ -104,53 +111,63 @@ export const FaqsHeader: React.FC<FaqsHeaderProps> = ({
                   options={localeOptions}
                   loading={!!localesLoading}
                   disabled={disabledLocaleSelect}
-                  label="Dil"
+                  label={t('header.filters.localeLabel')}
                 />
                 {localesLoading ? (
-                  <div className="mt-1 text-xs text-muted-foreground">Diller yükleniyor...</div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {t('header.filters.localesLoading')}
+                  </div>
                 ) : null}
                 {!localesLoading && localeOptions.length === 0 ? (
                   <div className="mt-1 text-xs text-destructive">
-                    Aktif dil listesi yok. Site ayarlarından app_locales kontrol et.
+                    {t('header.filters.noLocalesError')}
                   </div>
                 ) : null}
               </div>
 
               <div className="md:col-span-1">
-                <label className="mb-1 block text-xs text-muted-foreground">Aktif</label>
+                <label className="mb-1 block text-xs text-muted-foreground">
+                  {t('header.filters.statusLabel')}
+                </label>
                 <select
                   className="w-full rounded-md border bg-background px-2 py-2 text-sm"
                   value={filters.isActive}
                   onChange={(e) => onFiltersChange({ ...filters, isActive: e.target.value as any })}
                 >
-                  <option value="all">Hepsi</option>
-                  <option value="active">Aktif</option>
-                  <option value="inactive">Pasif</option>
+                  <option value="all">{t('header.filters.statusOptions.all')}</option>
+                  <option value="active">{t('header.filters.statusOptions.active')}</option>
+                  <option value="inactive">{t('header.filters.statusOptions.inactive')}</option>
                 </select>
               </div>
 
               <div className="md:col-span-1">
-                <label className="mb-1 block text-xs text-muted-foreground">Sort</label>
+                <label className="mb-1 block text-xs text-muted-foreground">
+                  {t('header.filters.sortLabel')}
+                </label>
                 <select
                   className="w-full rounded-md border bg-background px-2 py-2 text-sm"
                   value={filters.sort}
                   onChange={(e) => onFiltersChange({ ...filters, sort: e.target.value as any })}
                 >
-                  <option value="updated_at">updated_at</option>
-                  <option value="created_at">created_at</option>
-                  <option value="display_order">display_order</option>
+                  <option value="updated_at">{t('header.filters.sortOptions.updatedAt')}</option>
+                  <option value="created_at">{t('header.filters.sortOptions.createdAt')}</option>
+                  <option value="display_order">
+                    {t('header.filters.sortOptions.displayOrder')}
+                  </option>
                 </select>
               </div>
 
               <div className="md:col-span-1">
-                <label className="mb-1 block text-xs text-muted-foreground">Dir</label>
+                <label className="mb-1 block text-xs text-muted-foreground">
+                  {t('header.filters.dirLabel')}
+                </label>
                 <select
                   className="w-full rounded-md border bg-background px-2 py-2 text-sm"
                   value={filters.orderDir}
                   onChange={(e) => onFiltersChange({ ...filters, orderDir: e.target.value as any })}
                 >
-                  <option value="desc">desc</option>
-                  <option value="asc">asc</option>
+                  <option value="desc">{t('header.filters.dirOptions.desc')}</option>
+                  <option value="asc">{t('header.filters.dirOptions.asc')}</option>
                 </select>
               </div>
             </div>
@@ -159,7 +176,9 @@ export const FaqsHeader: React.FC<FaqsHeaderProps> = ({
           <div className="lg:w-72 lg:border-l lg:pl-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs text-muted-foreground">Toplam Kayıt</div>
+                <div className="text-xs text-muted-foreground">
+                  {t('header.summary.totalLabel')}
+                </div>
                 <div className="text-2xl font-bold">{total}</div>
               </div>
 
@@ -169,7 +188,7 @@ export const FaqsHeader: React.FC<FaqsHeaderProps> = ({
                   className="rounded-md border px-3 py-1 text-xs"
                   onClick={onRefresh}
                 >
-                  Yenile
+                  {t('header.actions.refresh')}
                 </button>
               ) : null}
             </div>
@@ -179,7 +198,7 @@ export const FaqsHeader: React.FC<FaqsHeaderProps> = ({
                 href="/admin/faqs/new"
                 className="rounded-md bg-primary px-3 py-2 text-xs text-primary-foreground"
               >
-                Yeni FAQ
+                {t('header.actions.create')}
               </Link>
             </div>
           </div>

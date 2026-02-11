@@ -16,6 +16,7 @@ import type { FaqDto } from '@/integrations/shared';
 import { useLazyGetFaqAdminQuery } from '@/integrations/hooks';
 
 import { AdminLocaleSelect } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import type { LocaleOption } from './FaqsHeader';
 
 import { FaqsFormJsonSection } from './FaqsFormJsonSection';
@@ -218,6 +219,7 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const t = useAdminT('admin.faqs');
   const safeDefaultLocale = norm(defaultLocale || 'de') || 'de';
 
   const [values, setValues] = useState<FaqsFormValues>(
@@ -304,10 +306,10 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
       if (mySeq !== localeReqSeq.current) return;
       const status = err?.status ?? err?.originalStatus;
       if (status === 404) {
-        toast.info('Seçilen dil için kayıt bulunamadı; bu dilde yeni içerik oluşturabilirsin.');
+        toast.info(t('messages.noRecordForLocale'));
         // keep current values but locale updated
       } else {
-        toast.error('Seçilen dil için kayıt yüklenirken bir hata oluştu.');
+        toast.error(t('messages.loadForLocaleError'));
       }
     }
   };
@@ -326,7 +328,7 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
     const s = v.slug.trim();
 
     if (!q || !a || !s) {
-      toast.error('Question, Answer ve Slug alanları zorunludur.');
+      toast.error(t('form.validation.requiredFields'));
       return;
     }
 
@@ -351,14 +353,14 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
 
     // json mode
     if (jsonError) {
-      toast.error('JSON geçersiz. Lütfen hatayı düzelt.');
+      toast.error(t('form.validation.invalidJson'));
       return;
     }
 
     const next = payloadJsonToValues(jsonModel, safeDefaultLocale, values);
 
     if (!validateRequired(next)) {
-      toast.error('JSON içinde Question, Answer ve Slug alanları zorunludur.');
+      toast.error(t('form.validation.requiredFieldsInJson'));
       return;
     }
 
@@ -393,7 +395,7 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
         onClick={() => setEditorMode('form')}
         disabled={!canSwitchToForm}
       >
-        Form
+        {t('form.editorModes.form')}
       </button>
       <button
         type="button"
@@ -412,11 +414,11 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
         }}
         disabled={!canSwitchToJson}
       >
-        JSON
+        {t('form.editorModes.json')}
       </button>
       {editorMode === 'json' ? (
         <span className="ml-2 text-[11px] text-muted-foreground">
-          {jsonError ? 'JSON hatalı' : 'JSON hazır'}
+          {jsonError ? t('form.editorStatus.jsonInvalid') : t('form.editorStatus.jsonReady')}
         </span>
       ) : null}
     </div>
@@ -429,12 +431,12 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0">
               <div className="text-sm font-semibold">
-                {mode === 'create' ? 'Yeni FAQ Oluştur' : 'FAQ Düzenle'}
+                {mode === 'create' ? t('form.titles.create') : t('form.titles.edit')}
               </div>
               <div className="text-xs text-muted-foreground">
                 {editorMode === 'form'
-                  ? 'Locale, aktiflik, sıralama, soru/cevap ve slug alanlarını doldur.'
-                  : 'İstek payload’ını JSON olarak düzenle ve kaydet.'}
+                  ? t('form.descriptions.formMode')
+                  : t('form.descriptions.jsonMode')}
               </div>
             </div>
 
@@ -450,7 +452,7 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
                   onClick={onCancel}
                   disabled={disabled}
                 >
-                  Geri
+                  {t('actions.back')}
                 </button>
               ) : null}
 
@@ -461,16 +463,16 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
               >
                 {saving
                   ? mode === 'create'
-                    ? 'Oluşturuluyor...'
-                    : 'Kaydediliyor...'
+                    ? t('actions.creating')
+                    : t('actions.saving')
                   : mode === 'create'
-                    ? 'Oluştur'
-                    : 'Kaydet'}
+                    ? t('actions.create')
+                    : t('actions.save')}
               </button>
 
               {loading || switchingLocale ? (
                 <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-                  {switchingLocale ? 'Dil değiştiriliyor...' : 'Yükleniyor...'}
+                  {switchingLocale ? t('form.switchingLocale') : t('form.loading')}
                 </span>
               ) : null}
             </div>
@@ -486,7 +488,7 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
             disabled={
               disabled || (!!localesLoading && !localeSelectOptions.length) || switchingLocale
             }
-            label="Dil"
+            label={t('form.fields.locale')}
           />
 
           {editorMode === 'json' ? (
@@ -510,12 +512,12 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
                         onChange={(e) => setValues((p) => ({ ...p, is_active: e.target.checked }))}
                         disabled={disabled}
                       />
-                      <span>Aktif</span>
+                      <span>{t('form.fields.active')}</span>
                     </label>
 
                     <div className="md:ml-auto w-full md:w-56">
                       <label className="mb-1 block text-xs text-muted-foreground">
-                        Sıralama (display_order)
+                        {t('form.fields.displayOrder')}
                       </label>
                       <input
                         type="number"
@@ -530,7 +532,9 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs text-muted-foreground">Question</label>
+                    <label className="mb-1 block text-xs text-muted-foreground">
+                      {t('form.fields.question')}
+                    </label>
                     <input
                       type="text"
                       className="w-full rounded-md border bg-background px-3 py-2 text-sm"
@@ -549,7 +553,9 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs text-muted-foreground">Slug</label>
+                    <label className="mb-1 block text-xs text-muted-foreground">
+                      {t('form.fields.slug')}
+                    </label>
                     <input
                       type="text"
                       className="w-full rounded-md border bg-background px-3 py-2 text-sm"
@@ -565,7 +571,9 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-xs text-muted-foreground">Answer</label>
+                    <label className="mb-1 block text-xs text-muted-foreground">
+                      {t('form.fields.answer')}
+                    </label>
                     <textarea
                       className="w-full rounded-md border bg-background px-3 py-2 text-sm"
                       rows={8}
@@ -580,25 +588,23 @@ export const FaqsForm: React.FC<FaqsFormProps> = ({
 
               <div className="lg:col-span-4">
                 <div className="rounded-lg border bg-card p-3 space-y-2">
-                  <div className="text-sm font-semibold">Notlar</div>
+                  <div className="text-sm font-semibold">{t('form.notes.title')}</div>
                   <div className="text-xs text-muted-foreground">
-                    FAQ modülünde görsel/SEO alanı yok. Bu form sadece backend’deki faq alanlarını
-                    yönetir.
+                    {t('form.notes.body')}
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    İstersen üstten <code>JSON</code> moduna geçip payload’ı direkt
-                    düzenleyebilirsin.
+                    {t('form.notes.jsonTip')}
                   </div>
 
                   {initialData?.created_at ? (
                     <div className="text-xs text-muted-foreground">
-                      Oluşturulma: <code>{initialData.created_at}</code>
+                      {t('form.notes.createdAt')}: <code>{initialData.created_at}</code>
                     </div>
                   ) : null}
                   {initialData?.updated_at ? (
                     <div className="text-xs text-muted-foreground">
-                      Güncelleme: <code>{initialData.updated_at}</code>
+                      {t('form.notes.updatedAt')}: <code>{initialData.updated_at}</code>
                     </div>
                   ) : null}
                 </div>

@@ -12,8 +12,9 @@ import * as React from 'react';
 import { toast } from 'sonner';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { resolveAdminApiLocale } from '../../../../../i18n/adminLocale';
-import { localeShortClient, localeShortClientOr } from '../../../../../i18n/localeShortClient';
+import { localeShortClientOr } from '../../../../../i18n/localeShortClient';
 
 import type { FaqDto, FaqUpdatePayload } from '@/integrations/shared';
 import { useListFaqsAdminQuery, useUpdateFaqAdminMutation } from '@/integrations/hooks';
@@ -31,6 +32,7 @@ const normLocale = (v: unknown): string =>
     .trim();
 
 export default function AdminFaqsClient() {
+  const t = useAdminT('admin.faqs');
   const {
     localeOptions,
     defaultLocaleFromDb,
@@ -39,7 +41,7 @@ export default function AdminFaqsClient() {
   } = useAdminLocales();
 
   const apiLocale = React.useMemo(() => {
-    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'tr');
+    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'de');
   }, [localeOptions, defaultLocaleFromDb]);
 
   const [filters, setFilters] = React.useState<FaqsFilters>({
@@ -56,7 +58,7 @@ export default function AdminFaqsClient() {
     if (!localeOptions || localeOptions.length === 0) return;
     setFilters((prev) => {
       if (prev.locale) return prev;
-      return { ...prev, locale: localeShortClientOr(apiLocale, 'tr') };
+      return { ...prev, locale: localeShortClientOr(apiLocale, 'de') };
     });
   }, [localeOptions, apiLocale]);
 
@@ -127,10 +129,11 @@ export default function AdminFaqsClient() {
         const patch: FaqUpdatePayload = { display_order: i } as any;
         await updateFaq({ id: it.id, patch } as any).unwrap();
       }
-      toast.success('Sıralama kaydedildi.');
+      toast.success(t('messages.orderSaved'));
       listQ.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Sıralama kaydedilemedi.');
+      const msg = err?.data?.error?.message || err?.message || t('messages.orderSaveError');
+      toast.error(msg);
     }
   }
 

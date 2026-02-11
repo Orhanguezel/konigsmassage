@@ -28,6 +28,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 
 import type { SiteSetting, SettingValue } from '@/integrations/shared';
 import {
+  useGetSiteSettingAdminByKeyQuery,
   useListSiteSettingsAdminQuery,
   useUpdateSiteSettingAdminMutation,
   useDeleteSiteSettingAdminMutation,
@@ -425,7 +426,7 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
   // load row for key+locale (same pattern as /pages)
   const listArgs = React.useMemo(() => {
     if (!settingKey || !selectedLocale) return undefined;
-    return { q: settingKey, locale: selectedLocale };
+    return { keys: [settingKey], locale: selectedLocale, limit: 10, offset: 0 };
   }, [settingKey, selectedLocale]);
 
   const {
@@ -435,7 +436,7 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
     refetch,
   } = useListSiteSettingsAdminQuery(listArgs as any, { skip: !listArgs });
 
-  const row: SiteSetting | null = React.useMemo(() => {
+  const rowFromList: SiteSetting | null = React.useMemo(() => {
     const arr = Array.isArray(rows) ? (rows as SiteSetting[]) : [];
     const exact = arr.find(
       (r) => String(r?.key || '') === settingKey && String(r?.locale || '') === selectedLocale,
@@ -446,11 +447,36 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
     return byKey || null;
   }, [rows, settingKey, selectedLocale]);
 
+  // fallback-aware single read (shows effective locale row if selected locale doesn't exist)
+  const resolvedQ = useGetSiteSettingAdminByKeyQuery(
+    { key: settingKey, locale: selectedLocale },
+    { skip: !settingKey || !selectedLocale },
+  );
+
+  const resolvedRow = (resolvedQ.data ?? null) as any as SiteSetting | null;
+
+  const row: SiteSetting | null = rowFromList ?? resolvedRow;
+
+  const effectiveLocale = React.useMemo(() => {
+    const loc = (resolvedRow as any)?.locale;
+    return loc === null || loc === undefined ? '' : String(loc).trim();
+  }, [resolvedRow]);
+
+  const isFallback =
+    !rowFromList && !!resolvedRow && effectiveLocale && effectiveLocale !== selectedLocale;
+
   const [updateSetting, { isLoading: isSaving }] = useUpdateSiteSettingAdminMutation();
   const [deleteSetting, { isLoading: isDeleting }] = useDeleteSiteSettingAdminMutation();
 
   const busy =
-    isLoading || isFetching || isSaving || isDeleting || isLocalesLoading || isLocalesFetching;
+    isLoading ||
+    isFetching ||
+    resolvedQ.isLoading ||
+    resolvedQ.isFetching ||
+    isSaving ||
+    isDeleting ||
+    isLocalesLoading ||
+    isLocalesFetching;
 
   const handleSave = async (args: { key: string; locale: string; value: SettingValue }) => {
     try {
@@ -596,31 +622,48 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
           {t('admin.siteSettings.detail.loadingLocale')}
         </div>
       ) : (
-        <SiteSettingsForm
-          settingKey={settingKey}
-          locale={selectedLocale}
-          row={
-            row
-              ? ({
-                  ...row,
-                  value: coerceSettingValue(row.value),
-                } as any)
-              : null
-          }
-          disabled={busy}
-          initialMode="structured"
-          onSave={handleSave}
-          onDelete={async ({ key, locale }) => handleDelete({ key, locale })}
-          renderStructured={(ctx) =>
-            React.createElement(renderStructured as any, {
-              value: ctx.value,
-              setValue: ctx.setValue,
-              disabled: ctx.disabled,
-              settingKey,
-              locale: selectedLocale,
-            })
-          }
-        />
+        <div className="space-y-3">
+          {isFallback ? (
+            <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+              {t('admin.siteSettings.detail.fallbackNotice', {
+                selectedLocale,
+                effectiveLocale,
+              })}
+            </div>
+          ) : null}
+
+          {!row && !busy ? (
+            <div className="rounded-md border p-3 text-sm text-muted-foreground">
+              {t('admin.siteSettings.detail.noRecordNotice', { key: settingKey, locale: selectedLocale })}
+            </div>
+          ) : null}
+
+          <SiteSettingsForm
+            settingKey={settingKey}
+            locale={selectedLocale}
+            row={
+              row
+                ? ({
+                    ...row,
+                    value: coerceSettingValue((row as any).value),
+                  } as any)
+                : null
+            }
+            disabled={busy}
+            initialMode="structured"
+            onSave={handleSave}
+            onDelete={async ({ key, locale }) => handleDelete({ key, locale })}
+            renderStructured={(ctx) =>
+              React.createElement(renderStructured as any, {
+                value: ctx.value,
+                setValue: ctx.setValue,
+                disabled: ctx.disabled,
+                settingKey,
+                locale: selectedLocale,
+              })
+            }
+          />
+        </div>
       )}
 
       <div className="text-xs text-muted-foreground">
