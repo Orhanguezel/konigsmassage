@@ -32,10 +32,10 @@ export function LayoutControls() {
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const setAdminLocale = usePreferencesStore((s) => s.setAdminLocale);
   const t = useAdminTranslations(adminLocale || undefined);
-  const pendingDbLocaleRef = useRef<string | null>(null);
+  const pendingDbLocaleRef = useRef<{ value: string; startedAt: number } | null>(null);
 
   const defaultLocaleQ = useGetDefaultLocaleAdminQuery();
-  const [updateSetting, { isLoading: isUpdatingDefaultLocale }] = useUpdateSiteSettingAdminMutation();
+  const [updateSetting] = useUpdateSiteSettingAdminMutation();
   const themeMode = usePreferencesStore((s) => s.themeMode);
   const setThemeMode = usePreferencesStore((s) => s.setThemeMode);
   const themePreset = usePreferencesStore((s) => s.themePreset);
@@ -103,9 +103,26 @@ export function LayoutControls() {
     const dbDefault = String(defaultLocaleQ.data || "").trim();
     if (!dbDefault) return;
 
-    // Update sırasında, DB hala eski değeri döndürebilir; UI'nin seçimini ezmeyelim.
-    if (isUpdatingDefaultLocale && pendingDbLocaleRef.current && dbDefault !== pendingDbLocaleRef.current) {
-      return;
+    /**
+     * ✅ Race fix:
+     * - Kullanıcı locale seçtiğinde state hemen değişir.
+     * - DB endpoint'i kısa süre eski değeri döndürebilir (cache/propagation).
+     * - Bu durumda effect UI seçimini geri "eski" locale'e çekmemeli.
+     *
+     * pendingDbLocaleRef:
+     * - Locale değişikliği başladıktan sonra, DB yeni değeri döndürünceye kadar korunur.
+     * - DB yeni değeri döndürdüğünde otomatik temizlenir.
+     */
+    const pending = pendingDbLocaleRef.current;
+    if (pending) {
+      // ✅ Safety valve: DB hiç güncellenmezse UI sync'i kilitlenmesin.
+      if (Date.now() - pending.startedAt > 10_000) {
+        pendingDbLocaleRef.current = null;
+      } else if (dbDefault !== pending.value) {
+        return;
+      } else {
+        pendingDbLocaleRef.current = null;
+      }
     }
 
     if (adminLocale !== dbDefault) {
@@ -113,22 +130,33 @@ export function LayoutControls() {
       persistPreference("admin_locale", dbDefault);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultLocaleQ.data, isUpdatingDefaultLocale]);
+  }, [defaultLocaleQ.data]);
 
   const onAdminLocaleChange = async (value: string) => {
-    pendingDbLocaleRef.current = value;
-    setAdminLocale(value);
-    persistPreference("admin_locale", value);
+    const next = String(value || '').trim();
+    if (!next) return;
+
+    pendingDbLocaleRef.current = { value: next, startedAt: Date.now() };
+    setAdminLocale(next);
+    persistPreference("admin_locale", next);
 
     try {
-      await updateSetting({ key: "default_locale", locale: "*", value }).unwrap();
+      await updateSetting({ key: "default_locale", locale: "*", value: next }).unwrap();
+      // ✅ DB hızlı sync için query'yi zorla yenile (invalidation zaten var, bu ek garanti).
+      await defaultLocaleQ.refetch();
       toast.success(t("admin.common.updated", { item: "default_locale" }));
     } catch (err: any) {
       const msg =
         err?.data?.error?.message || err?.message || t("admin.siteSettings.messages.error");
       toast.error(msg);
-    } finally {
       pendingDbLocaleRef.current = null;
+      const dbDefault = String(defaultLocaleQ.data || "").trim();
+      if (dbDefault) {
+        setAdminLocale(dbDefault);
+        persistPreference("admin_locale", dbDefault);
+      }
+    } finally {
+      // pending temizliği effect içinde DB eşleşince yapılır.
     }
   };
 

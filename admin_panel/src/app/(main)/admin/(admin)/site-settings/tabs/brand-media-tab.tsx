@@ -46,16 +46,6 @@ export const SITE_MEDIA_KEYS = [
 
 type MediaKey = (typeof SITE_MEDIA_KEYS)[number];
 
-const labelMap: Record<MediaKey, string> = {
-  site_logo: 'Logo',
-  site_logo_dark: 'Logo (Dark)',
-  site_logo_light: 'Logo (Light)',
-  site_favicon: 'Favicon',
-  site_apple_touch_icon: 'Apple Touch Icon',
-  site_app_icon_512: 'App Icon 512x512',
-  site_og_default_image: 'OG Default Image',
-};
-
 function isMediaKey(k: string): k is MediaKey {
   return (SITE_MEDIA_KEYS as readonly string[]).includes(k);
 }
@@ -202,6 +192,11 @@ export const BrandMediaTab: React.FC = () => {
 
   // Use default locale for translation (since this is global tab)
   const t = useAdminT();
+  const labelForKey = useCallback(
+    (key: MediaKey) =>
+      t(`admin.siteSettings.brandMedia.labels.${key}`, undefined, key),
+    [t],
+  );
 
   const listArgs = useMemo(() => {
     const q = search.trim() || undefined;
@@ -266,17 +261,17 @@ export const BrandMediaTab: React.FC = () => {
 
       try {
         await updateSetting({ key, locale: GLOBAL_LOCALE, value: toMediaValue(u) }).unwrap();
-        toast.success(t('admin.siteSettings.brandMedia.updated', { label: labelMap[key] }));
+        toast.success(t('admin.siteSettings.brandMedia.updated', { label: labelForKey(key) }));
         await refetchAll();
       } catch (err: any) {
         toast.error(
           err?.data?.error?.message ||
             err?.message ||
-            t('admin.siteSettings.brandMedia.updateError', { label: labelMap[key] }),
+            t('admin.siteSettings.brandMedia.updateError', { label: labelForKey(key) }),
         );
       }
     },
-    [updateSetting, refetchAll, t],
+    [updateSetting, refetchAll, t, labelForKey],
   );
 
   const deleteRow = useCallback(
@@ -307,7 +302,7 @@ export const BrandMediaTab: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">Locale: *</Badge>
+            <Badge variant="secondary">{t('admin.siteSettings.brandMedia.badge')}</Badge>
             <Button
               type="button"
               variant="outline"

@@ -10,6 +10,8 @@
 
 import * as React from 'react';
 import { Search, RefreshCcw } from 'lucide-react';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,15 +61,15 @@ export type SiteSettingsHeaderProps = {
 
 type SettingsScope = 'localized' | 'global' | 'mixed';
 
-const TAB_ITEMS: { id: SettingsTab; label: string; scope: SettingsScope }[] = [
-  { id: 'list', label: 'Liste (Dil)', scope: 'mixed' },
-  { id: 'global_list', label: 'Liste (Global *)', scope: 'global' },
-  { id: 'general', label: 'Genel / UI', scope: 'localized' },
-  { id: 'seo', label: 'SEO', scope: 'localized' },
-  { id: 'smtp', label: 'SMTP / E-posta', scope: 'global' },
-  { id: 'cloudinary', label: 'Cloudinary / Storage', scope: 'global' },
-  { id: 'brand_media', label: 'Marka Medyası', scope: 'global' },
-  { id: 'api', label: 'API & Entegrasyon', scope: 'global' },
+const TAB_ITEMS: { id: SettingsTab; scope: SettingsScope }[] = [
+  { id: 'list', scope: 'mixed' },
+  { id: 'global_list', scope: 'global' },
+  { id: 'general', scope: 'localized' },
+  { id: 'seo', scope: 'localized' },
+  { id: 'smtp', scope: 'global' },
+  { id: 'cloudinary', scope: 'global' },
+  { id: 'brand_media', scope: 'global' },
+  { id: 'api', scope: 'global' },
 ];
 
 function isGlobalTab(t: SettingsTab) {
@@ -88,25 +90,34 @@ export const SiteSettingsHeader: React.FC<SiteSettingsHeaderProps> = ({
   locales,
   localesLoading,
 }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
   const localeDisabled = loading || !!localesLoading || isGlobalTab(activeTab);
 
   return (
     <div className="space-y-6">
       {/* Title (UsersListClient style) */}
       <div className="space-y-1">
-        <h1 className="text-lg font-semibold">Site Ayarları</h1>
+        <h1 className="text-lg font-semibold">{t('admin.siteSettings.title')}</h1>
         <p className="text-sm text-muted-foreground">
-          Key-value ayarları. “Liste (Dil)” seçili locale’e göre; “Liste (Global *)” sadece{' '}
-          <code>*</code> kayıtlarını gösterir. Global tab’larda locale seçimi kullanılmaz.
+          {t('admin.siteSettings.description')}
         </p>
       </div>
 
       {/* Tabs (no bootstrap) */}
       <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as SettingsTab)}>
         <TabsList className="flex flex-wrap justify-start">
-          {TAB_ITEMS.map((t) => (
-            <TabsTrigger key={t.id} value={t.id}>
-              {t.label}
+          {TAB_ITEMS.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id}>
+              {tab.id === 'list' ? t('admin.siteSettings.tabs.list') : null}
+              {tab.id === 'global_list' ? t('admin.siteSettings.tabs.globalList') : null}
+              {tab.id === 'general' ? t('admin.siteSettings.tabs.general') : null}
+              {tab.id === 'seo' ? t('admin.siteSettings.tabs.seo') : null}
+              {tab.id === 'smtp' ? t('admin.siteSettings.tabs.smtp') : null}
+              {tab.id === 'cloudinary' ? t('admin.siteSettings.tabs.cloudinary') : null}
+              {tab.id === 'brand_media' ? t('admin.siteSettings.tabs.brandMedia') : null}
+              {tab.id === 'api' ? t('admin.siteSettings.tabs.api') : null}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -117,16 +128,18 @@ export const SiteSettingsHeader: React.FC<SiteSettingsHeaderProps> = ({
         <CardHeader className="gap-2">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1">
-              <CardTitle className="text-base">Filtreler</CardTitle>
-              <CardDescription>Arama, locale ve yenileme.</CardDescription>
+              <CardTitle className="text-base">{t('admin.siteSettings.filters.title')}</CardTitle>
+              <CardDescription>{t('admin.siteSettings.filters.description')}</CardDescription>
             </div>
 
             <div className="flex items-center gap-2">
-              {isGlobalTab(activeTab) ? <Badge variant="secondary">Global</Badge> : null}
+              {isGlobalTab(activeTab) ? (
+                <Badge variant="secondary">{t('admin.siteSettings.badges.global')}</Badge>
+              ) : null}
               {!isGlobalTab(activeTab) && locale ? (
                 <Badge variant="secondary">{locale}</Badge>
               ) : null}
-              {loading ? <Badge variant="outline">Yükleniyor…</Badge> : null}
+              {loading ? <Badge variant="outline">{t('admin.siteSettings.messages.loading')}</Badge> : null}
             </div>
           </div>
         </CardHeader>
@@ -134,14 +147,14 @@ export const SiteSettingsHeader: React.FC<SiteSettingsHeaderProps> = ({
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
             <div className="flex-1 space-y-2">
-              <Label htmlFor="site-settings-q">Ara</Label>
+              <Label htmlFor="site-settings-q">{t('admin.siteSettings.filters.search')}</Label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="site-settings-q"
                   value={search}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder="Key veya değer içinde ara"
+                  placeholder={t('admin.siteSettings.filters.searchPlaceholder')}
                   className="pl-9"
                   disabled={loading}
                 />
@@ -149,14 +162,20 @@ export const SiteSettingsHeader: React.FC<SiteSettingsHeaderProps> = ({
             </div>
 
             <div className="w-full space-y-2 lg:w-56">
-              <Label>Dil</Label>
+              <Label>{t('admin.siteSettings.filters.language')}</Label>
               <Select
                 value={locale || ''}
                 onValueChange={(v) => onLocaleChange(v)}
                 disabled={localeDisabled}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={localeDisabled ? 'Global' : 'Dil seç'} />
+                  <SelectValue
+                    placeholder={
+                      localeDisabled
+                        ? t('admin.siteSettings.filters.globalPlaceholder')
+                        : t('admin.siteSettings.filters.selectLanguage')
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {(locales ?? []).map((o) => (
@@ -169,7 +188,7 @@ export const SiteSettingsHeader: React.FC<SiteSettingsHeaderProps> = ({
 
               {localeDisabled ? (
                 <div className="text-xs text-muted-foreground">
-                  Bu sekmede locale seçimi devre dışıdır.
+                  {t('admin.siteSettings.filters.languageDisabledNote')}
                 </div>
               ) : null}
             </div>
@@ -180,7 +199,7 @@ export const SiteSettingsHeader: React.FC<SiteSettingsHeaderProps> = ({
                 variant="ghost"
                 onClick={onRefresh}
                 disabled={loading}
-                title="Yenile"
+                title={t('admin.siteSettings.filters.refreshButton')}
               >
                 <RefreshCcw className="size-4" />
               </Button>

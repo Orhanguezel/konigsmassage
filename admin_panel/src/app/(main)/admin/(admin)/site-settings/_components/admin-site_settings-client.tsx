@@ -38,6 +38,7 @@ import { SmtpSettingsTab } from '../tabs/smtp-settings-tab';
 import { CloudinarySettingsTab } from '../tabs/cloudinary-settings-tab';
 import { BrandMediaTab } from '../tabs/brand-media-tab';
 import { ApiSettingsTab } from '../tabs/api-settings-tab';
+import { LocalesSettingsTab } from '../tabs/locales-settings-tab';
 
 import type { SiteSetting } from '@/integrations/shared';
 import {
@@ -57,7 +58,8 @@ type SettingsTab =
   | 'smtp'
   | 'cloudinary'
   | 'brand_media'
-  | 'api';
+  | 'api'
+  | 'locales';
 
 type LocaleOption = { value: string; label: string; isDefault?: boolean; isActive?: boolean };
 
@@ -235,7 +237,7 @@ export default function AdminSiteSettingsClient() {
   };
 
   const localeReady = Boolean(locale && locale.trim());
-  const isGlobalTab = tab === 'global_list' || tab === 'smtp' || tab === 'brand_media';
+  const isGlobalTab = tab === 'global_list' || tab === 'smtp' || tab === 'brand_media' || tab === 'locales';
 
   return (
     <div className="w-full max-w-full space-y-6 overflow-x-hidden px-2 pb-6 md:px-0 md:pb-0">
@@ -355,6 +357,7 @@ export default function AdminSiteSettingsClient() {
                 {tab === 'cloudinary' ? t('admin.siteSettings.cloudinary.title') : null}
                 {tab === 'brand_media' ? t('admin.siteSettings.brandMedia.title') : null}
                 {tab === 'api' ? t('admin.siteSettings.api.title') : null}
+                {tab === 'locales' ? t('admin.siteSettings.locales.title') : null}
               </CardDescription>
             </div>
 
@@ -399,6 +402,9 @@ export default function AdminSiteSettingsClient() {
                   <TabsTrigger value="api" className="whitespace-nowrap">
                     {t('admin.siteSettings.tabs.api')}
                   </TabsTrigger>
+                  <TabsTrigger value="locales" className="whitespace-nowrap">
+                    {t('admin.siteSettings.tabs.locales')}
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
@@ -432,6 +438,10 @@ export default function AdminSiteSettingsClient() {
 
               <TabsContent value="api" className="mt-4">
                 <ApiSettingsTab locale={locale} />
+              </TabsContent>
+
+              <TabsContent value="locales" className="mt-4">
+                <LocalesSettingsTab />
               </TabsContent>
             </Tabs>
           )}

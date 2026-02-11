@@ -1,26 +1,33 @@
 // =============================================================
 // FILE: ecosystem.config.cjs
-// Ensotek – Frontend (Next.js) PM2 config
+// konigsmassage - admin_panel PM2 config
 // =============================================================
 
 module.exports = {
   apps: [
     {
-      name: 'tavvuk-frontend',
-      cwd: '/var/www/tavvuk/frontend',
-      script: 'node_modules/next/dist/bin/next',
-      args: 'start -p 3019',
+      name: 'konigsmassage-admin-panel',
+      cwd: '/var/www/konigsmassage/admin_panel',
+      script: '/home/orhan/.bun/bin/bun',
+      args: 'run start -- -p 3056 -H 127.0.0.1',
       exec_mode: 'fork',
       instances: 1,
       watch: false,
       autorestart: true,
-      max_memory_restart: '400M',
+      max_memory_restart: '450M',
+      min_uptime: '30s',
+      max_restarts: 10,
+      restart_delay: 5000,
+      kill_timeout: 8000,
+      listen_timeout: 10000,
       env: {
         NODE_ENV: 'production',
-        PORT: '3019',
+        PORT: '3056',
+        HOSTNAME: '127.0.0.1',
+        NEXT_TELEMETRY_DISABLED: '1',
       },
-      out_file: '/var/log/pm2/tavvuk-frontend.out.log',
-      error_file: '/var/log/pm2/tavvuk-frontend.err.log',
+      out_file: '/home/orhan/.pm2/logs/konigsmassage-admin-panel.out.log',
+      error_file: '/home/orhan/.pm2/logs/konigsmassage-admin-panel.err.log',
       combine_logs: true,
       time: true,
     },

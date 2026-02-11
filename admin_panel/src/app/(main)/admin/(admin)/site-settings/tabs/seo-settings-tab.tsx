@@ -356,28 +356,31 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
   }, [locale]);
 
   const deleteRow = async (key: string, targetLocale: string) => {
-    const ok = window.confirm(`"${key}" (${targetLocale}) silinsin mi?`);
+    const ok = window.confirm(
+      t('admin.siteSettings.seo.deleteConfirm', { key, locale: targetLocale }),
+    );
     if (!ok) return;
 
     try {
       await deleteSetting({ key, locale: targetLocale }).unwrap();
-      toast.success(`"${key}" (${targetLocale}) silindi.`);
+      toast.success(t('admin.siteSettings.seo.deleted', { key, locale: targetLocale }));
       await refetchAll();
     } catch (err: any) {
-      const msg = err?.data?.error?.message || err?.message || 'SEO ayarı silinirken hata oluştu.';
+      const msg =
+        err?.data?.error?.message || err?.message || t('admin.siteSettings.seo.deleteError');
       toast.error(msg);
     }
   };
 
   const createOverrideFromGlobal = async (g: RowGroup) => {
     if (!g.globalRow) {
-      toast.error('GLOBAL (*) kayıt bulunamadı. Önce global değer oluşturmalısın.');
+      toast.error(t('admin.siteSettings.general.missingGlobalError'));
       return;
     }
 
     // site_meta_default should not be global-copied; it must be locale based
     if (g.key === 'site_meta_default') {
-      toast.error('site_meta_default GLOBAL(*) olamaz. Locale için seed/structured değer yaz.');
+      toast.error(t('admin.siteSettings.seo.siteMetaDefaultGlobalError'));
       return;
     }
 
@@ -388,11 +391,11 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
         value: g.globalRow.value,
       }).unwrap();
 
-      toast.success(`"${g.key}" için ${locale} override oluşturuldu (GLOBAL kopyalandı).`);
+      toast.success(t('admin.siteSettings.seo.overrideCreated', { key: g.key, locale }));
       await refetchAll();
     } catch (err: any) {
       const msg =
-        err?.data?.error?.message || err?.message || 'Override oluşturulurken hata oluştu.';
+        err?.data?.error?.message || err?.message || t('admin.siteSettings.seo.overrideError');
       toast.error(msg);
     }
   };
@@ -406,7 +409,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
         await updateSetting({ key, locale: targetLocale, value: DEFAULT_SEO_GLOBAL }).unwrap();
       } else if (key === 'site_meta_default') {
         if (targetLocale === '*') {
-          toast.error('site_meta_default global(*) olamaz. Locale seçerek restore et.');
+          toast.error(t('admin.siteSettings.seo.siteMetaDefaultMustBeLocale'));
           return;
         }
         const seed =
@@ -415,14 +418,17 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
           DEFAULT_SITE_META_DEFAULT_BY_LOCALE['de'];
         await updateSetting({ key, locale: targetLocale, value: seed }).unwrap();
       } else {
-        toast.error('Bu key için default tanımlı değil.');
+        toast.error(t('admin.siteSettings.seo.defaultNotDefined'));
         return;
       }
 
-      toast.success(`"${key}" (${targetLocale}) default değerler geri yüklendi.`);
+      toast.success(t('admin.siteSettings.seo.defaultsRestored', { key, locale: targetLocale }));
       await refetchAll();
     } catch (err: any) {
-      const msg = err?.data?.error?.message || err?.message || 'Default restore hata verdi.';
+      const msg =
+        err?.data?.error?.message ||
+        err?.message ||
+        t('admin.siteSettings.seo.defaultsRestoreError');
       toast.error(msg);
     }
   };
@@ -441,10 +447,13 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
           value: DEFAULT_SEO_GLOBAL, // ✅ site_seo da aynı şemayı kullanıyor
         }).unwrap();
       }
-      toast.success('Eksik GLOBAL SEO kayıtları oluşturuldu.');
+      toast.success(t('admin.siteSettings.seo.defaultsCreated'));
       await refetchAll();
     } catch (err: any) {
-      const msg = err?.data?.error?.message || err?.message || 'GLOBAL bootstrap hata verdi.';
+      const msg =
+        err?.data?.error?.message ||
+        err?.message ||
+        t('admin.siteSettings.seo.defaultsCreateError');
       toast.error(msg);
     }
   };
@@ -487,13 +496,13 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
         locale: '*',
         value: toMediaValue(u),
       }).unwrap();
-      toast.success('Varsayılan OG görseli güncellendi.');
+      toast.success(t('admin.siteSettings.seo.ogUpdated'));
       await qOg.refetch();
     } catch (err: any) {
       const msg =
         err?.data?.error?.message ||
         err?.message ||
-        'Varsayılan OG görseli kaydedilirken hata oluştu.';
+        t('admin.siteSettings.seo.ogUpdateError');
       toast.error(msg);
     }
   };
@@ -503,17 +512,16 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
       <CardHeader className="gap-2">
         <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-base">SEO Ayarları</CardTitle>
+            <CardTitle className="text-base">{t('admin.siteSettings.seo.title')}</CardTitle>
             <CardDescription>
-              GLOBAL (<code>*</code>) default + seçili dil (<strong>{locale}</strong>) override
-              birlikte yönetilir. "Düzenle" butonu form sayfasını açar.
+              {t('admin.siteSettings.seo.description', { locale })}
             </CardDescription>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">Dil: {locale}</Badge>
+            <Badge variant="secondary">{t('admin.siteSettings.filters.language')}: {locale}</Badge>
             <Button type="button" variant="outline" size="sm" onClick={refetchAll} disabled={busy}>
-              Yenile
+              {t('admin.siteSettings.filters.refreshButton')}
             </Button>
             <Button
               type="button"
@@ -521,9 +529,9 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
               size="sm"
               onClick={upsertEmptyGlobalDefaults}
               disabled={busy}
-              title="seo / site_seo GLOBAL (*) yoksa default schema ile oluşturur"
+              title={t('admin.siteSettings.seo.globalBootstrapTooltip')}
             >
-              Global Bootstrap
+              {t('admin.siteSettings.seo.globalBootstrap')}
             </Button>
           </div>
         </div>
@@ -534,9 +542,10 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
         <div className="rounded-md border p-4">
           <div className="mb-4 flex items-start justify-between">
             <div className="space-y-1">
-              <div className="text-sm font-semibold">Varsayılan OG Görseli (Global)</div>
+              <div className="text-sm font-semibold">{t('admin.siteSettings.seo.ogDefaultImage')}</div>
               <div className="text-xs text-muted-foreground">
-                Key: <code>site_og_default_image</code> / <code>locale=&quot;*&quot;</code>
+                {t('admin.siteSettings.seo.ogDefaultImageKey')}: <code>site_og_default_image</code> /{' '}
+                <code>locale=&quot;*&quot;</code>
               </div>
             </div>
           </div>
@@ -546,8 +555,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
               label=""
               helperText={
                 <span className="text-xs text-muted-foreground">
-                  Upload sonrası otomatik kaydedilir. Brand &amp; Media tabındaki{' '}
-                  <code>site_og_default_image</code> ile aynıdır.
+                  {t('admin.siteSettings.seo.ogDefaultImageHelp', { key: 'site_og_default_image' })}
                 </span>
               }
               bucket="public"
@@ -562,32 +570,36 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
             />
 
             {ogUrl && (
-              <div className="space-y-2">
-                <div className="rounded-md border bg-muted/50 p-3">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">Kayıtlı URL:</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => void copyToClipboard(ogUrl)}
-                      disabled={busy}
-                    >
-                      Kopyala
-                    </Button>
+                <div className="space-y-2">
+                  <div className="rounded-md border bg-muted/50 p-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {t('admin.siteSettings.seo.savedUrlLabel')}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => void copyToClipboard(ogUrl)}
+                        disabled={busy}
+                      >
+                        {t('admin.siteSettings.actions.copy')}
+                      </Button>
+                    </div>
+                    <code className="block wrap-break-word text-xs font-mono leading-relaxed">
+                      {ogUrl}
+                    </code>
                   </div>
-                  <code className="block wrap-break-word text-xs font-mono leading-relaxed">
-                    {ogUrl}
-                  </code>
-                </div>
 
                 {/* Manual preview for debugging */}
                 <div className="rounded-md border bg-muted/50 p-3">
-                  <div className="mb-2 text-xs font-medium text-muted-foreground">Önizleme:</div>
+                  <div className="mb-2 text-xs font-medium text-muted-foreground">
+                    {t('admin.siteSettings.seo.previewLabel')}
+                  </div>
                   <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded border bg-background">
                     <img
                       src={ogUrl}
-                      alt="OG Default Image"
+                      alt={t('admin.siteSettings.seo.ogDefaultImageAlt')}
                       className="h-full w-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -597,7 +609,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                           const errorDiv = document.createElement('div');
                           errorDiv.className =
                             'error-message flex h-full items-center justify-center text-xs text-muted-foreground';
-                          errorDiv.textContent = 'Görsel yüklenemedi';
+                          errorDiv.textContent = t('admin.siteSettings.seo.imageLoadError');
                           parent.appendChild(errorDiv);
                         }
                       }}
@@ -610,13 +622,13 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="seo-search">Ara</Label>
+          <Label htmlFor="seo-search">{t('admin.siteSettings.filters.search')}</Label>
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="seo-search"
               type="text"
-              placeholder="Key veya değer içinde ara"
+              placeholder={t('admin.siteSettings.seo.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               disabled={busy}
@@ -627,7 +639,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
 
         {busy && (
           <div>
-            <Badge variant="secondary">Yükleniyor...</Badge>
+            <Badge variant="secondary">{t('admin.siteSettings.messages.loading')}</Badge>
           </div>
         )}
 
@@ -635,10 +647,10 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
           <Table className="table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[20%]">Key</TableHead>
-                <TableHead className="w-[15%]">Kaynak</TableHead>
-                <TableHead className="w-[35%]">Effective (Özet)</TableHead>
-                <TableHead className="w-[30%] text-right">İşlemler</TableHead>
+                <TableHead className="w-[20%]">{t('admin.siteSettings.seo.columns.key')}</TableHead>
+                <TableHead className="w-[15%]">{t('admin.siteSettings.seo.columns.source')}</TableHead>
+                <TableHead className="w-[35%]">{t('admin.siteSettings.seo.columns.effective')}</TableHead>
+                <TableHead className="w-[30%] text-right">{t('admin.siteSettings.seo.columns.actions')}</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -658,11 +670,11 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                         <TableCell className="font-mono text-sm font-semibold">{g.key}</TableCell>
                         <TableCell>
                           {g.effectiveSource === 'locale' ? (
-                            <Badge variant="default">Override</Badge>
+                            <Badge variant="default">{t('admin.siteSettings.seo.override')}</Badge>
                           ) : g.effectiveSource === 'global' ? (
-                            <Badge variant="secondary">Global</Badge>
+                            <Badge variant="secondary">{t('admin.siteSettings.seo.global')}</Badge>
                           ) : (
-                            <Badge variant="outline">Yok</Badge>
+                            <Badge variant="outline">{t('admin.siteSettings.seo.none')}</Badge>
                           )}
                         </TableCell>
 
@@ -672,8 +684,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                           </div>
                           {g.effectiveSource === 'global' && !hasLocal && (
                             <div className="mt-1 wrap-break-word text-xs text-muted-foreground">
-                              Bu key için <strong>{locale}</strong> override yok; GLOBAL (
-                              <code>*</code>) uygulanıyor.
+                              {t('admin.siteSettings.seo.hasOverride', { locale })}
                             </div>
                           )}
                         </TableCell>
@@ -682,7 +693,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                           <div className="flex flex-col gap-2">
                             <div className="flex flex-wrap justify-end gap-1">
                               <Button asChild variant="outline" size="sm">
-                                <Link href={editHref}>Düzenle</Link>
+                                <Link href={editHref}>{t('admin.siteSettings.actions.edit')}</Link>
                               </Button>
 
                               {!hasLocal && hasGlobal && g.key !== 'site_meta_default' && (
@@ -693,7 +704,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                                   onClick={() => createOverrideFromGlobal(g)}
                                   disabled={busy}
                                 >
-                                  Override Oluştur
+                                  {t('admin.siteSettings.seo.createOverride')}
                                 </Button>
                               )}
 
@@ -704,9 +715,9 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                                   size="sm"
                                   onClick={() => restoreDefaults(g.key, hasLocal ? locale : '*')}
                                   disabled={busy}
-                                  title="Bu satırın default değerlerini geri yükler"
+                                  title={t('admin.siteSettings.seo.restoreTooltip')}
                                 >
-                                  Restore
+                                  {t('admin.siteSettings.actions.restore')}
                                 </Button>
                               )}
                             </div>
@@ -717,10 +728,10 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                       {/* Global row */}
                       <TableRow>
                         <TableCell className="pl-8 text-sm text-muted-foreground">
-                          GLOBAL (*)
+                          {t('admin.siteSettings.seo.globalRow')}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {hasGlobal ? 'Var' : 'Yok'}
+                          {hasGlobal ? t('admin.siteSettings.seo.existsYes') : t('admin.siteSettings.seo.existsNo')}
                         </TableCell>
                         <TableCell className="wrap-break-word overflow-hidden text-sm text-muted-foreground">
                           {hasGlobal ? preview(g.globalRow?.value) : '-'}
@@ -733,7 +744,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                                 aria-disabled={!hasGlobal}
                                 tabIndex={!hasGlobal ? -1 : 0}
                               >
-                                Düzenle
+                                {t('admin.siteSettings.actions.edit')}
                               </Link>
                             </Button>
 
@@ -745,11 +756,11 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                               onClick={() => deleteRow(g.key, '*')}
                               title={
                                 g.key === 'site_meta_default'
-                                  ? 'Normalde GLOBAL olmaz; varsa silinebilir.'
+                                  ? t('admin.siteSettings.seo.siteMetaDefaultGlobalDeleteHint')
                                   : ''
                               }
                             >
-                              Sil
+                              {t('admin.siteSettings.actions.delete')}
                             </Button>
                           </div>
                         </TableCell>
@@ -758,10 +769,10 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                       {/* Locale row */}
                       <TableRow>
                         <TableCell className="pl-8 text-sm text-muted-foreground">
-                          LOCALE ({locale})
+                          {t('admin.siteSettings.seo.localeRow', { locale })}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {hasLocal ? 'Var' : 'Yok'}
+                          {hasLocal ? t('admin.siteSettings.seo.existsYes') : t('admin.siteSettings.seo.existsNo')}
                         </TableCell>
                         <TableCell className="wrap-break-word overflow-hidden text-sm text-muted-foreground">
                           {hasLocal ? preview(g.localeRow?.value) : '-'}
@@ -774,7 +785,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                                 aria-disabled={!hasLocal}
                                 tabIndex={!hasLocal ? -1 : 0}
                               >
-                                Düzenle
+                                {t('admin.siteSettings.actions.edit')}
                               </Link>
                             </Button>
 
@@ -785,7 +796,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                               disabled={busy || !hasLocal}
                               onClick={() => deleteRow(g.key, locale)}
                             >
-                              Sil
+                              {t('admin.siteSettings.actions.delete')}
                             </Button>
                           </div>
                         </TableCell>
@@ -797,10 +808,9 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
                 <TableRow>
                   <TableCell colSpan={4} className="py-10 text-center">
                     <div className="text-sm text-muted-foreground">
-                      SEO kaydı bulunamadı.
+                      {t('admin.siteSettings.seo.noRecords')}
                       <div className="mt-2">
-                        Seed çalıştıysa en az <code>seo</code> ve <code>site_seo</code> GLOBAL
-                        satırı görünmelidir.
+                        {t('admin.siteSettings.seo.seedNote')}
                       </div>
                     </div>
                   </TableCell>
@@ -811,8 +821,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
 
           <div className="border-t p-3">
             <span className="text-xs text-muted-foreground">
-              Not: <code>site_meta_default</code> GLOBAL(*) olamaz; edit linki her zaman locale ile
-              açılır.
+              {t('admin.siteSettings.seo.note')}
             </span>
           </div>
         </div>

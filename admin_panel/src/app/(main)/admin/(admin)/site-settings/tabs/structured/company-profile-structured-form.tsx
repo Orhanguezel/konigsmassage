@@ -6,6 +6,8 @@
 
 import React from 'react';
 import { z } from 'zod';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,6 +54,9 @@ export const CompanyProfileStructuredForm: React.FC<CompanyProfileStructuredForm
   disabled,
   seed,
 }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
   const s = (seed || {
     company_name: 'guezelwebdesign',
     slogan: '',
@@ -62,7 +67,7 @@ export const CompanyProfileStructuredForm: React.FC<CompanyProfileStructuredForm
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div className="space-y-2">
-        <Label htmlFor="company-name" className="text-sm">Şirket Adı</Label>
+        <Label htmlFor="company-name" className="text-sm">{t('admin.siteSettings.structured.companyProfile.labels.companyName')}</Label>
         <Input
           id="company-name"
           className="h-8"
@@ -74,7 +79,7 @@ export const CompanyProfileStructuredForm: React.FC<CompanyProfileStructuredForm
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="company-slogan" className="text-sm">Slogan</Label>
+        <Label htmlFor="company-slogan" className="text-sm">{t('admin.siteSettings.structured.companyProfile.labels.slogan')}</Label>
         <Input
           id="company-slogan"
           className="h-8"
@@ -86,7 +91,7 @@ export const CompanyProfileStructuredForm: React.FC<CompanyProfileStructuredForm
       </div>
 
       <div className="space-y-2 md:col-span-2">
-        <Label htmlFor="company-about" className="text-sm">Hakkımızda</Label>
+        <Label htmlFor="company-about" className="text-sm">{t('admin.siteSettings.structured.companyProfile.labels.about')}</Label>
         <Textarea
           id="company-about"
           rows={6}

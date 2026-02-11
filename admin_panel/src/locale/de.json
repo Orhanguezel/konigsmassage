@@ -192,7 +192,7 @@
       },
       "menuitem": {
         "header": {
-          "title": "Header-Menü",
+          "title": "Menüpunkte (Header)",
           "total": "Gesamt {count} Einträge.",
           "refresh": "Aktualisieren",
           "refreshing": "Laden...",
@@ -754,7 +754,8 @@
           "api": "API",
           "brandMedia": "Logo & Favicon",
           "list": "Liste (Sprache)",
-          "globalList": "Liste (Global *)"
+          "globalList": "Liste (Global *)",
+          "locales": "Sprachen"
         },
         "filters": {
           "title": "Filter",
@@ -763,16 +764,100 @@
           "searchPlaceholder": "In Schlüssel oder Wert suchen...",
           "language": "Sprache",
           "selectLanguage": "Sprache wählen",
+          "globalPlaceholder": "Global",
+          "defaultSuffix": "Standard",
+          "inactiveSuffix": "Inaktiv",
           "languageDisabledNote": "Sprachauswahl wird in diesem Tab nicht verwendet.",
           "refreshButton": "Aktualisieren",
           "resetButton": "Zurücksetzen",
           "refreshed": "Aktualisiert."
+        },
+        "badges": {
+          "global": "Global"
         },
         "management": {
           "title": "Verwaltung",
           "localeRecords": "Datensätze der ausgewählten Sprache",
           "globalRecords": "Globale (*) Datensätze",
           "loadingMeta": "Locale-Meta wird geladen…"
+        },
+        "locales": {
+          "title": "Sprachen",
+          "description": "Aktive Sprachen (app_locales) und Standard-Sprache (default_locale) verwalten.",
+          "defaultLabel": "Standardsprache",
+          "defaultPlaceholder": "Standardsprache wählen",
+          "table": {
+            "code": "Code",
+            "label": "Bezeichnung",
+            "active": "Aktiv",
+            "default": "Standard"
+          },
+          "empty": "Keine Sprachkonfiguration gefunden.",
+          "presetDeEnTr": "Preset de/en/tr setzen",
+          "saved": "Sprachen aktualisiert.",
+          "saveError": "Sprachen konnten nicht aktualisiert werden."
+        },
+        "list": {
+          "title": "Einstellungsliste",
+          "description": "site_settings Einträge",
+          "dash": "—",
+          "hideSeoNote": "SEO-Schlüssel werden hier ausgeblendet; verwalten Sie sie im SEO-Tab.",
+          "deleteConfirm": "\"{key}\" ({locale}) löschen?",
+          "noRecords": "Keine Datensätze gefunden.",
+          "updatedAtLabel": "Aktualisiert",
+          "mobileNote": "In der mobilen Ansicht werden Einträge als Karten angezeigt.",
+          "mobileHideSeoSuffix": "SEO-Schlüssel sind auch hier ausgeblendet.",
+          "columns": {
+            "key": "Schlüssel",
+            "locale": "Sprache",
+            "value": "Wert (Zusammenfassung)",
+            "updatedAt": "Aktualisiert am",
+            "actions": "Aktionen"
+          },
+          "preview": {
+            "array": "Array [{count} Elemente]",
+            "object": "Objekt ({count} Felder)"
+          }
+        },
+        "form": {
+          "title": "Einstellung",
+          "description": "Strukturiert: Formular-Editor. Raw: JSON oder Text.",
+          "imageLabel": "Bild",
+          "saved": "\"{key}\" ({locale}) gespeichert.",
+          "saveError": "Einstellung konnte nicht gespeichert werden.",
+          "deleteConfirm": "\"{key}\" ({locale}) löschen?",
+          "deleted": "\"{key}\" ({locale}) gelöscht.",
+          "deleteError": "Einstellung konnte nicht gelöscht werden.",
+          "modes": {
+            "structured": "Strukturiert",
+            "raw": "Raw"
+          },
+          "structuredMissingTitle": "Structured Renderer fehlt",
+          "structuredMissingDesc": "Für diesen Schlüssel ist kein Structured Renderer definiert. Verwenden Sie den Raw-Modus.",
+          "rawHelp": "Raw: Wenn Sie gültiges JSON eingeben, wird es geparst und gespeichert; andernfalls als Text gespeichert.",
+          "rawPlaceholder": "z.B.: {\"title\":\"...\"} oder Text",
+          "rawTip": "Tipp: Um als JSON zu speichern, muss der Text mit „{“ oder „[“ beginnen."
+        },
+        "detail": {
+          "globalOption": "Global (*)",
+          "keyMissingTitle": "Fehler",
+          "keyMissingDesc": "Setting-Schlüssel nicht gefunden.",
+          "localesMissingTitle": "Sprachliste nicht gefunden",
+          "localesMissingDesc": "site_settings.app_locales ist leer oder ungültig. Konfigurieren Sie zuerst die Sprachen.",
+          "localesMissingAction": "Zu den Site-Einstellungen",
+          "editTitle": "Bearbeiten",
+          "backToList": "Zurück zur Liste",
+          "localeLabel": "Locale",
+          "loadingLocale": "Locale wird geladen…",
+          "note": "Hinweis: General/UI-Schlüssel öffnen ein Structured-Formular. Andere Schlüssel verwenden im Structured-Modus den JSON-Editor.",
+          "siteMetaDefaultGlobalGuard": "site_meta_default kann nicht locale=\"*\" sein. Wählen Sie eine Locale und speichern Sie.",
+          "updated": "\"{key}\" ({locale}) aktualisiert.",
+          "deleted": "\"{key}\" ({locale}) gelöscht.",
+          "structuredJson": {
+            "noRenderer": "Für diesen Schlüssel ist kein spezielles Structured-Formular definiert. Structured-Modus arbeitet als JSON-Editor.",
+            "label": "Structured JSON",
+            "helperText": "Wird bei Blur geparst. Ungültiges JSON wird nicht gespeichert."
+          }
         },
         "general": {
           "title": "Allgemein / UI",
@@ -852,6 +937,7 @@
         "brandMedia": {
           "title": "Logo & Favicon",
           "description": "Diese Registerkarte ist sprachunabhängig. Datensätze werden als locale=\"*\" gespeichert.",
+          "badge": "Global (locale=*)",
           "uploadHelp": "Automatisch nach dem Upload gespeichert.",
           "note": "Diese Einstellungen sind global. Auch wenn sich die Sprache ändert, werden sie über * verwaltet.",
           "searchPlaceholder": "Im Schlüssel suchen (z.B.: logo, favicon)",
@@ -909,6 +995,8 @@
           "loading": "Laden…",
           "deleted": "Einstellung gelöscht.",
           "saved": "Einstellungen gespeichert.",
+          "copied": "Kopiert.",
+          "copyError": "Kopieren fehlgeschlagen.",
           "error": "Vorgang fehlgeschlagen. Bitte versuchen Sie es erneut."
         },
         "seo": {
@@ -930,7 +1018,35 @@
           "note": "site_meta_default kann nicht GLOBAL(*) sein; Bearbeitungslink öffnet immer mit Locale.",
           "defaultsCreated": "Standard-SEO-Einstellungen erstellt.",
           "defaultsRestored": "Standardwerte für \"{key}\" ({locale}) wiederhergestellt.",
-          "overrideCreated": "\"{key}\" ({locale}) Override erstellt."
+          "overrideCreated": "\"{key}\" ({locale}) Override erstellt.",
+          "overrideError": "Override konnte nicht erstellt werden.",
+          "deleteConfirm": "\"{key}\" ({locale}) löschen?",
+          "deleted": "\"{key}\" ({locale}) gelöscht.",
+          "deleteError": "SEO-Einstellung konnte nicht gelöscht werden.",
+          "defaultNotDefined": "Für diesen Schlüssel ist kein Standard definiert.",
+          "siteMetaDefaultGlobalError": "site_meta_default kann nicht GLOBAL(*) sein. Mit Locale speichern/wiederherstellen.",
+          "siteMetaDefaultMustBeLocale": "site_meta_default kann nicht GLOBAL(*) sein. Locale auswählen und wiederherstellen.",
+          "defaultsRestoreError": "Standardwerte konnten nicht wiederhergestellt werden.",
+          "defaultsCreateError": "Global Bootstrap fehlgeschlagen.",
+          "globalBootstrap": "Global Bootstrap",
+          "globalBootstrapTooltip": "Erstellt fehlende SEO GLOBAL(*) Einträge mit Standard-Schema",
+          "ogUpdated": "Standard OG-Bild aktualisiert.",
+          "ogUpdateError": "Standard OG-Bild konnte nicht aktualisiert werden.",
+          "savedUrlLabel": "Gespeicherte URL:",
+          "previewLabel": "Vorschau:",
+          "ogDefaultImageAlt": "Standard OG-Bild",
+          "imageLoadError": "Bild konnte nicht geladen werden",
+          "existsYes": "Vorhanden",
+          "existsNo": "Fehlt",
+          "siteMetaDefaultGlobalDeleteHint": "Normalerweise nicht GLOBAL; falls vorhanden, kann es gelöscht werden.",
+          "noRecords": "Keine SEO-Einträge gefunden.",
+          "seedNote": "Wenn Seed gelaufen ist, sollten mindestens seo und site_seo GLOBAL-Zeilen existieren.",
+          "columns": {
+            "key": "Schlüssel",
+            "source": "Quelle",
+            "effective": "Effektiv (Zusammenfassung)",
+            "actions": "Aktionen"
+          }
         },
         "structured": {
           "title": "Strukturierte Bearbeitung: Verwaltet SEO-Felder als Formular. Wenn strenge Validierung beim Speichern angewendet wird, wird ungültige Struktur nicht gespeichert.",
@@ -954,7 +1070,64 @@
           "noindex": "noindex",
           "index": "index",
           "follow": "follow",
-          "robotsRecommendation": "Empfehlung: Normalerweise {noindex}, {index}, {follow}."
+          "robotsRecommendation": "Empfehlung: Normalerweise {noindex}, {index}, {follow}.",
+          "contact": {
+            "description": "Kontaktinformationen. Leere Felder werden als leere Strings gespeichert.",
+            "labels": {
+              "phone": "Telefon",
+              "email": "E-Mail",
+              "whatsapp": "WhatsApp",
+              "address": "Adresse"
+            }
+          },
+          "socials": {
+            "description": "Social Links als vollständige URL (https://...) oder Benutzername eingeben.",
+            "labels": {
+              "instagram": "Instagram",
+              "facebook": "Facebook",
+              "linkedin": "LinkedIn",
+              "youtube": "YouTube",
+              "x": "X (Twitter)"
+            }
+          },
+          "companyProfile": {
+            "labels": {
+              "companyName": "Firmenname",
+              "slogan": "Slogan",
+              "about": "Über uns"
+            }
+          },
+          "uiHeader": {
+            "description": "Header-Navigation und CTA-Texte. Für sprachspezifische Overrides verwenden Sie eine Locale-Zeile.",
+            "labels": {
+              "navHome": "Menü: Home",
+              "navProducts": "Menü: Products",
+              "navServices": "Menü: Services",
+              "navContact": "Menü: Contact",
+              "ctaLabel": "CTA Label"
+            }
+          },
+          "businessHours": {
+            "description": "Zeitformat ist HH:MM. Wenn \"Closed\" ausgewählt ist, ist der Tag geschlossen.",
+            "columns": {
+              "day": "Tag",
+              "open": "Öffnet",
+              "close": "Schließt",
+              "closed": "Geschlossen"
+            },
+            "closedLabel": "closed",
+            "addRow": "Zeile hinzufügen",
+            "removeRow": "Entfernen",
+            "days": {
+              "mon": "Mo",
+              "tue": "Di",
+              "wed": "Mi",
+              "thu": "Do",
+              "fri": "Fr",
+              "sat": "Sa",
+              "sun": "So"
+            }
+          }
         },
         
         "users": {

@@ -10,7 +10,63 @@ import de from '@/locale/de.json';
 import { normLocaleTag } from './localeUtils';
 import { buildTranslator, getValueByPath, type TranslateFn } from './translation-utils';
 
-const translations = { tr, en, de } as const;
+type PlainObject = Record<string, unknown>;
+
+function isPlainObject(v: unknown): v is PlainObject {
+  return !!v && typeof v === 'object' && !Array.isArray(v);
+}
+
+function normalizeAdminLocaleJson(raw: unknown): PlainObject {
+  const base: PlainObject = isPlainObject(raw) ? (raw as PlainObject) : {};
+  const adminBase: PlainObject = isPlainObject(base.admin) ? (base.admin as PlainObject) : {};
+
+  // clone only the parts we might mutate
+  const admin: PlainObject = { ...adminBase };
+  const out: PlainObject = { ...base, admin };
+
+  // de.json gibi: { admin: {...}, db: {...}, services: {...}, siteSettings: {...} }
+  if (!isPlainObject(admin.db) && isPlainObject(base.db)) admin.db = base.db as PlainObject;
+  if (!isPlainObject(admin.services) && isPlainObject(base.services))
+    admin.services = base.services as PlainObject;
+  if (!isPlainObject(admin.siteSettings) && isPlainObject(base.siteSettings))
+    admin.siteSettings = base.siteSettings as PlainObject;
+
+  // tr.json gibi: admin.db.siteSettings (yanlış yerde)
+  const adminDb = isPlainObject(admin.db) ? (admin.db as PlainObject) : null;
+  if (!isPlainObject(admin.siteSettings) && adminDb && isPlainObject((adminDb as any).siteSettings)) {
+    admin.siteSettings = (adminDb as any).siteSettings as PlainObject;
+  }
+
+  // tr.json gibi: services key'leri root'ta dağınık (en.json admin.services ile uyumlu)
+  const looksLikeServicesRoot =
+    isPlainObject(base.header) &&
+    isPlainObject(base.list) &&
+    isPlainObject(base.form) &&
+    isPlainObject(base.formHeader) &&
+    isPlainObject(base.formImage) &&
+    isPlainObject(base.upload) &&
+    isPlainObject(base.types);
+
+  if (!isPlainObject(admin.services) && looksLikeServicesRoot) {
+    admin.services = {
+      header: base.header,
+      list: base.list,
+      form: base.form,
+      formHeader: base.formHeader,
+      formImage: base.formImage,
+      upload: base.upload,
+      types: base.types,
+    } as PlainObject;
+  }
+
+  return out;
+}
+
+const translations = {
+  tr: normalizeAdminLocaleJson(tr),
+  en: normalizeAdminLocaleJson(en),
+  de: normalizeAdminLocaleJson(de),
+} as const;
 
 /**
  * Supported languages for admin panel

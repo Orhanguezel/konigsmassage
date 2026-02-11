@@ -225,7 +225,7 @@
       },
       "menuitem": {
         "header": {
-          "title": "Header Menu",
+          "title": "Header Menu Items",
           "total": "Total {count} records found.",
           "refresh": "Refresh",
           "refreshing": "Refreshing...",
@@ -262,7 +262,7 @@
             "active": "Active",
             "date": "Date",
             "actions": "Actions",
-            "locale": "Locale"
+            "locale": "Language"
           },
           "types": {
             "page": "Page",
@@ -806,7 +806,8 @@
           "api": "API",
           "brandMedia": "Logo & Favicon",
           "list": "List (Language)",
-          "globalList": "List (Global *)"
+          "globalList": "List (Global *)",
+          "locales": "Locales"
         },
         "filters": {
           "title": "Filters",
@@ -815,16 +816,100 @@
           "searchPlaceholder": "Search in key or value...",
           "language": "Language",
           "selectLanguage": "Select language",
+          "globalPlaceholder": "Global",
+          "defaultSuffix": "default",
+          "inactiveSuffix": "inactive",
           "languageDisabledNote": "Language selection is not used in this tab.",
           "refreshButton": "Refresh",
           "resetButton": "Reset",
           "refreshed": "Refreshed."
+        },
+        "badges": {
+          "global": "Global"
         },
         "management": {
           "title": "Management",
           "localeRecords": "Selected language records",
           "globalRecords": "Global (*) records",
           "loadingMeta": "Loading locale meta…"
+        },
+        "locales": {
+          "title": "Locales",
+          "description": "Manage active locales (app_locales) and the default locale (default_locale).",
+          "defaultLabel": "Default locale",
+          "defaultPlaceholder": "Select default locale",
+          "table": {
+            "code": "Code",
+            "label": "Label",
+            "active": "Active",
+            "default": "Default"
+          },
+          "empty": "No locale configuration found.",
+          "presetDeEnTr": "Set de/en/tr preset",
+          "saved": "Locales updated.",
+          "saveError": "Failed to update locales."
+        },
+        "list": {
+          "title": "Settings List",
+          "description": "site_settings records",
+          "dash": "—",
+          "hideSeoNote": "SEO keys are hidden here; manage them in the SEO tab.",
+          "deleteConfirm": "Delete \"{key}\" ({locale})?",
+          "noRecords": "No records found.",
+          "updatedAtLabel": "Updated",
+          "mobileNote": "On mobile, records are shown as cards.",
+          "mobileHideSeoSuffix": "SEO keys are also hidden here.",
+          "columns": {
+            "key": "Key",
+            "locale": "Locale",
+            "value": "Value (Summary)",
+            "updatedAt": "Updated At",
+            "actions": "Actions"
+          },
+          "preview": {
+            "array": "Array [{count} items]",
+            "object": "Object ({count} fields)"
+          }
+        },
+        "form": {
+          "title": "Setting",
+          "description": "Structured mode: form editor. Raw mode: JSON or plain string.",
+          "imageLabel": "Image",
+          "saved": "\"{key}\" ({locale}) saved.",
+          "saveError": "Failed to save setting.",
+          "deleteConfirm": "Delete \"{key}\" ({locale})?",
+          "deleted": "\"{key}\" ({locale}) deleted.",
+          "deleteError": "Failed to delete setting.",
+          "modes": {
+            "structured": "Structured",
+            "raw": "Raw"
+          },
+          "structuredMissingTitle": "Structured renderer missing",
+          "structuredMissingDesc": "No structured renderer is defined for this key. Use Raw mode.",
+          "rawHelp": "Raw: If you enter valid JSON it will be parsed and saved; otherwise it will be saved as plain text.",
+          "rawPlaceholder": "E.g.: {\"title\":\"...\"} or plain text",
+          "rawTip": "Tip: To save as JSON, start the text with “{” or “[”."
+        },
+        "detail": {
+          "globalOption": "Global (*)",
+          "keyMissingTitle": "Error",
+          "keyMissingDesc": "Setting key not found.",
+          "localesMissingTitle": "Language list not found",
+          "localesMissingDesc": "site_settings.app_locales is empty or invalid. Configure languages first.",
+          "localesMissingAction": "Go to Site Settings",
+          "editTitle": "Edit",
+          "backToList": "Back to list",
+          "localeLabel": "Locale",
+          "loadingLocale": "Loading locale…",
+          "note": "Note: General/UI keys open a structured form. Other keys fall back to JSON editor in structured mode.",
+          "siteMetaDefaultGlobalGuard": "site_meta_default cannot be locale=\"*\". Select a locale and save.",
+          "updated": "\"{key}\" ({locale}) updated.",
+          "deleted": "\"{key}\" ({locale}) deleted.",
+          "structuredJson": {
+            "noRenderer": "No structured form is defined for this key. Structured mode works as a JSON editor.",
+            "label": "Structured JSON",
+            "helperText": "Parsed on blur. Invalid JSON will not be saved."
+          }
         },
         "general": {
           "title": "General / UI",
@@ -901,6 +986,25 @@
           "testInfoSuccess": "Last test: SUCCESS (cloud: {cloud})",
           "testInfoError": "Last test: ERROR – check logs for details."
         },
+        "brandMedia": {
+          "title": "Logo & Favicon",
+          "description": "This tab is language-independent. Records are stored as locale=\"*\".",
+          "badge": "Global (locale=*)",
+          "searchPlaceholder": "Search in key (e.g.: logo, favicon)",
+          "labels": {
+            "site_logo": "Logo",
+            "site_logo_dark": "Logo (Dark)",
+            "site_logo_light": "Logo (Light)",
+            "site_favicon": "Favicon",
+            "site_apple_touch_icon": "Apple Touch Icon",
+            "site_app_icon_512": "App Icon 512x512",
+            "site_og_default_image": "Default OG Image"
+          },
+          "updated": "{label} updated.",
+          "updateError": "Failed to save {label}.",
+          "deleteConfirm": "Delete \"{key}\" ({locale})?",
+          "deleteError": "Delete failed."
+        },
         
         "api": {
           "title": "API & Integration Settings",
@@ -942,6 +1046,8 @@
           "loading": "Loading…",
           "deleted": "Setting deleted.",
           "saved": "Settings saved.",
+          "copied": "Copied.",
+          "copyError": "Copy failed.",
           "error": "Operation failed. Please try again."
         },
         "seo": {
@@ -963,7 +1069,35 @@
           "note": "site_meta_default cannot be GLOBAL(*); edit link always opens with locale.",
           "defaultsCreated": "Default SEO settings created.",
           "defaultsRestored": "Default values restored for \"{key}\" ({locale}).",
-          "overrideCreated": "\"{key}\" ({locale}) override created."
+          "overrideCreated": "\"{key}\" ({locale}) override created.",
+          "overrideError": "Failed to create override.",
+          "deleteConfirm": "Delete \"{key}\" ({locale})?",
+          "deleted": "\"{key}\" ({locale}) deleted.",
+          "deleteError": "Failed to delete SEO setting.",
+          "defaultNotDefined": "No default is defined for this key.",
+          "siteMetaDefaultGlobalError": "site_meta_default cannot be GLOBAL(*). Save/restore with a locale.",
+          "siteMetaDefaultMustBeLocale": "site_meta_default cannot be GLOBAL(*). Select a locale and restore.",
+          "defaultsRestoreError": "Failed to restore defaults.",
+          "defaultsCreateError": "Global bootstrap failed.",
+          "globalBootstrap": "Global Bootstrap",
+          "globalBootstrapTooltip": "Creates missing SEO GLOBAL(*) records with default schema",
+          "ogUpdated": "Default OG image updated.",
+          "ogUpdateError": "Failed to update default OG image.",
+          "savedUrlLabel": "Saved URL:",
+          "previewLabel": "Preview:",
+          "ogDefaultImageAlt": "Default OG image",
+          "imageLoadError": "Image failed to load",
+          "existsYes": "Exists",
+          "existsNo": "Missing",
+          "siteMetaDefaultGlobalDeleteHint": "Normally not GLOBAL; if present it can be deleted.",
+          "noRecords": "No SEO records found.",
+          "seedNote": "If seed ran, at least seo and site_seo GLOBAL rows should exist.",
+          "columns": {
+            "key": "Key",
+            "source": "Source",
+            "effective": "Effective (Summary)",
+            "actions": "Actions"
+          }
         },
         "structured": {
           "title": "Structured edit: Manages SEO fields as a form. If strict validation is applied on the backend during saving, invalid structure will not be saved.",
@@ -987,7 +1121,64 @@
           "noindex": "noindex",
           "index": "index",
           "follow": "follow",
-          "robotsRecommendation": "Recommendation: Normally {noindex}, {index}, {follow}."
+          "robotsRecommendation": "Recommendation: Normally {noindex}, {index}, {follow}.",
+          "contact": {
+            "description": "Contact information. Empty fields are stored as empty strings.",
+            "labels": {
+              "phone": "Phone",
+              "email": "Email",
+              "whatsapp": "WhatsApp",
+              "address": "Address"
+            }
+          },
+          "socials": {
+            "description": "Enter social links as full URL (https://...) or username.",
+            "labels": {
+              "instagram": "Instagram",
+              "facebook": "Facebook",
+              "linkedin": "LinkedIn",
+              "youtube": "YouTube",
+              "x": "X (Twitter)"
+            }
+          },
+          "companyProfile": {
+            "labels": {
+              "companyName": "Company Name",
+              "slogan": "Slogan",
+              "about": "About"
+            }
+          },
+          "uiHeader": {
+            "description": "Header navigation and CTA labels. Use a locale row for language-specific overrides.",
+            "labels": {
+              "navHome": "Menu: Home",
+              "navProducts": "Menu: Products",
+              "navServices": "Menu: Services",
+              "navContact": "Menu: Contact",
+              "ctaLabel": "CTA Label"
+            }
+          },
+          "businessHours": {
+            "description": "Time format is HH:MM. If \"Closed\" is selected, the day is closed.",
+            "columns": {
+              "day": "Day",
+              "open": "Open",
+              "close": "Close",
+              "closed": "Closed"
+            },
+            "closedLabel": "closed",
+            "addRow": "Add Row",
+            "removeRow": "Remove",
+            "days": {
+              "mon": "Mon",
+              "tue": "Tue",
+              "wed": "Wed",
+              "thu": "Thu",
+              "fri": "Fri",
+              "sat": "Sat",
+              "sun": "Sun"
+            }
+          }
         },
         
         "users": {

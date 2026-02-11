@@ -8,6 +8,8 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { AdminImageUploadField } from '@/app/(main)/admin/_components/common/AdminImageUploadField';
 import type { SettingValue } from '@/integrations/shared';
@@ -125,6 +127,9 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
   setValue,
   disabled,
 }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
   const v = useMemo(() => normalizeSeo(coerceSettingValue(value)), [value]);
 
   const set = (patch: Partial<SeoStructured>) => {
@@ -168,12 +173,10 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
       <Alert variant="default" className="py-2">
         <AlertDescription className="space-y-1 text-sm">
           <p>
-            Structured edit: SEO alanlarını form olarak yönetir. Kaydetme sırasında backend tarafında
-            strict doğrulama uygulanıyorsa hatalı yapı kaydedilmez.
+            {t('admin.siteSettings.structured.title')}
           </p>
           <p>
-            <strong>Not:</strong> Robots'ta <code>noindex</code> true ise arama motorlarına indeksleme
-            önerilmez.
+            {t('admin.siteSettings.structured.robotsNote', { field: 'noindex' })}
           </p>
         </AlertDescription>
       </Alert>
@@ -181,7 +184,7 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
       {/* Optional helper upload */}
       <div>
         <AdminImageUploadField
-          label="OpenGraph Görsel Yükle (opsiyonel)"
+          label={t('admin.siteSettings.structured.ogImageUpload')}
           folder="seo"
           bucket="public"
           metadata={{
@@ -200,7 +203,7 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
         <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-site-name" className="text-sm">Site Name</Label>
+          <Label htmlFor="seo-site-name" className="text-sm">{t('admin.siteSettings.structured.siteName')}</Label>
           <Input
             id="seo-site-name"
             value={v.site_name || ''}
@@ -210,7 +213,7 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-title-default" className="text-sm">Title Default</Label>
+          <Label htmlFor="seo-title-default" className="text-sm">{t('admin.siteSettings.structured.titleDefault')}</Label>
           <Input
             id="seo-title-default"
             value={v.title_default || ''}
@@ -220,18 +223,18 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-title-template" className="text-sm">Title Template</Label>
+          <Label htmlFor="seo-title-template" className="text-sm">{t('admin.siteSettings.structured.titleTemplate')}</Label>
           <Input
             id="seo-title-template"
             value={v.title_template || ''}
             onChange={(e) => set({ title_template: e.target.value })}
-            placeholder="%s | guezelwebdesign"
+            placeholder={t('admin.siteSettings.structured.titleTemplatePlaceholder')}
             disabled={disabled}
           />
         </div>
 
         <div className="space-y-2 md:col-span-12">
-          <Label htmlFor="seo-description" className="text-sm">Description</Label>
+          <Label htmlFor="seo-description" className="text-sm">{t('admin.siteSettings.structured.description')}</Label>
           <Textarea
             id="seo-description"
             rows={3}
@@ -243,7 +246,7 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-og-type" className="text-sm">OpenGraph Type</Label>
+          <Label htmlFor="seo-og-type" className="text-sm">{t('admin.siteSettings.structured.ogType')}</Label>
           <Select
             value={v.open_graph?.type || 'website'}
             onValueChange={(value) => setOpenGraph({ type: value as any })}
@@ -261,7 +264,7 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-8">
-          <Label htmlFor="seo-og-images" className="text-sm">OpenGraph Images (1 per line)</Label>
+          <Label htmlFor="seo-og-images" className="text-sm">{t('admin.siteSettings.structured.ogImages')}</Label>
           <Textarea
             id="seo-og-images"
             rows={5}
@@ -275,14 +278,14 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
               );
               setOpenGraph({ images });
             }}
-            placeholder="/img/og-default.jpg"
+            placeholder={t('admin.siteSettings.structured.ogImagesPlaceholder')}
             disabled={disabled}
             className="font-mono text-sm"
           />
         </div>
 
         <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-twitter-card" className="text-sm">Twitter Card</Label>
+          <Label htmlFor="seo-twitter-card" className="text-sm">{t('admin.siteSettings.structured.twitterCard')}</Label>
           <Select
             value={v.twitter?.card || 'summary_large_image'}
             onValueChange={(value) => setTwitter({ card: value as any })}
@@ -299,34 +302,34 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            Çoğu site için önerilen: <code>summary_large_image</code>
+            {t('admin.siteSettings.structured.twitterCardRecommended', { card: 'summary_large_image' })}
           </p>
         </div>
 
         <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-twitter-site" className="text-sm">Twitter Site</Label>
+          <Label htmlFor="seo-twitter-site" className="text-sm">{t('admin.siteSettings.structured.twitterSite')}</Label>
           <Input
             id="seo-twitter-site"
             value={v.twitter?.site || ''}
             onChange={(e) => setTwitter({ site: e.target.value })}
-            placeholder="@guezelwebdesign"
+            placeholder={t('admin.siteSettings.structured.twitterSitePlaceholder')}
             disabled={disabled}
           />
         </div>
 
         <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-twitter-creator" className="text-sm">Twitter Creator</Label>
+          <Label htmlFor="seo-twitter-creator" className="text-sm">{t('admin.siteSettings.structured.twitterCreator')}</Label>
           <Input
             id="seo-twitter-creator"
             value={v.twitter?.creator || ''}
             onChange={(e) => setTwitter({ creator: e.target.value })}
-            placeholder="@creator"
+            placeholder={t('admin.siteSettings.structured.twitterCreatorPlaceholder')}
             disabled={disabled}
           />
         </div>
 
         <div className="space-y-2 md:col-span-12">
-          <Label className="text-sm">Robots</Label>
+          <Label className="text-sm">{t('admin.siteSettings.structured.robots')}</Label>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -336,7 +339,7 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
                 disabled={disabled}
               />
               <Label htmlFor="seo-robots-noindex" className="text-xs">
-                noindex
+                {t('admin.siteSettings.structured.noindex')}
               </Label>
             </div>
 
@@ -348,7 +351,7 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
                 disabled={disabled}
               />
               <Label htmlFor="seo-robots-index" className="text-xs">
-                index
+                {t('admin.siteSettings.structured.index')}
               </Label>
             </div>
 
@@ -360,14 +363,17 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
                 disabled={disabled}
               />
               <Label htmlFor="seo-robots-follow" className="text-xs">
-                follow
+                {t('admin.siteSettings.structured.follow')}
               </Label>
             </div>
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Öneri: Normalde <code>noindex=false</code>, <code>index=true</code>,{' '}
-            <code>follow=true</code>.
+            {t('admin.siteSettings.structured.robotsRecommendation', {
+              noindex: 'noindex=false',
+              index: 'index=true',
+              follow: 'follow=true',
+            })}
           </p>
         </div>
       </div>

@@ -6,6 +6,8 @@
 
 import React from 'react';
 import { z } from 'zod';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -82,6 +84,9 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
   disabled,
   seed,
 }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
   const s = (seed ||
     ([
       { day: 'mon', open: '09:00', close: '18:00', closed: false },
@@ -96,13 +101,13 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
   const form = businessHoursObjToForm(value, s);
 
   const dayLabel: Record<string, string> = {
-    mon: 'Mon',
-    tue: 'Tue',
-    wed: 'Wed',
-    thu: 'Thu',
-    fri: 'Fri',
-    sat: 'Sat',
-    sun: 'Sun',
+    mon: t('admin.siteSettings.structured.businessHours.days.mon', undefined, 'Mon'),
+    tue: t('admin.siteSettings.structured.businessHours.days.tue', undefined, 'Tue'),
+    wed: t('admin.siteSettings.structured.businessHours.days.wed', undefined, 'Wed'),
+    thu: t('admin.siteSettings.structured.businessHours.days.thu', undefined, 'Thu'),
+    fri: t('admin.siteSettings.structured.businessHours.days.fri', undefined, 'Fri'),
+    sat: t('admin.siteSettings.structured.businessHours.days.sat', undefined, 'Sat'),
+    sun: t('admin.siteSettings.structured.businessHours.days.sun', undefined, 'Sun'),
   };
 
   const setRow = (idx: number, patch: Partial<(typeof form)[number]>) => {
@@ -128,7 +133,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
     <div className="space-y-4">
       <Alert variant="default" className="py-2">
         <AlertDescription className="text-sm">
-          Saat formatı HH:MM. "Closed" seçilirse gün kapalıdır.
+          {t('admin.siteSettings.structured.businessHours.description')}
         </AlertDescription>
       </Alert>
 
@@ -136,10 +141,10 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-40">Gün</TableHead>
-              <TableHead className="w-40">Açılış</TableHead>
-              <TableHead className="w-40">Kapanış</TableHead>
-              <TableHead className="w-32">Kapalı</TableHead>
+              <TableHead className="w-40">{t('admin.siteSettings.structured.businessHours.columns.day')}</TableHead>
+              <TableHead className="w-40">{t('admin.siteSettings.structured.businessHours.columns.open')}</TableHead>
+              <TableHead className="w-40">{t('admin.siteSettings.structured.businessHours.columns.close')}</TableHead>
+              <TableHead className="w-32">{t('admin.siteSettings.structured.businessHours.columns.closed')}</TableHead>
               <TableHead className="text-right w-24"> </TableHead>
             </TableRow>
           </TableHeader>
@@ -203,7 +208,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
                       disabled={disabled}
                     />
                     <Label htmlFor={`closed-${idx}`} className="text-xs">
-                      closed
+                      {t('admin.siteSettings.structured.businessHours.closedLabel')}
                     </Label>
                   </div>
                 </TableCell>
@@ -216,7 +221,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
                     onClick={() => removeRow(idx)}
                     disabled={disabled}
                   >
-                    Sil
+                    {t('admin.siteSettings.structured.businessHours.removeRow')}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -235,7 +240,7 @@ export const BusinessHoursStructuredForm: React.FC<BusinessHoursStructuredFormPr
           onClick={addRow}
           disabled={disabled}
         >
-          Satır Ekle
+          {t('admin.siteSettings.structured.businessHours.addRow')}
         </Button>
       </div>
     </div>

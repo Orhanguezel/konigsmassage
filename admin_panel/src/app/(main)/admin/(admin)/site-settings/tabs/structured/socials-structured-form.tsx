@@ -7,6 +7,8 @@
 
 import React from "react";
 import { z } from "zod";
+import { useAdminTranslations } from "@/i18n";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
@@ -57,23 +59,26 @@ export const SocialsStructuredForm: React.FC<SocialsStructuredFormProps> = ({
   disabled,
   seed,
 }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
   const s =
     (seed || { instagram: "", facebook: "", linkedin: "", youtube: "", x: "" }) as SocialsFormState;
   const form = socialsObjToForm(value, s);
 
   const fields = [
-    ["instagram", "Instagram"],
-    ["facebook", "Facebook"],
-    ["linkedin", "LinkedIn"],
-    ["youtube", "YouTube"],
-    ["x", "X (Twitter)"],
+    ["instagram", t("admin.siteSettings.structured.socials.labels.instagram")],
+    ["facebook", t("admin.siteSettings.structured.socials.labels.facebook")],
+    ["linkedin", t("admin.siteSettings.structured.socials.labels.linkedin")],
+    ["youtube", t("admin.siteSettings.structured.socials.labels.youtube")],
+    ["x", t("admin.siteSettings.structured.socials.labels.x")],
   ] as const;
 
   return (
     <div className="space-y-4">
       <Alert variant="default" className="py-2">
         <AlertDescription className="text-sm">
-          Sosyal linkleri tam URL (https://...) veya kullanıcı adı olarak girebilirsin.
+          {t("admin.siteSettings.structured.socials.description")}
         </AlertDescription>
       </Alert>
 

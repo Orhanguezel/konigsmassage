@@ -6,6 +6,8 @@
 
 import React from 'react';
 import { z } from 'zod';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
@@ -56,6 +58,9 @@ export const UiHeaderStructuredForm: React.FC<UiHeaderStructuredFormProps> = ({
   disabled,
   seed,
 }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
   const s = (seed || {
     nav_home: 'Home',
     nav_products: 'Products',
@@ -67,18 +72,18 @@ export const UiHeaderStructuredForm: React.FC<UiHeaderStructuredFormProps> = ({
   const form = uiHeaderObjToForm(value, s);
 
   const fields = [
-    ['nav_home', 'Menü: Home'],
-    ['nav_products', 'Menü: Products'],
-    ['nav_services', 'Menü: Services'],
-    ['nav_contact', 'Menü: Contact'],
-    ['cta_label', 'CTA Label'],
+    ['nav_home', t('admin.siteSettings.structured.uiHeader.labels.navHome')],
+    ['nav_products', t('admin.siteSettings.structured.uiHeader.labels.navProducts')],
+    ['nav_services', t('admin.siteSettings.structured.uiHeader.labels.navServices')],
+    ['nav_contact', t('admin.siteSettings.structured.uiHeader.labels.navContact')],
+    ['cta_label', t('admin.siteSettings.structured.uiHeader.labels.ctaLabel')],
   ] as const;
 
   return (
     <div className="space-y-4">
       <Alert variant="default" className="py-2">
         <AlertDescription className="text-sm">
-          Header navigasyon ve CTA label metinleri. Dil bazlı override için locale satırı kullan.
+          {t('admin.siteSettings.structured.uiHeader.description')}
         </AlertDescription>
       </Alert>
 

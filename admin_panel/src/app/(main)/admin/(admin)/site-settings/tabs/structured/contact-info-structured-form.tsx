@@ -7,6 +7,8 @@
 
 import React from "react";
 import { z } from "zod";
+import { useAdminTranslations } from "@/i18n";
+import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
@@ -56,6 +58,9 @@ export const ContactInfoStructuredForm: React.FC<ContactInfoStructuredFormProps>
   disabled,
   seed,
 }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
   const s = (seed || { phone: "", email: "", address: "", whatsapp: "" }) as ContactInfoFormState;
   const form = contactObjToForm(value, s);
 
@@ -63,13 +68,13 @@ export const ContactInfoStructuredForm: React.FC<ContactInfoStructuredFormProps>
     <div className="space-y-4">
       <Alert variant="default" className="py-2">
         <AlertDescription className="text-sm">
-          İletişim bilgileri. Boş bırakılan alanlar frontend'de boş string olarak kaydedilir.
+          {t("admin.siteSettings.structured.contact.description")}
         </AlertDescription>
       </Alert>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="contact-phone" className="text-sm">Telefon</Label>
+          <Label htmlFor="contact-phone" className="text-sm">{t("admin.siteSettings.structured.contact.labels.phone")}</Label>
           <Input
             id="contact-phone"
             className="h-8"
@@ -81,7 +86,7 @@ export const ContactInfoStructuredForm: React.FC<ContactInfoStructuredFormProps>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="contact-email" className="text-sm">E-posta</Label>
+          <Label htmlFor="contact-email" className="text-sm">{t("admin.siteSettings.structured.contact.labels.email")}</Label>
           <Input
             id="contact-email"
             className="h-8"
@@ -93,7 +98,7 @@ export const ContactInfoStructuredForm: React.FC<ContactInfoStructuredFormProps>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="contact-whatsapp" className="text-sm">WhatsApp</Label>
+          <Label htmlFor="contact-whatsapp" className="text-sm">{t("admin.siteSettings.structured.contact.labels.whatsapp")}</Label>
           <Input
             id="contact-whatsapp"
             className="h-8"
@@ -105,7 +110,7 @@ export const ContactInfoStructuredForm: React.FC<ContactInfoStructuredFormProps>
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="contact-address" className="text-sm">Adres</Label>
+          <Label htmlFor="contact-address" className="text-sm">{t("admin.siteSettings.structured.contact.labels.address")}</Label>
           <Textarea
             id="contact-address"
             rows={3}
