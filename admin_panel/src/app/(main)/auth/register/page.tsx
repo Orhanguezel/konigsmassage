@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Suspense } from 'react';
 
 import { RegisterForm } from '../_components/register-form';
-import { useAdminTranslations } from '../../../../i18n/adminUi';
+import { useAdminTranslations } from '@/i18n';
 import { useLocaleShort } from '../../../../i18n/useLocaleShort';
 
 function RegisterFormFallback() {

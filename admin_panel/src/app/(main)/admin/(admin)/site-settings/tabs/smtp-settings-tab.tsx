@@ -13,7 +13,8 @@ import {
 } from '@/integrations/hooks';
 
 import type { SettingValue, SiteSetting } from '@/integrations/shared';
-import { useAdminTranslations } from '../../../../../../i18n/adminUi';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -86,7 +87,8 @@ function toMap(settings?: any) {
 }
 
 export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
-  const t = useAdminTranslations(locale);
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
 
   const {
     data: settings,
@@ -143,7 +145,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
       ];
 
       for (const u of updates) {
-        await updateSetting({ key: u.key, value: u.value }).unwrap();
+        await updateSetting({ key: u.key, locale: '*', value: u.value }).unwrap();
       }
 
       toast.success(t('admin.siteSettings.smtp.saved'));

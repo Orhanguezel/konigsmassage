@@ -224,6 +224,7 @@ export function buildAdminSiteSettingsListParams(
   if (p.group) q.group = p.group;
   if (p.keys?.length) q.keys = p.keys.join(',');
   if (p.prefix) q.prefix = p.prefix;
+  if (p.locale) q.locale = p.locale;
 
   const col = p.sort ?? 'key';
   const dir = p.order ?? 'asc';

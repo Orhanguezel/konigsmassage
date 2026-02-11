@@ -7,13 +7,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { FALLBACK_LOCALE } from './config';
 import { normLocaleTag } from './localeUtils';
 import { ensureLocationEventsPatched } from './locationEvents';
-
-type AppLocaleMeta = {
-  code?: unknown;
-  label?: unknown;
-  is_default?: unknown;
-  is_active?: unknown;
-};
+import {
+  computeActiveLocales,
+  normalizeAppLocalesMeta,
+  normalizeDefaultLocaleValue,
+  type AppLocaleMeta,
+} from './app-locales-meta';
 
 function readLocaleFromCookie(): string {
   if (typeof document === 'undefined') return '';
@@ -31,23 +30,6 @@ function readLocaleFromQuery(): string {
   }
 }
 
-function computeActiveLocales(meta: any[] | undefined): string[] {
-  const arr = Array.isArray(meta) ? meta : [];
-
-  const active = arr
-    .filter((x) => x && (x as any).is_active !== false)
-    .map((x) => normLocaleTag((x as any).code))
-    .filter(Boolean) as string[];
-
-  const uniq = Array.from(new Set(active));
-
-  const def = arr.find((x) => (x as any)?.is_default === true && (x as any)?.is_active !== false);
-  const defCode = def ? normLocaleTag((def as any).code) : '';
-  const out = defCode ? [defCode, ...uniq.filter((x) => x !== defCode)] : uniq;
-
-  return out.length ? out : [normLocaleTag(FALLBACK_LOCALE) || 'de'];
-}
-
 function getApiBase(): string {
   const raw =
     (process.env.NEXT_PUBLIC_API_BASE_URL || '').trim() || (process.env.API_BASE_URL || '').trim();
@@ -62,19 +44,6 @@ async function fetchJson<T>(url: string): Promise<T | null> {
   } catch {
     return null;
   }
-}
-
-function normalizeDefaultLocaleValue(v: any): string {
-  if (v && typeof v === 'object' && 'data' in v) return normLocaleTag((v as any).data);
-  return normLocaleTag(v);
-}
-
-function normalizeAppLocalesValue(v: any): AppLocaleMeta[] {
-  if (Array.isArray(v)) return v as AppLocaleMeta[];
-  if (v && typeof v === 'object' && 'data' in v && Array.isArray((v as any).data)) {
-    return (v as any).data as AppLocaleMeta[];
-  }
-  return [];
 }
 
 export function useResolvedLocale(explicitLocale?: string | null): string {
@@ -119,7 +88,7 @@ export function useResolvedLocale(explicitLocale?: string | null): string {
         fetchJson<any>(`${base}/site_settings/default-locale`),
       ]);
 
-      const appArr = normalizeAppLocalesValue(appLocalesRaw);
+      const appArr = normalizeAppLocalesMeta(appLocalesRaw);
       const def = normalizeDefaultLocaleValue(defaultLocaleRaw);
 
       setAppLocalesMeta(appArr.length ? appArr : null);
@@ -128,7 +97,7 @@ export function useResolvedLocale(explicitLocale?: string | null): string {
   }, []);
 
   return useMemo(() => {
-    const activeLocales = computeActiveLocales((appLocalesMeta || []) as any);
+    const activeLocales = computeActiveLocales((appLocalesMeta || []) as AppLocaleMeta[], FALLBACK_LOCALE);
     const activeSet = new Set(activeLocales.map(normLocaleTag));
 
     // ✅ 1) __lc query: rewrite’ın tek kaynağı

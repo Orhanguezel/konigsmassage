@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Suspense } from 'react';
 
 import { LoginForm } from '../_components/login-form';
-import { useLocaleContext } from '@/i18n/LocaleProvider';
+import { useLocaleContext } from '@/i18n';
 
 function LoginFormFallback() {
   return (

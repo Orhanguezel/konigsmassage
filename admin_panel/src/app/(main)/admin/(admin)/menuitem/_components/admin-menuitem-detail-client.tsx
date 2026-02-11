@@ -43,13 +43,6 @@ import {
   useDeleteMenuItemAdminMutation,
 } from '@/integrations/hooks';
 
-function getErrMsg(e: unknown): string {
-  const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message || anyErr?.data?.message || anyErr?.message || 'İşlem başarısız'
-  );
-}
-
 type FormData = {
   title: string;
   url: string;
@@ -65,11 +58,24 @@ type FormData = {
 };
 
 export default function AdminMenuItemDetailClient({ id }: { id: string }) {
-  const t = useAdminT();
+  const t = useAdminT('admin.menuitem');
   const router = useRouter();
   const isNew = id === 'new';
 
   const { localeOptions, defaultLocaleFromDb } = useAdminLocales();
+
+  const getErrMsg = React.useCallback(
+    (e: unknown): string => {
+      const anyErr = e as any;
+      return (
+        anyErr?.data?.error?.message ||
+        anyErr?.data?.message ||
+        anyErr?.message ||
+        t('form.errors.generic')
+      );
+    },
+    [t],
+  );
 
   const apiLocale = React.useMemo(() => {
     return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'de');
@@ -142,17 +148,17 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      toast.error('Başlık gerekli');
+      toast.error(t("form.errors.titleRequired"));
       return;
     }
 
     if (formData.type === 'custom' && !formData.url.trim()) {
-      toast.error('Özel URL tipi için URL gerekli');
+      toast.error(t("form.errors.urlRequired"));
       return;
     }
 
     if (formData.type === 'page' && !formData.page_id.trim()) {
-      toast.error('Sayfa tipi için sayfa ID gerekli');
+      toast.error(t("form.errors.pageIdRequired"));
       return;
     }
 
@@ -172,7 +178,7 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
           locale: formData.locale,
         };
         await createMenuItem(body).unwrap();
-        toast.success('Menü öğesi oluşturuldu');
+        toast.success(t("form.success.created"));
         router.push('/admin/menuitem');
       } else {
         const data = {
@@ -189,7 +195,7 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
           locale: formData.locale,
         };
         await updateMenuItem({ id, data }).unwrap();
-        toast.success('Menü öğesi güncellendi');
+        toast.success(t("form.success.updated"));
         router.push('/admin/menuitem');
       }
     } catch (err) {
@@ -198,11 +204,11 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
   };
 
   const handleDelete = async () => {
-    if (!confirm(`"${item?.title}" menü öğesini silmek istediğinize emin misiniz?`)) return;
+    if (!confirm(t("list.deleteConfirm", { title: item?.title || "" }))) return;
 
     try {
       await deleteMenuItem({ id }).unwrap();
-      toast.success('Menü öğesi silindi');
+      toast.success(t("list.deleted"));
       router.push('/admin/menuitem');
     } catch (err) {
       toast.error(getErrMsg(err));
@@ -231,12 +237,12 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
             <div className="flex gap-2">
               <Button onClick={handleBack} variant="outline" size="sm">
                 <ArrowLeft className="mr-2 size-4" />
-                Geri
+                {t("form.back")}
               </Button>
               {!isNew && (
                 <Button onClick={handleDelete} disabled={busy} variant="destructive" size="sm">
                   <Trash2 className="mr-2 size-4" />
-                  Sil
+                  {t("form.delete")}
                 </Button>
               )}
             </div>
@@ -247,24 +253,24 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
       {/* Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Menü Öğesi Bilgileri</CardTitle>
+          <CardTitle>{t("form.contentTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSave} className="space-y-6">
             {/* Basic Info */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold">Temel Bilgiler</h3>
+              <h3 className="text-sm font-semibold">{t("form.basicInfo")}</h3>
 
               {/* Title */}
               <div className="space-y-2">
                 <Label htmlFor="title">
-                  Başlık <span className="text-destructive">*</span>
+                  {t("form.labels.title")} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData((p) => ({ ...p, title: e.target.value }))}
-                  placeholder="Menü başlığı"
+                  placeholder={t("form.placeholders.title")}
                   required
                   disabled={busy}
                 />
@@ -273,7 +279,7 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
               {/* Type */}
               <div className="space-y-2">
                 <Label htmlFor="type">
-                  Tip <span className="text-destructive">*</span>
+                  {t("form.labels.type")} <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={formData.type}
@@ -284,12 +290,12 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="page">Sayfa (Internal)</SelectItem>
-                    <SelectItem value="custom">Özel URL</SelectItem>
+                    <SelectItem value="page">{t("list.types.page")}</SelectItem>
+                    <SelectItem value="custom">{t("list.types.custom")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Sayfa: Site içi sayfa, Özel URL: Dış veya özel link
+                  {t("form.help.typeDesc")}
                 </p>
               </div>
 
@@ -297,17 +303,17 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
               {formData.type === 'page' && (
                 <div className="space-y-2">
                   <Label htmlFor="page_id">
-                    Sayfa ID <span className="text-destructive">*</span>
+                    {t("form.labels.pageId")} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="page_id"
                     value={formData.page_id}
                     onChange={(e) => setFormData((p) => ({ ...p, page_id: e.target.value }))}
-                    placeholder="UUID veya slug"
+                    placeholder={t("form.placeholders.pageId")}
                     required={formData.type === 'page'}
                     disabled={busy}
                   />
-                  <p className="text-xs text-muted-foreground">Özel sayfanın ID'si veya slug'ı</p>
+                  <p className="text-xs text-muted-foreground">{t("form.help.pageIdHelp")}</p>
                 </div>
               )}
 
@@ -315,13 +321,13 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
               {formData.type === 'custom' && (
                 <div className="space-y-2">
                   <Label htmlFor="url">
-                    URL <span className="text-destructive">*</span>
+                    {t("form.labels.url")} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="url"
                     value={formData.url}
                     onChange={(e) => setFormData((p) => ({ ...p, url: e.target.value }))}
-                    placeholder="https://example.com veya /relative-path"
+                    placeholder={t("form.placeholders.url")}
                     required={formData.type === 'custom'}
                     disabled={busy}
                   />
@@ -331,7 +337,7 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
               {/* Location */}
               <div className="space-y-2">
                 <Label htmlFor="location">
-                  Konum <span className="text-destructive">*</span>
+                  {t("form.labels.location")} <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={formData.location}
@@ -342,8 +348,8 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="header">Header</SelectItem>
-                    <SelectItem value="footer">Footer</SelectItem>
+                    <SelectItem value="header">{t("form.help.locationHeader")}</SelectItem>
+                    <SelectItem value="footer">{t("form.help.locationFooter")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -351,7 +357,7 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
               {/* Locale */}
               <div className="space-y-2">
                 <Label htmlFor="locale">
-                  Dil <span className="text-destructive">*</span>
+                  {t("form.labels.locale")} <span className="text-destructive">*</span>
                 </Label>
                 <Select
                   value={formData.locale}
@@ -374,11 +380,11 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
 
             {/* Advanced Options */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold">Gelişmiş Ayarlar</h3>
+              <h3 className="text-sm font-semibold">{t('form.advancedTitle')}</h3>
 
               {/* ✅ FIX: Parent ID — value="" yerine value="none" kullanıldı */}
               <div className="space-y-2">
-                <Label htmlFor="parent_id">Üst Menü (Opsiyonel)</Label>
+                <Label htmlFor="parent_id">{t('form.labels.parentId')}</Label>
                 <Select
                   value={formData.parent_id || 'none'}
                   onValueChange={(v) =>
@@ -387,10 +393,10 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
                   disabled={busy}
                 >
                   <SelectTrigger id="parent_id">
-                    <SelectValue placeholder="Üst menü yok (ana seviye)" />
+                    <SelectValue placeholder={t('form.placeholders.parentNone')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Üst menü yok</SelectItem>
+                    <SelectItem value="none">{t('form.help.parentNoneOption')}</SelectItem>
                     {parentOptions.map((p: AdminMenuItemDto) => (
                       <SelectItem key={p.id} value={p.id}>
                         {p.title} ({p.location})
@@ -398,41 +404,39 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  Alt menü oluşturmak için üst menüyü seçin
-                </p>
+                <p className="text-xs text-muted-foreground">{t('form.help.parentHelp')}</p>
               </div>
 
               {/* Icon */}
               <div className="space-y-2">
-                <Label htmlFor="icon">İkon (Opsiyonel)</Label>
+                <Label htmlFor="icon">{t("form.labels.icon")}</Label>
                 <Input
                   id="icon"
                   value={formData.icon}
                   onChange={(e) => setFormData((p) => ({ ...p, icon: e.target.value }))}
-                  placeholder="İkon class veya emoji"
+                  placeholder={t("form.placeholders.icon")}
                   disabled={busy}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Örnek: fa fa-home, lucide-home, veya 🏠
+                  {t("form.help.iconExample")}
                 </p>
               </div>
 
               {/* Section ID */}
               <div className="space-y-2">
-                <Label htmlFor="section_id">Section ID (Opsiyonel)</Label>
+                <Label htmlFor="section_id">{t("form.labels.sectionId")}</Label>
                 <Input
                   id="section_id"
                   value={formData.section_id}
                   onChange={(e) => setFormData((p) => ({ ...p, section_id: e.target.value }))}
-                  placeholder="Grup ID'si"
+                  placeholder={t("form.placeholders.sectionId")}
                   disabled={busy}
                 />
               </div>
 
               {/* Display Order */}
               <div className="space-y-2">
-                <Label htmlFor="display_order">Sıra Numarası</Label>
+                <Label htmlFor="display_order">{t("form.labels.order")}</Label>
                 <Input
                   id="display_order"
                   type="number"
@@ -444,15 +448,15 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
                   disabled={busy}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Menüde gösterilme sırası (küçük değerler önce)
+                  {t("form.help.orderHelp")}
                 </p>
               </div>
 
               {/* Is Active */}
               <div className="flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <Label htmlFor="is_active">Aktif</Label>
-                  <p className="text-xs text-muted-foreground">Menü öğesini sitede göster</p>
+                  <Label htmlFor="is_active">{t("form.labels.active")}</Label>
+                  <p className="text-xs text-muted-foreground">{t("form.help.activeHelp")}</p>
                 </div>
                 <Switch
                   id="is_active"
@@ -466,11 +470,11 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
             {/* Submit */}
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" onClick={handleBack} variant="outline" disabled={busy}>
-                İptal
+                {t("admin.common.cancel")}
               </Button>
               <Button type="submit" disabled={busy}>
                 <Save className="mr-2 size-4" />
-                {busy ? 'Kaydediliyor...' : 'Kaydet'}
+                {busy ? t("form.saving") : t("form.save")}
               </Button>
             </div>
           </form>
@@ -481,28 +485,28 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
       {!isNew && item && (
         <Card>
           <CardHeader>
-            <CardTitle>Meta Bilgiler</CardTitle>
+            <CardTitle>{t("form.metaTitle")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">ID</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("form.metaId")}</p>
                 <p className="text-sm">{item.id}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Oluşturulma</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("form.metaCreatedAt")}</p>
                 <p className="text-sm">
                   {item.created_at ? new Date(item.created_at).toLocaleString('tr-TR') : '-'}
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Güncellenme</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("form.metaUpdatedAt")}</p>
                 <p className="text-sm">
                   {item.updated_at ? new Date(item.updated_at).toLocaleString('tr-TR') : '-'}
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Dil</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("form.metaLocale")}</p>
                 <p className="text-sm">{item.locale || '-'}</p>
               </div>
             </div>

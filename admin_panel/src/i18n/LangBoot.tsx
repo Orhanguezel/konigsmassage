@@ -10,29 +10,13 @@ import HtmlLangSync from './HtmlLangSync';
 import { KNOWN_RTL } from './config';
 import { FALLBACK_LOCALE } from './config';
 import { normLocaleTag } from './localeUtils';
+import { computeActiveLocales } from './app-locales-meta';
 import { useGetAppLocalesAdminQuery, useGetDefaultLocaleAdminQuery } from '@/integrations/hooks';
 
 function readLocaleFromPath(asPath?: string): string {
   const p = String(asPath || '/').trim();
   const seg = p.replace(/^\/+/, '').split('/')[0] || '';
   return normLocaleTag(seg);
-}
-
-function computeActiveLocales(meta: any[] | undefined): string[] {
-  const arr = Array.isArray(meta) ? meta : [];
-
-  const active = arr
-    .filter((x) => x && x.is_active !== false)
-    .map((x) => normLocaleTag(x.code))
-    .filter(Boolean) as string[];
-
-  const uniq = Array.from(new Set(active));
-
-  const def = arr.find((x) => x?.is_default === true && x?.is_active !== false);
-  const defCode = def ? normLocaleTag(def.code) : '';
-  const out = defCode ? [defCode, ...uniq.filter((x) => x !== defCode)] : uniq;
-
-  return out.length ? out : [normLocaleTag(FALLBACK_LOCALE) || 'de'];
 }
 
 export default function LangBoot() {
@@ -42,7 +26,7 @@ export default function LangBoot() {
   const { data: defaultLocaleMeta } = useGetDefaultLocaleAdminQuery();
 
   const activeLocales = useMemo(
-    () => computeActiveLocales(appLocalesMeta as any),
+    () => computeActiveLocales(appLocalesMeta as any, FALLBACK_LOCALE),
     [appLocalesMeta],
   );
 

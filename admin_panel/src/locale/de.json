@@ -78,12 +78,6 @@
         "apply": "Anwenden",
         "locale": "Sprache",
         "key": "Schlüssel",
-        "footerSections": {
-          "header": {
-            "edit": "Bearbeiten",
-            "delete": "Löschen"
-          }
-        },
         "value": "Wert",
         "source": "Quelle",
         "exists": "Existiert",
@@ -198,15 +192,17 @@
       },
       "menuitem": {
         "header": {
-          "title": "Header Menü",
+          "title": "Header-Menü",
           "total": "Gesamt {count} Einträge.",
           "refresh": "Aktualisieren",
           "refreshing": "Laden...",
+          "loading": "Lädt...",
           "create": "Neues Menüelement",
           "searchLabel": "Suche",
           "searchPlaceholder": "Titel oder URL suchen...",
           "localeLabel": "Sprache",
           "allLocales": "Alle Sprachen",
+          "defaultLabel": "Standard",
           "activeLabel": "Status",
           "allStats": "Alle",
           "active": "Aktiv",
@@ -217,7 +213,8 @@
           "sortTitle": "Titel",
           "orderLabel": "Richtung",
           "asc": "Aufsteigend",
-          "desc": "Absteigend"
+          "desc": "Absteigend",
+          "filtersTitle": "Filter"
         },
         "list": {
           "title": "Menüelemente",
@@ -244,7 +241,7 @@
           "deleteButton": "Löschen",
           "noData": "Keine Menüelemente gefunden.",
           "loading": "Laden...",
-          "noTitle": "(kein titel)",
+          "noTitle": "(Kein Titel)",
           "orderSaved": "Reihenfolge gespeichert.",
           "statusActive": "Aktiviert",
           "statusPassive": "Deaktiviert"
@@ -261,6 +258,7 @@
           "created": "Menüelement erstellt.",
           "updated": "Menüelement aktualisiert.",
           "basicInfo": "Basisinformationen",
+          "advancedTitle": "Erweiterte Einstellungen",
           "labels": {
             "title": "Titel",
             "url": "URL",
@@ -278,8 +276,16 @@
             "title": "Menütitel",
             "url": "https://... oder /beispiel",
             "urlPage": "Optional für Seitentyp",
-            "icon": "Bootstrap / Custom Icon Klasse"
+            "icon": "Bootstrap / Custom Icon Klasse",
+            "pageId": "UUID oder Slug",
+            "parentNone": "Kein übergeordnetes Menü (Hauptebene)",
+            "sectionId": "Gruppen-ID"
           },
+          "metaTitle": "Meta-Informationen",
+          "metaId": "ID",
+          "metaCreatedAt": "Erstellt am",
+          "metaUpdatedAt": "Aktualisiert am",
+          "metaLocale": "Sprache",
           "errors": {
             "titleRequired": "Titel ist erforderlich.",
             "urlRequired": "URL ist für benutzerdefinierten Typ erforderlich.",
@@ -295,6 +301,12 @@
             "typeDesc": "Seite: Intern, Custom: Externer Link",
             "typeCustomUrlRequired": "URL ist erforderlich, wenn Typ custom ist.",
             "advanced": "Erweiterte Felder sind im JSON-Modus bearbeitbar.",
+            "pageIdHelp": "ID oder Slug der Seite.",
+            "parentNoneOption": "Kein übergeordnetes Menü",
+            "parentHelp": "Wählen Sie ein übergeordnetes Menü, um ein Untermenü zu erstellen.",
+            "iconExample": "Beispiel: fa fa-home, lucide-home oder 🏠",
+            "orderHelp": "Anzeigereihenfolge (kleinere Werte zuerst)",
+            "activeHelp": "Menüelement auf der Website anzeigen",
             "locationUnknown": "Unbekannt",
             "locationHeader": "Kopfzeile",
             "locationFooter": "Fußzeile"
@@ -303,6 +315,67 @@
           "delete": "Löschen",
           "save": "Speichern",
           "saving": "Speichert..."
+        }
+      },
+      "footerSections": {
+        "header": {
+          "title": "Footer-Bereiche",
+          "description": "Verwalten Sie die Bereiche, die im Footer angezeigt werden.",
+          "create": "Neuen Bereich hinzufügen",
+          "edit": "Bearbeiten",
+          "delete": "Löschen",
+          "searchLabel": "Suche",
+          "searchPlaceholder": "Nach Titel suchen...",
+          "activeLabel": "Status",
+          "activeOptions": {
+            "all": "Alle",
+            "active": "Aktiv",
+            "inactive": "Inaktiv"
+          },
+          "loading": "Lädt..."
+        },
+        "list": {
+          "title": "Titel",
+          "slug": "Slug",
+          "active": "Aktiv",
+          "createdAt": "Erstellt am",
+          "actions": "Aktionen",
+          "empty": "Keine Bereiche gefunden.",
+          "deleteConfirmTitle": "Bereich löschen?",
+          "deleteConfirmDesc": "Diese Aktion kann nicht rückgängig gemacht werden.",
+          "cancel": "Abbrechen",
+          "confirm": "Löschen",
+          "statusActive": "Aktiviert",
+          "statusPassive": "Deaktiviert",
+          "deleted": "Bereich gelöscht.",
+          "deleteError": "Bereich konnte nicht gelöscht werden."
+        },
+        "form": {
+          "createTitle": "Neuer Footer-Bereich",
+          "editTitle": "Footer-Bereich bearbeiten",
+          "createDesc": "Einen neuen Footer-Bereich erstellen.",
+          "editDesc": "Footer-Bereich bearbeiten.",
+          "back": "Zurück",
+          "generalInfo": "Allgemeine Informationen",
+          "displayOrder": "Anzeigereihenfolge",
+          "displayOrderPlaceholder": "Reihenfolgenummer eingeben",
+          "active": "Aktiv",
+          "title": "Titel",
+          "titlePlaceholder": "Bereichstitel",
+          "slug": "Slug",
+          "slugPlaceholder": "footer-bereich",
+          "description": "Beschreibung",
+          "descriptionPlaceholder": "Kurze Beschreibung",
+          "save": "Speichern",
+          "saving": "Speichert...",
+          "created": "Footer-Bereich erstellt.",
+          "updated": "Footer-Bereich aktualisiert.",
+          "error": {
+            "titleRequired": "Titel ist erforderlich.",
+            "slugRequired": "Slug ist erforderlich.",
+            "load": "Datensatz konnte nicht geladen werden.",
+            "return": "Zur Liste zurückkehren"
+          }
         }
       },
       

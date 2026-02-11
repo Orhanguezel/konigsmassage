@@ -111,12 +111,6 @@
         "apply": "Apply",
         "locale": "Language",
         "key": "Key",
-        "footerSections": {
-          "header": {
-            "edit": "Edit",
-            "delete": "Delete"
-          }
-        },
         "value": "Value",
         "source": "Source",
         "exists": "Exists",
@@ -235,11 +229,13 @@
           "total": "Total {count} records found.",
           "refresh": "Refresh",
           "refreshing": "Refreshing...",
+          "loading": "Loading...",
           "create": "New Menu Item",
           "searchLabel": "Search",
           "searchPlaceholder": "Search title or URL...",
           "localeLabel": "Language",
           "allLocales": "All Languages",
+          "defaultLabel": "default",
           "activeLabel": "Status",
           "allStats": "All",
           "active": "Active",
@@ -250,7 +246,8 @@
           "sortTitle": "Title",
           "orderLabel": "Direction",
           "asc": "Ascending",
-          "desc": "Descending"
+          "desc": "Descending",
+          "filtersTitle": "Filters"
         },
         "list": {
           "title": "Menu Items",
@@ -265,7 +262,7 @@
             "active": "Active",
             "date": "Date",
             "actions": "Actions",
-            "locale": "Lang"
+            "locale": "Locale"
           },
           "types": {
             "page": "Page",
@@ -294,6 +291,7 @@
           "created": "Menu item created.",
           "updated": "Menu item updated.",
           "basicInfo": "Basic Info",
+          "advancedTitle": "Advanced Settings",
           "labels": {
             "title": "Title",
             "url": "URL",
@@ -311,8 +309,16 @@
             "title": "Menu title",
             "url": "https://... or /example",
             "urlPage": "Optional for Page type",
-            "icon": "Bootstrap / custom icon class"
+            "icon": "Bootstrap / custom icon class",
+            "pageId": "UUID or slug",
+            "parentNone": "No parent (top level)",
+            "sectionId": "Group ID"
           },
+          "metaTitle": "Metadata",
+          "metaId": "ID",
+          "metaCreatedAt": "Created At",
+          "metaUpdatedAt": "Updated At",
+          "metaLocale": "Locale",
           "errors": {
             "titleRequired": "Title is required.",
             "urlRequired": "URL is required for Custom URL type.",
@@ -328,6 +334,12 @@
             "typeDesc": "Page: Internal, Custom URL: External/Custom link",
             "typeCustomUrlRequired": "URL is required if type is custom.",
             "advanced": "Advanced fields are editable in JSON mode.",
+            "pageIdHelp": "Custom page ID or slug.",
+            "parentNoneOption": "No parent",
+            "parentHelp": "Select a parent menu to create a submenu.",
+            "iconExample": "Example: fa fa-home, lucide-home, or 🏠",
+            "orderHelp": "Display order (lower numbers first)",
+            "activeHelp": "Show menu item on the site",
             "locationUnknown": "Unknown",
             "locationHeader": "Header",
             "locationFooter": "Footer"
@@ -336,6 +348,67 @@
           "delete": "Delete",
           "save": "Save",
           "saving": "Saving..."
+        }
+      },
+      "footerSections": {
+        "header": {
+          "title": "Footer Sections",
+          "description": "Manage the sections to be shown in the footer.",
+          "create": "Add New Section",
+          "edit": "Edit",
+          "delete": "Delete",
+          "searchLabel": "Search",
+          "searchPlaceholder": "Search by title...",
+          "activeLabel": "Status",
+          "activeOptions": {
+            "all": "All",
+            "active": "Active",
+            "inactive": "Inactive"
+          },
+          "loading": "Loading..."
+        },
+        "list": {
+          "title": "Title",
+          "slug": "Slug",
+          "active": "Active",
+          "createdAt": "Created At",
+          "actions": "Actions",
+          "empty": "No sections found.",
+          "deleteConfirmTitle": "Delete section?",
+          "deleteConfirmDesc": "This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete",
+          "statusActive": "Activated",
+          "statusPassive": "Deactivated",
+          "deleted": "Section deleted.",
+          "deleteError": "Failed to delete section."
+        },
+        "form": {
+          "createTitle": "New Footer Section",
+          "editTitle": "Edit Footer Section",
+          "createDesc": "Create a new footer section.",
+          "editDesc": "Edit the footer section.",
+          "back": "Back",
+          "generalInfo": "General Information",
+          "displayOrder": "Display Order",
+          "displayOrderPlaceholder": "Enter order number",
+          "active": "Active",
+          "title": "Title",
+          "titlePlaceholder": "Section title",
+          "slug": "Slug",
+          "slugPlaceholder": "footer-section",
+          "description": "Description",
+          "descriptionPlaceholder": "Short description",
+          "save": "Save",
+          "saving": "Saving...",
+          "created": "Footer section created.",
+          "updated": "Footer section updated.",
+          "error": {
+            "titleRequired": "Title is required.",
+            "slugRequired": "Slug is required.",
+            "load": "Failed to load record.",
+            "return": "Return to list"
+          }
         }
       },
       

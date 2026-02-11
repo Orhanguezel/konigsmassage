@@ -45,10 +45,11 @@ const fmtDate = (value: unknown, locale: string) => {
   }
 };
 
-const fmtLocation = (loc?: string | null) => {
-  if (loc === 'header') return 'Header';
-  if (loc === 'footer') return 'Footer';
-  return loc ?? '-';
+const fmtLocation = (loc: unknown, t: any) => {
+  const v = safeText(loc).trim().toLowerCase();
+  if (v === 'header') return t('form.help.locationHeader');
+  if (v === 'footer') return t('form.help.locationFooter');
+  return t('form.help.locationUnknown');
 };
 
 const truncate = (v: unknown, max = 60) => {
@@ -67,8 +68,8 @@ const getTypeLabel = (raw: unknown, t: any): string => {
   const v = safeText(raw).trim().toLowerCase();
   if (!v) return '-';
   if (v === 'page' || v === 'internal_page' || v === 'route' || v === '1' || v === 'true')
-    return t('admin.menuitem.list.types.page');
-  return t('admin.menuitem.list.types.custom');
+    return t('list.types.page');
+  return t('list.types.custom');
 };
 
 /* ---------------- Props ---------------- */
@@ -107,7 +108,7 @@ export const MenuItemList: React.FC<MenuItemListProps> = ({
   dateLocale = 'tr-TR',
   hideLocationColumn = false,
 }) => {
-  const t = useAdminT();
+  const t = useAdminT('admin.menuitem');
   const total = items.length;
   const hasData = total > 0;
 
@@ -167,12 +168,12 @@ export const MenuItemList: React.FC<MenuItemListProps> = ({
   return (
     <div className="card">
       <div className="card-header py-2 d-flex justify-content-between align-items-center">
-        <span className="small fw-semibold">{t('admin.menuitem.list.title')}</span>
+        <span className="small fw-semibold">{t('list.title')}</span>
 
         <div className="d-flex gap-2 align-items-center flex-wrap">
           {loading && (
             <span className="badge bg-secondary">
-              {t('admin.menuitem.header.loading') || 'Yükleniyor'}
+              {t('header.loading')}
             </span>
           )}
 
@@ -184,13 +185,13 @@ export const MenuItemList: React.FC<MenuItemListProps> = ({
               disabled={!hasData || savingOrder || loading}
             >
               {savingOrder
-                ? t('admin.menuitem.list.savingOrder')
-                : t('admin.menuitem.list.saveOrder')}
+                ? t('list.savingOrder')
+                : t('list.saveOrder')}
             </button>
           )}
 
           <span className="text-muted small">
-            {t('admin.menuitem.list.totalLabel')} <strong>{total}</strong>
+            {t('list.totalLabel')} <strong>{total}</strong>
           </span>
         </div>
       </div>
@@ -205,39 +206,39 @@ export const MenuItemList: React.FC<MenuItemListProps> = ({
                 <th
                   className="text-nowrap"
                   style={{ ...noWrapEllipsis, width: 240, minWidth: 200 }}
-                  title={t('admin.menuitem.list.columns.title')}
+                  title={t('list.columns.title')}
                 >
-                  {t('admin.menuitem.list.columns.title')}
+                  {t('list.columns.title')}
                 </th>
                 <th
                   className="text-nowrap"
                   style={{ ...noWrapEllipsis, width: 260, minWidth: 220 }}
-                  title={t('admin.menuitem.list.columns.url')}
+                  title={t('list.columns.url')}
                 >
-                  {t('admin.menuitem.list.columns.url')}
+                  {t('list.columns.url')}
                 </th>
                 <th className="text-nowrap" style={{ ...noWrapEllipsis, width: 110 }}>
-                  {t('admin.menuitem.list.columns.type')}
+                  {t('list.columns.type')}
                 </th>
 
                 {/* ✅ Konum kolonunu opsiyonel gizle */}
                 {!hideLocationColumn && (
                   <th className="text-nowrap" style={{ ...noWrapEllipsis, width: 110 }}>
-                    {t('admin.menuitem.list.columns.location')}
+                    {t('list.columns.location')}
                   </th>
                 )}
 
                 <th className="text-nowrap text-center" style={{ ...noWrapEllipsis, width: 86 }}>
-                  {t('admin.menuitem.list.columns.active')}
+                  {t('list.columns.active')}
                 </th>
                 <th className="text-nowrap" style={{ ...noWrapEllipsis, width: 130 }}>
-                  {t('admin.menuitem.list.columns.locale')}
+                  {t('list.columns.locale')}
                 </th>
                 <th className="text-nowrap" style={{ ...noWrapEllipsis, width: 190 }}>
-                  {t('admin.menuitem.list.columns.date')}
+                  {t('list.columns.date')}
                 </th>
                 <th className="text-nowrap text-end" style={{ ...noWrapEllipsis, width: 170 }}>
-                  {t('admin.menuitem.list.columns.actions')}
+                  {t('list.columns.actions')}
                 </th>
               </tr>
             </thead>
@@ -303,7 +304,7 @@ export const MenuItemList: React.FC<MenuItemListProps> = ({
 
                       {!hideLocationColumn && (
                         <td className="align-middle small text-nowrap">
-                          {fmtLocation(item.location)}
+                          {fmtLocation((item as any).location, t)}
                         </td>
                       )}
 
@@ -404,7 +405,7 @@ export const MenuItemList: React.FC<MenuItemListProps> = ({
 
                           {!hideLocationColumn && (
                             <span className="badge bg-light text-dark border">
-                              {fmtLocation(item.location)}
+                              {fmtLocation((item as any).location, t)}
                             </span>
                           )}
 

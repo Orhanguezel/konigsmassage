@@ -265,7 +265,7 @@ export const BrandMediaTab: React.FC = () => {
       if (!u) return;
 
       try {
-        await updateSetting({ key, locale: GLOBAL_LOCALE, value: toMediaValue(u) } as any).unwrap();
+        await updateSetting({ key, locale: GLOBAL_LOCALE, value: toMediaValue(u) }).unwrap();
         toast.success(t('admin.siteSettings.brandMedia.updated', { label: labelMap[key] }));
         await refetchAll();
       } catch (err: any) {
@@ -285,7 +285,7 @@ export const BrandMediaTab: React.FC = () => {
       if (!ok) return;
 
       try {
-        await deleteSetting({ key, locale: GLOBAL_LOCALE } as any).unwrap();
+        await deleteSetting({ key, locale: GLOBAL_LOCALE }).unwrap();
         toast.success(t('admin.common.deleted', { item: key }));
         await refetchAll();
       } catch (err: any) {

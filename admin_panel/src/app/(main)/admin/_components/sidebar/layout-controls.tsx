@@ -23,12 +23,19 @@ import { persistPreference } from "@/lib/preferences/preferences-storage";
 import { THEME_PRESET_OPTIONS, type ThemeMode, type ThemePreset } from "@/lib/preferences/theme";
 import { applyThemeMode, applyThemePreset } from "@/lib/preferences/theme-utils";
 import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
-import { useAdminTranslations, ADMIN_LOCALE_OPTIONS } from "../../../../../i18n/adminUi";
+import { useAdminTranslations, ADMIN_LOCALE_OPTIONS } from '@/i18n';
+import { toast } from "sonner";
+import { useEffect, useRef } from "react";
+import { useGetDefaultLocaleAdminQuery, useUpdateSiteSettingAdminMutation } from "@/integrations/hooks";
 
 export function LayoutControls() {
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const setAdminLocale = usePreferencesStore((s) => s.setAdminLocale);
   const t = useAdminTranslations(adminLocale || undefined);
+  const pendingDbLocaleRef = useRef<string | null>(null);
+
+  const defaultLocaleQ = useGetDefaultLocaleAdminQuery();
+  const [updateSetting, { isLoading: isUpdatingDefaultLocale }] = useUpdateSiteSettingAdminMutation();
   const themeMode = usePreferencesStore((s) => s.themeMode);
   const setThemeMode = usePreferencesStore((s) => s.setThemeMode);
   const themePreset = usePreferencesStore((s) => s.themePreset);
@@ -92,9 +99,37 @@ export function LayoutControls() {
     persistPreference("font", value);
   };
 
-  const onAdminLocaleChange = (value: string) => {
+  useEffect(() => {
+    const dbDefault = String(defaultLocaleQ.data || "").trim();
+    if (!dbDefault) return;
+
+    // Update sırasında, DB hala eski değeri döndürebilir; UI'nin seçimini ezmeyelim.
+    if (isUpdatingDefaultLocale && pendingDbLocaleRef.current && dbDefault !== pendingDbLocaleRef.current) {
+      return;
+    }
+
+    if (adminLocale !== dbDefault) {
+      setAdminLocale(dbDefault);
+      persistPreference("admin_locale", dbDefault);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultLocaleQ.data, isUpdatingDefaultLocale]);
+
+  const onAdminLocaleChange = async (value: string) => {
+    pendingDbLocaleRef.current = value;
     setAdminLocale(value);
     persistPreference("admin_locale", value);
+
+    try {
+      await updateSetting({ key: "default_locale", locale: "*", value }).unwrap();
+      toast.success(t("admin.common.updated", { item: "default_locale" }));
+    } catch (err: any) {
+      const msg =
+        err?.data?.error?.message || err?.message || t("admin.siteSettings.messages.error");
+      toast.error(msg);
+    } finally {
+      pendingDbLocaleRef.current = null;
+    }
   };
 
   const handleRestore = () => {

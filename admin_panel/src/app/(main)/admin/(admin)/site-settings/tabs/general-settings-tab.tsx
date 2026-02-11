@@ -13,7 +13,8 @@ import * as React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { Search, RefreshCcw } from 'lucide-react';
-import { useAdminTranslations } from '../../../../../../i18n/adminUi';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import {
   useListSiteSettingsAdminQuery,
@@ -162,7 +163,8 @@ export const GeneralSettingsTab: React.FC<GeneralSettingsTabProps> = ({ locale }
   const [updateSetting, { isLoading: isSaving }] = useUpdateSiteSettingAdminMutation();
   const [deleteSetting, { isLoading: isDeleting }] = useDeleteSiteSettingAdminMutation();
 
-  const t = useAdminTranslations(locale);
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
 
   // list global + locale
   const listArgsGlobal = React.useMemo(() => {
@@ -220,7 +222,7 @@ export const GeneralSettingsTab: React.FC<GeneralSettingsTabProps> = ({ locale }
     }
 
     try {
-      await updateSetting({ key: g.key, locale, value: g.globalRow.value } as any).unwrap();
+      await updateSetting({ key: g.key, locale, value: g.globalRow.value }).unwrap();
       toast.success(t('admin.siteSettings.general.overrideCreated', { key: g.key, locale }));
       await refetchAll();
     } catch (err: any) {
@@ -234,7 +236,7 @@ export const GeneralSettingsTab: React.FC<GeneralSettingsTabProps> = ({ locale }
         key,
         locale: targetLocale,
         value: DEFAULTS_BY_KEY[key] as any,
-      } as any).unwrap();
+      }).unwrap();
       toast.success(t('admin.siteSettings.general.defaultsRestored', { key, locale: targetLocale }));
       await refetchAll();
     } catch (err: any) {
@@ -247,7 +249,7 @@ export const GeneralSettingsTab: React.FC<GeneralSettingsTabProps> = ({ locale }
     if (!ok) return;
 
     try {
-      await deleteSetting({ key, locale: targetLocale } as any).unwrap();
+      await deleteSetting({ key, locale: targetLocale }).unwrap();
       toast.success(t('admin.siteSettings.general.deleted', { key, locale: targetLocale }));
       await refetchAll();
     } catch (err: any) {
@@ -260,7 +262,7 @@ export const GeneralSettingsTab: React.FC<GeneralSettingsTabProps> = ({ locale }
       for (const k of GENERAL_KEYS) {
         const exists = groups.find((g) => g.key === k)?.globalRow;
         if (exists) continue;
-        await updateSetting({ key: k, locale: '*', value: DEFAULTS_BY_KEY[k] as any } as any).unwrap();
+        await updateSetting({ key: k, locale: '*', value: DEFAULTS_BY_KEY[k] as any }).unwrap();
       }
       toast.success(t('admin.siteSettings.general.globalBootstrapSuccess'));
       await refetchAll();

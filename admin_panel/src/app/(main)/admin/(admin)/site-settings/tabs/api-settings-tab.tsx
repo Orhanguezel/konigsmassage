@@ -11,7 +11,8 @@
 import * as React from 'react';
 import { toast } from 'sonner';
 import { RefreshCcw } from 'lucide-react';
-import { useAdminTranslations } from '../../../../../../i18n/adminUi';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import {
   useListSiteSettingsAdminQuery,
@@ -90,7 +91,8 @@ export const ApiSettingsTab: React.FC<ApiSettingsTabProps> = ({ locale }) => {
 
   const [form, setForm] = React.useState<ApiForm>(EMPTY_FORM);
 
-  const t = useAdminTranslations(locale);
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
 
   React.useEffect(() => {
     const map = toMap(settings);
@@ -117,7 +119,7 @@ export const ApiSettingsTab: React.FC<ApiSettingsTabProps> = ({ locale }) => {
       ];
 
       for (const u of updates) {
-        await updateSetting({ key: u.key, value: u.value, locale: '*' } as any).unwrap();
+        await updateSetting({ key: u.key, value: u.value, locale: '*' }).unwrap();
       }
 
       toast.success(t('admin.siteSettings.api.saved'));

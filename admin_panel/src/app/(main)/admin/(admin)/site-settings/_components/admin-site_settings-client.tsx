@@ -11,7 +11,8 @@
 import * as React from 'react';
 import { toast } from 'sonner';
 import { Search, RefreshCcw } from 'lucide-react';
-import { useAdminTranslations } from '../../../../../../i18n/adminUi';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,7 +59,7 @@ type SettingsTab =
   | 'brand_media'
   | 'api';
 
-type LocaleOption = { value: string; label: string };
+type LocaleOption = { value: string; label: string; isDefault?: boolean; isActive?: boolean };
 
 function safeStr(v: unknown) {
   return v === null || v === undefined ? '' : String(v);
@@ -93,11 +94,21 @@ function buildLocalesOptions(appLocales: any[] | undefined, defaultLocale: any):
     .map((x) => {
       const code = String(x.code);
       const labelBase = x.label ? `${x.label} (${code})` : code;
-      const suffix = x.is_default ? ' • default' : x.is_active === false ? ' • inactive' : '';
-      return { value: code, label: labelBase + suffix };
+      return {
+        value: code,
+        label: labelBase,
+        isDefault: x.is_default === true,
+        isActive: x.is_active !== false,
+      };
     });
 
-  if (!mapped.length) return [{ value: def || 'de', label: def || 'de' }];
+  if (!mapped.length) {
+    return [
+      { value: def || 'de', label: def || 'de', isDefault: true, isActive: true },
+      { value: 'en', label: 'English (en)', isDefault: false, isActive: true },
+      { value: 'tr', label: 'Türkçe (tr)', isDefault: false, isActive: true },
+    ];
+  }
   return mapped;
 }
 
@@ -176,13 +187,15 @@ export default function AdminSiteSettingsClient() {
   const [tab, setTab] = React.useState<SettingsTab>('general');
   const [search, setSearch] = React.useState('');
   const [locale, setLocale] = React.useState<string>('');
+  const [localeTouched, setLocaleTouched] = React.useState<boolean>(false);
 
   const [deleteSetting, { isLoading: isDeleting }] = useDeleteSiteSettingAdminMutation();
 
-  const t = useAdminTranslations(locale);
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
 
   React.useEffect(() => {
-    if (!locale) setLocale(initialLocale);
+    if (!locale || !localeTouched) setLocale(initialLocale);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialLocale]);
 
@@ -208,11 +221,13 @@ export default function AdminSiteSettingsClient() {
     const rowLocale = row?.locale ? String(row.locale) : undefined;
     if (!key) return;
 
-    const ok = window.confirm(`"${key}" (${rowLocale || locale || '—'}) silinsin mi?`);
+    const ok = window.confirm(
+      t('admin.siteSettings.list.deleteConfirm', { key, locale: rowLocale || locale || '—' }),
+    );
     if (!ok) return;
 
     try {
-      await deleteSetting({ key, locale: rowLocale ?? undefined } as any).unwrap();
+      await deleteSetting({ key, locale: rowLocale ?? undefined }).unwrap();
       toast.success(t('admin.siteSettings.messages.deleted'));
     } catch (err) {
       toast.error(getErrMessage(err, t('admin.siteSettings.messages.error')));
@@ -260,16 +275,27 @@ export default function AdminSiteSettingsClient() {
               <Label>{t('admin.siteSettings.filters.language')}</Label>
               <Select
                 value={localeReady ? locale : ''}
-                onValueChange={(v) => setLocale(v)}
+                onValueChange={(v) => {
+                  setLocaleTouched(true);
+                  setLocale(v);
+                }}
                 disabled={disabled || isGlobalTab}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={isGlobalTab ? 'Global' : t('admin.siteSettings.filters.selectLanguage')} />
+                  <SelectValue
+                    placeholder={
+                      isGlobalTab
+                        ? t('admin.siteSettings.filters.globalPlaceholder')
+                        : t('admin.siteSettings.filters.selectLanguage')
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {(localeOptions ?? []).map((o) => (
                     <SelectItem key={o.value} value={o.value}>
                       {o.label}
+                      {o.isDefault ? ` • ${t('admin.siteSettings.filters.defaultSuffix')}` : ''}
+                      {o.isActive === false ? ` • ${t('admin.siteSettings.filters.inactiveSuffix')}` : ''}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -299,7 +325,10 @@ export default function AdminSiteSettingsClient() {
                 variant="outline"
                 onClick={() => {
                   setSearch('');
-                  if (!isGlobalTab) setLocale(initialLocale);
+                  if (!isGlobalTab) {
+                    setLocaleTouched(false);
+                    setLocale(initialLocale);
+                  }
                 }}
                 disabled={disabled}
                 className="flex-1 lg:flex-initial"
@@ -330,7 +359,7 @@ export default function AdminSiteSettingsClient() {
             </div>
 
             <div className="flex items-center gap-2">
-              {isGlobalTab ? <Badge variant="secondary">Global</Badge> : null}
+              {isGlobalTab ? <Badge variant="secondary">{t('admin.siteSettings.badges.global')}</Badge> : null}
               {!isGlobalTab && localeReady ? <Badge variant="secondary">{locale}</Badge> : null}
               {disabled ? <Badge variant="outline">{t('admin.siteSettings.messages.loading')}</Badge> : null}
             </div>

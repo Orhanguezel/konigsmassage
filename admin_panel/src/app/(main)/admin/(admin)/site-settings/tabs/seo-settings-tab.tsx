@@ -19,6 +19,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { Search } from 'lucide-react';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import {
   useListSiteSettingsAdminQuery,
@@ -193,18 +195,6 @@ function toMediaValue(url: string): SettingValue {
   return { url: u };
 }
 
-async function copyToClipboard(text: string) {
-  const t = safeStr(text);
-  if (!t) return;
-
-  try {
-    await navigator.clipboard.writeText(t);
-    toast.success('URL kopyalandı.');
-  } catch {
-    toast.error('Kopyalama başarısız. Tarayıcı izni engelliyor olabilir.');
-  }
-}
-
 /**
  * Normalize image URL - if relative, try to make it absolute
  * Returns empty string if URL is invalid
@@ -261,6 +251,23 @@ export type SeoSettingsTabProps = {
 
 export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
   const [search, setSearch] = useState('');
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
+
+  const copyToClipboard = React.useCallback(
+    async (text: string) => {
+      const val = safeStr(text);
+      if (!val) return;
+
+      try {
+        await navigator.clipboard.writeText(val);
+        toast.success(t('admin.siteSettings.messages.copied'));
+      } catch {
+        toast.error(t('admin.siteSettings.messages.copyError'));
+      }
+    },
+    [t],
+  );
 
   // ✅ Query args
   const listArgsGlobal = useMemo(() => {
@@ -353,7 +360,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
     if (!ok) return;
 
     try {
-      await deleteSetting({ key, locale: targetLocale } as any).unwrap();
+      await deleteSetting({ key, locale: targetLocale }).unwrap();
       toast.success(`"${key}" (${targetLocale}) silindi.`);
       await refetchAll();
     } catch (err: any) {
@@ -379,7 +386,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
         key: g.key,
         locale,
         value: g.globalRow.value,
-      } as any).unwrap();
+      }).unwrap();
 
       toast.success(`"${g.key}" için ${locale} override oluşturuldu (GLOBAL kopyalandı).`);
       await refetchAll();
@@ -393,10 +400,10 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
   const restoreDefaults = async (key: string, targetLocale: string) => {
     try {
       if (key === 'seo') {
-        await updateSetting({ key, locale: targetLocale, value: DEFAULT_SEO_GLOBAL } as any).unwrap();
+        await updateSetting({ key, locale: targetLocale, value: DEFAULT_SEO_GLOBAL }).unwrap();
       } else if (key === 'site_seo') {
         // ✅ Artık site_seo için de aynı global schema kullanılıyor
-        await updateSetting({ key, locale: targetLocale, value: DEFAULT_SEO_GLOBAL } as any).unwrap();
+        await updateSetting({ key, locale: targetLocale, value: DEFAULT_SEO_GLOBAL }).unwrap();
       } else if (key === 'site_meta_default') {
         if (targetLocale === '*') {
           toast.error('site_meta_default global(*) olamaz. Locale seçerek restore et.');
@@ -406,7 +413,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
           DEFAULT_SITE_META_DEFAULT_BY_LOCALE[targetLocale] ||
           DEFAULT_SITE_META_DEFAULT_BY_LOCALE[locale] ||
           DEFAULT_SITE_META_DEFAULT_BY_LOCALE['de'];
-        await updateSetting({ key, locale: targetLocale, value: seed } as any).unwrap();
+        await updateSetting({ key, locale: targetLocale, value: seed }).unwrap();
       } else {
         toast.error('Bu key için default tanımlı değil.');
         return;
@@ -432,7 +439,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
           key: k,
           locale: '*',
           value: DEFAULT_SEO_GLOBAL, // ✅ site_seo da aynı şemayı kullanıyor
-        } as any).unwrap();
+        }).unwrap();
       }
       toast.success('Eksik GLOBAL SEO kayıtları oluşturuldu.');
       await refetchAll();
@@ -479,7 +486,7 @@ export const SeoSettingsTab: React.FC<SeoSettingsTabProps> = ({ locale }) => {
         key: 'site_og_default_image',
         locale: '*',
         value: toMediaValue(u),
-      } as any).unwrap();
+      }).unwrap();
       toast.success('Varsayılan OG görseli güncellendi.');
       await qOg.refetch();
     } catch (err: any) {

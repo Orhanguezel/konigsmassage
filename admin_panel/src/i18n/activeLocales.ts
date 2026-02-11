@@ -8,32 +8,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FALLBACK_LOCALE } from './config';
 import { normLocaleTag } from './localeUtils';
-
-type AppLocaleMeta = {
-  code?: unknown;
-  label?: unknown;
-  is_default?: unknown;
-  is_active?: unknown;
-};
-
-function computeLocales(meta: AppLocaleMeta[] | null | undefined): string[] {
-  const arr = Array.isArray(meta) ? meta : [];
-
-  const active = arr
-    .filter((x) => x && (x as any).is_active !== false)
-    .map((x) => normLocaleTag((x as any).code))
-    .filter(Boolean) as string[];
-
-  const uniq = Array.from(new Set(active));
-
-  const def = arr.find((x) => (x as any)?.is_default === true && (x as any)?.is_active !== false);
-  const defCode = def ? normLocaleTag((def as any).code) : '';
-
-  const out = defCode ? [defCode, ...uniq.filter((x) => x !== defCode)] : uniq;
-
-  const fb = normLocaleTag(FALLBACK_LOCALE) || 'de';
-  return out.length ? out : [fb];
-}
+import { computeActiveLocales, normalizeAppLocalesMeta, type AppLocaleMeta } from './app-locales-meta';
 
 function getApiBase(): string {
   const raw =
@@ -59,14 +34,6 @@ async function fetchJson<T>(url: string): Promise<T | null> {
   } catch {
     return null;
   }
-}
-
-function normalizeAppLocalesValue(v: any): AppLocaleMeta[] {
-  if (Array.isArray(v)) return v as AppLocaleMeta[];
-  if (v && typeof v === 'object' && 'data' in v && Array.isArray((v as any).data)) {
-    return (v as any).data as AppLocaleMeta[];
-  }
-  return [];
 }
 
 // ✅ Minimal in-memory cache (page lifetime)
@@ -105,7 +72,7 @@ export function useActiveLocales() {
       // ✅ Varsayım: GET {API_BASE}/site_settings/app-locales
       // API_BASE burada .../api ile biter.
       const raw = await fetchJson<any>(`${base}/site_settings/app-locales`);
-      const arr = normalizeAppLocalesValue(raw);
+      const arr = normalizeAppLocalesMeta(raw);
 
       const next = arr.length ? arr : null;
       __cache = { at: Date.now(), meta: next };
@@ -115,7 +82,7 @@ export function useActiveLocales() {
     })();
   }, []);
 
-  const locales = useMemo<string[]>(() => computeLocales(meta), [meta]);
+  const locales = useMemo<string[]>(() => computeActiveLocales(meta as AppLocaleMeta[] | null, FALLBACK_LOCALE), [meta]);
 
   return { locales, isLoading };
 }

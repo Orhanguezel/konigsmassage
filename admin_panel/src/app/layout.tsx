@@ -18,7 +18,7 @@ import { PREFERENCE_DEFAULTS } from '@/lib/preferences/preferences-config';
 
 import StoreProvider from '@/stores/Provider';
 import { PreferencesStoreProvider } from '@/stores/preferences/preferences-provider';
-import { LocaleProvider } from '../i18n/LocaleProvider';
+import { LocaleProvider } from '@/i18n';
 
 import './globals.css';
 
@@ -79,7 +79,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
 
   return (
     <html
-      lang="tr"
+      lang="de"
       // html/body hydration mismatch’lerini tolere et (extension + theme class)
       suppressHydrationWarning
       data-theme-preset={theme_preset}

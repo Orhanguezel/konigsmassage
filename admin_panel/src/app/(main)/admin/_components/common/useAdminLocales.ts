@@ -114,15 +114,6 @@ export function useAdminLocales(): UseAdminLocalesResult {
     const appRow = list.find((r: any) => r.key === 'app_locales');
     const defRow = list.find((r: any) => r.key === 'default_locale');
 
-    // 🔍 DEBUG
-    console.log('🔍 useAdminLocales DEBUG:', {
-      rows,
-      appRow,
-      appRowValue: appRow?.value,
-      defRow,
-      defRowValue: defRow?.value,
-    });
-
     const itemsRaw = parseAppLocalesValue(appRow?.value);
 
     // active filter: default true unless explicitly false

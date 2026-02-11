@@ -10,7 +10,8 @@
 
 import * as React from 'react';
 import { toast } from 'sonner';
-import { useAdminTranslations } from '../../../../../../i18n/adminUi';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import {
   useListSiteSettingsAdminQuery,
@@ -102,7 +103,8 @@ export const CloudinarySettingsTab: React.FC<CloudinarySettingsTabProps> = ({ lo
 
   const [form, setForm] = React.useState<StorageForm>(EMPTY_FORM);
 
-  const t = useAdminTranslations(locale);
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
 
   React.useEffect(() => {
     const map = toMap(settings);
@@ -123,7 +125,7 @@ export const CloudinarySettingsTab: React.FC<CloudinarySettingsTabProps> = ({ lo
 
     try {
       for (const key of STORAGE_KEYS) {
-        await updateSetting({ key, value: form[key].trim() }).unwrap();
+        await updateSetting({ key, locale: '*', value: form[key].trim() }).unwrap();
       }
       toast.success(t('admin.siteSettings.cloudinary.saved'));
       await refetch();

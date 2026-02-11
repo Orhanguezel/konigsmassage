@@ -55,7 +55,7 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
   onRefresh,
   onCreateClick,
 }) => {
-  const t = useAdminT();
+  const t = useAdminT('admin.menuitem');
   const effectiveDefaultLocale = useMemo(
     () => toShortLocale(defaultLocale ?? 'de'),
     [defaultLocale],
@@ -94,11 +94,12 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
           <div className="card-body py-2">
             <div className="row g-2">
               {/* Search */}
-              <div className="col-12 col-md-6 col-xl-4">{t('admin.menuitem.header.searchLabel')}</label>
+              <div className="col-12 col-md-6 col-xl-4">
+                <label className="form-label small mb-1">{t('header.searchLabel')}</label>
                 <input
                   type="text"
                   className="form-control form-control-sm"
-                  placeholder={t('admin.menuitem.header.searchPlaceholder')}
+                  placeholder={t('header.searchPlaceholder')}
                   value={filters.search}
                   onChange={handleInputChange('search')}
                   disabled={loading}
@@ -108,7 +109,7 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
               {/* Locale */}
               <div className="col-12 col-md-6 col-xl-3">
                 <label className="form-label small mb-1 d-flex align-items-center gap-2">
-                  <span>{t('admin.menuitem.header.localeLabel')}</span>
+                  <span>{t('header.localeLabel')}</span>
                   {localesLoading && (
                     <span className="spinner-border spinner-border-sm" role="status" />
                   )}
@@ -121,9 +122,8 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
                   disabled={localeSelectDisabled}
                 >
                   <option value="">
-                    {t('admin.menuitem.header.allLocales')}
-                    {effectiveDefaultLocale ? ` (
-                    {effectiveDefaultLocale ? ` (varsayılan: ${effectiveDefaultLocale})` : ''}
+                    {t('header.allLocales')}
+                    {effectiveDefaultLocale ? ` (${t('header.defaultLabel')}: ${effectiveDefaultLocale})` : ''}
                   </option>
 
                   {(locales ?? []).map((loc) => (
@@ -136,37 +136,37 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
 
               {/* Active */}
               <div className="col-6 col-md-4 col-xl-2">
-                <label className="form-label small mb-1">{t('admin.menuitem.header.activeLabel')}</label>
+                <label className="form-label small mb-1">{t('header.activeLabel')}</label>
                 <select
                   className="form-select form-select-sm"
                   value={filters.active}
                   onChange={handleInputChange('active')}
                   disabled={loading}
                 >
-                  <option value="all">{t('admin.menuitem.header.allStats')}</option>
-                  <option value="active">{t('admin.menuitem.header.active')}</option>
-                  <option value="inactive">{t('admin.menuitem.header.inactive')}</option>
+                  <option value="all">{t('header.allStats')}</option>
+                  <option value="active">{t('header.active')}</option>
+                  <option value="inactive">{t('header.inactive')}</option>
                 </select>
               </div>
 
               {/* Sort */}
               <div className="col-6 col-md-4 col-xl-2">
-                <label className="form-label small mb-1">{t('admin.menuitem.header.sortLabel')}</label>
+                <label className="form-label small mb-1">{t('header.sortLabel')}</label>
                 <select
                   className="form-select form-select-sm"
                   value={filters.sort}
                   onChange={handleInputChange('sort')}
                   disabled={loading}
                 >
-                  <option value="display_order">{t('admin.menuitem.header.sortOrder')}</option>
-                  <option value="created_at">{t('admin.menuitem.header.sortCreated')}</option>
-                  <option value="title">{t('admin.menuitem.header.sortTitle')}</option>
+                  <option value="display_order">{t('header.sortOrder')}</option>
+                  <option value="created_at">{t('header.sortCreated')}</option>
+                  <option value="title">{t('header.sortTitle')}</option>
                 </select>
               </div>
 
               {/* Order */}
               <div className="col-12 col-md-4 col-xl-1">
-                <label className="form-label small mb-1 d-block">{t('admin.menuitem.header.orderLabel')}</label>
+                <label className="form-label small mb-1 d-block">{t('header.orderLabel')}</label>
 
                 <div className="d-none d-md-block">
                   <button
@@ -186,8 +186,8 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
                     onChange={handleInputChange('order')}
                     disabled={loading}
                   >
-                    <option value="asc">{t('admin.menuitem.header.asc')}</option>
-                    <option value="desc">{t('admin.menuitem.header.desc')}</option>
+                    <option value="asc">{t('header.asc')}</option>
+                    <option value="desc">{t('header.desc')}</option>
                   </select>
                 </div>
               </div>
@@ -204,9 +204,9 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
           <div className="card-body py-2">
             <div className="d-flex flex-column flex-sm-row flex-lg-column justify-content-between align-items-start gap-2 h-100">
               <div className="small text-muted">
-                <div className="fw-semibold text-dark">{t('admin.menuitem.header.title')}</div>
+                <div className="fw-semibold text-dark">{t('header.title')}</div>
                 <div>
-                  {t('admin.menuitem.header.total', { count: totalSafe })}
+                  {t('header.total', { count: totalSafe })}
                 </div>
               </div>
 
@@ -217,7 +217,7 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
                   disabled={loading}
                   onClick={onRefresh}
                 >
-                  {loading ? t('admin.menuitem.header.refreshing') : t('admin.menuitem.header.refresh')}
+                  {loading ? t('header.refreshing') : t('header.refresh')}
                 </button>
                 <button
                   type="button"
@@ -225,7 +225,7 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
                   disabled={loading}
                   onClick={onCreateClick}
                 >
-                  + {t('admin.menuitem.header.create')}
+                  + {t('header.create')}
                 </button>
               </div>
             </div>

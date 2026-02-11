@@ -32,6 +32,9 @@ import {
   useUpdateSiteSettingAdminMutation,
   useDeleteSiteSettingAdminMutation,
 } from '@/integrations/hooks';
+import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { SiteSettingsForm } from './site-settings-form';
 import { AdminJsonEditor } from '@/app/(main)/admin/_components/common/AdminJsonEditor';
@@ -74,13 +77,6 @@ import {
 
 /* ----------------------------- helpers (same behavior as /pages) ----------------------------- */
 
-type AppLocaleItem = {
-  code: string;
-  label?: string;
-  is_active?: boolean;
-  is_default?: boolean;
-};
-
 const toShortLocale = (v: unknown): string =>
   String(v || '')
     .trim()
@@ -88,58 +84,6 @@ const toShortLocale = (v: unknown): string =>
     .replace('_', '-')
     .split('-')[0]
     .trim();
-
-function uniqByCode(items: AppLocaleItem[]): AppLocaleItem[] {
-  const seen = new Set<string>();
-  const out: AppLocaleItem[] = [];
-  for (const it of items) {
-    const code = toShortLocale(it?.code);
-    if (!code) continue;
-    if (seen.has(code)) continue;
-    seen.add(code);
-    out.push({ ...it, code });
-  }
-  return out;
-}
-
-function buildLocaleLabel(item: AppLocaleItem): string {
-  const code = toShortLocale(item.code);
-  const label = String(item.label || '').trim();
-  if (label) return `${label} (${code})`;
-  return code.toUpperCase();
-}
-
-function parseAppLocalesValue(raw: unknown): AppLocaleItem[] {
-  if (!raw) return [];
-
-  if (Array.isArray(raw)) {
-    return raw
-      .map((x: any) => ({
-        code: toShortLocale(x?.code ?? x),
-        label: x?.label,
-        is_active: x?.is_active,
-        is_default: x?.is_default,
-      }))
-      .filter((x) => !!x.code);
-  }
-
-  if (typeof raw === 'string') {
-    const s = raw.trim();
-    if (!s) return [];
-    try {
-      return parseAppLocalesValue(JSON.parse(s));
-    } catch {
-      return [];
-    }
-  }
-
-  if (typeof raw === 'object' && raw !== null) {
-    const anyObj = raw as any;
-    if (Array.isArray(anyObj.locales)) return parseAppLocalesValue(anyObj.locales);
-  }
-
-  return [];
-}
 
 function isSeoKey(key: string) {
   const k = String(key || '')
@@ -192,19 +136,21 @@ type StructuredRenderProps = {
 };
 
 const JsonStructuredRenderer: React.FC<StructuredRenderProps> = ({ value, setValue, disabled }) => {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
   const v = coerceSettingValue(value ?? {});
   return (
     <div className="space-y-3">
       <div className="rounded-md border p-3 text-sm text-muted-foreground">
-        Bu key için özel structured form tanımlı değil. Structured mod JSON editor olarak çalışır.
+        {t('admin.siteSettings.detail.structuredJson.noRenderer')}
       </div>
 
       <AdminJsonEditor
-        label="Structured JSON"
+        label={t('admin.siteSettings.detail.structuredJson.label')}
         value={v ?? {}}
         onChange={(next) => setValue(next)}
         disabled={disabled}
-        helperText="Blur olduğunda parse edilir. Geçersiz JSON kaydedilmez."
+        helperText={t('admin.siteSettings.detail.structuredJson.helperText')}
         height={340}
       />
     </div>
@@ -416,38 +362,22 @@ const BusinessHoursStructuredRenderer: React.FC<StructuredRenderProps> = ({
 export default function SiteSettingsDetailClient({ id }: { id: string }) {
   const router = useRouter();
   const sp = useSearchParams();
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
 
   const settingKey = React.useMemo(() => String(id || '').trim(), [id]);
 
-  // locales from DB
   const {
-    data: localeRows,
-    isLoading: isLocalesLoading,
-    isFetching: isLocalesFetching,
-    refetch: refetchLocales,
-  } = useListSiteSettingsAdminQuery({ keys: ['app_locales', 'default_locale'] });
+    localeOptions: appLocaleOptions,
+    defaultLocaleFromDb,
+    loading: isLocalesLoading,
+    fetching: isLocalesFetching,
+  } = useAdminLocales();
 
-  const { localeOptions, defaultLocaleFromDb } = React.useMemo(() => {
-    const rows = Array.isArray(localeRows) ? localeRows : [];
-    const appRow = rows.find((r: any) => r.key === 'app_locales');
-    const defRow = rows.find((r: any) => r.key === 'default_locale');
-
-    const itemsRaw = parseAppLocalesValue(appRow?.value);
-    const active = itemsRaw.filter((x) => x && x.code && x.is_active !== false);
-    const uniq = uniqByCode(active);
-
-    const def = toShortLocale(defRow?.value);
-
-    const options = uniq.map((it) => ({
-      value: toShortLocale(it.code),
-      label: buildLocaleLabel(it),
-    }));
-
-    return {
-      localeOptions: [{ value: '*', label: 'Global (*)' }, ...options],
-      defaultLocaleFromDb: def,
-    };
-  }, [localeRows]);
+  const localeOptions = React.useMemo(
+    () => [{ value: '*', label: t('admin.siteSettings.detail.globalOption') }, ...appLocaleOptions],
+    [appLocaleOptions, t],
+  );
 
   const localeFromQuery = React.useMemo(() => {
     const q = sp.get('locale');
@@ -525,26 +455,30 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
   const handleSave = async (args: { key: string; locale: string; value: SettingValue }) => {
     try {
       if (String(args.key).toLowerCase() === 'site_meta_default' && args.locale === '*') {
-        toast.error('site_meta_default locale="*" olamaz. Dil seçip kaydet.');
+        toast.error(t('admin.siteSettings.detail.siteMetaDefaultGlobalGuard'));
         return;
       }
-      await updateSetting(args as any).unwrap();
-      toast.success(`"${args.key}" güncellendi.`);
+      await updateSetting({ key: args.key, locale: args.locale, value: args.value }).unwrap();
+      toast.success(t('admin.siteSettings.detail.updated', { key: args.key, locale: args.locale }));
       await refetch();
-      await refetchLocales();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Kaydetme sırasında hata oluştu.');
+      const msg =
+        err?.data?.error?.message || err?.message || t('admin.siteSettings.messages.error');
+      toast.error(msg);
     }
   };
 
   const handleDelete = async (args: { key: string; locale?: string }) => {
     try {
-      await deleteSetting({ key: args.key, locale: args.locale } as any).unwrap();
-      toast.success(`"${args.key}" silindi.`);
+      await deleteSetting({ key: args.key, locale: args.locale }).unwrap();
+      toast.success(
+        t('admin.siteSettings.detail.deleted', { key: args.key, locale: args.locale || '' }),
+      );
       await refetch();
-      await refetchLocales();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Silme sırasında hata oluştu.');
+      const msg =
+        err?.data?.error?.message || err?.message || t('admin.siteSettings.messages.error');
+      toast.error(msg);
     }
   };
 
@@ -574,28 +508,28 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Hata</CardTitle>
-            <CardDescription>Setting key bulunamadı.</CardDescription>
+            <CardTitle className="text-base">{t('admin.siteSettings.detail.keyMissingTitle')}</CardTitle>
+            <CardDescription>{t('admin.siteSettings.detail.keyMissingDesc')}</CardDescription>
           </CardHeader>
         </Card>
       </div>
     );
   }
 
-  if (!busy && (!localeOptions || localeOptions.length === 0)) {
+  if (!busy && (!appLocaleOptions || appLocaleOptions.length === 0)) {
     return (
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Dil listesi bulunamadı</CardTitle>
+            <CardTitle className="text-base">{t('admin.siteSettings.detail.localesMissingTitle')}</CardTitle>
             <CardDescription>
-              <code>site_settings.app_locales</code> boş veya geçersiz. Önce dilleri ayarla.
+              {t('admin.siteSettings.detail.localesMissingDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" size="sm">
               <Link prefetch={false} href={backHref}>
-                Site Ayarlarına git
+                {t('admin.siteSettings.detail.localesMissingAction')}
               </Link>
             </Button>
           </CardContent>
@@ -608,28 +542,28 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <div className="text-sm text-muted-foreground">Site Ayarları</div>
+          <div className="text-sm text-muted-foreground">{t('admin.siteSettings.title')}</div>
           <h1 className="text-lg font-semibold">
-            Düzenle: <code>{settingKey}</code>
+            {t('admin.siteSettings.detail.editTitle')}: <code>{settingKey}</code>
           </h1>
         </div>
 
         <div className="flex flex-wrap items-end gap-2">
           <Button asChild variant="outline" size="sm">
             <Link prefetch={false} href={backHref}>
-              Listeye Dön
+              {t('admin.siteSettings.detail.backToList')}
             </Link>
           </Button>
 
           <div className="space-y-2">
-            <Label>Locale</Label>
+            <Label>{t('admin.siteSettings.detail.localeLabel')}</Label>
             <Select
               value={selectedLocale || ''}
               onValueChange={(v) => setSelectedLocale(v === '*' ? '*' : toShortLocale(v))}
               disabled={busy || !localeOptions.length}
             >
               <SelectTrigger className="w-60">
-                <SelectValue placeholder="Locale seç" />
+                <SelectValue placeholder={t('admin.siteSettings.filters.selectLanguage')} />
               </SelectTrigger>
               <SelectContent>
                 {localeOptions.map((o) => (
@@ -647,19 +581,19 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
             size="sm"
             onClick={() => refetch()}
             disabled={busy}
-            title="Yenile"
+            title={t('admin.common.refresh')}
           >
             <RefreshCcw className="size-4" />
           </Button>
 
           {selectedLocale ? <Badge variant="secondary">{selectedLocale}</Badge> : null}
-          {busy ? <Badge variant="outline">Yükleniyor…</Badge> : null}
+          {busy ? <Badge variant="outline">{t('admin.siteSettings.messages.loading')}</Badge> : null}
         </div>
       </div>
 
       {!selectedLocale ? (
         <div className="rounded-md border p-4 text-sm text-muted-foreground">
-          Locale yükleniyor…
+          {t('admin.siteSettings.detail.loadingLocale')}
         </div>
       ) : (
         <SiteSettingsForm
@@ -690,8 +624,7 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
       )}
 
       <div className="text-xs text-muted-foreground">
-        Not: General/UI key’lerde structured form açılır. Diğer key’ler structured modda JSON editor
-        fallback’tır.
+        {t('admin.siteSettings.detail.note')}
       </div>
     </div>
   );

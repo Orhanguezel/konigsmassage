@@ -17,6 +17,8 @@ import { useRouter } from 'next/navigation';
 
 import type { SiteSetting, SettingValue } from '@/integrations/shared';
 import { AdminImageUploadField } from '@/app/(main)/admin/_components/common/AdminImageUploadField';
+import { useAdminTranslations } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -108,12 +110,12 @@ function parseRawOrString(text: string): SettingValue {
   }
 }
 
-function errMsg(err: any): string {
+function errMsg(err: any, fallback: string): string {
   return (
     err?.data?.error?.message ||
     err?.data?.message ||
     err?.message ||
-    'İşlem sırasında hata oluştu.'
+    fallback
   );
 }
 
@@ -132,6 +134,8 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
   imageUpload,
 }) => {
   const router = useRouter();
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const t = useAdminTranslations(adminLocale || undefined);
 
   const canStructured = typeof renderStructured === 'function';
 
@@ -172,23 +176,29 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
         mode === 'raw' ? parseRawOrString(rawText) : (structuredValue as any);
 
       await onSave({ key: settingKey, locale, value: valueToSave });
-      toast.success(`"${settingKey}" (${locale}) kaydedildi.`);
+      toast.success(t('admin.siteSettings.form.saved', { key: settingKey, locale }));
     } catch (err: any) {
-      toast.error(errMsg(err) || 'Kaydetme sırasında hata oluştu.');
+      toast.error(
+        errMsg(err, t('admin.siteSettings.form.saveError')),
+      );
     }
   };
 
   const handleDelete = async () => {
     if (!onDelete || disabled) return;
 
-    const ok = window.confirm(`"${settingKey}" (${locale}) silinsin mi?`);
+    const ok = window.confirm(
+      t('admin.siteSettings.form.deleteConfirm', { key: settingKey, locale }),
+    );
     if (!ok) return;
 
     try {
       await onDelete({ key: settingKey, locale });
-      toast.success(`"${settingKey}" (${locale}) silindi.`);
+      toast.success(t('admin.siteSettings.form.deleted', { key: settingKey, locale }));
     } catch (err: any) {
-      toast.error(errMsg(err) || 'Silme sırasında hata oluştu.');
+      toast.error(
+        errMsg(err, t('admin.siteSettings.form.deleteError')),
+      );
     }
   };
 
@@ -198,25 +208,25 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
         <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-1">
             <CardTitle className="text-base">
-              Ayar: <code>{settingKey}</code>
+              {t('admin.siteSettings.form.title')}: <code>{settingKey}</code>
               <Badge variant="secondary" className="ml-2 align-middle">
                 {locale}
               </Badge>
             </CardTitle>
             <CardDescription>
-              Structured mod: form bileşeni. Raw mod: JSON veya düz string.
+              {t('admin.siteSettings.form.description')}
             </CardDescription>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             {onDelete ? (
               <Button type="button" variant="outline" onClick={handleDelete} disabled={disabled}>
-                Sil
+                {t('admin.siteSettings.actions.delete')}
               </Button>
             ) : null}
 
             <Button type="button" onClick={handleSave} disabled={disabled}>
-              Kaydet
+              {t('admin.siteSettings.actions.save')}
             </Button>
           </div>
         </div>
@@ -225,10 +235,10 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
         <Tabs value={mode} onValueChange={(v) => setMode(v as SiteSettingsFormMode)}>
           <TabsList className="w-fit">
             <TabsTrigger value="structured" disabled={!canStructured || !!disabled}>
-              Structured
+              {t('admin.siteSettings.form.modes.structured')}
             </TabsTrigger>
             <TabsTrigger value="raw" disabled={!!disabled}>
-              Raw
+              {t('admin.siteSettings.form.modes.raw')}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -238,7 +248,7 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
         {showImageUpload ? (
           <div>
             <AdminImageUploadField
-              label={imageUpload?.label ?? 'Görsel'}
+              label={imageUpload?.label ?? t('admin.siteSettings.form.imageLabel')}
               helperText={imageUpload?.helperText}
               bucket={imageUpload?.bucket ?? 'public'}
               folder={imageUpload?.folder ?? 'uploads'}
@@ -264,27 +274,19 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
                   disabled,
                 })}
               </div>
-
-              {/* Debug block */}
-              <div className="rounded-md border p-4">
-                <div className="mb-2 text-xs text-muted-foreground">Structured state (debug)</div>
-                <pre className="max-h-80 overflow-auto whitespace-pre-wrap wrap-break-word text-xs">
-                  {prettyStringify(structuredValue)}
-                </pre>
-              </div>
             </div>
           ) : (
             <Alert>
-              <AlertTitle>Structured renderer yok</AlertTitle>
+              <AlertTitle>{t('admin.siteSettings.form.structuredMissingTitle')}</AlertTitle>
               <AlertDescription>
-                Bu key için structured renderer tanımlı değil. Raw modunu kullanın.
+                {t('admin.siteSettings.form.structuredMissingDesc')}
               </AlertDescription>
             </Alert>
           )
         ) : (
           <div className="space-y-3">
             <div className="text-sm text-muted-foreground">
-              Raw: Geçerli JSON girersen parse edilerek kaydedilir; değilse düz string kaydedilir.
+              {t('admin.siteSettings.form.rawHelp')}
             </div>
 
             <Textarea
@@ -294,11 +296,11 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
               disabled={disabled}
               spellCheck={false}
               className="font-mono"
-              placeholder='Örn: {"title":"..."} veya düz metin'
+              placeholder={t('admin.siteSettings.form.rawPlaceholder')}
             />
 
             <div className="text-xs text-muted-foreground">
-              İpucu: JSON formatında kaydetmek istiyorsan başı “&#123;” veya “&#91;” ile başlamalı.
+              {t('admin.siteSettings.form.rawTip')}
             </div>
           </div>
         )}

@@ -17,6 +17,7 @@ import { resolveAdminApiLocale } from '../../../../../../i18n/adminLocale';
 import { localeShortClient, localeShortClientOr } from '../../../../../../i18n/localeShortClient';
 
 import { cn } from '@/lib/utils';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,43 +61,50 @@ type Filters = {
   locale: string;
 };
 
-function fmtDate(val: string | null | undefined) {
-  if (!val) return '-';
-  try {
-    const d = new Date(val);
-    if (Number.isNaN(d.getTime())) return String(val);
-    return d.toLocaleString('tr-TR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return String(val);
-  }
-}
-
 function truncate(text: string | null | undefined, max = 40) {
   const t = text || '';
   if (t.length <= max) return t || '-';
   return t.slice(0, max - 1) + '…';
 }
 
-function getErrMsg(e: unknown): string {
-  const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message ||
-    anyErr?.data?.message ||
-    anyErr?.message ||
-    'İşlem başarısız'
-  );
-}
-
 export default function AdminMenuItemClient() {
-  const t = useAdminT();
+  const t = useAdminT('admin.menuitem');
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const router = useRouter();
   const sp = useSearchParams();
+
+  const fmtDate = React.useCallback(
+    (val: string | null | undefined) => {
+      if (!val) return '-';
+      try {
+        const d = new Date(val);
+        if (Number.isNaN(d.getTime())) return String(val);
+        return d.toLocaleString(adminLocale || undefined, {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      } catch {
+        return String(val);
+      }
+    },
+    [adminLocale],
+  );
+
+  const getErrMsg = React.useCallback(
+    (e: unknown): string => {
+      const anyErr = e as any;
+      return (
+        anyErr?.data?.error?.message ||
+        anyErr?.data?.message ||
+        anyErr?.message ||
+        t('form.errors.generic')
+      );
+    },
+    [t],
+  );
 
   const {
     localeOptions,
@@ -311,7 +319,7 @@ export default function AdminMenuItemClient() {
                     {t('list.saveOrder')}
                   </Button>
                   <Button onClick={handleCancelReorder} variant="outline" size="sm">
-                    İptal
+                    {t('admin.common.cancel')}
                   </Button>
                 </>
               ) : (
@@ -344,7 +352,7 @@ export default function AdminMenuItemClient() {
       {!reorderMode && (
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold">Filtreler</CardTitle>
+            <CardTitle className="text-base font-semibold">{t('header.filtersTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
