@@ -1,26 +1,34 @@
 // =============================================================
-// FILE: src/i18n/locationEvents.ts
+// FILE: src/i18n/locationEvents.ts  (FINAL)
 // konigsmassage – SPA navigation detector (no next/router)
+// FIX: dispatchLocationChange is async to avoid React insertion effect warnings
 // =============================================================
 'use client';
 
 let patched = false;
 
-function dispatchLocationChange() {
+function dispatchLocationChangeAsync() {
+  // ✅ defer: do NOT trigger state updates inside pushState/replaceState sync phase
   try {
-    window.dispatchEvent(new Event('locationchange'));
+    queueMicrotask(() => {
+      try {
+        window.dispatchEvent(new Event('locationchange'));
+      } catch {
+        // ignore
+      }
+    });
   } catch {
-    // ignore
+    // older env fallback
+    setTimeout(() => {
+      try {
+        window.dispatchEvent(new Event('locationchange'));
+      } catch {
+        // ignore
+      }
+    }, 0);
   }
 }
 
-/**
- * ✅ Intercepts pushState/replaceState and emits:
- * - locationchange
- * Also listens to:
- * - popstate
- * - hashchange
- */
 export function ensureLocationEventsPatched() {
   if (patched) return;
   if (typeof window === 'undefined') return;
@@ -29,19 +37,18 @@ export function ensureLocationEventsPatched() {
 
   const { pushState, replaceState } = window.history;
 
-  // ✅ TS fix: annotate `this`
   window.history.pushState = function (this: History, ...args: any[]) {
     const ret = pushState.apply(this, args as any);
-    dispatchLocationChange();
+    dispatchLocationChangeAsync();
     return ret;
   } as any;
 
   window.history.replaceState = function (this: History, ...args: any[]) {
     const ret = replaceState.apply(this, args as any);
-    dispatchLocationChange();
+    dispatchLocationChangeAsync();
     return ret;
   } as any;
 
-  window.addEventListener('popstate', dispatchLocationChange);
-  window.addEventListener('hashchange', dispatchLocationChange);
+  window.addEventListener('popstate', dispatchLocationChangeAsync);
+  window.addEventListener('hashchange', dispatchLocationChangeAsync);
 }

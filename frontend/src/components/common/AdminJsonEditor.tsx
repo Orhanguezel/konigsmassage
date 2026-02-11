@@ -75,13 +75,13 @@ export const AdminJsonEditor: React.FC<AdminJsonEditorProps> = ({
   return (
     <div>
       {label && (
-        <label className="form-label small d-flex align-items-center justify-content-between">
+        <label className="text-sm font-medium text-gray-700 mb-1 flex items-center justify-between">
           <span>{label}</span>
-          <span className="badge bg-light text-muted border small">JSON editor</span>
+          <span className="bg-gray-100 text-gray-500 border text-xs px-2 py-0.5 rounded">JSON editor</span>
         </label>
       )}
       <textarea
-        className={`form-control form-control-sm font-monospace ${error ? 'is-invalid' : ''}`}
+        className={`w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm font-mono ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'}`}
         style={{
           minHeight: height,
           whiteSpace: 'pre',
@@ -94,8 +94,8 @@ export const AdminJsonEditor: React.FC<AdminJsonEditorProps> = ({
         onBlur={handleBlur}
         disabled={disabled}
       />
-      {helperText && !error && <div className="form-text small">{helperText}</div>}
-      {error && <div className="invalid-feedback d-block small">JSON hatası: {error}</div>}
+      {helperText && !error && <div className="mt-1 text-xs text-gray-500">{helperText}</div>}
+      {error && <div className="mt-1 text-xs text-red-600">JSON hatası: {error}</div>}
     </div>
   );
 };

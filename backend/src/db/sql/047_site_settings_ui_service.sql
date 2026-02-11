@@ -1,6 +1,6 @@
 -- =============================================================
--- 047_site_settings_ui_service.sql (FINAL — Königs Massage)
--- ui_services: Massage types list + detail + "more massages" translations
+-- 047_site_settings_ui_service.sql (FINAL — KÖNIG ENERGETIK)
+-- ui_services: Treatments list + detail + "other services" translations
 --  - Key: ui_services
 --  - Value: JSON (stored as TEXT in site_settings.value)
 --  - Localized: tr / en / de
@@ -20,24 +20,25 @@ VALUES
   'tr',
   CAST(JSON_OBJECT(
 
-    'ui_services_page_title',                'Masaj Çeşitleri',
-    'ui_services_detail_page_title',         'Masaj Detayı',
+    'ui_services_page_title',                'Hizmetler',
+    'ui_services_detail_page_title',         'Hizmet Detayı',
 
-    'ui_services_meta_title',                'Masaj Çeşitleri | Königs Massage',
-    'ui_services_meta_description',          'Königs Massage masaj çeşitleri: rahatlatıcı, derin doku, klasik ve daha fazlası. Size en uygun masajı seçmek için detayları inceleyin.',
-    'ui_services_detail_meta_title',         'Masaj Detayı | Königs Massage',
+    'ui_services_meta_title',                'Hizmetler | KÖNIG ENERGETIK',
+    'ui_services_meta_description',          'Bonn’da enerjetik masaj seansları: Enerjetik Rahatlama Masajı, Thai Yoga Masajı, Sırt & Boyun Rahatlatma, Aroma Enerji Masajı, Ayak Refleks & Enerji Noktaları, Sezgisel Enerjetik Seans.',
+    'ui_services_og_image',                  '',
+    'ui_services_detail_meta_title',         'Hizmet Detayı | KÖNIG ENERGETIK',
     'ui_services_detail_meta_description',   'Masajın kapsamı, süre seçenekleri ve uygulama detayları. Size uygun seansı seçmek için masaj detaylarını inceleyin.',
 
-    'ui_services_subprefix',                 'Königs Massage',
-    'ui_services_sublabel',                  'Masaj Çeşitleri',
-    'ui_services_title',                     'Hangi masaj size uygun?',
-    'ui_services_page_description',          'Masaj çeşitlerimizi inceleyin. Rahatlama, gevşeme ve yenilenme için size uygun seçeneği bulun.',
+    'ui_services_subprefix',                 'KÖNIG ENERGETIK',
+    'ui_services_sublabel',                  'Hizmetler',
+    'ui_services_title',                     'Hangi seans size iyi gelir?',
+    'ui_services_page_description',          'Enerjetik masaj ve seans seçeneklerimizi inceleyin. Sakin bir ritim ve net sınırlar içinde derin gevşemeye alan açın.',
 
     'ui_services_placeholder_title',         'Masaj',
     'ui_services_placeholder_summary',       'Bu masajın açıklaması yakında eklenecektir.',
     'ui_services_details_aria',              'masaj detaylarını görüntüle',
 
-    'ui_services_more_subtitle',             'Diğer masajlarımızı keşfedin',
+    'ui_services_more_subtitle',             'Diğer hizmetleri keşfedin',
     'ui_services_more_title',                'İlginizi çekebilecek diğer masajlar',
 
     'ui_services_detail_title',              'Masaj',
@@ -84,7 +85,9 @@ VALUES
     'ui_services_cta_more_info',             'Bu masaj hakkında detaylı bilgi ve uygunluk için ekibimizle iletişime geçebilirsiniz.',
     'ui_services_cta_whatsapp',              'WhatsApp üzerinden yazın',
     'ui_services_cta_request_quote',         'Bu masaj için randevu talep et',
-    'ui_services_other_title',               'Diğer Masajlarımız'
+    'ui_services_other_title',               'Diğer hizmetler',
+    'ui_services_view_all',                  'Tümünü gör',
+    'ui_services_details_empty',             'Henüz detay yok.'
   ) AS CHAR),
   NOW(3),
   NOW(3)
@@ -95,24 +98,25 @@ VALUES
   'en',
   CAST(JSON_OBJECT(
 
-    'ui_services_page_title',                'Massage Types',
-    'ui_services_detail_page_title',         'Massage Detail',
+    'ui_services_page_title',                'Treatments',
+    'ui_services_detail_page_title',         'Treatment Detail',
 
-    'ui_services_meta_title',                'Massage Types | Königs Massage',
-    'ui_services_meta_description',          'Königs Massage massage types: relaxing, deep tissue, classic and more. Explore details to choose the best massage for you.',
-    'ui_services_detail_meta_title',         'Massage Detail | Königs Massage',
+    'ui_services_meta_title',                'Treatments | KÖNIG ENERGETIK',
+    'ui_services_meta_description',          'Energetic massage sessions in Bonn: Energetic Relaxation Massage, Thai Yoga Massage, Back & Neck Release, Aroma Energy Massage, Foot Reflex & Energy Points, Intuitive Energetic Session.',
+    'ui_services_og_image',                  '',
+    'ui_services_detail_meta_title',         'Treatment Detail | KÖNIG ENERGETIK',
     'ui_services_detail_meta_description',   'Massage scope, duration options and session details. Review the massage detail to choose the right session.',
 
-    'ui_services_subprefix',                 'Königs Massage',
-    'ui_services_sublabel',                  'Massage Types',
-    'ui_services_title',                     'Which massage suits you?',
-    'ui_services_page_description',          'Explore our massage types. Find the right option for relaxation, relief and renewal.',
+    'ui_services_subprefix',                 'KÖNIG ENERGETIK',
+    'ui_services_sublabel',                  'Treatments',
+    'ui_services_title',                     'Which session suits you?',
+    'ui_services_page_description',          'Explore our energetic massage and session options. A calm rhythm, clear boundaries, and space for deep relaxation.',
 
     'ui_services_placeholder_title',         'Massage',
     'ui_services_placeholder_summary',       'Massage description will be added soon.',
     'ui_services_details_aria',              'view massage details',
 
-    'ui_services_more_subtitle',             'Discover our other massages',
+    'ui_services_more_subtitle',             'Discover other treatments',
     'ui_services_more_title',                'Other massages you may like',
 
     'ui_services_detail_title',              'Massage',
@@ -159,7 +163,9 @@ VALUES
     'ui_services_cta_more_info',             'Contact our team for more details and availability for this massage.',
     'ui_services_cta_whatsapp',              'Message us on WhatsApp',
     'ui_services_cta_request_quote',         'Request an appointment for this massage',
-    'ui_services_other_title',               'Other massages'
+    'ui_services_other_title',               'Other treatments',
+    'ui_services_view_all',                  'View all',
+    'ui_services_details_empty',             'No details yet.'
   ) AS CHAR),
   NOW(3),
   NOW(3)
@@ -170,24 +176,25 @@ VALUES
   'de',
   CAST(JSON_OBJECT(
 
-    'ui_services_page_title',                'Massagearten',
-    'ui_services_detail_page_title',         'Massage-Details',
+    'ui_services_page_title',                'Behandlungen',
+    'ui_services_detail_page_title',         'Behandlungsdetails',
 
-    'ui_services_meta_title',                'Massagearten | Königs Massage',
-    'ui_services_meta_description',          'Königs Massage Massagearten: Entspannungsmassage, Deep Tissue, Klassische Massage und mehr. Entdecken Sie Details und wählen Sie die passende Massage.',
-    'ui_services_detail_meta_title',         'Massage-Details | Königs Massage',
+    'ui_services_meta_title',                'Behandlungen | KÖNIG ENERGETIK',
+    'ui_services_meta_description',          'Energetische Massage in Bonn: Energetische Entspannungsmassage, Thai Yoga Massage, Rücken & Nacken Release, Aroma-Energie Massage, Fußreflex & Energiepunkte, Intuitive Energetik Session.',
+    'ui_services_og_image',                  '',
+    'ui_services_detail_meta_title',         'Behandlungsdetails | KÖNIG ENERGETIK',
     'ui_services_detail_meta_description',   'Umfang, Daueroptionen und Details zur Behandlung. Lesen Sie die Massage-Details, um die passende Sitzung zu wählen.',
 
-    'ui_services_subprefix',                 'Königs Massage',
-    'ui_services_sublabel',                  'Massagearten',
-    'ui_services_title',                     'Welche Massage passt zu Ihnen?',
-    'ui_services_page_description',          'Entdecken Sie unsere Massagearten. Finden Sie die passende Option für Entspannung, Linderung und Regeneration.',
+    'ui_services_subprefix',                 'KÖNIG ENERGETIK',
+    'ui_services_sublabel',                  'Behandlungen',
+    'ui_services_title',                     'Welche Sitzung passt zu Ihnen?',
+    'ui_services_page_description',          'Entdecken Sie energetische Massage und Behandlungsoptionen. Ruhiger Rhythmus, klare Grenzen und Raum zum Loslassen.',
 
     'ui_services_placeholder_title',         'Massage',
     'ui_services_placeholder_summary',       'Die Beschreibung dieser Massage wird in Kürze hinzugefügt.',
     'ui_services_details_aria',              'Massage-Details anzeigen',
 
-    'ui_services_more_subtitle',             'Entdecken Sie weitere Massagen',
+    'ui_services_more_subtitle',             'Weitere Behandlungen entdecken',
     'ui_services_more_title',                'Weitere Massagen, die Sie interessieren könnten',
 
     'ui_services_detail_title',              'Massage',
@@ -234,7 +241,9 @@ VALUES
     'ui_services_cta_more_info',             'Kontaktieren Sie unser Team für weitere Details und Verfügbarkeit für diese Massage.',
     'ui_services_cta_whatsapp',              'Per WhatsApp schreiben',
     'ui_services_cta_request_quote',         'Terminanfrage für diese Massage senden',
-    'ui_services_other_title',               'Weitere Massagen'
+    'ui_services_other_title',               'Weitere Behandlungen',
+    'ui_services_view_all',                  'Alle ansehen',
+    'ui_services_details_empty',             'Noch keine Details.'
   ) AS CHAR),
   NOW(3),
   NOW(3)

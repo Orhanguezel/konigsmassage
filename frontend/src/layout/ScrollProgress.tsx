@@ -1,14 +1,13 @@
 // src/layout/ScrollProgress.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { FiChevronUp } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { IconChevronUp } from "@/components/ui/icons";
 
 const CIRCUMFERENCE = 308.66; // 2πr (r≈49)
 
 function ScrollProgress() {
   const [progress, setProgress] = useState(0);
-  const wrapRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -48,8 +47,9 @@ function ScrollProgress() {
 
   return (
     <button
-      ref={wrapRef}
-      className={`progress-wrap${progress > 0 ? " active-progress" : ""}`}
+      className={`fixed right-5 bottom-5 z-50 grid place-items-center w-11 h-11 rounded-full bg-white border border-sand-200 shadow-lg transition-all duration-200 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 ${
+        progress > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+      }`}
       onClick={onClick}
       aria-label="Back to top"
       title="Back to top"
@@ -57,7 +57,7 @@ function ScrollProgress() {
     >
       {/* Dairesel ilerleme */}
       <svg
-        className="progress-circle"
+        className="absolute inset-0 text-brand-primary"
         width="100%"
         height="100%"
         viewBox="-1 -1 102 102"
@@ -65,7 +65,7 @@ function ScrollProgress() {
       >
         <path
           d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
-          stroke="#3887FE"
+          stroke="currentColor"
           strokeWidth="4"
           fill="none"
           style={{
@@ -77,55 +77,9 @@ function ScrollProgress() {
       </svg>
 
       {/* React Icons — Font Awesome yerine */}
-      <span className="progress-icon" aria-hidden="true">
-        <FiChevronUp size={20} />
+      <span className="relative text-brand-primary hover:text-brand-hover transition-colors" aria-hidden="true">
+        <IconChevronUp size={20} />
       </span>
-
-      {/* Sadece bu bileşene özel minimal stil */}
-      <style jsx>{`
-        .progress-wrap {
-          position: fixed;
-          right: 18px;
-          bottom: 18px;
-          width: 46px;
-          height: 46px;
-          border-radius: 50%;
-          background: #fff;
-          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-          cursor: pointer;
-          outline: none;
-          border: 0;
-          padding: 0;
-          display: grid;
-          place-items: center;
-          opacity: 0;
-          visibility: hidden;
-          transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-          z-index: 999;
-        }
-        .progress-wrap.active-progress {
-          opacity: 1;
-          visibility: visible;
-          transform: translateY(0);
-        }
-        .progress-wrap:not(.active-progress) {
-          transform: translateY(8px);
-        }
-        .progress-circle {
-          position: absolute;
-          inset: 0;
-        }
-        .progress-icon {
-          position: relative;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          color: #3887fe;
-        }
-        .progress-wrap:hover .progress-icon {
-          color: #1e6ff6;
-        }
-      `}</style>
     </button>
   );
 }

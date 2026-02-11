@@ -25,32 +25,26 @@ import Header from './header/Header';
 import FooterTwo from './footer/Footer';
 import ScrollProgress from './ScrollProgress';
 
-import { SiteIconsHead } from '@/seo/SiteIconsHead';
+import { SiteIconsHead } from '@/seo';
 
 import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
 import type { SettingValue, SiteSettingRow } from '@/integrations/types';
 
-import { asObj, buildCanonical } from '@/seo/pageSeo';
-import { siteUrlBase, absoluteUrl } from '@/features/seo/utils';
-import { buildMeta, filterClientHeadSpecs, type MetaInput } from '@/seo/meta';
+import { asObj, buildCanonical, siteUrlBase, absoluteUrl } from '@/seo';
+import { buildMeta, filterClientHeadSpecs, type MetaInput } from '@/seo';
 
 // ✅ i18n
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { FALLBACK_LOCALE } from '@/i18n/config';
 
 // ✅ JSON-LD
-import JsonLd from '@/seo/JsonLd';
-import { graph, org, website, sameAsFromSocials } from '@/seo/jsonld';
+import { JsonLd, graph, org, website, sameAsFromSocials } from '@/seo';
 
 // ✅ SEO SCHEMA HELPERS (DB-backed)
-import { parseSeoFromSettings } from '@/seo/seoSchema';
+import { parseSeoFromSettings } from '@/seo';
 
 // ✅ Store-based page overrides (LayoutSeoBridge)
-import {
-  getLayoutSeoSnapshot,
-  subscribeLayoutSeo,
-  type LayoutSeoOverrides,
-} from '@/seo/layoutSeoStore';
+import { getLayoutSeoSnapshot, subscribeLayoutSeo, type LayoutSeoOverrides } from '@/seo';
 
 type SimpleBrand = {
   name: string;
@@ -399,13 +393,13 @@ export default function Layout({
   // ------------------------------------------------------------
 
   const finalTitle = useMemo(() => {
-    const hardFb = 'konigsmassage';
+    const hardFb = 'KÖNIG ENERGETIK – Energetische Massage in Bonn';
     return cleanString(effectiveTitleProp) || seoTitleDefault || metaDefault.title || hardFb;
   }, [effectiveTitleProp, seoTitleDefault, metaDefault.title]);
 
   const finalDescription = useMemo(() => {
     const hardFb =
-      'Industrial cooling towers, engineering, installation and service solutions for efficient process cooling.';
+      'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung. Termine nach Vereinbarung.';
     return cleanString(effectiveDescProp) || seoDescription || metaDefault.description || hardFb;
   }, [effectiveDescProp, seoDescription, metaDefault.description]);
 
@@ -637,7 +631,7 @@ export default function Layout({
       </Head>
 
       <div className="my-app">
-        <Header brand={effectiveBrand} logoSrc={headerLogoSrc} />
+        <Header brand={effectiveBrand} />
         <main>
           <LayoutErrorBoundary fallback={errorFallback}>{children}</LayoutErrorBoundary>
         </main>

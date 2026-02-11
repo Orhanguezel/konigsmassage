@@ -7,9 +7,10 @@
     "build": "bun x tsc -p tsconfig.json && bun x tsc-alias -p tsconfig.json && node scripts/fix-esm-extensions.mjs",
     "start": "node --experimental-specifier-resolution=node dist/index.js",
     "start:bun": "bun dist/index.js",
-    "db:seed": "node --experimental-specifier-resolution=node dist/db/seed/index.js",
-    "db:seed:nodrop": "node --experimental-specifier-resolution=node dist/db/seed/index.js --no-drop",
-    "db:seed:only": "node --experimental-specifier-resolution=node dist/db/seed/index.js --only="
+    "db:seed": "bun src/db/index.ts",
+    "db:seed:nodrop": "bun src/db/index.ts --no-drop",
+    "db:seed:only": "bun src/db/index.ts",
+    "db:seed:dist": "node --experimental-specifier-resolution=node dist/db/index.js"
   },
   "dependencies": {
     "@fastify/cookie": "^11",

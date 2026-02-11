@@ -7,7 +7,7 @@
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 
-import { FaFacebookF, FaTwitter, FaYoutube, FaLinkedin, FaInstagram } from 'react-icons/fa';
+import { IconFacebook, IconInstagram, IconLinkedIn, IconTwitterX, IconYoutube } from '@/components/ui/icons';
 
 export type SocialLinksMap = Record<string, string>;
 
@@ -15,7 +15,7 @@ type SocialItem = {
   key: string;
   label: string;
   url: string;
-  Icon: React.ComponentType<{ className?: string }>;
+  Icon: React.ComponentType<{ className?: string; size?: number }>;
 };
 
 export type SocialLinksProps = {
@@ -55,11 +55,11 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
     const ig = normalizeUrl(s.instagram || s.ig);
 
     return [
-      fb && { key: 'facebook', label: 'Facebook', url: fb, Icon: FaFacebookF },
-      tw && { key: 'twitter', label: 'X (Twitter)', url: tw, Icon: FaTwitter },
-      yt && { key: 'youtube', label: 'YouTube', url: yt, Icon: FaYoutube },
-      li && { key: 'linkedin', label: 'LinkedIn', url: li, Icon: FaLinkedin },
-      ig && { key: 'instagram', label: 'Instagram', url: ig, Icon: FaInstagram },
+      fb && { key: 'facebook', label: 'Facebook', url: fb, Icon: IconFacebook },
+      tw && { key: 'twitter', label: 'X (Twitter)', url: tw, Icon: IconTwitterX },
+      yt && { key: 'youtube', label: 'YouTube', url: yt, Icon: IconYoutube },
+      li && { key: 'linkedin', label: 'LinkedIn', url: li, Icon: IconLinkedIn },
+      ig && { key: 'instagram', label: 'Instagram', url: ig, Icon: IconInstagram },
     ].filter(Boolean) as SocialItem[];
   }, [socials]);
 
@@ -130,13 +130,16 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
         }
 
         .konigsmassage-social__icon {
-          font-size: 16px;
+          width: 16px;
+          height: 16px;
         }
         .konigsmassage-social--sm .konigsmassage-social__icon {
-          font-size: 14px;
+          width: 14px;
+          height: 14px;
         }
         .konigsmassage-social--lg .konigsmassage-social__icon {
-          font-size: 18px;
+          width: 18px;
+          height: 18px;
         }
 
         .konigsmassage-social__label {

@@ -1,9 +1,8 @@
 // =============================================================
 // FILE: src/components/containers/faqs/FaqsPageContent.tsx
 // Königs Massage – Full FAQs Page Content [FINAL]
-// - i18n: useLocaleShort() + ui_faqs (DB) with EN fallback
-// - Accordion: theme SCSS (.bd-faq__wrapper-2 + .bd-faq__accordion) (no inline css)
-// - No content + not loading => empty message inside accordion
+// - Tailwind v4 Semantic Tokens
+// - Standard Accordion
 // =============================================================
 
 'use client';
@@ -12,17 +11,11 @@ import React, { useMemo, useState, useEffect, useId, useCallback } from 'react';
 
 import { useListFaqsQuery } from '@/integrations/rtk/hooks';
 import type { FaqDto } from '@/integrations/types';
-import { normalizeFaq } from '@/integrations/types';
+import { normalizeFaq, safeStr } from '@/integrations/types';
 
-// i18n (PATTERN)
+// i18n
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
 
 const FaqsPageContent: React.FC = () => {
   const uid = useId();
@@ -31,12 +24,12 @@ const FaqsPageContent: React.FC = () => {
   const { ui } = useUiSection('ui_faqs', locale as any);
   const t = useCallback((key: string, fallback: string) => ui(key, fallback), [ui]);
 
-  // UI (DB -> EN fallback)
+  // UI Strings
   const kickerPrefix = safeStr(t('ui_faqs_kicker_prefix', 'Königs Massage'));
   const kickerLabel = safeStr(t('ui_faqs_kicker_label', 'Frequently Asked Questions'));
 
   const titlePrefix = safeStr(t('ui_faqs_page_title_prefix', 'Common'));
-  const titleMark = safeStr(t('ui_faqs_page_title_mark', 'questions'));
+  const titleMark = safeStr(t('ui_faqs_page_title_mark', 'Questions'));
 
   const intro = safeStr(
     t(
@@ -93,107 +86,104 @@ const FaqsPageContent: React.FC = () => {
       return;
     }
     if (openId == null) setOpenId(safeStr(faqs[0]?.id) || null);
-  }, [hasFaqs, faqs, openId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasFaqs, faqs]); // run only when list changes
 
   return (
-    <section className="faq__area pt-120 pb-90 grey-bg-3">
-      <div className="container">
+    <section className="bg-bg-primary py-20 min-h-screen">
+      <div className="container mx-auto px-4">
         {/* HEADER */}
-        <div className="row">
-          <div className="col-12">
-            <div className="section__title-wrapper text-center mb-50">
-              <span className="section__subtitle">
-                <span>{kickerPrefix}</span> {kickerLabel}
-              </span>
+        <div className="text-center mb-16 max-w-3xl mx-auto" data-aos="fade-up">
+          <span className="text-brand-primary font-bold text-sm uppercase tracking-widest block mb-3">
+            <span>{kickerPrefix}</span> {kickerLabel}
+          </span>
 
-              <h2 className="section__title">
-                {titlePrefix} <span className="down__mark-line">{titleMark}</span>
-              </h2>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-text-primary mb-6">
+            {titlePrefix} <span className="text-brand-primary border-b-2 border-brand-primary/20 pb-1">{titleMark}</span>
+          </h2>
 
-              {intro ? <p className="ens-faqs__intro">{intro}</p> : null}
-            </div>
-          </div>
+          {intro && <p className="text-text-secondary text-lg leading-relaxed">{intro}</p>}
         </div>
 
         {/* ACCORDION */}
-        <div className="row" data-aos="fade-up" data-aos-delay="200">
-          <div className="col-xl-10 col-lg-11 mx-auto">
-            {/* SCSS wrapper */}
-            <div className="bd-faq__wrapper-2 mb-10">
-              <div className="bd-faq__accordion" data-aos="fade-left" data-aos-duration="1000">
-                <div className="accordion" id={`faqAccordion-${uid}`}>
-                  {/* EMPTY */}
-                  {!isLoading && !hasFaqs ? (
-                    <div className="accordion-item">
-                      <div className="accordion-body">
-                        <p className="text-center mb-0">{emptyText}</p>
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {/* ITEMS */}
-                  {faqs.map((faq, idx) => {
-                    const id = safeStr(faq.id) || `${uid}-${idx}`;
-                    const isOpen = openId === id;
-
-                    const headingId = `faqHeading-${id}`;
-                    const panelId = `faqCollapse-${id}`;
-
-                    const q = safeStr(faq.question) || untitled;
-                    const a = safeStr(faq.answer);
-
-                    return (
-                      <div className="accordion-item" key={id}>
-                        <h2 className="accordion-header" id={headingId}>
-                          <button
-                            type="button"
-                            className={`accordion-button${isOpen ? '' : ' collapsed'}`}
-                            aria-expanded={isOpen ? 'true' : 'false'}
-                            aria-controls={panelId}
-                            onClick={() => setOpenId((prev) => (prev === id ? null : id))}
-                          >
-                            {q}
-                          </button>
-                        </h2>
-
-                        {/* Bootstrap JS yok: class ile show/hide */}
-                        <div
-                          id={panelId}
-                          className={`accordion-collapse collapse${isOpen ? ' show' : ''}`}
-                          aria-labelledby={headingId}
-                        >
-                          <div className="accordion-body">
-                            {a ? (
-                              <div dangerouslySetInnerHTML={{ __html: a }} />
-                            ) : (
-                              <p className="text-muted small mb-0">{noAnswer}</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* LOADING */}
-                  {isLoading ? (
-                    <div className="accordion-item" aria-hidden>
-                      <div className="accordion-body">
-                        <div className="skeleton-line ens-faqs__skelLine" />
-                        <div className="skeleton-line ens-faqs__skelLine ens-faqs__skelLine--w80" />
-                      </div>
-                    </div>
-                  ) : null}
+        <div className="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+          <div className="space-y-4">
+              {/* EMPTY */}
+              {!isLoading && !hasFaqs && (
+                <div className="bg-white p-8 rounded-xl shadow-soft text-center border border-sand-100">
+                  <p className="text-text-muted">{emptyText}</p>
                 </div>
-              </div>
-            </div>
+              )}
 
-            {/* FOOTER NOTE */}
-            {footerNote ? (
-              <div className="text-center mt-20">
-                <p className="small text-muted mb-0">{footerNote}</p>
-              </div>
-            ) : null}
+              {/* LOADING */}
+              {isLoading && (
+                 <div className="space-y-4">
+                    {[1,2,3].map(i => (
+                        <div key={i} className="bg-white p-6 rounded-xl border border-sand-100 shadow-soft animate-pulse">
+                            <div className="h-6 bg-sand-100 rounded w-2/3 mb-4"/>
+                            <div className="h-4 bg-sand-100 rounded w-full"/>
+                        </div>
+                    ))}
+                 </div>
+              )}
+
+              {/* ITEMS */}
+              {faqs.map((faq, idx) => {
+                const id = safeStr(faq.id) || `${uid}-${idx}`;
+                const isOpen = openId === id;
+
+                const headingId = `faqHeading-${id}`;
+                const panelId = `faqCollapse-${id}`;
+
+                const q = safeStr(faq.question) || untitled;
+                const a = safeStr(faq.answer);
+
+                return (
+                  <div className="bg-white border border-sand-100 rounded-xl shadow-soft overflow-hidden transition-all duration-300 hover:border-brand-primary/20 hover:shadow-medium" key={id}>
+                    <h2>
+                      <button
+                        type="button"
+                        className={`w-full text-left px-6 py-5 flex justify-between items-center font-bold text-lg md:text-xl transition-colors ${
+                            isOpen ? 'text-brand-primary' : 'text-text-primary hover:text-brand-primary'
+                        }`}
+                        aria-expanded={isOpen}
+                        aria-controls={panelId}
+                        id={headingId}
+                        onClick={() => setOpenId((prev) => (prev === id ? null : id))}
+                      >
+                        <span className="font-serif">{q}</span>
+                        <span className={`ml-4 transform transition-transform duration-300 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-sand-50 ${isOpen ? 'rotate-180 bg-brand-primary/10 text-brand-primary' : 'text-text-muted'}`}>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </span>
+                      </button>
+                    </h2>
+
+                    <div
+                      id={panelId}
+                      className={`transition-all duration-300 ease-in-out overflow-hidden bg-sand-50/50 ${
+                        isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                      aria-labelledby={headingId}
+                    >
+                      <div className="p-6 pt-2 text-text-secondary leading-relaxed border-t border-sand-100/50">
+                        {a ? (
+                          <div className="prose prose-rose max-w-none" dangerouslySetInnerHTML={{ __html: a }} />
+                        ) : (
+                          <p className="text-text-muted italic text-sm">{noAnswer}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
           </div>
+
+          {/* FOOTER NOTE */}
+          {footerNote && (
+            <div className="text-center mt-12 bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-sand-200">
+              <p className="text-text-secondary font-medium mb-0">{footerNote}</p>
+            </div>
+          )}
         </div>
       </div>
     </section>

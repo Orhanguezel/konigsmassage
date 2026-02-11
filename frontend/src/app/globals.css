@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary - Rose Palette */
+  --color-rose-50: #FFF5F3;
+  --color-rose-100: #FFE8E3;
+  --color-rose-200: #FBD5CD;
+  --color-rose-300: #F4BDB3;
+  --color-rose-400: #E8A598;
+  --color-rose-500: #D88D7E;
+  --color-rose-600: #C77665;
+  --color-rose-700: #A6604F;
+  --color-rose-800: #7F4A3B;
+  --color-rose-900: #5E352A;
+
+  /* Neutral - Sand Palette */
+  --color-sand-50: #FDFCFB;
+  --color-sand-100: #F9F7F4;
+  --color-sand-200: #F0EBE6;
+  --color-sand-300: #E3DDD5;
+  --color-sand-400: #C9BFB3;
+  --color-sand-800: #4A4139;
+  --color-sand-900: #2D2520;
+
+  /* Accent Colors */
+  --color-gold-300: #F3D9A8;
+  --color-gold-400: #E8C57A;
+  --color-lavender-300: #D9C9E8;
+  
+  /* Dark Colors */
+  --color-black: #0A0806;
+  --color-charcoal: #1A1512;
+
+  /* Semantic Tokens */
+  --color-bg-primary: var(--color-sand-50);
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-dark: var(--color-charcoal);
+  --color-bg-accent: var(--color-rose-50);
+
+  --color-text-primary: var(--color-sand-900);
+  --color-text-secondary: var(--color-sand-800); /* Daha koyu, daha iyi kontrast */
+  --color-text-muted: var(--color-sand-400);    /* Daha belirgin, daha iyi okunabilirlik */
+  --color-text-on-dark: var(--color-sand-50);
+
+  /* Accessibility: ensure sufficient contrast with white text */
+  --color-brand-primary: var(--color-rose-900);
+  --color-brand-hover: var(--color-rose-800);
+  --color-brand-dark: var(--color-charcoal);
+  --color-brand-light: var(--color-rose-100);
+
+  /* Legacy/Generic aliases used across the app (Tailwind v4 color names) */
+  --color-primary: var(--color-brand-primary);
+  --color-primary-hover: var(--color-brand-hover);
+
+  --color-accent-gold: var(--color-gold-400);
+  --color-accent-spiritual: var(--color-lavender-300);
+
+  --color-border-light: var(--color-sand-200);
+  --color-border-medium: var(--color-sand-300);
+
+  /* Typography */
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  /* Add script font if you bundle it, e.g. --font-script: "Dancing Script", cursive; */
+}
+
+/* Custom CSS Properties for Shadows */
+:root {
+  --shadow-soft: 0 2px 20px rgba(232, 165, 152, 0.12);
+  --shadow-medium: 0 8px 40px rgba(232, 165, 152, 0.18);
+  --shadow-glow: 0 0 40px rgba(232, 165, 152, 0.3);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    color: var(--color-text-primary);
+  }
+  p, .prose, .prose p, .prose li {
+    color: var(--color-text-secondary);
+  }
+  main li {
+    color: var(--color-text-secondary);
+  }
+}
+
+@layer utilities {
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  /* Utility for the script font if added later */
+  .font-script {
+    font-family: cursive; /* Placeholder */
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 1280px;
+}

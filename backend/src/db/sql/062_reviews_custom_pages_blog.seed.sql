@@ -1,7 +1,13 @@
 -- =============================================================
 -- OPTIONAL: BLOG reviews seed (safe)
 -- - If reviews tables are missing, skip without failing the seed run
+-- - target_type: 'blog' (FE uses target_type='blog' + target_id=custom_pages.id)
 -- =============================================================
+
+SET NAMES utf8mb4;
+SET time_zone = '+00:00';
+
+START TRANSACTION;
 
 SET @HAS_REVIEWS := (
   SELECT COUNT(*)
@@ -17,15 +23,21 @@ SET @HAS_REVIEW_I18N := (
     AND table_name = 'review_i18n'
 );
 
--- Blog page ids (must match your blog custom_pages seed)
+-- Blog page ids (must match 052_custom_pages_blog.seed.sql)
 SET @PAGE_BLOG_1 := '22222222-2222-3333-4444-555555555501';
 SET @PAGE_BLOG_2 := '22222222-2222-3333-4444-555555555502';
 SET @PAGE_BLOG_3 := '22222222-2222-3333-4444-555555555503';
+SET @PAGE_BLOG_4 := '22222222-2222-3333-4444-555555555504';
+SET @PAGE_BLOG_5 := '22222222-2222-3333-4444-555555555505';
+SET @PAGE_BLOG_6 := '22222222-2222-3333-4444-555555555506';
 
 -- Parent review ids (fixed)
 SET @REV_BLOG_1 := '44440101-4444-4444-8444-444444440101';
 SET @REV_BLOG_2 := '44440102-4444-4444-8444-444444440102';
 SET @REV_BLOG_3 := '44440103-4444-4444-8444-444444440103';
+SET @REV_BLOG_4 := '44440104-4444-4444-8444-444444440104';
+SET @REV_BLOG_5 := '44440105-4444-4444-8444-444444440105';
+SET @REV_BLOG_6 := '44440106-4444-4444-8444-444444440106';
 
 -- ---------------------------
 -- Insert parents (reviews)
@@ -39,9 +51,12 @@ SET @SQL_REVIEWS := IF(@HAS_REVIEWS > 0,
    `submitted_locale`,
    `created_at`, `updated_at`)
 VALUES
-  (@REV_BLOG_1, 'custom_page', @PAGE_BLOG_1, 'Merve K.',  'merve.k@example.com',  5, 1, 1, 210, 6, 0, 5, 'tr', NOW(3), NOW(3)),
-  (@REV_BLOG_2, 'custom_page', @PAGE_BLOG_2, 'Daniel S.', 'daniel.s@example.com', 5, 1, 1, 220, 4, 0, 4, 'en', NOW(3), NOW(3)),
-  (@REV_BLOG_3, 'custom_page', @PAGE_BLOG_3, 'Anna M.',   'anna.m@example.com',   4, 1, 1, 230, 2, 0, 2, 'de', NOW(3), NOW(3))
+  (@REV_BLOG_1, 'blog', @PAGE_BLOG_1, 'Leonie K.',  'leonie.k@example.com',  5, 1, 1, 210, 6, 0, 5, 'de', NOW(3), NOW(3)),
+  (@REV_BLOG_2, 'blog', @PAGE_BLOG_2, 'Daniel S.',  'daniel.s@example.com',  5, 1, 1, 220, 4, 0, 4, 'de', NOW(3), NOW(3)),
+  (@REV_BLOG_3, 'blog', @PAGE_BLOG_3, 'Anna M.',    'anna.m@example.com',    5, 1, 1, 230, 2, 0, 2, 'de', NOW(3), NOW(3)),
+  (@REV_BLOG_4, 'blog', @PAGE_BLOG_4, 'Miriam N.',  'miriam.n@example.com',  5, 1, 1, 240, 3, 0, 3, 'de', NOW(3), NOW(3)),
+  (@REV_BLOG_5, 'blog', @PAGE_BLOG_5, 'Tom W.',     'tom.w@example.com',     5, 1, 1, 250, 3, 0, 3, 'de', NOW(3), NOW(3)),
+  (@REV_BLOG_6, 'blog', @PAGE_BLOG_6, 'Lea S.',     'lea.s@example.com',     5, 1, 1, 260, 3, 0, 3, 'de', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `target_type`      = VALUES(`target_type`),
   `target_id`        = VALUES(`target_id`),
@@ -72,43 +87,34 @@ SET @SQL_REVIEW_I18N := IF(@HAS_REVIEW_I18N > 0,
    `title`, `comment`, `admin_reply`,
    `created_at`, `updated_at`)
 VALUES
-  ('44440101-4444-4444-8444-444444441101', @REV_BLOG_1, 'tr',
-   'Bağırsak sağlığı konusu çok iyi özetlenmiş',
-   'Yazı hem anlaşılır hem de pratik. Su, lif ve fermente gıdalarla ilgili öneriler günlük rutine kolayca eklenebiliyor. “İkinci beyin” yaklaşımı özellikle dikkat çekici.',
-   NULL, NOW(3), NOW(3)),
-  ('44440101-4444-4444-8444-444444441102', @REV_BLOG_1, 'en',
-   'Clear and practical gut health article',
-   'Very easy to follow and actionable. The hydration, fiber and fermented foods tips are realistic for everyday life, and the “second brain” perspective is a great reminder.',
-   NULL, NOW(3), NOW(3)),
   ('44440101-4444-4444-8444-444444441103', @REV_BLOG_1, 'de',
    'Sehr verständlich und alltagstauglich',
-   'Der Beitrag ist klar strukturiert und praxisnah. Tipps zu Wasser, Ballaststoffen und fermentierten Lebensmitteln lassen sich gut in den Alltag integrieren; die „zweites Gehirn“-Perspektive ist ein guter Denkanstoß.',
+   'Der Beitrag ist klar strukturiert und praxisnah. Die Hinweise zu Wasser, Ballaststoffen und fermentierten Lebensmitteln lassen sich gut in den Alltag integrieren – die Idee vom „zweiten Gehirn“ ist ein starker Denkanstoß.',
    NULL, NOW(3), NOW(3)),
 
-  ('44440102-4444-4444-8444-444444442201', @REV_BLOG_2, 'tr',
-   'Kafeinsiz enerji için çok iyi öneriler',
-   'Kahveye yüklenmeden enerji yükseltme fikri çok iyi anlatılmış. Uyku, sabah ışığı ve hareket önerileri basit ama etkili. Bitki çayı önerileri de yerinde.',
-   NULL, NOW(3), NOW(3)),
-  ('44440102-4444-4444-8444-444444442202', @REV_BLOG_2, 'en',
-   'Helpful alternatives to caffeine',
-   'Great suggestions without pushing stimulants. The focus on sleep rhythm, morning light and gentle movement feels sustainable, and the herbal tea ideas are a nice touch.',
-   NULL, NOW(3), NOW(3)),
   ('44440102-4444-4444-8444-444444442203', @REV_BLOG_2, 'de',
    'Nachhaltige Energie ohne Koffein',
-   'Sehr gute, realistische Empfehlungen. Schlafrhythmus, Morgenlicht und Bewegung sind sinnvoll erklärt, ohne „Wunderlösungen“. Die Hinweise zu Kräutertees passen ebenfalls gut.',
+   'Sehr gute, realistische Empfehlungen. Schlafrhythmus, Morgenlicht und sanfte Bewegung sind verständlich erklärt – ohne „Wunderlösungen“. Die Kräutertee-Ideen passen perfekt dazu.',
    NULL, NOW(3), NOW(3)),
 
-  ('44440103-4444-4444-8444-444444443301', @REV_BLOG_3, 'tr',
-   'Mevsimsel beslenme rehberi çok faydalı',
-   'Mevsimlere göre neye ağırlık verileceği net. Özellikle yerel pazar ve “tabakta çeşit” vurgusu hoşuma gitti. Uygulaması kolay bir içerik.',
-   NULL, NOW(3), NOW(3)),
-  ('44440103-4444-4444-8444-444444443302', @REV_BLOG_3, 'en',
-   'Great seasonal eating overview',
-   'Simple, well structured and easy to apply. I like the practical season-by-season ideas and the emphasis on local markets and variety on the plate.',
-   NULL, NOW(3), NOW(3)),
   ('44440103-4444-4444-8444-444444443303', @REV_BLOG_3, 'de',
-   'Übersichtlich und praxisnah',
-   'Der saisonale Überblick ist klar gegliedert und leicht umzusetzen. Besonders gut: die Ideen pro Jahreszeit sowie der Fokus auf Wochenmarkt, Vielfalt und einfache Anpassungen.',
+   'Übersichtlich und motivierend',
+   'Der saisonale Überblick ist angenehm klar und leicht umzusetzen. Besonders hilfreich finde ich den Fokus auf Wochenmarkt, Vielfalt auf dem Teller und kleine, konsequente Schritte.',
+   NULL, NOW(3), NOW(3)),
+
+  ('44440104-4444-4444-8444-444444444403', @REV_BLOG_4, 'de',
+   'Sehr stimmig beschrieben',
+   'Die Arbeit mit geschlossenen Augen wird nachvollziehbar als Präsenz und Sensibilität erklärt. Die Betonung von Ruhe, klaren Grenzen und einem geschützten Rahmen wirkt sehr vertrauensvoll.',
+   NULL, NOW(3), NOW(3)),
+
+  ('44440105-4444-4444-8444-444444445503', @REV_BLOG_5, 'de',
+   'Klare, hilfreiche Einordnung',
+   'Sehr wertvoll, wie deutlich „was es ist / was es nicht ist“ beschrieben wird. Einverständnis, Kommunikation und Grenzen werden ruhig und respektvoll in den Mittelpunkt gestellt.',
+   NULL, NOW(3), NOW(3)),
+
+  ('44440106-4444-4444-8444-444444446603', @REV_BLOG_6, 'de',
+   'Kurz und alltagstauglich',
+   'Die Atem-Übung ist einfach und sofort umsetzbar. Schön ist auch der Bezug zur Massage: Tempo, Atmung und Sicherheit hängen spürbar zusammen.',
    NULL, NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `title`       = VALUES(`title`),
@@ -121,3 +127,5 @@ ON DUPLICATE KEY UPDATE
 PREPARE stmt_review_i18n FROM @SQL_REVIEW_I18N;
 EXECUTE stmt_review_i18n;
 DEALLOCATE PREPARE stmt_review_i18n;
+
+COMMIT;

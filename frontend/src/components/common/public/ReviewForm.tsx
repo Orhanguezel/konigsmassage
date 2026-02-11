@@ -8,11 +8,11 @@
 
 'use client';
 
-import React, { useMemo, useState, FormEvent } from 'react';
+import React, { useId, useMemo, useState, FormEvent } from 'react';
 import { toast } from 'sonner';
 
 import { useCreateReviewPublicMutation } from '@/integrations/rtk/hooks';
-import type { ReviewDto } from '@/integrations/types/review.types';
+import type { ReviewDto } from '@/integrations/types';
 
 import { useResolvedLocale } from '@/i18n/locale';
 import { useUiSection } from '@/i18n/uiDb';
@@ -32,6 +32,15 @@ type ReviewFormProps = {
 
   /** ✅ yeni: toggle buton label override */
   toggleLabel?: string;
+
+  /** Optional overrides (e.g. when used as blog comments) */
+  titleOverride?: string;
+  commentLabelOverride?: string;
+  submitTextOverride?: string;
+
+  /** Blog/comments mode: keep rating fixed but still submit valid payload */
+  hideRating?: boolean;
+  defaultRating?: number;
 };
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
@@ -43,13 +52,21 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   initialOpen = false,
   showToggle = true,
   toggleLabel,
+  titleOverride,
+  commentLabelOverride,
+  submitTextOverride,
+  hideRating = false,
+  defaultRating = 5,
 }) => {
   const resolvedLocale = useResolvedLocale();
   const locale = (localeProp || resolvedLocale || 'de').split('-')[0];
 
   const { ui } = useUiSection('ui_feedback', locale as any);
 
-  const title = ui('ui_feedback_form_title', 'Leave a review');
+  const title = useMemo(() => {
+    const t = String(titleOverride || '').trim();
+    return t || ui('ui_feedback_form_title', 'Leave a review');
+  }, [titleOverride, ui]);
 
   const openButtonText = useMemo(() => {
     if (toggleLabel && toggleLabel.trim()) return toggleLabel.trim();
@@ -61,9 +78,15 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   const nameLabel = ui('ui_feedback_form_name_label', 'Your name');
   const emailLabel = ui('ui_feedback_form_email_label', 'Email address');
   const ratingLabel = ui('ui_feedback_form_rating_label', 'Your rating');
-  const commentLabel = ui('ui_feedback_form_comment_label', 'Your review');
+  const commentLabel = useMemo(() => {
+    const t = String(commentLabelOverride || '').trim();
+    return t || ui('ui_feedback_form_comment_label', 'Your review');
+  }, [commentLabelOverride, ui]);
 
-  const submitText = ui('ui_feedback_form_submit', 'Submit review');
+  const submitText = useMemo(() => {
+    const t = String(submitTextOverride || '').trim();
+    return t || ui('ui_feedback_form_submit', 'Submit review');
+  }, [submitTextOverride, ui]);
   const submittingText = ui('ui_feedback_form_submitting', 'Submitting...');
 
   const successText = ui('ui_feedback_form_success', 'Your review has been received. Thank you!');
@@ -77,10 +100,16 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [rating, setRating] = useState<number>(5);
+  const [rating, setRating] = useState<number>(defaultRating);
   const [comment, setComment] = useState('');
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const formId = useId();
+  const nameId = `${formId}-name`;
+  const emailId = `${formId}-email`;
+  const ratingId = `${formId}-rating`;
+  const commentId = `${formId}-comment`;
 
   const onBlurField = (field: string) => setTouched((prev) => ({ ...prev, [field]: true }));
 
@@ -95,7 +124,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   const resetForm = () => {
     setName('');
     setEmail('');
-    setRating(5);
+    setRating(defaultRating);
     setComment('');
     setTouched({});
   };
@@ -115,7 +144,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         locale,
         name: name.trim(),
         email: email.trim(),
-        rating,
+        rating: hideRating ? defaultRating : rating,
         comment: comment.trim(),
       };
 
@@ -155,10 +184,11 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         <form className="review__form" onSubmit={handleSubmit} noValidate>
           {/* Name */}
           <div className="review__field">
-            <label className="review__label">
+            <label className="review__label" htmlFor={nameId}>
               {nameLabel} <span className="review__req">*</span>
             </label>
             <input
+              id={nameId}
               type="text"
               className={['review__input', hasError('name') ? 'is-invalid' : '']
                 .filter(Boolean)
@@ -173,10 +203,11 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
 
           {/* Email */}
           <div className="review__field">
-            <label className="review__label">
+            <label className="review__label" htmlFor={emailId}>
               {emailLabel} <span className="review__req">*</span>
             </label>
             <input
+              id={emailId}
               type="email"
               className={['review__input', hasError('email') ? 'is-invalid' : '']
                 .filter(Boolean)
@@ -190,27 +221,33 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           </div>
 
           {/* Rating */}
-          <div className="review__field">
-            <label className="review__label">{ratingLabel} (1–5)</label>
-            <select
-              className="review__select"
-              value={rating}
-              onChange={(e) => setRating(Number(e.target.value))}
-            >
-              {[5, 4, 3, 2, 1].map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!hideRating && (
+            <div className="review__field">
+              <label className="review__label" htmlFor={ratingId}>
+                {ratingLabel} (1–5)
+              </label>
+              <select
+                id={ratingId}
+                className="review__select"
+                value={rating}
+                onChange={(e) => setRating(Number(e.target.value))}
+              >
+                {[5, 4, 3, 2, 1].map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Comment */}
           <div className="review__field">
-            <label className="review__label">
+            <label className="review__label" htmlFor={commentId}>
               {commentLabel} <span className="review__req">*</span>
             </label>
             <textarea
+              id={commentId}
               className={['review__textarea', hasError('comment') ? 'is-invalid' : '']
                 .filter(Boolean)
                 .join(' ')}

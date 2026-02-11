@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 051_custom_pages_about.seed.sql (FINAL / FULL)
--- Königs Massage — Kurumsal Sayfalar (About / Hakkımda / Über mich)
+-- KÖNIG ENERGETIK — Kurumsal Sayfalar (About / Hakkımda / Über mich)
 -- ✅ module_key PARENT: custom_pages.module_key = 'about'
 -- ✅ NO categories + sub_categories
 -- ✅ images + storage_image_ids JSON-string güvenli yazılır
@@ -29,11 +29,12 @@ SET @MODULE_KEY := 'about';
 SET @IMG_ABOUT_MAIN :=
   'https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222471/site-media/about.png';
 
--- İstersen ek görsel koy:
--- SET @IMG_ABOUT_2 := 'https://images.unsplash.com/photo-...';
--- SET @IMG_ABOUT_3 := 'https://images.unsplash.com/photo-...';
+-- Ek görseller (seyahatler / atmosfer) — random/stok olabilir
+SET @IMG_ABOUT_2 := 'https://images.unsplash.com/photo-1526779259212-939e64788e3c?auto=format&fit=crop&w=1600&q=80';
+SET @IMG_ABOUT_3 := 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1600&q=80';
+SET @IMG_ABOUT_4 := 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80';
 
-SET @IMAGES_JSON := JSON_ARRAY(@IMG_ABOUT_MAIN);
+SET @IMAGES_JSON := JSON_ARRAY(@IMG_ABOUT_MAIN, @IMG_ABOUT_2, @IMG_ABOUT_3, @IMG_ABOUT_4);
 SET @STORAGE_IMAGE_IDS_JSON := JSON_ARRAY();
 
 -- -------------------------------------------------------------
@@ -108,36 +109,40 @@ VALUES
   UUID(),
   @PAGE_ABOUT,
   'tr',
-  'Königs Massage — Hakkımda',
+  'Hakkımda',
   'hakkimda',
   JSON_OBJECT(
     'html',
     CONCAT(
-      '<h2>Merhaba, ben Anastasia</h2>',
-      '<p>Bonn’da, <strong>Königs Massage</strong> çatısı altında klasik masaj, spor masajı ve fasya terapisi odaklı seanslar sunuyorum. ',
-      'Her seansı, kişinin ihtiyacına göre planlıyor; bedenin rahatlamasını ve hareket kabiliyetinin desteklenmesini hedefliyorum.</p>',
+      '<h2>Merhaba, ben Anastasia König</h2>',
+      '<p>Bonn’da <strong>KÖNIG ENERGETIK</strong> ile; sakin bir atmosferde, dikkatli dokunuş ve bilinçli varlıkla yürüyen <strong>enerjetik masaj</strong> seansları sunuyorum. ',
+      'Her seans kişiye özeldir; amaç “yetişmek” değil, içe dönmek ve rahatlamaya alan açmaktır.</p>',
 
-      '<h3>Yaklaşımım</h3>',
-      '<p>Masajı yalnızca kısa süreli gevşeme olarak değil; stresin azalması, kas gerginliğinin hafiflemesi ve genel iyilik halinin güçlenmesi için ',
-      'bütüncül bir bakım olarak görüyorum. Seans öncesinde kısa bir değerlendirme yapar, hedefinizi netleştirir ve buna göre uygulamayı şekillendiririm.</p>',
+      '<h3>Masaj yaklaşımım</h3>',
+      '<p>Seanslarda çoğu zaman gözlerim kapalı çalışırım. Böylece bedeni daha derinden hissedebilir, nefesin ritmini, kaslardaki gerilimi ve sinir sisteminin verdiği ince sinyalleri daha net takip edebilirim. ',
+      'Seansın başlangıcında şükran (gratitude) ile iç frekansı yumuşatır; güvenli bir alanda sakinleşmeye eşlik ederim.</p>',
 
-      '<h3>Hijyen ve konfor</h3>',
-      '<p>Benim için <strong>üst düzey hijyen</strong>, güven ve konfor vazgeçilmezdir. Seans ortamı düzenli olarak hazırlanır; ',
-      'kullanılan materyaller her randevuda titizlikle yenilenir.</p>',
+      '<h3>Yolculuklar & eğitimler</h3>',
+      '<p>Tayland başta olmak üzere farklı ülkelerde edindiğim masaj tekniklerini, yıllar içinde geliştirdiğim sezgisel yaklaşım ile birleştiriyorum. ',
+      'Her uygulama “bir protokol” değil; o gün bedeninin ve zihninin ihtiyaç duyduğu şeye saygılı bir cevap olarak şekillenir.</p>',
 
-      '<h3>Doğal yaşam ve beslenme</h3>',
-      '<p>Doğal yaşam ve sağlıklı beslenme konularına da ilgi duyuyorum. Dilerseniz seans sonrası basit ve uygulanabilir önerileri paylaşabilir, ',
-      'günlük rutininizi destekleyecek küçük dokunuşlar üzerine konuşabiliriz.</p>',
+      '<h3>Sınırlar, güven ve hijyen</h3>',
+      '<p>Seanslar <strong>net sınırlar</strong> içinde yürür: saygılı, açık iletişimli ve güven odaklı. Ortam her randevu öncesi özenle hazırlanır; hijyen benim için temel bir değerdir.</p>',
 
-      '<p><strong>Kendinize iyi bakmak</strong>, biraz nefes almak ve bedeninizi yeniden dengelemek istediğinizde; ',
-      'sizi Königs Massage’ta memnuniyetle ağırlamak isterim.</p>'
+      '<h3>Randevu</h3>',
+      '<ul>',
+      '<li>Terminler randevu ile.</li>',
+      '<li>Yalnızca kısa bir ön görüşme ve karşılıklı onay ile.</li>',
+      '</ul>',
+
+      '<p><em>Not:</em> Seanslar tıbbi tanı/tedavi yerine geçmez; amaç rahatlama ve beden farkındalığını desteklemektir.</p>'
     )
   ),
-  'Bonn’da klasik ve spor masajı ile fasya terapisi odaklı, kişiye özel ve hijyen standartları yüksek seanslar.',
-  'Königs Massage Bonn — masaj terapisi',
-  'Königs Massage | Hakkımda',
-  'Bonn’da Königs Massage: klasik masaj, spor masajı ve fasya terapisi odaklı kişiye özel seanslar. Hijyen, konfor ve bütüncül yaklaşım.',
-  'konigs massage,bonn,masaj,klasik masaj,spor masaji,fasya terapisi,hijyen,kisiye ozel',
+  'Bonn’da enerjetik masaj: bilinçli dokunuş, net sınırlar ve sakin bir atmosferde derin gevşeme için kişiye özel seanslar.',
+  'Anastasia König — KÖNIG ENERGETIK',
+  'KÖNIG ENERGETIK | Hakkımda',
+  'Bonn’da enerjetik masaj seansları: sakin atmosfer, bilinçli dokunuş, güvenli alan ve net sınırlar. Randevu ön görüşme ile planlanır.',
+  'koenig energetik,bonn,enerjetik masaj,anastasia koenig,rahatlama,beden farkindaligi,thai masaj,sezgisel seans',
   NOW(3),
   NOW(3)
 ),
@@ -149,34 +154,39 @@ VALUES
   UUID(),
   @PAGE_ABOUT,
   'en',
-  'Königs Massage — About',
+  'About',
   'about',
   JSON_OBJECT(
     'html',
     CONCAT(
-      '<h2>Hello, I’m Anastasia</h2>',
-      '<p>Based in Bonn, I welcome you to <strong>Königs Massage</strong> for sessions focused on classic massage, sports massage, and fascia therapy. ',
-      'Each appointment is tailored to your needs, with the goal of supporting relaxation, mobility, and overall well-being.</p>',
+      '<h2>Hello, I’m Anastasia König</h2>',
+      '<p>In Bonn, I welcome you to <strong>KÖNIG ENERGETIK</strong> for <strong>energetic massage</strong> sessions in a calm, protected atmosphere. ',
+      'The focus is inward: you can arrive, let go, and rest—without having to perform.</p>',
 
-      '<h3>My approach</h3>',
-      '<p>I see massage not only as short-term relaxation, but as a mindful form of self-care that can help reduce stress, ease muscular tension, ',
-      'and support long-term comfort. Before each session, we do a brief check-in to understand your goals and adapt the treatment accordingly.</p>',
+      '<h3>How I work</h3>',
+      '<p>During the massage I often keep my eyes closed. It helps me stay deeply present and sense subtle tension patterns, breath rhythm, and the nervous system’s signals. ',
+      'I begin with gratitude to soften the inner frequency and create a quiet, grounded space.</p>',
 
-      '<h3>Hygiene and comfort</h3>',
-      '<p><strong>High hygiene standards</strong>, trust, and comfort are essential. The space is prepared carefully and materials are refreshed for every visit.</p>',
+      '<h3>Travel & training</h3>',
+      '<p>Techniques learned in Thailand and other countries flow into my work. Over time, they have merged with an intuitive approach—always respectful, and always individual.</p>',
 
-      '<h3>Natural living & nutrition</h3>',
-      '<p>I also enjoy sharing practical insights on natural living and healthy nutrition—simple, realistic ideas that can support your day-to-day routine, ',
-      'if you would like.</p>',
+      '<h3>Boundaries, trust, and hygiene</h3>',
+      '<p>Sessions are held within <strong>clear boundaries</strong>, with open communication and a strong focus on safety and respect. The space is prepared carefully for each appointment.</p>',
 
-      '<p>If you are looking to <strong>reset your body and mind</strong>, breathe, and take good care of yourself, I will be happy to welcome you at Königs Massage.</p>'
+      '<h3>Appointments</h3>',
+      '<ul>',
+      '<li>By arrangement.</li>',
+      '<li>Only after a short pre-chat and consent.</li>',
+      '</ul>',
+
+      '<p><em>Note:</em> Sessions are not a substitute for medical diagnosis or treatment. The intention is relaxation and supporting body awareness.</p>'
     )
   ),
-  'Massage therapist in Bonn offering tailored sessions in classic massage, sports massage, and fascia therapy with a strong focus on hygiene and comfort.',
-  'Königs Massage Bonn — massage therapy',
-  'Königs Massage | About',
-  'Königs Massage in Bonn: tailored sessions in classic massage, sports massage, and fascia therapy. A holistic approach with high hygiene standards.',
-  'konigs massage,bonn,massage,classic massage,sports massage,fascia therapy,hygiene,personalized',
+  'Energetic massage sessions in Bonn with mindful touch, clear boundaries, and a calm atmosphere. Appointments by arrangement after a short pre-chat.',
+  'Anastasia König — KÖNIG ENERGETIK',
+  'KÖNIG ENERGETIK | About',
+  'Energetic massage in Bonn: mindful touch, clear boundaries, and a safe, calm space. Sessions are individual and arranged after a short conversation.',
+  'koenig energetik,bonn,energetic massage,anastasia koenig,relaxation,body awareness,thai yoga massage,intuitive session',
   NOW(3),
   NOW(3)
 ),
@@ -188,34 +198,39 @@ VALUES
   UUID(),
   @PAGE_ABOUT,
   'de',
-  'Königs Massage — Über mich',
+  'Über mich',
   'ueber-mich',
   JSON_OBJECT(
     'html',
     CONCAT(
-      '<h2>Hallo, ich bin Anastasia</h2>',
-      '<p>In Bonn begrüße ich Sie bei <strong>Königs Massage</strong> zu Behandlungen mit Fokus auf klassische Massage, Sportmassage und Faszientherapie. ',
-      'Jede Sitzung wird individuell auf Ihre Bedürfnisse abgestimmt – mit dem Ziel, Entspannung, Beweglichkeit und Wohlbefinden zu fördern.</p>',
+      '<h2>Hallo, ich bin Anastasia König</h2>',
+      '<p>In Bonn lade ich Sie bei <strong>KÖNIG ENERGETIK</strong> zu <strong>energetischen Massagen</strong> in ruhiger Atmosphäre ein. ',
+      'Der Fokus richtet sich nach innen: ankommen, loslassen, zur Ruhe finden – ohne Erwartungen.</p>',
 
-      '<h3>Mein Ansatz</h3>',
-      '<p>Massage ist für mich mehr als kurzfristige Entspannung: Sie ist eine bewusste Form der Selbstfürsorge, die Stress reduzieren, Muskelverspannungen lösen ',
-      'und das Körpergefühl nachhaltig unterstützen kann. Vor jeder Behandlung klären wir in einem kurzen Gespräch Ihre Ziele und passen die Anwendung daran an.</p>',
+      '<h3>Meine Arbeitsweise</h3>',
+      '<p>Während der Behandlung arbeite ich häufig mit geschlossenen Augen. Das unterstützt mich dabei, präsenter zu bleiben und feine Spannungsmuster, Atmung und Signale des Nervensystems bewusst wahrzunehmen. ',
+      'Ich beginne mit Dankbarkeit, um einen klaren, warmen Raum für Entspannung zu öffnen.</p>',
 
-      '<h3>Hygiene und Wohlfühlatmosphäre</h3>',
-      '<p><strong>Höchste Hygienestandards</strong>, Vertrauen und Komfort sind für mich selbstverständlich. Der Raum wird sorgfältig vorbereitet, ',
-      'Materialien werden für jeden Termin frisch bereitgestellt.</p>',
+      '<h3>Reisen & Ausbildung</h3>',
+      '<p>Techniken, die ich u. a. in Thailand und auf meinen Reisen gelernt habe, fließen in meine Arbeit ein. Über die Jahre hat sich daraus eine intuitive, achtsame Praxis entwickelt – immer individuell und respektvoll.</p>',
 
-      '<h3>Natürlich leben & gesund essen</h3>',
-      '<p>Auf Wunsch teile ich gern praktische Impulse zu natürlicher Lebensweise und gesunder Ernährung – unkompliziert, alltagstauglich und unterstützend.</p>',
+      '<h3>Klare Grenzen, Vertrauen und Hygiene</h3>',
+      '<p>Mir sind <strong>klare Grenzen</strong>, Sicherheit und ein wertschätzender Umgang sehr wichtig. Der Raum wird sorgfältig vorbereitet; Hygiene ist selbstverständlich.</p>',
 
-      '<p>Wenn Sie <strong>Körper und Geist</strong> zur Ruhe bringen, durchatmen und sich etwas Gutes tun möchten, freue ich mich, Sie bei Königs Massage willkommen zu heißen.</p>'
+      '<h3>Termin</h3>',
+      '<ul>',
+      '<li>Nach Vereinbarung.</li>',
+      '<li>Nur nach kurzem Vorgespräch und Einverständnis.</li>',
+      '</ul>',
+
+      '<p><em>Hinweis:</em> Die Sitzungen ersetzen keine medizinische Diagnose oder Behandlung. Im Mittelpunkt stehen Entspannung und Körperwahrnehmung.</p>'
     )
   ),
-  'Masseurin in Bonn: individuelle Behandlungen in klassischer Massage, Sportmassage und Faszientherapie – mit Fokus auf Hygiene, Vertrauen und Wohlbefinden.',
-  'Königs Massage Bonn — Massage & Faszientherapie',
-  'Königs Massage | Über mich',
-  'Königs Massage in Bonn: klassische Massage, Sportmassage und Faszientherapie. Individuell abgestimmt, ganzheitlich und mit hohen Hygienestandards.',
-  'koenigs massage,bonn,massage,klassische massage,sportmassage,faszientherapie,hygiene,individuell',
+  'Energetische Massage in Bonn: achtsame Berührung, klare Grenzen und ruhige Atmosphäre. Termine nach Vereinbarung nach kurzem Vorgespräch.',
+  'Anastasia König — KÖNIG ENERGETIK',
+  'KÖNIG ENERGETIK | Über mich',
+  'Energetische Massage in Bonn: achtsame Berührung, klare Grenzen und ein sicherer Raum. Individuelle Sitzungen nach Vereinbarung.',
+  'koenig energetik,bonn,energetische massage,anastasia koenig,entspannung,koerperwahrnehmung,thai yoga massage,intuitiv',
   NOW(3),
   NOW(3)
 )

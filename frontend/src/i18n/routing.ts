@@ -4,8 +4,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/router";
-import type { NextRouter } from "next/router";
+import { usePathname as useNextPathname, useSearchParams } from "next/navigation";
 
 import { normLocaleTag } from "@/i18n/localeUtils";
 
@@ -90,14 +89,16 @@ export function localePath(
 
 /** Kendi custom hook'un: hook içinde hook kullanımı OK */
 export function usePathname() {
-  const r = useRouter();
-  return r.asPath;
+  const p = useNextPathname();
+  const s = useSearchParams();
+  // App Router doesn't give asPath directly. Reconstruct roughly:
+  return s.toString() ? `${p}?${s.toString()}` : p;
 }
 
 /**
  * Hook OLMAYAN, SSR-safe yardımcı: hook çağırmaz.
  */
-export function getPathnameFrom(router?: Pick<NextRouter, "asPath">) {
+export function getPathnameFrom(router?: any) {
   if (router?.asPath) return router.asPath;
   if (typeof window !== "undefined") {
     const { pathname, search, hash } = window.location;

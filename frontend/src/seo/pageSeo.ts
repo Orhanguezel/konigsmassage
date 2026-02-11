@@ -1,63 +1,21 @@
 // src/seo/pageSeo.ts
 'use client';
 
-const DEFAULT_LOCALE_PREFIXLESS = true;
+import {
+  DEFAULT_LOCALE_PREFIXLESS,
+  absoluteUrl,
+  asObj,
+  normLocaleShort,
+  normPath,
+} from '@/seo/helpers';
+
 const DEFAULT_LOCALE = (process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de').trim().toLowerCase();
 
-function stripTrailingSlash(u: string) {
-  return String(u || '')
-    .trim()
-    .replace(/\/+$/, '');
-}
-
-function normalizeLocalhostOrigin(origin: string): string {
-  const o = stripTrailingSlash(origin);
-  if (/^https?:\/\/localhost:\d+$/i.test(o)) return o.replace(/:\d+$/i, '');
-  if (/^https?:\/\/127\.0\.0\.1:\d+$/i.test(o)) return o.replace(/:\d+$/i, '');
-  return o;
-}
-
 function toLocaleShort(l: any): string {
-  return (
-    String(l || DEFAULT_LOCALE)
-      .trim()
-      .toLowerCase()
-      .replace('_', '-')
-      .split('-')[0] || DEFAULT_LOCALE
-  );
+  return normLocaleShort(l, DEFAULT_LOCALE);
 }
 
-function getBaseUrl(): string {
-  const env = stripTrailingSlash(process.env.NEXT_PUBLIC_SITE_URL || '');
-  if (env) return normalizeLocalhostOrigin(env);
-
-  if (typeof window !== 'undefined' && window?.location?.origin) {
-    return normalizeLocalhostOrigin(window.location.origin);
-  }
-
-  return 'http://localhost';
-}
-
-/** absolute URL helper (client) */
-export function absUrl(pathOrUrl: string): string {
-  const base = getBaseUrl();
-  const v = String(pathOrUrl || '').trim();
-  if (!v) return base;
-  if (/^https?:\/\//i.test(v)) return normalizeLocalhostOrigin(v);
-  return `${base}${v.startsWith('/') ? v : `/${v}`}`;
-}
-
-/** "/x?y#z" -> "/x" */
-export function stripHashQuery(asPath: string): string {
-  const [pathOnly] = String(asPath || '/').split('#');
-  const [pathname] = pathOnly.split('?');
-  return pathname || '/';
-}
-
-/** Layout ve diğer yerler bunu kullanıyor: export olmalı */
-export function asObj(x: any): Record<string, any> | null {
-  return x && typeof x === 'object' && !Array.isArray(x) ? (x as Record<string, any>) : null;
-}
+const absUrl = (pathOrUrl: string) => absoluteUrl(pathOrUrl);
 
 /** seo.open_graph.image veya seo.open_graph.images[0] */
 export function pickFirstImageFromSeo(seo: any): string {
@@ -80,13 +38,6 @@ function splitPath(asPath: string): { pathname: string; search: string } {
     return { pathname: noHash.slice(0, idx) || '/', search: noHash.slice(idx) || '' };
   }
   return { pathname: noHash || '/', search: '' };
-}
-
-function normPath(pathname?: string): string {
-  let p = (pathname ?? '/').trim();
-  if (!p.startsWith('/')) p = `/${p}`;
-  if (p !== '/' && p.endsWith('/')) p = p.slice(0, -1);
-  return p || '/';
 }
 
 function readLcFromSearch(search: string): string {

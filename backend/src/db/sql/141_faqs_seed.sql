@@ -1,6 +1,6 @@
 -- =============================================================
 -- 141_faqs_seed.sql (FINAL)
--- Home Massage – Multilingual FAQs seed (faqs + faqs_i18n)
+-- KÖNIG ENERGETIK – Multilingual FAQs seed (faqs + faqs_i18n)
 -- ✅ 140_faqs.sql şema mevcut olmalı (DROP/CREATE yok)
 -- ✅ TR + EN + DE
 -- ✅ NO category fields
@@ -42,24 +42,24 @@ INSERT INTO `faqs_i18n`
 VALUES
 
 -- =============================================================
--- 1) Hizmet nasıl işliyor?
+-- 1) Seans nerede gerçekleşiyor?
 -- =============================================================
 ('00000000-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','tr',
-'Evde masaj hizmeti nasıl işliyor?',
-'Randevu oluşturduktan sonra adres ve tercih ettiğiniz saat teyit edilir. Seans günü yanımda masaj yağı ve gerekli ekipmanlarla gelirim; uygun bir alan hazırlamanız yeterlidir (yaklaşık 2–3 m²). Seans öncesinde kısa bir ihtiyaç değerlendirmesi yapar, ardından planlanan masaj uygulamasına geçerim.',
-'evde-masaj-hizmeti-nasil-isliyor',
+'Seans nerede gerçekleşiyor?',
+'Seanslar Bonn’da, Anastasia’nın sakin ve kişiye özel hazırlanan alanında gerçekleşir. Evde masaj hizmeti sunmuyoruz. Randevu sonrası detaylar ve konum bilgisi paylaşılır. Seans öncesinde kısa bir görüşme yapılır; ardından masajın akışı, o günkü ihtiyaca göre nazik ve net sınırlar içinde şekillenir.',
+'seans-nerede-gerceklesiyor',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000002','11111111-1111-1111-1111-111111111111','en',
-'How does the at-home massage service work?',
-'After you book, we confirm your address and preferred time. On the day of the session I arrive with oils and the necessary equipment; you only need to prepare a comfortable area (around 2–3 m²). We do a short needs assessment first, then proceed with the planned massage.',
-'how-does-at-home-massage-work',
+'Where does the session take place?',
+'Sessions take place in Bonn at Anastasia’s calm, private space. We do not offer at home massage. After booking, you receive the details and location. We begin with a short conversation and then the session unfolds gently, within clear boundaries, shaped around what you need that day.',
+'where-does-the-session-take-place',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000003','11111111-1111-1111-1111-111111111111','de',
-'Wie läuft eine Massage bei Ihnen zu Hause ab?',
-'Nach der Buchung bestätige ich Adresse und Wunschzeit. Am Termin komme ich mit Ölen und dem notwendigen Equipment; Sie benötigen lediglich einen angenehmen Platz (ca. 2–3 m²). Vor Beginn klären wir kurz Ihre Bedürfnisse, danach startet die vereinbarte Massage.',
-'wie-laeuft-massage-zu-hause-ab',
+'Wo findet die Sitzung statt?',
+'Die Sitzungen finden in Bonn in Anastasias ruhigem, privaten Raum statt. Hausbesuche werden nicht angeboten. Nach der Buchung erhalten Sie alle Details sowie die genaue Adresse. Wir beginnen mit einem kurzen Vorgespräch; anschließend gestaltet sich die Behandlung achtsam, klar abgegrenzt und individuell nach Ihrem aktuellen Bedürfnis.',
+'wo-findet-die-sitzung-statt',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 -- =============================================================
@@ -67,19 +67,19 @@ VALUES
 -- =============================================================
 ('00000000-0000-0000-0000-000000000004','22222222-2222-2222-2222-222222222222','tr',
 'Hangi masaj türlerini uyguluyorsunuz?',
-'Klasik rahatlatıcı masaj, spor masajı, boyun-sırt odaklı masaj ve fasya/derin doku odaklı uygulamalar yapıyorum. Seans içeriğini; ağrı, gerginlik, duruş ve günlük stres düzeyinize göre kişiselleştiriyorum.',
+'Odak noktamız enerjetik masajdır. Enerjetik rahatlama masajı, Thai Yoga masajı, sırt-boyun rahatlatma, aroma ile desteklenen seanslar, ayak refleks ve enerji noktaları gibi uygulamalar sunuyorum. Seans içeriği; bedenin gerilimi, nefes, sinir sistemi ve günlük stres düzeyinize göre kişiselleştirilir.',
 'hangi-masaj-turleri-var',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000005','22222222-2222-2222-2222-222222222222','en',
 'What types of massage do you offer?',
-'I offer classic relaxation massage, sports massage, neck-and-back focused sessions, and fascia/deep-tissue oriented techniques. The session is tailored to your pain points, tension areas, posture, and overall stress level.',
+'Our focus is energetic massage. Depending on your needs, sessions may include energetic relaxation massage, Thai Yoga Massage, back and neck release, aroma supported work, and foot reflex and energy point techniques. Each session is tailored to your tension patterns, breath, nervous system, and stress level.',
 'what-types-of-massage-do-you-offer',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000006','22222222-2222-2222-2222-222222222222','de',
 'Welche Massagearten bieten Sie an?',
-'Ich biete klassische Entspannungsmassage, Sportmassage, Nacken-/Rückenfokus sowie Faszien- bzw. Deep-Tissue-orientierte Techniken an. Die Behandlung passe ich individuell an Beschwerden, Verspannungen, Haltung und Stressniveau an.',
+'Der Schwerpunkt liegt auf energetischer Massage. Je nach Bedarf kann eine Sitzung Elemente aus energetischer Entspannungsmassage, Thai Yoga Massage, Rücken und Nackenlösung, Aroma unterstützter Arbeit sowie Fußreflex und Energiepunkten enthalten. Jede Behandlung ist individuell abgestimmt auf Spannung, Atmung, Nervensystem und Stressniveau.',
 'welche-massagearten-bieten-sie-an',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
@@ -88,19 +88,19 @@ VALUES
 -- =============================================================
 ('00000000-0000-0000-0000-000000000007','33333333-3333-3333-3333-333333333333','tr',
 'Seans süresi ne kadar ve neleri kapsıyor?',
-'Genellikle 60 veya 90 dakikalık seanslar öneriyorum. Süreye kısa bir değerlendirme, masaj uygulaması ve seans sonunda su tüketimi/ev egzersizi gibi basit öneriler dahildir. Hedef; hem anlık rahatlama hem de gerginliğin tekrarını azaltmaktır.',
+'Genellikle 60 veya 90 dakikalık seanslar öneriyorum. Süreye kısa bir ön görüşme, bedenin ihtiyacına göre ilerleyen masaj ve seans sonunda basit öneriler (su içmek, gün içinde sakinleşme molaları gibi) dahildir. Hedef; derin gevşeme, beden farkındalığı ve içsel dengeye alan açmaktır.',
 'seans-suresi-ne-kadar',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000008','33333333-3333-3333-3333-333333333333','en',
 'How long is a session and what does it include?',
-'I typically recommend 60 or 90-minute sessions. The time includes a brief assessment, the massage itself, and simple aftercare tips such as hydration and easy home stretches. The goal is both immediate relief and reducing recurring tension.',
+'I typically recommend 60 or 90 minute sessions. The time includes a short pre chat, bodywork shaped around what you need, and simple aftercare suggestions (for example hydration and gentle grounding). The intention is deep relaxation, body awareness, and inner balance.',
 'how-long-is-a-session',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000009','33333333-3333-3333-3333-333333333333','de',
 'Wie lange dauert eine Sitzung und was ist enthalten?',
-'Üblich sind 60 oder 90 Minuten. Enthalten sind eine kurze Einschätzung, die Massage sowie einfache Empfehlungen für danach (z. B. trinken, leichte Dehnübungen). Ziel ist schnelle Entlastung und weniger wiederkehrende Verspannungen.',
+'Üblich sind 60 oder 90 Minuten. Enthalten sind ein kurzes Vorgespräch, Körperarbeit passend zu Ihrem Bedarf und einfache Hinweise für danach (zum Beispiel trinken, Ruhe, sanftes Ankommen). Im Mittelpunkt stehen tiefe Entspannung, Körperwahrnehmung und innere Balance.',
 'wie-lange-dauert-eine-sitzung',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
@@ -109,19 +109,19 @@ VALUES
 -- =============================================================
 ('00000000-0000-0000-0000-000000000010','44444444-4444-4444-4444-444444444444','tr',
 'Masaj öncesinde nasıl hazırlanmalıyım?',
-'Rahat kıyafetler tercih edin ve masajdan hemen önce ağır yemek yememeye çalışın. Oda ısısının uygun olması ve sessiz bir alan hazırlamanız yeterlidir. Varsa ağrınız, sakatlığınız veya hassasiyetinizle ilgili bilgileri seans öncesinde paylaşmanız önemli.',
+'Rahat kıyafetlerle gelmenizi ve seans öncesinde ağır yemek yememenizi öneririm. Mümkünse birkaç dakika erken gelerek sakinleşebilirsiniz. Ağrı, sakatlık, hassasiyet veya sınırlarla ilgili tüm bilgileri seans öncesinde paylaşmanız önemlidir.',
 'masaj-oncesi-nasil-hazirlanmali',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000011','44444444-4444-4444-4444-444444444444','en',
 'How should I prepare before the massage?',
-'Wear comfortable clothing and avoid a heavy meal right before the session. A quiet space with a comfortable room temperature is enough. Please share any injuries, sensitivities, or pain areas before we begin.',
+'Wear comfortable clothing and avoid a heavy meal right before the session. If possible, arrive a few minutes early to settle. Please share any injuries, sensitivities, health conditions, or boundaries before we begin.',
 'how-to-prepare-before-massage',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000012','44444444-4444-4444-4444-444444444444','de',
 'Wie bereite ich mich auf die Massage vor?',
-'Tragen Sie bequeme Kleidung und vermeiden Sie direkt vorher eine schwere Mahlzeit. Ein ruhiger Platz mit angenehmer Raumtemperatur genügt. Bitte informieren Sie mich vor Beginn über Verletzungen, Beschwerden oder besondere Empfindlichkeiten.',
+'Tragen Sie bequeme Kleidung und vermeiden Sie direkt vorher eine schwere Mahlzeit. Wenn möglich, kommen Sie ein paar Minuten früher, um in Ruhe anzukommen. Bitte informieren Sie mich vor Beginn über Beschwerden, Empfindlichkeiten, gesundheitliche Themen und Ihre Grenzen.',
 'wie-vorbereiten-vor-der-massage',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
@@ -172,19 +172,19 @@ VALUES
 -- =============================================================
 ('00000000-0000-0000-0000-000000000019','77777777-7777-7777-7777-777777777777','tr',
 'Ödeme ve fiyatlandırma nasıl oluyor?',
-'Fiyat; seans süresi (60/90 dk) ve adres mesafesine göre belirlenir. Randevu onayı sonrası net fiyatı iletirim. Ödeme yöntemleri (nakit/IBAN vb.) hizmet sayfanızdaki bilgilere göre güncellenebilir.',
+'Fiyat seans süresine (ör. 60/90 dk) ve seçilen hizmete göre belirlenir. Randevu onayı sonrası net fiyatı iletirim. Ödeme yöntemleri (nakit/IBAN vb.) hizmet sayfanızdaki bilgilere göre güncellenebilir.',
 'odeme-ve-fiyatlandirma',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000020','77777777-7777-7777-7777-777777777777','en',
 'How do pricing and payments work?',
-'Pricing depends on session duration (60/90 min) and travel distance. After confirming your appointment, I share the final price. Payment methods (cash/bank transfer, etc.) can be updated based on the information on your service page.',
+'Pricing depends on the session duration (for example 60 or 90 minutes) and the selected service. After confirming your appointment, I share the final price. Payment methods (cash or bank transfer, etc.) can be updated based on the information on your service page.',
 'pricing-and-payments',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000021','77777777-7777-7777-7777-777777777777','de',
 'Wie funktionieren Preise und Bezahlung?',
-'Der Preis richtet sich nach Dauer (60/90 Min.) und Anfahrtsweg. Nach der Terminbestätigung teile ich den Endpreis mit. Zahlungsarten (Bar/Überweisung etc.) können gemäß Ihrer Leistungsseite aktualisiert werden.',
+'Der Preis richtet sich nach Dauer (zum Beispiel 60 oder 90 Minuten) und der gewählten Behandlung. Nach der Terminbestätigung teile ich den Endpreis mit. Zahlungsarten (Bar, Überweisung usw.) können gemäß Ihrer Leistungsseite aktualisiert werden.',
 'preise-und-bezahlung',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
@@ -193,19 +193,19 @@ VALUES
 -- =============================================================
 ('00000000-0000-0000-0000-000000000022','88888888-8888-8888-8888-888888888888','tr',
 'Randevu iptali veya erteleme nasıl yapılır?',
-'Plan değiştiyse mümkün olan en erken zamanda haber vermeniz yeterli. Aynı gün değişikliklerde müsaitliğe göre yeni saat planlanır. Düzenli bir akış için iptal/erteleme politikanızı hizmet sayfanızda netleştirmeniz önerilir.',
+'Plan değiştiyse mümkün olan en erken zamanda haber vermeniz yeterli. Mümkünse en az 24 saat önceden bilgi vermenizi rica ederim. Aynı gün değişiklikler müsaitliğe göre planlanır. Düzenli bir akış için iptal veya erteleme politikasının hizmet sayfasında net olması önerilir.',
 'randevu-iptali-ve-erteleme',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000023','88888888-8888-8888-8888-888888888888','en',
 'How can I cancel or reschedule my appointment?',
-'If your plans change, please let me know as early as possible. Same-day changes depend on availability. For a smooth process, it is recommended to clearly state your cancellation/rescheduling policy on your service page.',
+'If your plans change, please let me know as early as possible. If possible, I kindly ask for at least 24 hours notice. Same day changes depend on availability. For a smooth process, it is recommended to clearly state your cancellation and rescheduling policy on your service page.',
 'cancel-or-reschedule-appointment',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000024','88888888-8888-8888-8888-888888888888','de',
 'Wie kann ich einen Termin absagen oder verschieben?',
-'Wenn sich Ihre Planung ändert, geben Sie bitte so früh wie möglich Bescheid. Änderungen am selben Tag sind abhängig von der Verfügbarkeit. Für einen reibungslosen Ablauf empfiehlt es sich, Ihre Storno-/Umbuchungsregeln auf der Leistungsseite klar zu kommunizieren.',
+'Wenn sich Ihre Planung ändert, geben Sie bitte so früh wie möglich Bescheid. Wenn möglich, bitte mindestens 24 Stunden vorher. Änderungen am selben Tag sind abhängig von der Verfügbarkeit. Für einen reibungslosen Ablauf empfiehlt es sich, die Storno und Umbuchungsregeln auf der Leistungsseite klar zu kommunizieren.',
 'termin-absagen-oder-verschieben',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000')
 

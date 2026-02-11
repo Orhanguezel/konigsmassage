@@ -1,34 +1,39 @@
 // =============================================================
 // FILE: src/components/containers/auth/Register.tsx
+// FINAL – Auth Register
 // =============================================================
-"use client";
 
-import React, { useState, useMemo, FormEvent } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
+'use client';
+
+import React, { useState, useMemo, FormEvent } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import {
   useSignupMutation,
   useOauthStartMutation,
-} from "@/integrations/rtk/hooks";
-import { tokenStore } from "@/integrations/core/token";
-import { normalizeError } from "@/integrations/core/errors";
+} from '@/integrations/rtk/hooks';
+import { tokenStore } from '@/integrations/core/token';
+import { normalizeError } from '@/integrations/core/errors';
 
-// Yeni i18n helper'lar
-import { useResolvedLocale } from "@/i18n/locale";
-import { useUiSection } from "@/i18n/uiDb";
-
+// i18n
+import { useLocaleShort } from '@/i18n/useLocaleShort';
+import { useUiSection } from '@/i18n/uiDb';
+import { localizePath } from '@/i18n/url';
 
 const Register: React.FC = () => {
   const router = useRouter();
-  const locale = useResolvedLocale();
-  const { ui } = useUiSection("ui_auth", locale);
+  const locale = useLocaleShort();
+  const { ui } = useUiSection('ui_auth', locale as any);
 
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordAgain, setPasswordAgain] = useState("");
+  const loginHref = useMemo(() => localizePath(locale, '/login'), [locale]);
+  const homeHref = useMemo(() => localizePath(locale, '/'), [locale]);
+
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordAgain, setPasswordAgain] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
   const [signup, signupState] = useSignupMutation();
@@ -46,30 +51,15 @@ const Register: React.FC = () => {
     setFormError(null);
 
     if (!email.trim() || !password) {
-      setFormError(
-        ui(
-          "register_error_required",
-          "Email and password are required.",
-        ),
-      );
+      setFormError(ui('register_error_required', 'Email and password are required.'));
       return;
     }
     if (password.length < 6) {
-      setFormError(
-        ui(
-          "register_error_password_length",
-          "Password must be at least 6 characters.",
-        ),
-      );
+      setFormError(ui('register_error_password_length', 'Password must be at least 6 characters.'));
       return;
     }
     if (password !== passwordAgain) {
-      setFormError(
-        ui(
-          "register_error_password_mismatch",
-          "Passwords do not match.",
-        ),
-      );
+      setFormError(ui('register_error_password_mismatch', 'Passwords do not match.'));
       return;
     }
 
@@ -89,17 +79,17 @@ const Register: React.FC = () => {
 
       const resp = await signup(payload).unwrap();
       if (resp.access_token) tokenStore.set(resp.access_token);
-      router.push("/");
+      router.push(homeHref);
     } catch {
-      // Hata signupState.error'dan okunuyor
+      // Error handled by signupState
     }
   };
 
   const handleGoogleRegister = async () => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     setFormError(null);
     try {
-      const currentUrl = window.location.origin || "";
+      const currentUrl = window.location.origin || '';
       const resp = await googleStart({ redirectTo: currentUrl }).unwrap();
       if (resp.url) {
         window.location.href = resp.url;
@@ -108,10 +98,7 @@ const Register: React.FC = () => {
       const n = normalizeError(err as any);
       setFormError(
         n.message ||
-        ui(
-          "register_error_google_generic",
-          "An error occurred while starting Google signup.",
-        ),
+        ui('register_error_google_generic', 'An error occurred while starting Google signup.')
       );
     }
   };
@@ -119,201 +106,170 @@ const Register: React.FC = () => {
   const errorToShow = formError || apiErrorMessage;
 
   return (
-    <section className="tp-register-area pt-120 pb-120">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-lg-6 col-md-8">
-            <div className="tp-register-wrapper p-4 p-md-5 shadow-sm bg-white rounded">
-              <h3 className="mb-3 text-center">
-                {ui("register_title", "Sign Up")}
-              </h3>
-              <p className="text-center mb-4">
-                {ui(
-                  "register_lead_has_account",
-                  "Already have an account?",
-                )}{" "}
-                <Link href="/login" className="text-primary">
-                  {ui("register_login_link", "Sign in")}
-                </Link>
-                .
-              </p>
-
-              {errorToShow ? (
-                <div className="alert alert-danger py-2 small mb-3">
-                  {errorToShow}
-                </div>
-              ) : null}
-
-              <form onSubmit={handleSubmit} className="tp-register-form">
-                <div className="mb-3">
-                  <label htmlFor="reg-fullname" className="form-label">
-                    {ui("register_fullname_label", "Full Name")}
-                  </label>
-                  <input
-                    id="reg-fullname"
-                    type="text"
-                    className="form-control"
-                    placeholder={ui(
-                      "register_fullname_placeholder",
-                      "Your full name",
-                    )}
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    disabled={isLoading}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="reg-phone" className="form-label">
-                    {ui("register_phone_label", "Phone")}
-                  </label>
-                  <input
-                    id="reg-phone"
-                    type="tel"
-                    className="form-control"
-                    placeholder={ui(
-                      "register_phone_placeholder",
-                      "+90 5xx xxx xx xx",
-                    )}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    disabled={isLoading}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="reg-email" className="form-label">
-                    {ui("register_email_label", "Email")}
-                  </label>
-                  <input
-                    id="reg-email"
-                    type="email"
-                    className="form-control"
-                    placeholder={ui(
-                      "register_email_placeholder",
-                      "example@konigsmassage.com",
-                    )}
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="reg-password" className="form-label">
-                    {ui("register_password_label", "Password")}
-                  </label>
-                  <input
-                    id="reg-password"
-                    type="password"
-                    className="form-control"
-                    placeholder={ui(
-                      "register_password_placeholder",
-                      "Your password",
-                    )}
-                    autoComplete="new-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label
-                    htmlFor="reg-password-again"
-                    className="form-label"
-                  >
-                    {ui(
-                      "register_password_again_label",
-                      "Password (again)",
-                    )}
-                  </label>
-                  <input
-                    id="reg-password-again"
-                    type="password"
-                    className="form-control"
-                    placeholder={ui(
-                      "register_password_again_placeholder",
-                      "Re-enter your password",
-                    )}
-                    autoComplete="new-password"
-                    value={passwordAgain}
-                    onChange={(e) => setPasswordAgain(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-100 mb-3 solid__btn d-inline-flex justify-content-center align-items-center gap-2"
-                  disabled={isLoading}
-                >
-                  {signupState.isLoading
-                    ? ui("register_loading", "Creating account...")
-                    : ui("register_submit", "Sign Up")}
-                </button>
-              </form>
-
-              <div className="text-center mb-3">
-                <span className="d-inline-block position-relative">
-                  <span className="px-2 bg-white position-relative z-1">
-                    {ui("register_or", "or")}
-                  </span>
-                  <span className="register-divider" />
-                </span>
-              </div>
-
-              <button
-                type="button"
-                className="w-100 border__btn d-inline-flex justify-content-center align-items-center gap-2"
-                onClick={handleGoogleRegister}
-                disabled={isLoading}
-              >
-                {googleState.isLoading ? (
-                  <>{ui("register_google_loading", "Redirecting to Google...")}</>
-                ) : (
-                  <>
-                    <span className="register-google-icon">G</span>
-                    <span>
-                      {ui(
-                        "register_google_button",
-                        "Continue with Google",
-                      )}
-                    </span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
+    <section className="bg-bg-primary py-20 min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-sand-200/20 rounded-full blur-3xl" />
       </div>
 
-      <style jsx>{`
-        .register-divider {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 50%;
-          border-bottom: 1px solid #e5e5e5;
-          transform: translateY(-50%);
-          z-index: 0;
-        }
-        .register-google-icon {
-          display: inline-flex;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          font-weight: 600;
-          background: #fff;
-        }
-      `}</style>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-md mx-auto bg-white p-8 md:p-12 rounded-lg shadow-soft">
+          
+          <div className="text-center mb-8">
+            <h3 className="text-3xl font-serif font-bold text-text-primary mb-3">
+              {ui('register_title', 'Sign Up')}
+            </h3>
+            <p className="text-text-secondary leading-relaxed">
+              {ui('register_lead_has_account', 'Already have an account?')}{' '}
+              <Link
+                href={loginHref}
+                className="text-brand-primary font-bold hover:text-brand-hover transition-colors"
+              >
+                {ui('register_login_link', 'Sign in')}
+              </Link>
+              .
+            </p>
+          </div>
+
+          {errorToShow && (
+            <div
+              role="alert"
+              aria-live="polite"
+              className="bg-rose-50 border border-rose-100 text-rose-700 px-4 py-3 rounded-md mb-6 text-sm flex items-start gap-2"
+            >
+              <span className="mt-0.5">⚠️</span>
+              <span className="font-medium">{errorToShow}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="reg-fullname" className="block text-sm font-bold text-text-primary mb-1 uppercase tracking-wide">
+                {ui('register_fullname_label', 'Full Name')}
+              </label>
+              <input
+                id="reg-fullname"
+                type="text"
+                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                placeholder={ui('register_fullname_placeholder', 'Your full name')}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="reg-phone" className="block text-sm font-bold text-text-primary mb-1 uppercase tracking-wide">
+                {ui('register_phone_label', 'Phone')}
+              </label>
+              <input
+                id="reg-phone"
+                type="tel"
+                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                placeholder={ui('register_phone_placeholder', '+90 5xx xxx xx xx')}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="reg-email" className="block text-sm font-bold text-text-primary mb-1 uppercase tracking-wide">
+                {ui('register_email_label', 'Email')}
+              </label>
+              <input
+                id="reg-email"
+                type="email"
+                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                placeholder={ui('register_email_placeholder', 'example@konigsmassage.com')}
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="reg-password" className="block text-sm font-bold text-text-primary mb-1 uppercase tracking-wide">
+                  {ui('register_password_label', 'Password')}
+                </label>
+                <input
+                  id="reg-password"
+                  type="password"
+                  className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                  placeholder={ui('register_password_placeholder', 'Password')}
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="reg-password-again" className="block text-sm font-bold text-text-primary mb-1 uppercase tracking-wide">
+                  {ui('register_password_again_label', 'Again')}
+                </label>
+                <input
+                  id="reg-password-again"
+                  type="password"
+                  className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                  placeholder={ui('register_password_again_placeholder', 'Repeat')}
+                  autoComplete="new-password"
+                  value={passwordAgain}
+                  onChange={(e) => setPasswordAgain(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="pt-6">
+              <button
+                type="submit"
+                className="w-full bg-brand-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-brand-hover transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center uppercase tracking-widest text-sm"
+                disabled={isLoading}
+              >
+                {signupState.isLoading
+                  ? ui('register_loading', 'Creating account...')
+                  : ui('register_submit', 'Sign Up')}
+              </button>
+            </div>
+          </form>
+
+          <div className="relative my-8 text-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-sand-200" />
+            </div>
+            <div className="relative">
+              <span className="px-3 bg-white text-text-muted text-sm uppercase tracking-wider font-medium">
+                {ui('register_or', 'or')}
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="w-full border border-sand-200 bg-sand-50 text-text-primary font-bold py-3 px-4 rounded-sm hover:bg-white hover:border-sand-300 transition-all flex justify-center items-center gap-3 group"
+            onClick={handleGoogleRegister}
+            disabled={isLoading}
+          >
+            {googleState.isLoading ? (
+              <span className="text-sm">{ui('register_google_loading', 'Redirecting to Google...')}</span>
+            ) : (
+              <>
+                 <svg className="w-5 h-5 text-text-secondary group-hover:text-brand-primary transition-colors" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+                <span className="text-sm">
+                  {ui('register_google_button', 'Continue with Google')}
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
     </section>
   );
 };

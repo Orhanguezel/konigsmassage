@@ -1,12 +1,15 @@
 // =============================================================
 // FILE: src/i18n/locale.ts  (DYNAMIC via META endpoints) - PROVIDER SAFE
+// FIX: avoid "useInsertionEffect must not schedule updates"
+//      by using useSyncExternalStore instead of setState in location listeners
 // =============================================================
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { FALLBACK_LOCALE } from '@/i18n/config';
-import { normLocaleTag } from '@/i18n/localeUtils';
+import { normLocaleTag, normalizeLocales, resolveDefaultLocale } from '@/i18n/localeUtils';
 import { ensureLocationEventsPatched } from '@/i18n/locationEvents';
+import { fetchJsonNoStore, getPublicApiBase, unwrapMaybeData } from '@/i18n/publicMetaApi';
 
 type AppLocaleMeta = {
   code?: unknown;
@@ -14,6 +17,12 @@ type AppLocaleMeta = {
   is_default?: unknown;
   is_active?: unknown;
 };
+
+function readLocaleFromPath(pathname: string): string {
+  const p = String(pathname || '/').trim();
+  const seg = p.replace(/^\/+/, '').split('/')[0] || '';
+  return normLocaleTag(seg);
+}
 
 function readLocaleFromCookie(): string {
   if (typeof document === 'undefined') return '';
@@ -32,54 +41,38 @@ function readLocaleFromQuery(): string {
 }
 
 function computeActiveLocales(meta: any[] | undefined): string[] {
-  const arr = Array.isArray(meta) ? meta : [];
-
-  const active = arr
-    .filter((x) => x && (x as any).is_active !== false)
-    .map((x) => normLocaleTag((x as any).code))
-    .filter(Boolean) as string[];
-
-  const uniq = Array.from(new Set(active));
-
-  const def = arr.find((x) => (x as any)?.is_default === true && (x as any)?.is_active !== false);
-  const defCode = def ? normLocaleTag((def as any).code) : '';
-  const out = defCode ? [defCode, ...uniq.filter((x) => x !== defCode)] : uniq;
-
-  return out.length ? out : [normLocaleTag(FALLBACK_LOCALE) || 'de'];
+  const fb = normLocaleTag(FALLBACK_LOCALE) || 'de';
+  const normalized = normalizeLocales(meta);
+  return normalized.length ? normalized : [fb];
 }
 
-function getApiBase(): string {
-  const raw =
-    (process.env.NEXT_PUBLIC_API_BASE_URL || '').trim() || (process.env.API_BASE_URL || '').trim();
-  return raw.replace(/\/+$/, '');
+/** External store snapshot (pathname) */
+function getPathnameSnapshot(): string {
+  if (typeof window === 'undefined') return '/';
+  return window.location.pathname || '/';
 }
 
-async function fetchJson<T>(url: string): Promise<T | null> {
-  try {
-    const res = await fetch(url, { credentials: 'omit', cache: 'no-store' });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
-  } catch {
-    return null;
-  }
-}
+/** Subscribe to navigation-ish changes without calling setState ourselves */
+function subscribePathname(onStoreChange: () => void): () => void {
+  if (typeof window === 'undefined') return () => {};
 
-function normalizeDefaultLocaleValue(v: any): string {
-  if (v && typeof v === 'object' && 'data' in v) return normLocaleTag((v as any).data);
-  return normLocaleTag(v);
-}
+  // Patch pushState/replaceState to emit 'locationchange'
+  ensureLocationEventsPatched();
 
-function normalizeAppLocalesValue(v: any): AppLocaleMeta[] {
-  if (Array.isArray(v)) return v as AppLocaleMeta[];
-  if (v && typeof v === 'object' && 'data' in v && Array.isArray((v as any).data)) {
-    return (v as any).data as AppLocaleMeta[];
-  }
-  return [];
+  window.addEventListener('locationchange', onStoreChange);
+  window.addEventListener('popstate', onStoreChange);
+  window.addEventListener('hashchange', onStoreChange);
+
+  return () => {
+    window.removeEventListener('locationchange', onStoreChange);
+    window.removeEventListener('popstate', onStoreChange);
+    window.removeEventListener('hashchange', onStoreChange);
+  };
 }
 
 export function useResolvedLocale(explicitLocale?: string | null): string {
-  // pathname sadece SPA değişimini tetiklemek için tutuluyor
-  const [pathname, setPathname] = useState<string>('/');
+  // ✅ No setState in listeners -> no "useInsertionEffect must not schedule updates"
+  const pathname = useSyncExternalStore(subscribePathname, getPathnameSnapshot, () => '/');
 
   const [appLocalesMeta, setAppLocalesMeta] = useState<AppLocaleMeta[] | null>(null);
   const [defaultLocaleMeta, setDefaultLocaleMeta] = useState<string | null>(null);
@@ -87,40 +80,23 @@ export function useResolvedLocale(explicitLocale?: string | null): string {
   const didFetchRef = useRef(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    ensureLocationEventsPatched();
-
-    const read = () => setPathname(window.location.pathname || '/');
-
-    read();
-
-    window.addEventListener('locationchange', read);
-    window.addEventListener('popstate', read);
-    window.addEventListener('hashchange', read);
-
-    return () => {
-      window.removeEventListener('locationchange', read);
-      window.removeEventListener('popstate', read);
-      window.removeEventListener('hashchange', read);
-    };
-  }, []);
-
-  useEffect(() => {
     if (didFetchRef.current) return;
     didFetchRef.current = true;
 
-    const base = getApiBase();
+    const base = getPublicApiBase();
     if (!base) return;
 
     (async () => {
       const [appLocalesRaw, defaultLocaleRaw] = await Promise.all([
-        fetchJson<any>(`${base}/site_settings/app-locales`),
-        fetchJson<any>(`${base}/site_settings/default-locale`),
+        fetchJsonNoStore<any>(`${base}/site_settings/app-locales`),
+        fetchJsonNoStore<any>(`${base}/site_settings/default-locale`),
       ]);
 
-      const appArr = normalizeAppLocalesValue(appLocalesRaw);
-      const def = normalizeDefaultLocaleValue(defaultLocaleRaw);
+      const appUnwrapped = unwrapMaybeData<any>(appLocalesRaw);
+      const appArr = Array.isArray(appUnwrapped) ? (appUnwrapped as AppLocaleMeta[]) : [];
+
+      const defUnwrapped = unwrapMaybeData<any>(defaultLocaleRaw);
+      const def = normLocaleTag(defUnwrapped);
 
       setAppLocalesMeta(appArr.length ? appArr : null);
       setDefaultLocaleMeta(def || null);
@@ -128,31 +104,38 @@ export function useResolvedLocale(explicitLocale?: string | null): string {
   }, []);
 
   return useMemo(() => {
+    // pathname dependency is needed to re-evaluate query/cookie rules on navigation
+    void pathname;
+
     const activeLocales = computeActiveLocales((appLocalesMeta || []) as any);
     const activeSet = new Set(activeLocales.map(normLocaleTag));
 
-    // ✅ 1) __lc query: rewrite’ın tek kaynağı
+    // 0) PATH PREFIX (source of truth in /[locale]/... routing)
+    const fromPath = readLocaleFromPath(pathname);
+    if (fromPath && activeSet.has(fromPath)) return fromPath;
+
+    // 1) __lc query (rewrite source)
     const fromQuery = readLocaleFromQuery();
     if (fromQuery && activeSet.has(fromQuery)) return fromQuery;
 
-    // ✅ 2) cookie
+    // 2) cookie
     const fromCookie = readLocaleFromCookie();
     if (fromCookie && activeSet.has(fromCookie)) return fromCookie;
 
-    // ✅ 3) explicit
+    // 3) explicit
     const fromExplicit = normLocaleTag(explicitLocale);
     if (fromExplicit && activeSet.has(fromExplicit)) return fromExplicit;
 
-    // ✅ 4) DB default
-    const candDefault = normLocaleTag(defaultLocaleMeta);
-    if (candDefault && activeSet.has(candDefault)) return candDefault;
+    // 4) DB default (validated against app_locales)
+    const candDefault =
+      resolveDefaultLocale(defaultLocaleMeta, appLocalesMeta) || normLocaleTag(defaultLocaleMeta);
+    if (candDefault && activeSet.has(normLocaleTag(candDefault))) return normLocaleTag(candDefault);
 
-    // ✅ 5) first active
+    // 5) first active
     const firstActive = normLocaleTag(activeLocales[0]);
     if (firstActive) return firstActive;
 
-    // ✅ 6) fallback
+    // 6) fallback
     return normLocaleTag(FALLBACK_LOCALE) || 'de';
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, explicitLocale, appLocalesMeta, defaultLocaleMeta]);
 }

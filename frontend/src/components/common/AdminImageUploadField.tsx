@@ -165,20 +165,20 @@ const UrlLine: React.FC<{ url: string; disabled?: boolean }> = ({ url, disabled 
 
   return (
     <div
-      className="d-flex align-items-center gap-2 mt-2"
+      className="flex items-center gap-2 mt-2"
       style={{
         minWidth: 0,
       }}
     >
       <div
-        className="flex-grow-1"
+        className="grow"
         style={{
           minWidth: 0,
           overflow: 'hidden',
         }}
       >
         <div
-          className="text-muted small text-truncate"
+          className="text-gray-500 text-sm truncate"
           title={safe}
           style={{
             width: '100%',
@@ -193,7 +193,7 @@ const UrlLine: React.FC<{ url: string; disabled?: boolean }> = ({ url, disabled 
 
       <button
         type="button"
-        className="btn btn-outline-secondary btn-sm"
+        className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
         onClick={copy}
         disabled={disabled}
         title="Kopyala"
@@ -439,22 +439,24 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
                   </div>
 
                   {/* actions */}
-                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                    <div className="d-flex align-items-center justify-content-between gap-2">
+                  <div className="grow" style={{ minWidth: 0 }}>
+                    <div className="flex items-center justify-between gap-2">
                       <div
-                        className="small fw-semibold text-truncate"
+                        className="text-sm font-semibold truncate"
                         title={u}
                         style={{ minWidth: 0 }}
                       >
                         {isCover ? 'Kapak' : `Görsel ${idx + 1}`}
                       </div>
 
-                      <div className="d-flex gap-1" style={{ flex: '0 0 auto' }}>
+                      <div className="flex gap-1" style={{ flex: '0 0 auto' }}>
                         {onSelectAsCover && (
                           <button
                             type="button"
-                            className={`btn btn-sm ${
-                              isCover ? 'btn-primary' : 'btn-outline-primary'
+                            className={`px-2 py-1 text-xs rounded border transition-colors ${
+                              isCover
+                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                : 'text-indigo-600 border-indigo-600 hover:bg-indigo-50'
                             }`}
                             disabled={disabled || isUploading}
                             onClick={() => onSelectAsCover(u)}

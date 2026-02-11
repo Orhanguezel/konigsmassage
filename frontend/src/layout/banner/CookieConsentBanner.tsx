@@ -264,52 +264,62 @@ export default function CookieConsentBanner() {
   return (
     <>
       <div
-        className={`ccb__wrap ccb__wrap--${position}`}
+        className={`fixed ${position === 'top' ? 'top-0' : 'bottom-0'} left-0 right-0 z-[10040] p-4`}
         role="region"
         aria-label={ui('cc_banner_aria_region', 'Cookie consent')}
       >
-        <div className="ccb__inner">
-          <div className="ccb__text">
-            <div className="ccb__title">{titleText}</div>
-
-            <div className="ccb__desc">
-              {descText}{' '}
-              <Link className="ccb__link" href={policyHref}>
-                {policyLabel}
-              </Link>
-            </div>
-          </div>
-
-          <div className="ccb__actions">
-            {/* ✅ Colors come from existing button system */}
-            <button
-              type="button"
-              className="ccb__btn border__btn white"
-              onClick={() => setOpenSettings(true)}
-            >
-              {btnSettings}
-            </button>
-
-            {showRejectAll ? (
-              <button type="button" className="ccb__btn border__btn white" onClick={onRejectAll}>
-                {btnReject}
-              </button>
-            ) : null}
-
-            <button type="button" className="ccb__btn solid__btn" onClick={onAcceptAll}>
-              {btnAccept}
-            </button>
-          </div>
-
+        <div className="mx-auto max-w-5xl rounded-2xl bg-white/95 backdrop-blur-md border border-sand-200 shadow-2xl p-5 sm:p-6 relative">
           <button
             type="button"
-            className="ccb__close"
+            className="absolute right-3 top-3 w-9 h-9 rounded-full border border-sand-200 text-text-secondary hover:text-text-primary hover:bg-sand-50 transition-colors"
             onClick={showRejectAll ? onRejectAll : () => setOpenSettings(true)}
             aria-label={ariaClose}
             title={ariaClose}
           >
-            ×
+            <span aria-hidden="true">×</span>
           </button>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 pr-10">
+              <p className="text-base sm:text-lg font-serif font-bold text-text-primary leading-snug">
+                {titleText}
+              </p>
+              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                {descText}{' '}
+                <Link className="text-brand-primary font-bold hover:underline" href={policyHref}>
+                  {policyLabel}
+                </Link>
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
+              <button
+                type="button"
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-sand-200 text-sm font-bold text-text-primary hover:bg-sand-50 transition-colors"
+                onClick={() => setOpenSettings(true)}
+              >
+                {btnSettings}
+              </button>
+
+              {showRejectAll ? (
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-brand-primary/30 text-sm font-bold text-brand-primary hover:bg-brand-primary/5 transition-colors"
+                  onClick={onRejectAll}
+                >
+                  {btnReject}
+                </button>
+              ) : null}
+
+              <button
+                type="button"
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-brand-primary text-white text-sm font-bold hover:bg-brand-hover transition-colors shadow-sm"
+                onClick={onAcceptAll}
+              >
+                {btnAccept}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

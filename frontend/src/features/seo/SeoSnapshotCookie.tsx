@@ -7,7 +7,7 @@
 
 import { BASE_URL } from '@/integrations/rtk/constants';
 import type { SupportedLocale } from '@/types/common';
-import { siteUrlBase } from '@/features/seo/utils';
+import { siteUrlBase } from '@/seo';
 
 // RTK tarafındaki SiteSetting yapısına benzer basit tip
 type SettingDoc = { key: string; value: any };

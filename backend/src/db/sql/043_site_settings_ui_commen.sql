@@ -68,44 +68,57 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'ui_contact_page_title',               'İletişim',
 
-      'ui_contact_subprefix',                'İletişime',
-      'ui_contact_sublabel',                 'geçin',
+      'ui_contact_subprefix',                'KÖNIG ENERGETIK',
+      'ui_contact_sublabel',                 'İletişim',
       'ui_contact_title_left',               'Konuşalım',
-      'ui_contact_tagline',                  '2009''dan beri işletmeleri büyütüyoruz, sizin için de yapalım!',
+      'ui_contact_tagline',                  'Sorularınız ve randevu talepleriniz için bize yazın. Seanslar Bonn’da, ön görüşme ve onay ile planlanır.',
 
       'ui_contact_quick_email_placeholder',  'E-posta adresiniz',
       'ui_contact_quick_email_aria',         'E-postayı forma aktar',
 
-      'ui_contact_form_title',               'Danışmanlık talebi oluşturun',
+      'ui_contact_form_title',               'Mesaj gönderin',
       'ui_contact_first_name',               'Adınız*',
       'ui_contact_last_name',                'Soyadınız',
-      'ui_contact_company',                  'Firma adı',
-      'ui_contact_website',                  'Web sitesi',
-      'ui_contact_phone',                    'Telefon numarası',
+      'ui_contact_company',                  'Not (opsiyonel)',
+      'ui_contact_website',                  'Web sitesi (boş bırakın)',
+      'ui_contact_phone',                    'Telefon*',
       'ui_contact_email',                    'E-posta*',
 
-      'ui_contact_select_label',             'Hizmet türünü seçin',
-      'ui_contact_service_cooling_towers',   'Soğutma Kuleleri',
-      'ui_contact_service_maintenance',      'Bakım',
-      'ui_contact_service_modernization',    'Modernizasyon',
+      'ui_contact_select_label',             'Konu',
+      'ui_contact_service_cooling_towers',   'Randevu talebi',
+      'ui_contact_service_maintenance',      'Soru',
+      'ui_contact_service_modernization',    'İş birliği',
       'ui_contact_service_other',            'Diğer',
 
-      'ui_contact_terms_prefix',             'Şunları kabul ediyorum:',
-      'ui_contact_terms',                    'Şartlar',
-      'ui_contact_conditions',               'Koşullar',
+      'ui_contact_terms_prefix',             'Okudum ve kabul ediyorum:',
+      'ui_contact_terms',                    'Gizlilik Politikası',
+      'ui_contact_conditions',               'Şartlar',
 
-      'ui_contact_subject_base',             'Danışmanlık Talebi',
+      'ui_contact_subject_base',             'İletişim Mesajı',
       'ui_contact_message_footer',           'İletişim formundan gönderildi.',
+
+      'ui_contact_subject_label',            'Konu başlığı*',
+      'ui_contact_message_label',            'Mesajınız*',
+      'ui_contact_message_placeholder',      'Mesajınızı yazın...',
 
       'ui_contact_submit',                   'Talebi Gönder',
       'ui_contact_sending',                  'Gönderiliyor...',
       'ui_contact_success',                  'Teşekkürler! Mesajınız başarılı şekilde iletildi.',
       'ui_contact_error_generic',            'Gönderim başarısız oldu. Lütfen tekrar deneyin.',
 
+      'ui_contact_error_required',           'Bu alan zorunludur.',
+      'ui_contact_error_email',              'Lütfen geçerli bir e-posta girin.',
+      'ui_contact_error_phone',              'Lütfen geçerli bir telefon numarası girin.',
+      'ui_contact_error_message',            'Lütfen mesajınızı yazın (en az 10 karakter).',
+
+      'ui_contact_info_title',               'İletişim Bilgileri',
+      'ui_contact_info_note_title',          'Not',
+      'ui_contact_address_label',            'Adres',
+
       'ui_contact_map_title',                'Konum',
 
-      'ui_contact_meta_title',               'konigsmassage İletişim | Bize Ulaşın',
-      'ui_contact_meta_description',         'konigsmassage su soğutma çözümleri hakkında bilgi almak için bizimle iletişime geçin.'
+      'ui_contact_meta_title',               'İletişim | KÖNIG ENERGETIK',
+      'ui_contact_meta_description',         'KÖNIG ENERGETIK ile iletişime geçin: Bonn’da enerjetik masaj seansları için randevu ve sorular.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -120,44 +133,57 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'ui_contact_page_title',               'Contact',
 
-      'ui_contact_subprefix',                'Get',
-      'ui_contact_sublabel',                 'in touch',
+      'ui_contact_subprefix',                'KÖNIG ENERGETIK',
+      'ui_contact_sublabel',                 'Contact',
       'ui_contact_title_left',               'Let''s Talk',
-      'ui_contact_tagline',                  'We''ve been growing businesses since 2009, let us do it for you!',
+      'ui_contact_tagline',                  'For questions and appointment requests, send a message. Sessions take place in Bonn and are arranged after a short pre-chat and consent.',
 
       'ui_contact_quick_email_placeholder',  'Your email address',
       'ui_contact_quick_email_aria',         'Fill email',
 
-      'ui_contact_form_title',               'Request a Consultation',
+      'ui_contact_form_title',               'Send a message',
       'ui_contact_first_name',               'First Name*',
       'ui_contact_last_name',                'Last Name',
-      'ui_contact_company',                  'Company Name',
-      'ui_contact_website',                  'Website',
-      'ui_contact_phone',                    'Phone Number',
+      'ui_contact_company',                  'Note (optional)',
+      'ui_contact_website',                  'Website (leave empty)',
+      'ui_contact_phone',                    'Phone*',
       'ui_contact_email',                    'Email*',
 
-      'ui_contact_select_label',             'Select a service',
-      'ui_contact_service_cooling_towers',   'Cooling Towers',
-      'ui_contact_service_maintenance',      'Maintenance',
-      'ui_contact_service_modernization',    'Modernization',
+      'ui_contact_select_label',             'Topic',
+      'ui_contact_service_cooling_towers',   'Appointment request',
+      'ui_contact_service_maintenance',      'Question',
+      'ui_contact_service_modernization',    'Collaboration',
       'ui_contact_service_other',            'Other',
 
       'ui_contact_terms_prefix',             'I agree to the:',
-      'ui_contact_terms',                    'Terms',
-      'ui_contact_conditions',               'Conditions',
+      'ui_contact_terms',                    'Privacy Policy',
+      'ui_contact_conditions',               'Terms',
 
-      'ui_contact_subject_base',             'Consultation Request',
+      'ui_contact_subject_base',             'Contact Message',
       'ui_contact_message_footer',           'Sent from contact form.',
+
+      'ui_contact_subject_label',            'Subject*',
+      'ui_contact_message_label',            'Message*',
+      'ui_contact_message_placeholder',      'Write your message...',
 
       'ui_contact_submit',                   'Send Request',
       'ui_contact_sending',                  'Sending...',
       'ui_contact_success',                  'Thanks! Your message has been sent.',
       'ui_contact_error_generic',            'Failed to send. Please try again.',
 
+      'ui_contact_error_required',           'This field is required.',
+      'ui_contact_error_email',              'Please enter a valid email address.',
+      'ui_contact_error_phone',              'Please enter a valid phone number.',
+      'ui_contact_error_message',            'Please write a message (at least 10 characters).',
+
+      'ui_contact_info_title',               'Contact info',
+      'ui_contact_info_note_title',          'Note',
+      'ui_contact_address_label',            'Address',
+
       'ui_contact_map_title',                'Location',
 
-      'ui_contact_meta_title',               'Contact konigsmassage | Get in Touch',
-      'ui_contact_meta_description',         'Contact konigsmassage for industrial cooling tower solutions and technical support.'
+      'ui_contact_meta_title',               'Contact | KÖNIG ENERGETIK',
+      'ui_contact_meta_description',         'Contact KÖNIG ENERGETIK: appointment requests and questions for energetic massage sessions in Bonn.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -172,44 +198,57 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'ui_contact_page_title',               'Kontakt',
 
-      'ui_contact_subprefix',                'Kontakt',
-      'ui_contact_sublabel',                 'aufnehmen',
+      'ui_contact_subprefix',                'KÖNIG ENERGETIK',
+      'ui_contact_sublabel',                 'Kontakt',
       'ui_contact_title_left',               'Lassen Sie uns sprechen',
-      'ui_contact_tagline',                  'Seit 2009 unterstützen wir Unternehmen beim Wachstum – gerne auch Ihres.',
+      'ui_contact_tagline',                  'Für Fragen und Terminanfragen schreiben Sie uns. Sitzungen finden in Bonn statt – nach kurzem Vorgespräch und Einverständnis.',
 
       'ui_contact_quick_email_placeholder',  'Ihre E-Mail-Adresse',
       'ui_contact_quick_email_aria',         'E-Mail übernehmen',
 
-      'ui_contact_form_title',               'Beratungsanfrage senden',
+      'ui_contact_form_title',               'Nachricht senden',
       'ui_contact_first_name',               'Vorname*',
       'ui_contact_last_name',                'Nachname',
-      'ui_contact_company',                  'Firmenname',
-      'ui_contact_website',                  'Webseite',
-      'ui_contact_phone',                    'Telefonnummer',
+      'ui_contact_company',                  'Notiz (optional)',
+      'ui_contact_website',                  'Webseite (frei lassen)',
+      'ui_contact_phone',                    'Telefon*',
       'ui_contact_email',                    'E-Mail*',
 
-      'ui_contact_select_label',             'Wählen Sie eine Leistung',
-      'ui_contact_service_cooling_towers',   'Kühltürme',
-      'ui_contact_service_maintenance',      'Wartung',
-      'ui_contact_service_modernization',    'Modernisierung',
+      'ui_contact_select_label',             'Thema',
+      'ui_contact_service_cooling_towers',   'Terminanfrage',
+      'ui_contact_service_maintenance',      'Frage',
+      'ui_contact_service_modernization',    'Kooperation',
       'ui_contact_service_other',            'Sonstiges',
 
-      'ui_contact_terms_prefix',             'Ich akzeptiere:',
-      'ui_contact_terms',                    'Bedingungen',
-      'ui_contact_conditions',               'Konditionen',
+      'ui_contact_terms_prefix',             'Ich stimme zu:',
+      'ui_contact_terms',                    'Datenschutz',
+      'ui_contact_conditions',               'AGB',
 
-      'ui_contact_subject_base',             'Beratungsanfrage',
+      'ui_contact_subject_base',             'Kontakt Nachricht',
       'ui_contact_message_footer',           'Über das Kontaktformular gesendet.',
+
+      'ui_contact_subject_label',            'Betreff*',
+      'ui_contact_message_label',            'Nachricht*',
+      'ui_contact_message_placeholder',      'Schreiben Sie Ihre Nachricht...',
 
       'ui_contact_submit',                   'Anfrage senden',
       'ui_contact_sending',                  'Wird gesendet...',
       'ui_contact_success',                  'Danke! Ihre Nachricht wurde gesendet.',
       'ui_contact_error_generic',            'Senden fehlgeschlagen. Bitte erneut versuchen.',
 
+      'ui_contact_error_required',           'Dieses Feld ist erforderlich.',
+      'ui_contact_error_email',              'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+      'ui_contact_error_phone',              'Bitte geben Sie eine gültige Telefonnummer ein.',
+      'ui_contact_error_message',            'Bitte schreiben Sie eine Nachricht (mindestens 10 Zeichen).',
+
+      'ui_contact_info_title',               'Kontakt',
+      'ui_contact_info_note_title',          'Hinweis',
+      'ui_contact_address_label',            'Adresse',
+
       'ui_contact_map_title',                'Standort',
 
-      'ui_contact_meta_title',               'konigsmassage Kontakt | Kontaktieren Sie uns',
-      'ui_contact_meta_description',         'Kontaktieren Sie konigsmassage für industrielle Kühlturmlösungen und technischen Support.'
+      'ui_contact_meta_title',               'Kontakt | KÖNIG ENERGETIK',
+      'ui_contact_meta_description',         'Kontaktieren Sie KÖNIG ENERGETIK: Terminanfragen und Fragen zu energetischen Massage-Sitzungen in Bonn.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -233,7 +272,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'title',     'Konum',
       'height',    420,
-      'query',     'konigsmassage',
+      'query',     'KÖNIG ENERGETIK Bonn',
       'embed_url', ''
     )
     AS CHAR CHARACTER SET utf8mb4
@@ -249,7 +288,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'title',     'Location',
       'height',    420,
-      'query',     'konigsmassage',
+      'query',     'KÖNIG ENERGETIK Bonn',
       'embed_url', ''
     )
     AS CHAR CHARACTER SET utf8mb4
@@ -265,7 +304,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'title',     'Standort',
       'height',    420,
-      'query',     'konigsmassage',
+      'query',     'KÖNIG ENERGETIK Bonn',
       'embed_url', ''
     )
     AS CHAR CHARACTER SET utf8mb4

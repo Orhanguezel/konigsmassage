@@ -34,10 +34,10 @@ VALUES
 
       -- SEO (pages/legal-notice.tsx)
       'ui_legal_notice_page_description',
-        'konigsmassage yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.',
-      'ui_legal_notice_meta_title',        'Yasal Bilgilendirme | konigsmassage',
+        'KÖNIG ENERGETIK yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.',
+      'ui_legal_notice_meta_title',        'Yasal Bilgilendirme | KÖNIG ENERGETIK',
       'ui_legal_notice_meta_description',
-        'konigsmassage yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.'
+        'KÖNIG ENERGETIK yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -60,10 +60,10 @@ VALUES
 
       -- SEO
       'ui_legal_notice_page_description',
-        'konigsmassage legal notice: disclaimers, external links, intellectual property, and limitation of liability.',
-      'ui_legal_notice_meta_title',        'Legal Notice | konigsmassage',
+        'KÖNIG ENERGETIK legal notice: disclaimers, external links, intellectual property, and limitation of liability.',
+      'ui_legal_notice_meta_title',        'Legal Notice | KÖNIG ENERGETIK',
       'ui_legal_notice_meta_description',
-        'konigsmassage legal notice: disclaimers, external links, intellectual property, and limitation of liability.'
+        'KÖNIG ENERGETIK legal notice: disclaimers, external links, intellectual property, and limitation of liability.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -86,10 +86,10 @@ VALUES
 
       -- SEO
       'ui_legal_notice_page_description',
-        'konigsmassage rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.',
-      'ui_legal_notice_meta_title',        'Impressum & Rechtliches | konigsmassage',
+        'KÖNIG ENERGETIK rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.',
+      'ui_legal_notice_meta_title',        'Impressum & Rechtliches | KÖNIG ENERGETIK',
       'ui_legal_notice_meta_description',
-        'konigsmassage rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.'
+        'KÖNIG ENERGETIK rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),

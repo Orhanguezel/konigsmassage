@@ -1,9 +1,8 @@
 // =============================================================
-// FILE: src/i18n/url.ts  (DYNAMIC)
-//  - No SUPPORTED_LOCALES / LOCALE_SET dependency
-//  - Strip/localize uses runtime activeLocales if provided
-//  - Has safe heuristic fallback when activeLocales is not available yet
-//  - ✅ Default locale prefixless support
+// FILE: src/i18n/url.ts  (FINAL)
+//  - Always prefixed locale URLs: "/{locale}/..."
+//  - No default-locale prefixless behavior
+//  - Strip/localize works with runtime activeLocales when provided
 // =============================================================
 
 export type RuntimeLocale = string;
@@ -34,37 +33,24 @@ function buildActiveSet(activeLocales?: string[]) {
 
 function looksLikeLocale(seg: string): boolean {
   const s = toShortLocale(seg);
-  if (/^[a-z]{2}$/.test(s)) return true;
-  if (/^[a-z]{3}$/.test(s)) return true;
-  return false;
-}
-
-function hasLcQuery(): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    const usp = new URLSearchParams(window.location.search || '');
-    return !!usp.get('__lc');
-  } catch {
-    return false;
-  }
+  return /^[a-z]{2}$/.test(s) || /^[a-z]{3}$/.test(s);
 }
 
 /**
  * Strips "/{locale}" prefix from a pathname.
- * - If activeLocales provided, only strips if prefix exists in activeLocales (strict).
- * - Otherwise strips ONLY when "__lc" query exists (rewrite mode) and prefix looks like locale.
+ * - If activeLocales provided: strips only if prefix exists in activeLocales (strict).
+ * - Else: strips if first segment looks like locale (heuristic).
  */
 export function stripLocalePrefix(pathname: string, activeLocales?: string[]): string {
   const p = pathname.startsWith('/') ? pathname : `/${pathname}`;
   const seg = p.replace(/^\/+/, '').split('/')[0] || '';
   const cand = toShortLocale(seg);
-
   if (!cand) return p;
 
   const activeSet = buildActiveSet(activeLocales);
 
   const shouldStrip =
-    activeSet.size > 0 ? activeSet.has(cand) : hasLcQuery() ? looksLikeLocale(cand) : false;
+    activeSet.size > 0 ? activeSet.has(cand) : looksLikeLocale(cand);
 
   if (!shouldStrip) return p;
 
@@ -74,12 +60,12 @@ export function stripLocalePrefix(pathname: string, activeLocales?: string[]): s
 
 export type LocalizePathOptions = {
   defaultLocale?: string;
-  defaultPrefixless?: boolean;
 };
 
 /**
- * Localizes a path using URL-prefix routing with optional default-locale prefixless rule.
- * - Removes existing locale prefix first (strict if activeLocales provided).
+ * Localizes a path using URL-prefix routing ALWAYS:
+ *   /{locale}/...
+ * Removes existing locale prefix first.
  */
 export function localizePath(
   locale: RuntimeLocale,
@@ -92,16 +78,13 @@ export function localizePath(
   const clean = stripLocalePrefix(pathname, activeLocales);
   const base = clean === '/' ? '' : clean;
 
-  const target = toShortLocale(locale) || '';
+  const target = toShortLocale(locale);
+  const def = toShortLocale(opts?.defaultLocale) || toShortLocale(activeLocales?.[0]) || 'de';
 
-  const defFromOpts = toShortLocale(opts?.defaultLocale);
-  const defFromActives = toShortLocale(activeLocales?.[0]);
-  const def = defFromOpts || defFromActives || 'de';
+  const lc = target || def;
 
-  const defaultPrefixless = opts?.defaultPrefixless !== false;
-
-  const path =
-    defaultPrefixless && target && target === def ? `${base || '/'}` : `/${target || def}${base}`;
+  // ✅ ALWAYS prefix locale
+  const path = `/${lc}${base || ''}` || `/${lc}`;
 
   return `${path}${query}${hash}`;
 }

@@ -6,9 +6,17 @@ import 'server-only';
 import { cache } from 'react';
 import { headers, cookies } from 'next/headers';
 
-import { normLocaleTag, pickFromAcceptLanguage, pickFromCookie } from '@/i18n/localeUtils';
+import {
+  normLocaleTag,
+  normalizeLocales,
+  resolveDefaultLocale,
+  pickFromAcceptLanguage,
+  pickFromCookie,
+} from '@/i18n/localeUtils';
 
-const API = (process.env.API_BASE_URL || '').trim();
+import { getServerApiBase } from '@/i18n/apiBase.server';
+
+const API = getServerApiBase();
 
 // Hard fallback only if DB/API not reachable or empty
 export const DEFAULT_LOCALE_FALLBACK = 'de';
@@ -46,27 +54,10 @@ async function fetchJson<T>(path: string, opts?: { revalidate?: number }): Promi
   }
 }
 
-function computeActiveLocales(meta: AppLocaleMeta[] | null | undefined): {
-  activeLocales: string[];
-  preferredDefault: string | null; // from is_default
-} {
+function computeActiveLocales(meta: AppLocaleMeta[] | null | undefined): string[] {
   const def = DEFAULT_LOCALE_FALLBACK;
-  const arr = Array.isArray(meta) ? meta : [];
-
-  const active = arr
-    .filter((x) => x && x.is_active !== false)
-    .map((x) => normLocaleTag(x.code))
-    .filter(Boolean) as string[];
-
-  const uniq = Array.from(new Set(active));
-
-  const preferredDefault =
-    arr.find((x) => x?.is_default === true && x?.is_active !== false)?.code ?? null;
-
-  return {
-    activeLocales: uniq.length ? uniq : [def],
-    preferredDefault: preferredDefault ? normLocaleTag(preferredDefault) : null,
-  };
+  const out = normalizeLocales(meta);
+  return out.length ? out : [def];
 }
 
 /**
@@ -77,8 +68,8 @@ export async function fetchActiveLocales(): Promise<string[]> {
   if (!API) return [def];
 
   const meta = await fetchJson<AppLocaleMeta[]>('/site_settings/app-locales', { revalidate: 600 });
-  const parsed = computeActiveLocales(meta);
-  return parsed.activeLocales.length ? parsed.activeLocales : [def];
+  const active = computeActiveLocales(meta);
+  return active.length ? active : [def];
 }
 
 /**
@@ -98,18 +89,9 @@ export const getDefaultLocale = cache(async (): Promise<string> => {
     fetchJson<string | null>('/site_settings/default-locale', { revalidate: 600 }),
   ]);
 
-  const parsed = computeActiveLocales(meta);
-  const active = parsed.activeLocales;
-  const activeSet = new Set(active.map(normLocaleTag));
-
-  const fromDefaultEndpoint = normLocaleTag(defaultMeta);
-  if (fromDefaultEndpoint && activeSet.has(fromDefaultEndpoint)) return fromDefaultEndpoint;
-
-  const fromAppIsDefault = normLocaleTag(parsed.preferredDefault);
-  if (fromAppIsDefault && activeSet.has(fromAppIsDefault)) return fromAppIsDefault;
-
-  const first = normLocaleTag(active?.[0]);
-  return (first && activeSet.has(first) ? first : def) || def;
+  const active = computeActiveLocales(meta);
+  const resolved = resolveDefaultLocale(defaultMeta, meta);
+  return normLocaleTag(resolved) || normLocaleTag(active[0]) || def;
 });
 
 /**
@@ -136,8 +118,8 @@ export const getServerI18nContext = cache(async () => {
 
 /**
  * ✅ Single setting fetcher (key + locale) — serverMetadata.ts bunu kullanıyor.
- * Endpoint varsayımı:
- *   GET /site_settings/by-key?key=seo&locale=tr
+ * Endpoint:
+ *   GET /site_settings/:key?locale=tr
  */
 export async function fetchSetting(
   key: string,
@@ -148,15 +130,19 @@ export async function fetchSetting(
   const l = normLocaleTag(locale);
   if (!k) return null;
 
-  const qs = `key=${encodeURIComponent(k)}&locale=${encodeURIComponent(
-    l || DEFAULT_LOCALE_FALLBACK,
-  )}`;
-  const row = await fetchJson<SiteSettingRow | { data: SiteSettingRow }>(
-    `/site_settings/by-key?${qs}`,
-    {
-      revalidate: opts?.revalidate ?? 600,
-    },
-  );
+  const loc = l || DEFAULT_LOCALE_FALLBACK;
+
+  // Preferred public route: GET /site_settings/:key?locale=de
+  const row =
+    (await fetchJson<SiteSettingRow | { data: SiteSettingRow }>(
+      `/site_settings/${encodeURIComponent(k)}?locale=${encodeURIComponent(loc)}`,
+      { revalidate: opts?.revalidate ?? 600 },
+    )) ??
+    // Legacy compatibility: GET /site_settings/by-key?key=seo&locale=de
+    (await fetchJson<SiteSettingRow | { data: SiteSettingRow }>(
+      `/site_settings/by-key?key=${encodeURIComponent(k)}&locale=${encodeURIComponent(loc)}`,
+      { revalidate: opts?.revalidate ?? 600 },
+    ));
 
   if (!row) return null;
   if (typeof row === 'object' && row && 'data' in (row as any)) return (row as any).data ?? null;

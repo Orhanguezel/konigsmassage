@@ -1,35 +1,38 @@
 // =============================================================
 // FILE: src/components/containers/appointment/AppointmentPageContent.tsx
-// FINAL — Public Appointment PAGE content (rendered)
-// - Same UI/logic as AppointmentSection, but no route-key remount wrapper
-// - No inline styles
-// - Weekly note text removed (parent already has enough)
+// FINAL — Public Appointment PAGE content
+// - Replaced Legacy Classes with Standard Tailwind v4
+// - Dark theme support
 // =============================================================
 
-'use client';
+	'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+	import React, { useCallback, useEffect, useMemo, useState } from 'react';
+	import Image from 'next/image';
+	import Link from 'next/link';
+	import { useSearchParams } from 'next/navigation';
 
 import {
   useListResourcesPublicQuery,
   useListAvailabilitySlotsPublicQuery,
-  useListAvailabilitySlotsByResourcesPublicQuery,
-  useGetAvailabilityPublicQuery,
   useCreateBookingPublicMutation,
   useListResourceWorkingHoursPublicQuery,
+  useGetSiteSettingByKeyQuery,
+  useGetServiceBySlugPublicQuery,
 } from '@/integrations/rtk/hooks';
 
 import type {
   BookingPublicCreatePayload,
   ResourceSlotDto,
-  SlotAvailabilityDto,
   ResourceWorkingHourDto,
   ResourcePublicItemDto,
 } from '@/integrations/types';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
+	import { useLocaleShort } from '@/i18n/useLocaleShort';
+	import { useUiSection } from '@/i18n/uiDb';
+	import { isValidUiText } from '@/i18n/uiText';
+	import { localizePath } from '@/i18n/url';
+	import { toCdnSrc } from '@/shared/media';
 
 import {
   safeStr,
@@ -38,19 +41,13 @@ import {
   isValidYmd,
   isValidHm,
   slotTime,
-  slotIsActive,
-  slotIsAvailable,
 } from './_utils/appointmentHelpers';
 
 import { TherapistSelect } from './_utils/TherapistSelect';
 import { DailyAvailableSlots } from './_utils/DailyAvailableSlots';
 import { WeeklyPlanTable } from './_utils/WeeklyPlanTable';
 
-type TherapistDaySummary = {
-  status: 'unknown' | 'closed' | 'full' | 'available';
-  totalActive: number;
-  availableCount: number;
-};
+import { FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 
 type FormState = {
   name: string;
@@ -76,9 +73,21 @@ const DEFAULT_STATE: FormState = {
   customer_message: '',
 };
 
+function normalizeHm(v: unknown): string {
+  const s = safeStr(v);
+  if (!s) return '';
+  if (s.includes('T') && s.includes(':')) {
+    const part = (s.split('T')[1] ?? '').slice(0, 5);
+    return isValidHm(part) ? part : '';
+  }
+  const hm = s.slice(0, 5);
+  return isValidHm(hm) ? hm : '';
+}
+
 export const AppointmentPageContent: React.FC = () => {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_appointment', locale as any);
+  const searchParams = useSearchParams();
 
   const t = useCallback(
     (key: string, fallback: string) => {
@@ -90,23 +99,55 @@ export const AppointmentPageContent: React.FC = () => {
 
   const [form, setForm] = useState<FormState>(DEFAULT_STATE);
   const [localMsg, setLocalMsg] = useState<string>('');
+  const [success, setSuccess] = useState(false);
+
+  const coverImage = useMemo(() => {
+    const raw = safeStr(ui('ui_appointment_cover_image', ''));
+    const fallback =
+      'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp';
+    const src = raw || fallback;
+    return toCdnSrc(src, 1200, 900, 'fill') || src;
+  }, [ui]);
+
+  const coverAlt = useMemo(() => {
+    return safeStr(ui('ui_appointment_cover_image_alt', '')) || t('ui_appointment_page_title', 'Appointment');
+  }, [ui, t]);
+
+  // -------- optional: service preselect via query param --------
+  const serviceSlug = useMemo(() => {
+    const fromQuery = safeStr(searchParams?.get('service')) || safeStr(searchParams?.get('service_slug'));
+    return fromQuery;
+  }, [searchParams]);
+
+  const { data: defaultLocaleRow } = useGetSiteSettingByKeyQuery({ key: 'default_locale' } as any);
+  const defaultLocale = safeStr((defaultLocaleRow as any)?.value) || 'de';
+
+  const {
+    data: serviceFromSlug,
+    isError: serviceError,
+  } = useGetServiceBySlugPublicQuery(
+    { slug: serviceSlug, locale, default_locale: defaultLocale } as any,
+    { skip: !serviceSlug } as any,
+  );
+
+  const lockedServiceId = useMemo(() => safeStr((serviceFromSlug as any)?.id), [serviceFromSlug]);
+  const lockedServiceTitle = useMemo(
+    () => safeStr((serviceFromSlug as any)?.name) || safeStr((serviceFromSlug as any)?.title),
+    [serviceFromSlug],
+  );
 
   const patch = useCallback(<K extends keyof FormState>(k: K, v: FormState[K]) => {
     setForm((p) => ({ ...p, [k]: v }));
   }, []);
 
-  // Left quick date picker
-  const dateRef = useRef<HTMLInputElement>(null);
-  const openDatePicker = useCallback(() => {
-    const el = dateRef.current;
-    if (!el) return;
-    const anyEl = el as any;
-    if (typeof anyEl.showPicker === 'function') anyEl.showPicker();
-    else {
-      el.focus();
-      el.click();
-    }
-  }, []);
+  useEffect(() => {
+    if (!serviceSlug) return;
+    if (!lockedServiceId) return;
+    setForm((p) => {
+      if (safeStr(p.service_id) === lockedServiceId) return p;
+      return { ...p, service_id: lockedServiceId };
+    });
+  }, [serviceSlug, lockedServiceId]);
 
   // -------- resources (public) --------
   const {
@@ -141,86 +182,6 @@ export const AppointmentPageContent: React.FC = () => {
   const hasTherapist = !!safeStr(form.resource_id);
   const hasDate = isValidYmd(safeStr(form.appointment_date));
 
-  // -------- therapist day availability summary (RTK, multi-resource) --------
-  const therapistDayArgs = useMemo(() => {
-    const d = safeStr(form.appointment_date);
-    if (!isValidYmd(d)) return null;
-
-    const ids = resources.map((r) => safeStr((r as any)?.id)).filter(Boolean);
-    if (!ids.length) return null;
-
-    return { resource_ids: ids, date: d };
-  }, [resources, form.appointment_date]);
-
-  const {
-    data: multiSlotsMap,
-    isLoading: therapistDayLoading1,
-    isFetching: therapistDayLoading2,
-  } = useListAvailabilitySlotsByResourcesPublicQuery(
-    therapistDayArgs as any,
-    { skip: !therapistDayArgs, refetchOnMountOrArgChange: true } as any,
-  );
-
-  const therapistDayLoading = !!(therapistDayLoading1 || therapistDayLoading2);
-
-  const therapistDayMap: Record<string, TherapistDaySummary> = useMemo(() => {
-    const map: Record<string, TherapistDaySummary> = {};
-    const raw = multiSlotsMap as unknown;
-
-    if (!raw || typeof raw !== 'object') return map;
-
-    const obj = raw as Record<string, unknown>;
-    for (const rid of Object.keys(obj)) {
-      const arr = Array.isArray(obj[rid]) ? (obj[rid] as ResourceSlotDto[]) : [];
-
-      const activeSlots = arr.filter(slotIsActive);
-      const availSlots = activeSlots.filter(slotIsAvailable);
-
-      const totalActive = activeSlots.length;
-      const availableCount = availSlots.length;
-
-      let status: TherapistDaySummary['status'] = 'unknown';
-      if (totalActive === 0) status = 'closed';
-      else if (availableCount === 0) status = 'full';
-      else status = 'available';
-
-      map[rid] = { status, totalActive, availableCount };
-    }
-
-    return map;
-  }, [multiSlotsMap]);
-
-  const therapistAvailabilityText = useCallback(
-    (rid: string) => {
-      const d = safeStr(form.appointment_date);
-      if (!isValidYmd(d)) return '';
-      const s = therapistDayMap[rid];
-      if (!s) {
-        return therapistDayLoading ? t('ui_appointment_avail_checking', 'Kontrol ediliyor...') : '';
-      }
-      if (s.status === 'available')
-        return t('ui_appointment_therapist_available', 'Müsait') + ` (${s.availableCount})`;
-      if (s.status === 'full') return t('ui_appointment_therapist_full', 'Dolu');
-      if (s.status === 'closed') return t('ui_appointment_therapist_closed', 'Kapalı');
-      return t('ui_appointment_therapist_unknown', 'Bilinmiyor');
-    },
-    [form.appointment_date, therapistDayMap, therapistDayLoading, t],
-  );
-
-  const filteredResources = useMemo(() => {
-    if (isSingleTherapist) return resources;
-
-    const d = safeStr(form.appointment_date);
-    if (!isValidYmd(d)) return resources;
-
-    return resources.filter((r) => {
-      const rid = safeStr((r as any)?.id);
-      const s = therapistDayMap[rid];
-      if (!s) return true;
-      return s.status === 'available';
-    });
-  }, [resources, form.appointment_date, therapistDayMap, isSingleTherapist]);
-
   // -------- handlers --------
   const onPickTherapist = useCallback(
     (rid: string) => {
@@ -243,7 +204,7 @@ export const AppointmentPageContent: React.FC = () => {
 
   const onPickTime = useCallback(
     (tm: string) => {
-      patch('appointment_time', tm);
+      patch('appointment_time', normalizeHm(tm));
       setLocalMsg('');
     },
     [patch],
@@ -274,6 +235,8 @@ export const AppointmentPageContent: React.FC = () => {
     return [...(arr as ResourceSlotDto[])].sort((a, b) => slotTime(a).localeCompare(slotTime(b)));
   }, [slotsData]);
 
+  const selectedTimeHm = useMemo(() => normalizeHm(form.appointment_time), [form.appointment_time]);
+
   // -------- weekly working hours (public) --------
   const whArgs = useMemo(() => {
     const rid = safeStr(form.resource_id);
@@ -284,399 +247,391 @@ export const AppointmentPageContent: React.FC = () => {
   const {
     data: whData,
     isLoading: whLoading,
-    isFetching: whFetching,
     isError: whError,
-  } = useListResourceWorkingHoursPublicQuery(whArgs as any, { skip: !whArgs } as any);
+  } = useListResourceWorkingHoursPublicQuery(
+    whArgs as any,
+    { skip: !whArgs, refetchOnMountOrArgChange: true } as any,
+  );
 
-  const workingHours: ResourceWorkingHourDto[] = useMemo(() => {
-    const arr = (whData as unknown) ?? [];
-    return Array.isArray(arr) ? (arr as ResourceWorkingHourDto[]) : [];
+  const whRows = useMemo(() => {
+    return Array.isArray(whData) ? (whData as ResourceWorkingHourDto[]) : [];
   }, [whData]);
 
-  // -------- final availability check (public) --------
-  const availArgs = useMemo(() => {
-    const rid = safeStr(form.resource_id);
-    const d = safeStr(form.appointment_date);
-    const tm = safeStr(form.appointment_time);
-    if (!rid || !isValidYmd(d) || !isValidHm(tm)) return null;
-    return { resource_id: rid, date: d, time: tm };
-  }, [form.resource_id, form.appointment_date, form.appointment_time]);
+  // -------- Create Booking --------
+  const [createBooking, { isLoading: isSubmitting }] = useCreateBookingPublicMutation();
 
-  const { data: availData, isLoading: availLoading } = useGetAvailabilityPublicQuery(
-    availArgs as any,
-    { skip: !availArgs } as any,
-  );
-
-  const availabilityText = useMemo(() => {
-    if (!availArgs) return '';
-    if (availLoading) return t('ui_appointment_avail_checking', 'Müsaitlik kontrol ediliyor...');
-    const dto = availData as SlotAvailabilityDto | undefined;
-    if (!dto) return '';
-    if ((dto as any).available) return t('ui_appointment_avail_ok', 'Müsait');
-    return t('ui_appointment_avail_full', 'Dolu veya pasif');
-  }, [availArgs, availLoading, availData, t]);
-
-  // -------- create booking --------
-  const [createBooking, createState] = useCreateBookingPublicMutation();
-  const isSubmitting = !!createState.isLoading;
-
-  const apiErrorText = useMemo(() => {
-    const e = createState.error as any;
-    if (!e) return '';
-    if (typeof e === 'string') return e;
-    if (e?.data?.error?.message) return safeStr(e.data.error.message);
-    if (e?.data?.message) return safeStr(e.data.message);
-    if (e?.error) return safeStr(e.error);
-    return t('ui_appointment_error_generic', 'Bir hata oluştu. Lütfen tekrar deneyin.');
-  }, [createState.error, t]);
+  const needsLockedService = !!serviceSlug;
+  const hasLockedService = !needsLockedService || !!safeStr(form.service_id);
 
   const canSubmit =
-    !!slotsArgs && !!safeStr(form.appointment_time) && !slotsLoading && !slotsFetching;
+    !!form.name &&
+    isValidEmail(form.email) &&
+    !!form.phone &&
+    !!form.resource_id &&
+    isValidYmd(form.appointment_date) &&
+    isValidHm(form.appointment_time) &&
+    hasLockedService &&
+    !isSubmitting;
 
-  const validate = (): string => {
-    const name = safeStr(form.name);
-    const email = safeStr(form.email);
-    const phone = normalizePhone(safeStr(form.phone));
-    const rid = safeStr(form.resource_id);
-    const d = safeStr(form.appointment_date);
-    const tm = safeStr(form.appointment_time);
-
-    if (!rid) return t('ui_appointment_err_resource', 'Lütfen bir terapist seçin.');
-    if (!isValidYmd(d)) return t('ui_appointment_err_date', 'Lütfen geçerli bir tarih seçin.');
-    if (!name) return t('ui_appointment_err_name', 'Lütfen adınızı girin.');
-    if (!isValidEmail(email))
-      return t('ui_appointment_err_email', 'Lütfen geçerli bir e-posta adresi girin.');
-    if (!phone) return t('ui_appointment_err_phone', 'Lütfen telefon numaranızı girin.');
-    if (!isValidHm(tm)) return t('ui_appointment_err_time', 'Lütfen bir saat seçin.');
-    if (availArgs && availData && (availData as any).available === false) {
-      return t('ui_appointment_err_not_available', 'Seçilen saat şu an müsait değil.');
-    }
-    return '';
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSubmit) return;
     setLocalMsg('');
 
-    const err = validate();
-    if (err) return setLocalMsg(err);
-
-    const payload: BookingPublicCreatePayload = {
-      locale: safeStr(locale) || undefined,
-
-      name: safeStr(form.name),
-      email: safeStr(form.email),
-      phone: normalizePhone(safeStr(form.phone)),
-
-      appointment_date: safeStr(form.appointment_date),
-      appointment_time: safeStr(form.appointment_time),
-
-      resource_id: safeStr(form.resource_id),
-      service_id: safeStr(form.service_id) || undefined,
-
-      customer_message: undefined,
-      message: undefined,
-    } as any;
-
     try {
-      const resp = await createBooking(payload).unwrap();
+      const payload: BookingPublicCreatePayload = {
+        resource_id: form.resource_id,
+        service_id: form.service_id || undefined,
+        appointment_date: form.appointment_date,
+        appointment_time: form.appointment_time,
+        name: form.name,
+        email: form.email,
+        phone: normalizePhone(form.phone),
+        customer_message: form.customer_message,
+        locale,
+      };
 
-      if ((resp as any)?.ok) {
-        setLocalMsg(
-          t('ui_appointment_success', 'Talebiniz alındı. En kısa sürede dönüş yapılacaktır.'),
-        );
-
-        setForm((p) => {
-          const keepRid = isSingleTherapist ? p.resource_id : '';
-          return { ...DEFAULT_STATE, resource_id: keepRid };
-        });
-      } else {
-        setLocalMsg(
-          t('ui_appointment_error_generic', 'Talebiniz alınamadı. Lütfen tekrar deneyin.'),
-        );
-      }
-    } catch {
-      // apiErrorText shown
+      await createBooking(payload).unwrap();
+      setSuccess(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err: any) {
+      const m = err?.data?.error?.message || err?.message || t('ui_appointment_form_error', 'Bir hata oluştu.');
+      setLocalMsg(m);
     }
   };
 
-  // -------- UI strings --------
-  const leftSubprefix = t('ui_appointment_subprefix', 'Königs Massage');
-  const leftSublabel = t('ui_appointment_sublabel', 'Appointment');
-
-  const leftTitleRaw = t('ui_appointment_left_title', t('ui_appointment_page_title', 'Randevu Al'));
-  const leftTitleParts = safeStr(leftTitleRaw).split(' ').filter(Boolean);
-  const leftTitleFirst = leftTitleParts[0] ?? '';
-  const leftTitleRest = leftTitleParts.slice(1).join(' ');
-
-  const leftTagline = t(
-    'ui_appointment_left_tagline',
-    t('ui_appointment_page_lead', 'Terapist seçin, tarih ve saat belirleyin, formu gönderin.'),
-  );
-
-  const rightTitle = t('ui_appointment_form_title', 'Randevu Talebi');
-
-  const dateLabel = t('ui_appointment_date_label', 'Tarih');
-  const therapistLabel = t('ui_appointment_resource_label', 'Terapist');
-  const customerLabel = t('ui_appointment_customer_label', 'İletişim Bilgileri');
-  const slotsTitle = t('ui_appointment_slots_title', 'Boş Seanslar');
-
-  const btnSubmit = isSubmitting
-    ? t('ui_appointment_btn_loading', 'Gönderiliyor...')
-    : t('ui_appointment_btn_submit', 'Randevu Talebi Gönder');
+  if (success) {
+    return (
+      <div className="bg-bg-primary min-h-[60vh] py-20 flex items-center justify-center">
+        <div className="container mx-auto px-4 max-w-lg text-center" data-aos="fade-up">
+          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FiCheckCircle size={40} />
+          </div>
+          <h2 className="text-3xl font-serif font-bold text-brand-dark mb-4">
+            {t('ui_appointment_success_title', 'Randevunuz Alındı!')}
+          </h2>
+          <p className="text-text-secondary leading-relaxed mb-8">
+            {t(
+              'ui_appointment_success_msg',
+              'Talebiniz bize ulaştı. En kısa sürede sizinle iletişime geçeceğiz.',
+            )}
+          </p>
+          <Link
+            href={localizePath(locale, '/')}
+            className="inline-flex items-center justify-center px-8 py-3 bg-brand-primary text-white font-bold uppercase tracking-wider hover:bg-brand-hover transition-all rounded-sm"
+          >
+            {t('ui_appointment_success_home', 'Ana Sayfaya Dön')}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section className="touch__area touch-bg include__bg pt-120 contact-contrast ens-appointment appointment-page-root">
-      <div className="container">
-        <div className="row">
-          {/* LEFT */}
-          <div className="col-xl-4 col-lg-4">
-            <div className="touch__left mb-60">
-              <div className="section__title-wrapper">
-                <span className="section__subtitle s-2">
-                  {safeStr(leftSubprefix) ? <span>{leftSubprefix} </span> : null}
-                  {safeStr(leftSublabel)}
-                </span>
+    <section className="bg-bg-primary py-12 lg:py-20 overflow-x-hidden">
+      <div className="container mx-auto px-4">
+        
+        {/* Header */}
+        <div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center mb-12 lg:mb-16"
+          data-aos="fade-up"
+        >
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 text-brand-primary font-bold uppercase tracking-widest text-sm mb-4">
+              {t('ui_appointment_subprefix', 'KÖNIG ENERGETIK')} {t('ui_appointment_sublabel', 'Appointment')}
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-text-primary mb-5 leading-[1.05]">
+              {t('ui_appointment_title', 'Randevu Al')}
+            </h1>
+            <p className="text-text-secondary text-lg leading-relaxed">
+              {t('ui_appointment_desc', 'Size uygun terapisti ve saati seçerek kolayca randevu oluşturabilirsiniz.')}
+            </p>
+          </div>
 
-                <h2 className="section__title s-2 mb-30">
-                  <span className="down__mark-line">{leftTitleFirst}</span> {leftTitleRest}
-                </h2>
-              </div>
+          <div className="relative w-full h-72 sm:h-80 lg:h-[420px] rounded-3xl overflow-hidden border border-sand-200 shadow-medium bg-sand-100">
+            <Image
+              src={coverImage as any}
+              alt={coverAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 45vw"
+              className="object-cover"
+              loading="lazy"
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-bg-dark/35 via-transparent to-transparent" aria-hidden />
+          </div>
+        </div>
 
-              {safeStr(leftTagline) ? <p>{leftTagline}</p> : null}
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+            {/* Step 1 (smaller) */}
+            <div className="lg:col-span-5" data-aos="fade-right">
+              <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft border border-sand-200">
+                {serviceSlug ? (
+                  <div className="bg-sand-50 border border-sand-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <div>
+                      <div className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-1">
+                        {t('ui_appointment_selected_service_label', 'Selected service')}
+                      </div>
+                      <div className="font-serif font-bold text-text-primary leading-snug">
+                        {lockedServiceTitle || t('ui_appointment_selected_service_loading', 'Loading...')}
+                      </div>
+                      {serviceError ? (
+                        <div className="text-sm text-rose-700 mt-1">
+                          {t(
+                            'ui_appointment_selected_service_error',
+                            'Service not found. Please pick a service again.',
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
 
-              <div className="mt-25">
-                <div className="mb-10">
-                  <div className="contact__label text-white ens-appointmentLabel">
-                    {therapistLabel}
+                    <div className="flex items-center gap-3">
+                      <Link
+                        href={localizePath(locale, '/services')}
+                        className="text-sm font-bold text-brand-primary hover:underline"
+                      >
+                        {t('ui_appointment_change_service', 'Change')}
+                      </Link>
+
+                      <Link
+                        href={localizePath(locale, `/services/${encodeURIComponent(serviceSlug)}`)}
+                        className="text-sm font-bold text-text-primary hover:text-brand-primary transition-colors"
+                      >
+                        {t('ui_appointment_view_service', 'View')}
+                      </Link>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="pb-2 border-b border-sand-100 mb-6">
+                  <span className="text-xs font-bold text-brand-primary uppercase tracking-widest block mb-1">
+                    {t('ui_appointment_step_label', 'Step')} 1
+                  </span>
+                  <h2 className="text-2xl font-serif font-bold text-brand-dark">
+                    {t('ui_appointment_step1_title', 'Terapist ve Zaman')}
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <TherapistSelect
+                    resources={resources}
+                    loading={resourcesLoading}
+                    fetching={resourcesFetching}
+                    error={!!resourcesError}
+                    selectedId={form.resource_id}
+                    onChange={onPickTherapist}
+                    t={t}
+                  />
+
+                  <div className={!hasTherapist ? 'opacity-50 pointer-events-none' : ''}>
+                    <label
+                      htmlFor="appointment-date"
+                      className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide"
+                    >
+                      {t('ui_appointment_date_label', 'Tarih')}
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="appointment-date"
+                        type="date"
+                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 text-brand-dark rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all appearance-none uppercase text-sm font-medium"
+                        value={form.appointment_date}
+                        min={new Date().toISOString().split('T')[0]}
+                        onChange={(e) => onPickDate(e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <TherapistSelect
-                  resources={resources}
-                  filteredResources={filteredResources}
-                  loading={resourcesLoading}
-                  fetching={resourcesFetching}
-                  error={!!resourcesError}
-                  selectedId={form.resource_id}
-                  onChange={onPickTherapist}
-                  getSuffix={isSingleTherapist ? undefined : therapistAvailabilityText}
-                  t={t}
-                  disabled={isSubmitting}
-                />
-
-                <div className="touch__search mt-15">
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      openDatePicker();
-                    }}
-                  >
-                    <label className="visually-hidden" htmlFor="appointment-quick-date">
-                      {dateLabel}
+                {hasTherapist && hasDate ? (
+                  <div className="pt-6 mt-6 border-t border-sand-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide">
+                      {t('ui_appointment_time_label', 'Saat Seçimi')}
                     </label>
 
-                    <input
-                      id="appointment-quick-date"
-                      ref={dateRef}
-                      type="date"
-                      value={form.appointment_date}
-                      onChange={(e) => onPickDate(e.target.value)}
-                      disabled={isSubmitting || !hasTherapist}
+                    <DailyAvailableSlots
+                      date={form.appointment_date}
+                      slots={slots}
+                      loading={slotsLoading}
+                      fetching={slotsFetching}
+                      error={!!slotsError}
+                      selectedTime={selectedTimeHm}
+                      onPickTime={onPickTime}
+                      onRefresh={refetchSlots}
+                      t={t}
                     />
-
-                    <button
-                      type="submit"
-                      aria-label={t('ui_appointment_open_calendar', 'Takvimi aç')}
-                      title={t('ui_appointment_open_calendar', 'Takvimi aç')}
-                      disabled={isSubmitting || !hasTherapist}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="11.83"
-                        height="20.026"
-                        viewBox="0 0 11.83 20.026"
-                      >
-                        <path
-                          d="M-3925.578,5558.542l7.623,8.242-7.623,7.543"
-                          transform="translate(3927.699 -5556.422)"
-                          fill="none"
-                          stroke="#fff"
-                          strokeLinecap="round"
-                          strokeWidth="3"
-                        />
-                      </svg>
-                    </button>
-                  </form>
-                </div>
-
-                {localMsg || apiErrorText ? (
-                  <div className="mt-20">
-                    {localMsg ? (
-                      <div className="alert alert-info mb-0" role="status">
-                        {localMsg}
-                      </div>
-                    ) : (
-                      <div className="alert alert-warning mb-0" role="alert">
-                        {apiErrorText}
-                      </div>
-                    )}
                   </div>
                 ) : null}
               </div>
             </div>
-          </div>
 
-          {/* RIGHT */}
-          <div className="col-xl-8 col-lg-8">
-            <div className="touch__contact p-relative">
-              <div className="touch__carcle ens-touch-circle" />
+            {/* Weekly schedule (wider) */}
+            <div className="lg:col-span-7" data-aos="fade-left">
+              <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft border border-sand-200">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-serif font-bold text-brand-dark mb-2">
+                    {t('ui_appointment_weekly_title', 'Weekly Schedule')}
+                  </h2>
+                  <p className="text-text-secondary text-sm">
+                    {t(
+                      'ui_appointment_weekly_desc',
+                      'You can view the selected therapist’s weekly working hours below.',
+                    )}
+                  </p>
+                </div>
 
-              <div className="touch__content-title">
-                <h3>{rightTitle}</h3>
-              </div>
-
-              {hasTherapist ? (
-                <>
-                  <div className="touch__content-title mt-15">
-                    <h3>{customerLabel}</h3>
-                  </div>
-
-                  <form onSubmit={handleSubmit} className="mt-10" noValidate>
-                    <div className="row">
-                      <div className="col-lg-6">
-                        <div className="touch__input">
-                          <input
-                            id="appt-name"
-                            type="text"
-                            placeholder={t('ui_appointment_name', 'Ad Soyad')}
-                            value={form.name}
-                            onChange={(e) => patch('name', e.target.value)}
-                            disabled={isSubmitting}
-                            autoComplete="name"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col-lg-6">
-                        <div className="touch__input">
-                          <input
-                            id="appt-phone"
-                            type="tel"
-                            placeholder={t('ui_appointment_phone', 'Telefon')}
-                            value={form.phone}
-                            onChange={(e) => patch('phone', e.target.value)}
-                            disabled={isSubmitting}
-                            autoComplete="tel"
-                            inputMode="tel"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col-lg-6">
-                        <div className="touch__input">
-                          <input
-                            id="appt-time"
-                            type="text"
-                            placeholder={t('ui_appointment_time', 'Saat')}
-                            value={form.appointment_time}
-                            readOnly
-                            aria-readonly="true"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col-lg-6">
-                        <div className="touch__input">
-                          <input
-                            id="appt-email"
-                            type="email"
-                            placeholder={t('ui_appointment_email', 'E-posta')}
-                            value={form.email}
-                            onChange={(e) => patch('email', e.target.value)}
-                            disabled={isSubmitting}
-                            autoComplete="email"
-                          />
-                        </div>
-                      </div>
-
-                      {hasDate ? (
-                        <div className="col-12">
-                          <div className="touch__content-title mt-25">
-                            <h3>{slotsTitle}</h3>
-                          </div>
-                          <div className="mt-10">
-                            <DailyAvailableSlots
-                              date={form.appointment_date}
-                              slots={slots}
-                              loading={slotsLoading}
-                              fetching={slotsFetching}
-                              error={!!slotsError}
-                              selectedTime={form.appointment_time}
-                              onPickTime={onPickTime}
-                              onRefresh={() => void refetchSlots()}
-                              disabled={isSubmitting || !slotsArgs}
-                              t={t}
-                            />
-
-                            {availabilityText ? (
-                              <p className="small text-muted mt-10 mb-0">{availabilityText}</p>
-                            ) : null}
-                          </div>
-                        </div>
-                      ) : null}
-
-                      {hasDate ? (
-                        <div className="col-12">
-                          <div className="touch__submit mt-20">
-                            <div className="touch__btn">
-                              <button
-                                className={`border__btn ${canSubmit ? '' : 'is-disabled'} ${
-                                  isSubmitting ? 'is-loading' : ''
-                                }`}
-                                type="submit"
-                                disabled={isSubmitting || !canSubmit}
-                                aria-busy={isSubmitting}
-                              >
-                                {btnSubmit}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
-                  </form>
-                </>
-              ) : (
-                <div className="ens-appointmentRightEmpty" />
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* ROW 2: Weekly plan FULL WIDTH */}
-        <div className="row mt-30">
-          <div className="col-12">
-            <div className="touch__contact p-relative ens-weeklyPlanCard ens-weeklyPlanFull">
-              <div className="touch__carcle ens-touch-circle" />
-
-              <div className="touch__content-title">
-                <h3>{t('ui_appointment_weekly_title', 'Haftalık Çalışma Planı')}</h3>
-              </div>
-
-              <div className="ens-weeklyPlanWrap">
                 <WeeklyPlanTable
                   resourceId={form.resource_id}
                   selectedDate={form.appointment_date}
-                  workingHours={workingHours}
-                  whLoading={whLoading || whFetching}
+                  workingHours={whRows}
+                  whLoading={whLoading}
                   whError={!!whError}
                   t={t}
                 />
               </div>
             </div>
+
+            {/* Step 2 */}
+            {selectedTimeHm ? (
+              <div className="lg:col-span-12" data-aos="fade-up">
+                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft border border-sand-200">
+                  <div className="pb-2 border-b border-sand-100 mb-6">
+                    <span className="text-xs font-bold text-brand-primary uppercase tracking-widest block mb-1">
+                      {t('ui_appointment_step_label', 'Step')} 2
+                    </span>
+                    <h2 className="text-2xl font-serif font-bold text-brand-dark">
+                      {t('ui_appointment_step2_title', 'Kişisel Bilgiler')}
+                    </h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="appointment-name"
+                        className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide"
+                      >
+                        {t('ui_appointment_field_name', 'Ad Soyad')}
+                      </label>
+                      <input
+                        id="appointment-name"
+                        type="text"
+                        required
+                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
+                        placeholder={t('ui_appointment_ph_name', 'Adınız Soyadınız')}
+                        value={form.name}
+                        onChange={(e) => patch('name', e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="appointment-phone"
+                        className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide"
+                      >
+                        {t('ui_appointment_field_phone', 'Telefon')}
+                      </label>
+                      <input
+                        id="appointment-phone"
+                        type="tel"
+                        required
+                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
+                        placeholder={t('ui_appointment_ph_phone', '05xx xxx xx xx')}
+                        value={form.phone}
+                        onChange={(e) => patch('phone', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label
+                        htmlFor="appointment-email"
+                        className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide"
+                      >
+                        {t('ui_appointment_field_email', 'E-Posta')}
+                      </label>
+                      <input
+                        id="appointment-email"
+                        type="email"
+                        required
+                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
+                        placeholder={t('ui_appointment_ph_email', 'ornek@email.com')}
+                        value={form.email}
+                        onChange={(e) => patch('email', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label
+                        htmlFor="appointment-note"
+                        className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide"
+                      >
+                        {t('ui_appointment_field_note', 'Notunuz (Opsiyonel)')}
+                      </label>
+                      <textarea
+                        id="appointment-note"
+                        rows={3}
+                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50 resize-y min-h-25"
+                        placeholder={t('ui_appointment_ph_note', 'Varsa özel istekleriniz...')}
+                        value={form.customer_message}
+                        onChange={(e) => patch('customer_message', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {localMsg ? (
+                    <div className="mt-6 bg-rose-50 border border-rose-100 text-rose-700 px-4 py-3 rounded-sm flex items-start gap-2 text-sm font-medium">
+                      <span className="mt-0.5">⚠️</span>
+                      <span>{localMsg}</span>
+                    </div>
+                  ) : null}
+
+                  <div className="mt-8 pt-6 border-t border-sand-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-start gap-3 bg-sand-50 border border-sand-200 rounded-xl px-4 py-3">
+                      <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-brand-primary border border-sand-200 shrink-0">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="font-bold text-text-primary">
+                          {t('ui_appointment_info_title', 'Important')}
+                        </div>
+                        <div className="text-sm text-text-secondary leading-relaxed">
+                          {t(
+                            'ui_appointment_info_text',
+                            'Your appointment is confirmed after approval via SMS/email. Please notify cancellations at least 24 hours in advance.',
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={!canSubmit}
+                      className="px-8 py-4 bg-brand-primary text-white font-bold uppercase tracking-wider rounded-xl hover:bg-brand-hover transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    >
+                      {isSubmitting ? (
+                        <span>{t('ui_appointment_btn_sending', 'Sending...')}</span>
+                      ) : (
+                        <>
+                          <span>{t('ui_appointment_btn_submit', 'Submit')}</span>
+                          <FiArrowRight />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
-        </div>
+        </form>
       </div>
     </section>
   );

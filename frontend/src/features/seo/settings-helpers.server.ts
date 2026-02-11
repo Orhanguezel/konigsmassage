@@ -3,7 +3,7 @@
 // ✅ Yeni importlar
 import { BASE_URL } from '@/integrations/rtk/constants';
 import { normLocaleTag } from '@/i18n/localeUtils';
-import { siteUrlBase } from '@/features/seo/utils';
+import { siteUrlBase } from '@/seo';
 
 // Dinamik locale: artık sabit liste yok
 export type RuntimeLocale = string;

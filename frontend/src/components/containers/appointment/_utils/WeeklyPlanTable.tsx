@@ -5,10 +5,10 @@
 
 'use client';
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { ResourceWorkingHourDto } from '@/integrations/types';
 
-import { isValidHm, safeStr, buildDowLabels } from '../_utils/appointmentHelpers';
+import { isValidHm, isValidYmd, safeStr, buildDowLabels } from '../_utils/appointmentHelpers';
 
 type DayCell = {
   dow: number;
@@ -133,20 +133,16 @@ function buildTemplateForDow(
   return { rangeText, sessions };
 }
 
-function chunk<T>(arr: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
-}
-
 export const WeeklyPlanTable: React.FC<WeeklyPlanTableProps> = ({
   resourceId,
+  selectedDate,
   workingHours,
   whLoading,
   whError,
   t,
 }) => {
   const rid = safeStr(resourceId);
+  const selectedYmd = safeStr(selectedDate);
 
   // ✅ i18n DOW labels (from ui_appointment) + TR fallback
   const dowLabels = useMemo(() => buildDowLabels(t), [t]);
@@ -175,115 +171,88 @@ export const WeeklyPlanTable: React.FC<WeeklyPlanTableProps> = ({
     return map;
   }, [effectiveWh]);
 
+  const defaultDow = useMemo(() => {
+    if (!isValidYmd(selectedYmd)) return 1;
+    const d = new Date(`${selectedYmd}T00:00:00`);
+    const js = d.getDay(); // 0=Sun
+    return js === 0 ? 7 : js;
+  }, [selectedYmd]);
+
+  const [activeDow, setActiveDow] = useState<number>(defaultDow);
+  useEffect(() => setActiveDow(defaultDow), [defaultDow]);
+
   if (!rid) {
     return (
-      <div className="alert alert-light mb-0">
+      <div className="bg-sand-50 border border-sand-200 px-4 py-3 rounded-sm text-text-secondary text-sm">
         {t('ui_appointment_weekly_pick_therapist', 'Select a therapist to view the weekly plan.')}
       </div>
     );
   }
 
+  const active = cells[activeDow] || cells[1];
+  const rangeText = active?.rangeText ?? '-';
+  const sessions = active?.sessions ?? [];
+
   return (
-    <div className="ens-weeklyPlanTable">
+    <div className="w-full">
       {whError ? (
-        <div className="alert alert-warning mb-0">
+        <div className="bg-rose-50 border border-rose-100 text-rose-700 px-4 py-3 rounded-sm mb-4 text-sm">
           {t('ui_appointment_weekly_wh_error', 'Working hours could not be loaded.')}
         </div>
       ) : null}
 
-      {/* Desktop / Tablet: table */}
-      <div className="ens-weeklyPlanDesktop">
-        <div className="table-responsive">
-          <table className="table table-sm table-bordered align-middle mb-0">
-            <thead className="table-light">
-              <tr>
-                {HEADER_DAYS.map((dow) => (
-                  <th key={dow} className="text-center text-nowrap">
-                    {dowLabels[dow] || String(dow)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                {HEADER_DAYS.map((dow) => {
-                  const cell = cells[dow];
-                  const rangeText = cell?.rangeText ?? '-';
-                  const sessions = cell?.sessions ?? [];
-
-                  return (
-                    <td key={dow} className="text-center align-top">
-                      <div className="ens-dayCell">
-                        <div className="ens-range">{rangeText}</div>
-
-                        {sessions.length ? (
-                          <div className="ens-sessionGrid">
-                            {sessions.map((tm) => (
-                              <span key={tm} className="ens-chip">
-                                {tm}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="ens-empty">-</div>
-                        )}
-
-                        {whLoading && rangeText === '-' ? (
-                          <div className="ens-loading">
-                            {t('ui_appointment_weekly_wh_loading', 'Loading...')}
-                          </div>
-                        ) : null}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      {/* Tabs (warm mockup style) */}
+      <div className="flex flex-wrap gap-2">
+        {HEADER_DAYS.map((dow) => {
+          const label = dowLabels[dow] || String(dow);
+          const isActive = dow === activeDow;
+          return (
+            <button
+              key={dow}
+              type="button"
+              onClick={() => setActiveDow(dow)}
+              className={[
+                'px-3 py-2 rounded-xl text-sm font-bold border transition-colors',
+                isActive
+                  ? 'bg-brand-primary/10 border-brand-primary/25 text-text-primary'
+                  : 'bg-sand-50 border-sand-200 text-text-secondary hover:text-text-primary hover:border-sand-300',
+              ].join(' ')}
+              aria-pressed={isActive}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Small screens: stacked layout */}
-      <div className="ens-weeklyPlanMobile">
-        <div className="ens-stack">
-          {HEADER_DAYS.map((dow) => {
-            const cell = cells[dow];
-            const sessions = cell?.sessions ?? [];
-            const rangeText = cell?.rangeText ?? '-';
-
-            return (
-              <div key={dow} className="ens-row">
-                <div className="ens-day">
-                  <div className="ens-dayName">{dowLabels[dow] || String(dow)}</div>
-                  <div className="ens-dayRange">{rangeText}</div>
-                </div>
-
-                <div className="ens-times">
-                  {sessions.length ? (
-                    chunk(sessions, 4).map((line, idx) => (
-                      <div key={idx} className="ens-timesLine">
-                        {line.map((tm) => (
-                          <span key={tm} className="ens-chip">
-                            {tm}
-                          </span>
-                        ))}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="ens-empty">-</div>
-                  )}
-
-                  {whLoading && rangeText === '-' ? (
-                    <div className="ens-loading">
-                      {t('ui_appointment_weekly_wh_loading', 'Loading...')}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            );
-          })}
+      <div className="mt-4 bg-bg-secondary border border-sand-200 rounded-2xl p-5 shadow-soft">
+        <div className="flex items-center justify-between mb-4 border-b border-sand-100 pb-3">
+          <div className="text-base font-bold text-text-primary">
+            {dowLabels[activeDow] || String(activeDow)}
+          </div>
+          <div className="text-xs text-text-secondary font-semibold">{rangeText}</div>
         </div>
+
+        {sessions.length ? (
+          <div className="flex flex-wrap gap-2">
+            {sessions.map((tm) => (
+              <span
+                key={tm}
+                className="inline-flex items-center justify-center px-3 py-1.5 bg-brand-primary/5 text-text-primary text-xs font-bold rounded-xl border border-brand-primary/10"
+              >
+                {tm}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <div className="text-text-muted text-sm italic">-</div>
+        )}
+
+        {whLoading && rangeText === '-' ? (
+          <div className="text-xs text-brand-primary animate-pulse mt-3">
+            {t('ui_appointment_weekly_wh_loading', 'Loading...')}
+          </div>
+        ) : null}
       </div>
     </div>
   );

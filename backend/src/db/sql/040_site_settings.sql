@@ -123,7 +123,7 @@ VALUES
   UUID(),
   'site_title',
   'tr',
-  'Königs Massage',
+  'KÖNIG ENERGETIK',
   NOW(3),
   NOW(3)
 ),
@@ -132,14 +132,14 @@ VALUES
   'contact_info',
   'tr',
   CAST(JSON_OBJECT(
-    'companyName','Königs Massage',
+    'companyName','KÖNIG ENERGETIK',
     'phones',JSON_ARRAY('+49 176 41107158'),
     'email','info@koenigsmassage.com',
     'address','Bonn — randevu ile',
     'addressSecondary','',
     'whatsappNumber','+49 176 41107158',
     'website','https://www.koenigsmassage.com',
-    'notes','Randevu ve sorularınız için e-posta veya WhatsApp üzerinden ulaşabilirsiniz.'
+    'notes','Randevu ve sorularınız için e-posta veya WhatsApp üzerinden ulaşabilirsiniz. Seanslar ön görüşme ve onay ile planlanır.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -164,9 +164,9 @@ VALUES
   'company_profile',
   'tr',
   CAST(JSON_OBJECT(
-    'headline','Masaj ve Wellness ile Daha Iyi Hisset',
-    'subline','Kişiye özel seanslar ve blog içerikleri: rahatlama, stres yönetimi, hareket ve beslenme.',
-    'body','Königs Massage, masaj ve wellness odaklı bir randevu ve içerik platformudur. Amacımız; iyi hissetmenize yardımcı olacak bir deneyim sunmak ve blog bölümünde rahatlama, duruş-esneme, stres yönetimi ve beslenme üzerine pratik içerikler paylaşmaktır.'
+    'headline','Bonn’da Enerjetik Masaj',
+    'subline','Kalpten dokunuş, bilinçli varlık ve güvenli bir alanla derin gevşeme.',
+    'body','KÖNIG ENERGETIK, Anastasia König’in Bonn’da sunduğu enerjetik masaj seanslarını bir araya getirir. Tayland’da ve farklı ülkelerde edindiği masaj tekniklerini, sezgisel yaklaşımı ve dikkatli dokunuşla birleştirir. Her seans kişiye özel, saygılı ve net sınırlar içinde ilerler. Amaç; beden farkındalığını desteklemek, iç huzuru güçlendirmek ve gündelik yükleri geride bırakmanıza yardımcı olmaktır. Terminler ön görüşme ile, randevuya göre planlanır.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -176,14 +176,14 @@ VALUES
   'company_brand',
   'tr',
   CAST(JSON_OBJECT(
-    'name','Königs Massage',
-    'shortName','Königs',
+    'name','KÖNIG ENERGETIK',
+    'shortName','KÖNIG',
     'website','https://www.koenigsmassage.com',
     'logo',JSON_OBJECT(
       'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
       'width',120,
       'height',120,
-      'alt','Königs Massage Logo'
+      'alt','KÖNIG ENERGETIK Logo'
     ),
     'images',JSON_ARRAY(
       JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png')
@@ -213,7 +213,7 @@ VALUES
   UUID(),
   'site_title',
   'en',
-  'Königs Massage',
+  'KÖNIG ENERGETIK',
   NOW(3),
   NOW(3)
 ),
@@ -222,14 +222,14 @@ VALUES
   'contact_info',
   'en',
   CAST(JSON_OBJECT(
-    'companyName','Königs Massage',
+    'companyName','KÖNIG ENERGETIK',
     'phones',JSON_ARRAY('+49 176 41107158'),
     'email','info@koenigsmassage.com',
     'address','Bonn — by appointment',
     'addressSecondary','',
     'whatsappNumber','+49 176 41107158',
     'website','https://www.koenigsmassage.com',
-    'notes','For bookings and questions, contact via email or WhatsApp.'
+    'notes','For bookings and questions, contact via email or WhatsApp. Sessions are arranged after a short pre-chat and consent.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -254,9 +254,9 @@ VALUES
   'company_profile',
   'en',
   CAST(JSON_OBJECT(
-    'headline','Feel Better with Massage and Wellness',
-    'subline','Personalized sessions and blog content: relaxation, stress management, mobility and nutrition.',
-    'body','Königs Massage is a massage and wellness booking and content platform. Our goal is to offer a great experience and share practical blog content about relaxation, posture and stretching, stress management and nutrition.'
+    'headline','Energetic Massage in Bonn',
+    'subline','Healing touch with heart — mindful presence, clear boundaries, and deep relaxation.',
+    'body','KÖNIG ENERGETIK brings together the energetic massage sessions offered by Anastasia König in Bonn. She combines bodywork techniques learned in Thailand and across her travels with an intuitive, attentive approach. Each session is individual, respectful, and clearly bounded. The intention is to support body awareness, inner calm, and a gentle release from everyday pressure. Appointments are available by arrangement after a short conversation and consent.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -266,14 +266,14 @@ VALUES
   'company_brand',
   'en',
   CAST(JSON_OBJECT(
-    'name','Königs Massage',
-    'shortName','Königs',
+    'name','KÖNIG ENERGETIK',
+    'shortName','KÖNIG',
     'website','https://www.koenigsmassage.com',
     'logo',JSON_OBJECT(
       'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
       'width',120,
       'height',120,
-      'alt','Königs Massage Logo'
+      'alt','KÖNIG ENERGETIK Logo'
     ),
     'images',JSON_ARRAY(
       JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png')
@@ -295,7 +295,7 @@ VALUES
   UUID(),
   'site_title',
   'de',
-  'Königs Massage',
+  'KÖNIG ENERGETIK',
   NOW(3),
   NOW(3)
 ),
@@ -304,14 +304,14 @@ VALUES
   'contact_info',
   'de',
   CAST(JSON_OBJECT(
-    'companyName','Königs Massage',
+    'companyName','KÖNIG ENERGETIK',
     'phones',JSON_ARRAY('+49 176 41107158'),
     'email','info@koenigsmassage.com',
     'address','Bonn — nach Terminvereinbarung',
     'addressSecondary','',
     'whatsappNumber','+49 176 41107158',
     'website','https://www.koenigsmassage.com',
-    'notes','Für Termine und Fragen kontaktieren Sie mich per E-Mail oder WhatsApp.'
+    'notes','Für Termine und Fragen erreichen Sie mich per E-Mail oder WhatsApp. Termine nach kurzem Vorgespräch und Einverständnis.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -336,9 +336,9 @@ VALUES
   'company_profile',
   'de',
   CAST(JSON_OBJECT(
-    'headline','Besser fühlen mit Massage und Wellness',
-    'subline','Individuelle Termine und Blog-Inhalte: Entspannung, Stressmanagement, Mobilität und Ernährung.',
-    'body','Königs Massage ist eine Plattform für Massage und Wellness mit Termin- und Content-Bereich. Ziel ist ein gutes Erlebnis sowie praktische Blogbeiträge zu Entspannung, Haltung und Dehnung, Stressmanagement und Ernährung.'
+    'headline','Energetische Massage in Bonn',
+    'subline','Heilende Berührung mit Herz — achtsam, klar abgegrenzt und individuell.',
+    'body','KÖNIG ENERGETIK bündelt die energetischen Massage-Sessions von Anastasia König in Bonn. Techniken aus Thailand und weiteren Reisen verbinden sich mit einer intuitiven, präsenten Arbeitsweise. Jede Sitzung ist persönlich, respektvoll und in klaren Grenzen gehalten. Im Mittelpunkt stehen Körperwahrnehmung, innere Ruhe und ein sanftes Loslassen vom Alltag. Termine nach Vereinbarung, idealerweise nach kurzem Vorgespräch und Einverständnis.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -348,14 +348,14 @@ VALUES
   'company_brand',
   'de',
   CAST(JSON_OBJECT(
-    'name','Königs Massage',
-    'shortName','Königs',
+    'name','KÖNIG ENERGETIK',
+    'shortName','KÖNIG',
     'website','https://www.koenigsmassage.com',
     'logo',JSON_OBJECT(
       'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
       'width',120,
       'height',120,
-      'alt','Königs Massage Logo'
+      'alt','KÖNIG ENERGETIK Logo'
     ),
     'images',JSON_ARRAY(
       JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png')
@@ -397,7 +397,7 @@ VALUES
 (UUID(), 'smtp_username', '*', 'no-reply@koenigsmassage.com', NOW(3), NOW(3)),
 (UUID(), 'smtp_password', '*', 'change-me-in-admin', NOW(3), NOW(3)),
 (UUID(), 'smtp_from_email', '*', 'no-reply@koenigsmassage.com', NOW(3), NOW(3)),
-(UUID(), 'smtp_from_name', '*', 'Königs Massage', NOW(3), NOW(3)),
+(UUID(), 'smtp_from_name', '*', 'KÖNIG ENERGETIK', NOW(3), NOW(3)),
 (UUID(), 'smtp_ssl', '*', 'true', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `value`      = VALUES(`value`),
@@ -438,7 +438,7 @@ VALUES
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
     'width',120,
     'height',120,
-    'alt','Königs Massage Logo'
+    'alt','KÖNIG ENERGETIK Logo'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -451,7 +451,7 @@ VALUES
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
     'width',120,
     'height',120,
-    'alt','Königs Massage Logo (Dark)'
+    'alt','KÖNIG ENERGETIK Logo (Dark)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -464,7 +464,7 @@ VALUES
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
     'width',120,
     'height',120,
-    'alt','Königs Massage Logo (Light)'
+    'alt','KÖNIG ENERGETIK Logo (Light)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -475,7 +475,7 @@ VALUES
   '*',
   CAST(JSON_OBJECT(
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222395/site-media/favicon.png',
-    'alt','Königs Massage Favicon'
+    'alt','KÖNIG ENERGETIK Favicon'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -486,7 +486,7 @@ VALUES
   '*',
   CAST(JSON_OBJECT(
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
-    'alt','Königs Massage Apple Touch Icon'
+    'alt','KÖNIG ENERGETIK Apple Touch Icon'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -497,7 +497,7 @@ VALUES
   '*',
   CAST(JSON_OBJECT(
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
-    'alt','Königs Massage App Icon (512x512)'
+    'alt','KÖNIG ENERGETIK App Icon (512x512)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -510,7 +510,7 @@ VALUES
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222471/site-media/about.png',
     'width',1200,
     'height',630,
-    'alt','Königs Massage – Massage and Wellness'
+    'alt','KÖNIG ENERGETIK – Energetische Massage in Bonn'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)

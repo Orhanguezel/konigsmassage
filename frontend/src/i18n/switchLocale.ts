@@ -1,14 +1,13 @@
 // =============================================================
 // FILE: src/i18n/switchLocale.ts
 // konigsmassage – Locale switcher (URL-prefix based) (DYNAMIC)
-//  - Default locale prefixless destekli
+//  - ALWAYS "/{locale}/..." (matches app router: src/app/[locale]/...)
 //  - activeLocales verilirse strip işlemi strict olur
 // =============================================================
 
 'use client';
 
-import type { NextRouter } from 'next/router';
-import { stripLocalePrefix, type RuntimeLocale } from '@/i18n/url';
+import { localizePath, type RuntimeLocale } from '@/i18n/url';
 import { normLocaleTag } from '@/i18n/localeUtils';
 
 function safeAsPath(asPath?: string) {
@@ -28,46 +27,48 @@ function splitAsPath(asPath: string) {
 }
 
 /**
- * ✅ Default locale prefixless kuralı:
- * - default => "/product"
- * - others  => "/en/product"
- *
- * defaultLocale belirlemek için:
- * - activeLocales[0] (useActiveLocales zaten default’u başa alıyor)
+ * ✅ Always "/{locale}/..." kuralı:
+ * - App Router yapısı `src/app/[locale]/...` olduğu için prefix zorunlu.
+ * - activeLocales verilirse strip işlemi strict olur.
  */
 export async function switchLocale(
-  router: NextRouter,
+  router: { push: (url: string, opts?: any) => void; refresh?: () => void },
+  currentPath: string,
   next: RuntimeLocale,
   activeLocales?: string[],
 ) {
-  const asPath = safeAsPath(router.asPath);
+  const asPath = safeAsPath(currentPath);
   const { pathname, query, hash } = splitAsPath(asPath);
 
   const nextLoc = normLocaleTag(next) || 'de';
   const actives = Array.isArray(activeLocales) ? activeLocales : [];
   const defaultLocale = normLocaleTag(actives[0]) || 'de';
 
-  // Mevcut path’i locale prefix’ten arındır (strict: activeLocales varsa)
-  const cleanPath = stripLocalePrefix(pathname, actives);
-  const base = cleanPath === '/' ? '' : cleanPath;
-
-  // ✅ target üret
-  const target =
-    nextLoc === defaultLocale
-      ? `${base || '/'}${query}${hash}` // prefixless
-      : `/${nextLoc}${base}${query}${hash}`;
-
-  // normalize: "/" garantisi
-  const finalTarget = target.startsWith('/') ? target : `/${target}`;
+  const finalTarget = localizePath(nextLoc, `${pathname}${query}${hash}`, actives, {
+    defaultLocale,
+  });
 
   if (finalTarget === asPath) return;
 
   // Cookie yaz (Next.js i18n / kendi boot mantığın için faydalı)
   try {
-    document.cookie = `NEXT_LOCALE=${encodeURIComponent(nextLoc)}; path=/; max-age=31536000`;
+    const secure =
+      typeof window !== 'undefined' && window.location && window.location.protocol === 'https:'
+        ? '; secure'
+        : '';
+    document.cookie = `NEXT_LOCALE=${encodeURIComponent(nextLoc)}; path=/; max-age=31536000; samesite=lax${secure}`;
   } catch {
     // ignore
   }
 
-  await router.push(finalTarget, finalTarget, { scroll: false });
+  // App Router navigation (soft)
+  await router.push(finalTarget, { scroll: false });
+
+  // ✅ Ensure locale-dependent client data refetches
+  // (RTK queries / UI strings / etc.), especially when only search/hash changes.
+  try {
+    router.refresh?.();
+  } catch {
+    // ignore
+  }
 }

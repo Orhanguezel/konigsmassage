@@ -18,22 +18,22 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     /* =========================================================
        META (NEW KEYS - preferred)
        ========================================================= */
-    'ui_auth_login_meta_title',           'Giriş Yap | konigsmassage',
-    'ui_auth_login_meta_description',     'konigsmassage hesabınıza giriş yapın.',
-    'ui_auth_register_meta_title',        'Kayıt Ol | konigsmassage',
-    'ui_auth_register_meta_description',  'konigsmassage hesabı oluşturun.',
-    'ui_auth_logout_meta_title',          'Çıkış Yapılıyor | konigsmassage',
-    'ui_auth_logout_meta_description',    'konigsmassage hesabınızdan çıkış yapılıyor.',
+    'ui_auth_login_meta_title',           'Giriş Yap | KÖNIG ENERGETIK',
+    'ui_auth_login_meta_description',     'KÖNIG ENERGETIK hesabınıza giriş yapın.',
+    'ui_auth_register_meta_title',        'Kayıt Ol | KÖNIG ENERGETIK',
+    'ui_auth_register_meta_description',  'KÖNIG ENERGETIK hesabı oluşturun.',
+    'ui_auth_logout_meta_title',          'Çıkış Yapılıyor | KÖNIG ENERGETIK',
+    'ui_auth_logout_meta_description',    'KÖNIG ENERGETIK hesabınızdan çıkış yapılıyor.',
 
     /* =========================================================
        META (LEGACY KEYS - backward compatible)
        ========================================================= */
-    'login_meta_title',      'Giriş Yap | konigsmassage',
-    'login_meta_desc',       'konigsmassage hesabınıza giriş yapın.',
-    'register_meta_title',   'Kayıt Ol | konigsmassage',
-    'register_meta_desc',    'konigsmassage hesabı oluşturun.',
-    'logout_meta_title',     'Çıkış Yapılıyor | konigsmassage',
-    'logout_meta_desc',      'konigsmassage hesabınızdan çıkış yapılıyor.',
+    'login_meta_title',      'Giriş Yap | KÖNIG ENERGETIK',
+    'login_meta_desc',       'KÖNIG ENERGETIK hesabınıza giriş yapın.',
+    'register_meta_title',   'Kayıt Ol | KÖNIG ENERGETIK',
+    'register_meta_desc',    'KÖNIG ENERGETIK hesabı oluşturun.',
+    'logout_meta_title',     'Çıkış Yapılıyor | KÖNIG ENERGETIK',
+    'logout_meta_desc',      'KÖNIG ENERGETIK hesabınızdan çıkış yapılıyor.',
 
     /* =========================================================
        LOGIN
@@ -41,7 +41,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'login_title',                   'Giriş Yap',
     'login_lead',                    'Hesabınıza giriş yapın veya yeni hesap oluşturun.',
     'login_email_label',             'E-posta',
-    'login_email_placeholder',       'ornek@konigsmassage.com',
+    'login_email_placeholder',       'ornek@example.com',
     'login_password_label',          'Şifre',
     'login_password_placeholder',    'Şifreniz',
     'login_remember_me',             'Beni hatırla',
@@ -67,7 +67,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'register_phone_label',                  'Telefon',
     'register_phone_placeholder',            '+90 5xx xxx xx xx',
     'register_email_label',                  'E-posta',
-    'register_email_placeholder',            'ornek@konigsmassage.com',
+    'register_email_placeholder',            'ornek@example.com',
     'register_password_label',               'Şifre',
     'register_password_placeholder',         'Şifreniz',
     'register_password_again_label',         'Şifre (Tekrar)',
@@ -100,22 +100,22 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     /* =========================================================
        META (NEW KEYS - preferred)
        ========================================================= */
-    'ui_auth_login_meta_title',           'Sign In | konigsmassage',
-    'ui_auth_login_meta_description',     'Sign in to your konigsmassage account.',
-    'ui_auth_register_meta_title',        'Sign Up | konigsmassage',
-    'ui_auth_register_meta_description',  'Create your konigsmassage account.',
-    'ui_auth_logout_meta_title',          'Signing out | konigsmassage',
-    'ui_auth_logout_meta_description',    'Signing you out of your konigsmassage account.',
+    'ui_auth_login_meta_title',           'Sign In | KÖNIG ENERGETIK',
+    'ui_auth_login_meta_description',     'Sign in to your KÖNIG ENERGETIK account.',
+    'ui_auth_register_meta_title',        'Sign Up | KÖNIG ENERGETIK',
+    'ui_auth_register_meta_description',  'Create your KÖNIG ENERGETIK account.',
+    'ui_auth_logout_meta_title',          'Signing out | KÖNIG ENERGETIK',
+    'ui_auth_logout_meta_description',    'Signing you out of your KÖNIG ENERGETIK account.',
 
     /* =========================================================
        META (LEGACY KEYS - backward compatible)
        ========================================================= */
-    'login_meta_title',      'Sign In | konigsmassage',
-    'login_meta_desc',       'Sign in to your konigsmassage account.',
-    'register_meta_title',   'Sign Up | konigsmassage',
-    'register_meta_desc',    'Create your konigsmassage account.',
-    'logout_meta_title',     'Signing out | konigsmassage',
-    'logout_meta_desc',      'Signing you out of your konigsmassage account.',
+    'login_meta_title',      'Sign In | KÖNIG ENERGETIK',
+    'login_meta_desc',       'Sign in to your KÖNIG ENERGETIK account.',
+    'register_meta_title',   'Sign Up | KÖNIG ENERGETIK',
+    'register_meta_desc',    'Create your KÖNIG ENERGETIK account.',
+    'logout_meta_title',     'Signing out | KÖNIG ENERGETIK',
+    'logout_meta_desc',      'Signing you out of your KÖNIG ENERGETIK account.',
 
     /* =========================================================
        LOGIN
@@ -123,7 +123,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'login_title',                   'Sign In',
     'login_lead',                    'Sign in to your account or create a new one.',
     'login_email_label',             'Email',
-    'login_email_placeholder',       'example@konigsmassage.com',
+    'login_email_placeholder',       'example@example.com',
     'login_password_label',          'Password',
     'login_password_placeholder',    'Your password',
     'login_remember_me',             'Remember me',
@@ -149,7 +149,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'register_phone_label',                  'Phone',
     'register_phone_placeholder',            '+90 5xx xxx xx xx',
     'register_email_label',                  'Email',
-    'register_email_placeholder',            'example@konigsmassage.com',
+    'register_email_placeholder',            'example@example.com',
     'register_password_label',               'Password',
     'register_password_placeholder',         'Your password',
     'register_password_again_label',         'Password (again)',
@@ -182,22 +182,22 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     /* =========================================================
        META (NEW KEYS - preferred)
        ========================================================= */
-    'ui_auth_login_meta_title',           'Anmelden | konigsmassage',
-    'ui_auth_login_meta_description',     'Melden Sie sich bei Ihrem konigsmassage-Konto an.',
-    'ui_auth_register_meta_title',        'Registrieren | konigsmassage',
-    'ui_auth_register_meta_description',  'Erstellen Sie Ihr konigsmassage-Konto.',
-    'ui_auth_logout_meta_title',          'Abmeldung | konigsmassage',
-    'ui_auth_logout_meta_description',    'Sie werden von Ihrem konigsmassage-Konto abgemeldet.',
+    'ui_auth_login_meta_title',           'Anmelden | KÖNIG ENERGETIK',
+    'ui_auth_login_meta_description',     'Melden Sie sich bei Ihrem KÖNIG ENERGETIK-Konto an.',
+    'ui_auth_register_meta_title',        'Registrieren | KÖNIG ENERGETIK',
+    'ui_auth_register_meta_description',  'Erstellen Sie Ihr KÖNIG ENERGETIK-Konto.',
+    'ui_auth_logout_meta_title',          'Abmeldung | KÖNIG ENERGETIK',
+    'ui_auth_logout_meta_description',    'Sie werden von Ihrem KÖNIG ENERGETIK-Konto abgemeldet.',
 
     /* =========================================================
        META (LEGACY KEYS - backward compatible)
        ========================================================= */
-    'login_meta_title',      'Anmelden | konigsmassage',
-    'login_meta_desc',       'Melden Sie sich bei Ihrem konigsmassage-Konto an.',
-    'register_meta_title',   'Registrieren | konigsmassage',
-    'register_meta_desc',    'Erstellen Sie Ihr konigsmassage-Konto.',
-    'logout_meta_title',     'Abmeldung | konigsmassage',
-    'logout_meta_desc',      'Sie werden von Ihrem konigsmassage-Konto abgemeldet.',
+    'login_meta_title',      'Anmelden | KÖNIG ENERGETIK',
+    'login_meta_desc',       'Melden Sie sich bei Ihrem KÖNIG ENERGETIK-Konto an.',
+    'register_meta_title',   'Registrieren | KÖNIG ENERGETIK',
+    'register_meta_desc',    'Erstellen Sie Ihr KÖNIG ENERGETIK-Konto.',
+    'logout_meta_title',     'Abmeldung | KÖNIG ENERGETIK',
+    'logout_meta_desc',      'Sie werden von Ihrem KÖNIG ENERGETIK-Konto abgemeldet.',
 
     /* =========================================================
        LOGIN
@@ -205,7 +205,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'login_title',                   'Anmelden',
     'login_lead',                    'Melden Sie sich an oder erstellen Sie ein neues Konto.',
     'login_email_label',             'E-Mail',
-    'login_email_placeholder',       'beispiel@konigsmassage.com',
+    'login_email_placeholder',       'beispiel@example.com',
     'login_password_label',          'Passwort',
     'login_password_placeholder',    'Ihr Passwort',
     'login_remember_me',             'Angemeldet bleiben',
@@ -231,7 +231,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'register_phone_label',                  'Telefon',
     'register_phone_placeholder',            '+49 ...',
     'register_email_label',                  'E-Mail',
-    'register_email_placeholder',            'beispiel@konigsmassage.com',
+    'register_email_placeholder',            'beispiel@example.com',
     'register_password_label',               'Passwort',
     'register_password_placeholder',         'Ihr Passwort',
     'register_password_again_label',         'Passwort (wiederholen)',

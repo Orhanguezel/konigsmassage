@@ -7,7 +7,7 @@
 
 import React from 'react';
 import type { SupportedLocale } from '@/types/common';
-import { siteUrlBase, absoluteUrl, compact } from './utils';
+import { siteUrlBase, absoluteUrl, compact } from '@/seo';
 import { BASE_URL } from '@/integrations/rtk/constants';
 
 /* ---------- helpers ---------- */

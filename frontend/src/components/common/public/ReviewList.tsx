@@ -15,7 +15,7 @@ import {
   useListReviewsPublicQuery,
   useAddReviewReactionPublicMutation,
 } from '@/integrations/rtk/hooks';
-import type { ReviewDto } from '@/integrations/types/review.types';
+import type { ReviewDto } from '@/integrations/types';
 
 import { useResolvedLocale } from '@/i18n/locale';
 import { useUiSection } from '@/i18n/uiDb';
@@ -26,6 +26,13 @@ type ReviewListProps = {
   locale?: string;
   className?: string;
   showHeader?: boolean;
+
+  /** Optional overrides (e.g. when used as blog comments) */
+  titleOverride?: string;
+  emptyTextOverride?: string;
+
+  /** Display mode */
+  variant?: 'reviews' | 'comments';
 };
 
 function clampRating(v: number) {
@@ -44,17 +51,24 @@ const ReviewList: React.FC<ReviewListProps> = ({
   locale: localeProp,
   className,
   showHeader = true,
+  titleOverride,
+  emptyTextOverride,
+  variant = 'reviews',
 }) => {
   const resolvedLocale = useResolvedLocale();
   const locale = (localeProp || resolvedLocale || 'de').split('-')[0];
 
   const { ui } = useUiSection('ui_feedback', locale as any);
 
-  const title = ui('ui_feedback_list_title', 'Customer Reviews');
-  const noReviewsText = ui(
-    'ui_feedback_list_no_reviews',
-    'There are no reviews for this item yet.',
-  );
+  const title = useMemo(() => {
+    const t = String(titleOverride || '').trim();
+    return t || ui('ui_feedback_list_title', 'Customer Reviews');
+  }, [titleOverride, ui]);
+
+  const noReviewsText = useMemo(() => {
+    const t = String(emptyTextOverride || '').trim();
+    return t || ui('ui_feedback_list_no_reviews', 'There are no reviews for this item yet.');
+  }, [emptyTextOverride, ui]);
   const avgRatingLabel = ui('ui_feedback_list_avg_rating', 'Average Rating');
   const reviewsSuffix = ui('ui_feedback_list_reviews_suffix', 'reviews');
 
@@ -122,7 +136,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
         <header className="reviewList__head">
           <h3 className="reviewList__title">{title}</h3>
 
-          {stats.count > 0 && (
+          {variant === 'reviews' && stats.count > 0 && (
             <div className="reviewList__stats">
               <div className="reviewList__avg">
                 <strong>
@@ -164,18 +178,20 @@ const ReviewList: React.FC<ReviewListProps> = ({
               <div className="reviewCard__top">
                 <div className="reviewCard__who">
                   <strong className="reviewCard__name">{r.name}</strong>
-                  <div className="reviewCard__rating">
-                    <span className="reviewCard__stars" aria-hidden="true">
-                      {starsArray(Number(r.rating)).map((on, idx) => (
-                        <span key={idx} className={on ? 'is-on' : ''}>
-                          ★
-                        </span>
-                      ))}
-                    </span>
-                    <span className="reviewCard__score">
-                      {clampRating(Number(r.rating)).toFixed(1)}/5
-                    </span>
-                  </div>
+                  {variant === 'reviews' && (
+                    <div className="reviewCard__rating">
+                      <span className="reviewCard__stars" aria-hidden="true">
+                        {starsArray(Number(r.rating)).map((on, idx) => (
+                          <span key={idx} className={on ? 'is-on' : ''}>
+                            ★
+                          </span>
+                        ))}
+                      </span>
+                      <span className="reviewCard__score">
+                        {clampRating(Number(r.rating)).toFixed(1)}/5
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <time className="reviewCard__date" dateTime={String((r as any).created_at || '')}>

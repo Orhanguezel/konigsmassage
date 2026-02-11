@@ -1,6 +1,6 @@
 -- =============================================================
 -- 049-1.3_site_settings_ui_kvkk.sql  [FINAL]
--- ui_kvkk (KVKK / Privacy page UI strings) — Königs Massage
+-- ui_kvkk (KVKK / Privacy page UI strings) — KÖNIG ENERGETIK
 --  - Key: ui_kvkk
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
@@ -34,10 +34,10 @@ VALUES
 
       -- SEO (pages/kvkk.tsx)
       'ui_kvkk_page_description',
-        'Königs Massage gizlilik bilgilendirmesi: kişisel verilerin işlenmesi, hukuki sebepler, güvenlik önlemleri ve ilgili kişi hakları.',
-      'ui_kvkk_meta_title',        'KVKK / Gizlilik | Königs Massage',
+        'KÖNIG ENERGETIK gizlilik bilgilendirmesi: kişisel verilerin işlenmesi, hukuki sebepler, güvenlik önlemleri ve ilgili kişi hakları.',
+      'ui_kvkk_meta_title',        'KVKK / Gizlilik | KÖNIG ENERGETIK',
       'ui_kvkk_meta_description',
-        'Königs Massage gizlilik bilgilendirmesi: kişisel verilerin işlenmesi, hukuki sebepler, güvenlik önlemleri ve ilgili kişi hakları.'
+        'KÖNIG ENERGETIK gizlilik bilgilendirmesi: kişisel verilerin işlenmesi, hukuki sebepler, güvenlik önlemleri ve ilgili kişi hakları.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -60,10 +60,10 @@ VALUES
 
       -- SEO
       'ui_kvkk_page_description',
-        'Königs Massage privacy notice: how we process personal data, legal bases, security measures, and your data subject rights.',
-      'ui_kvkk_meta_title',        'Privacy Notice | Königs Massage',
+        'KÖNIG ENERGETIK privacy notice: how we process personal data, legal bases, security measures, and your data subject rights.',
+      'ui_kvkk_meta_title',        'Privacy Notice | KÖNIG ENERGETIK',
       'ui_kvkk_meta_description',
-        'Königs Massage privacy notice: how we process personal data, legal bases, security measures, and your data subject rights.'
+        'KÖNIG ENERGETIK privacy notice: how we process personal data, legal bases, security measures, and your data subject rights.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -86,10 +86,10 @@ VALUES
 
       -- SEO
       'ui_kvkk_page_description',
-        'Königs Massage Datenschutzhinweis: Verarbeitung personenbezogener Daten, Rechtsgrundlagen, Sicherheitsmaßnahmen und Ihre Betroffenenrechte (DSGVO).',
-      'ui_kvkk_meta_title',        'Datenschutzhinweis | Königs Massage',
+        'KÖNIG ENERGETIK Datenschutzhinweis: Verarbeitung personenbezogener Daten, Rechtsgrundlagen, Sicherheitsmaßnahmen und Ihre Betroffenenrechte (DSGVO).',
+      'ui_kvkk_meta_title',        'Datenschutzhinweis | KÖNIG ENERGETIK',
       'ui_kvkk_meta_description',
-        'Königs Massage Datenschutzhinweis: Verarbeitung personenbezogener Daten, Rechtsgrundlagen, Sicherheitsmaßnahmen und Ihre Betroffenenrechte (DSGVO).'
+        'KÖNIG ENERGETIK Datenschutzhinweis: Verarbeitung personenbezogener Daten, Rechtsgrundlagen, Sicherheitsmaßnahmen und Ihre Betroffenenrechte (DSGVO).'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),

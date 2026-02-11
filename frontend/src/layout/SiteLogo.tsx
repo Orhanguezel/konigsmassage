@@ -27,11 +27,8 @@ export type SiteLogoProps = {
   wrapperClassName?: string; // applied to wrapper
 };
 
-const FALLBACK_URL =
-  'https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png';
-
-const DEFAULT_W = 260;
-const DEFAULT_H = 96;
+const DEFAULT_W = 160;
+const DEFAULT_H = 48;
 
 const variantKeyMap: Record<Variant, string> = {
   default: 'site_logo',
@@ -111,7 +108,7 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
     [setting?.value],
   );
 
-  let finalSrc: StaticImageData | string = FALLBACK_URL;
+  let finalSrc: StaticImageData | string = '';
   let finalW = DEFAULT_W;
   let finalH = DEFAULT_H;
 
@@ -125,23 +122,38 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
     }
   } else {
     const u = safeStr(url);
-    finalSrc = u || FALLBACK_URL;
+    finalSrc = u;
     finalW = width || DEFAULT_W;
     finalH = height || DEFAULT_H;
   }
 
+  // Fallback logo yok. URL yoksa render etme.
+  // CLS fix: always reserve space in header even while DB logo loads.
+  const frameClass = cx(
+    'inline-flex items-center justify-start select-none transition-opacity hover:opacity-90',
+    'w-36 sm:w-44 lg:w-56 h-10 sm:h-11 lg:h-12',
+    wrapperClassName,
+  );
+
   return (
-    <span className={cx('site-logo-wrap', wrapperClassName)} aria-label={alt}>
-      <Image
-        key={typeof finalSrc === 'string' ? finalSrc : 'settings-logo'}
-        src={finalSrc}
-        alt={alt}
-        width={finalW}
-        height={finalH}
-        className={cx('site-logo-img', className)}
-        sizes="(max-width: 576px) 170px, (max-width: 992px) 200px, 240px"
-        priority={priority}
-      />
+    <span className={frameClass} aria-label={alt}>
+      {finalSrc ? (
+        <Image
+          key={typeof finalSrc === 'string' ? finalSrc : 'settings-logo'}
+          src={finalSrc}
+          alt={alt}
+          width={finalW}
+          height={finalH}
+          className={cx('w-full h-full object-contain', className)}
+          sizes="(max-width: 576px) 140px, (max-width: 992px) 180px, 220px"
+          priority={priority}
+        />
+      ) : (
+        <span
+          className="w-full h-full rounded-md bg-sand-100 border border-sand-200 animate-pulse"
+          aria-hidden="true"
+        />
+      )}
     </span>
   );
 };

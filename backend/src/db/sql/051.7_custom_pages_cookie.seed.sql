@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 051.7_custom_pages_cookie.seed.sql (FINAL)
--- Ensotek – Custom Page: Çerez Politikası (TR/EN/DE)
+-- FILE: 051.7_custom_pages_cookie.seed.sql (FINAL — KÖNIG ENERGETIK)
+-- KÖNIG ENERGETIK – Custom Page: Çerez Politikası / Cookie Policy (TR/EN/DE)
 -- ✅ module_key artık PARENT: custom_pages.module_key = 'cookies'
 -- Category: LEGAL (aaaa7101)
 -- SubCategory: Çerez Politikası (bbbb7008)
@@ -155,11 +155,11 @@ VALUES
       '</section>'
     )
   ),
-  'Ensotek Çerez Politikası: çerez türleri, kullanım amaçları ve tercih yönetimi.',
-  'Ensotek Çerez Politikası sayfası',
-  'Çerez Politikası | Ensotek',
-  'Ensotek çerez politikası; zorunlu, fonksiyonel ve analitik çerezler ile çerez tercih yönetimi hakkında bilgi verir.',
-  'ensotek,legal,cerez politikasi,cookies,analitik,tercih yonetimi',
+  'KÖNIG ENERGETIK Çerez Politikası: çerez türleri, kullanım amaçları ve tercih yönetimi.',
+  'KÖNIG ENERGETIK Çerez Politikası sayfası',
+  'Çerez Politikası | KÖNIG ENERGETIK',
+  'KÖNIG ENERGETIK çerez politikası; zorunlu, fonksiyonel ve analitik çerezler ile tercih yönetimi hakkında bilgi verir.',
+  'koenig energetik,legal,cerez politikasi,cookies,analitik,tercih yonetimi',
   NOW(3), NOW(3)
 ),
 (
@@ -217,11 +217,11 @@ VALUES
       '</section>'
     )
   ),
-  'Ensotek Cookie Policy: cookie types, purposes, and preference management.',
-  'Ensotek Cookie Policy page',
-  'Cookie Policy | Ensotek',
-  'Ensotek Cookie Policy explains cookie categories and how to manage preferences in your browser.',
-  'ensotek,legal,cookie policy,cookies,analytics,preferences',
+  'KÖNIG ENERGETIK Cookie Policy: cookie types, purposes, and preference management.',
+  'KÖNIG ENERGETIK Cookie Policy page',
+  'Cookie Policy | KÖNIG ENERGETIK',
+  'KÖNIG ENERGETIK Cookie Policy explains cookie categories and how to manage preferences in your browser.',
+  'koenig energetik,legal,cookie policy,cookies,analytics,preferences',
   NOW(3), NOW(3)
 ),
 (
@@ -279,11 +279,11 @@ VALUES
       '</section>'
     )
   ),
-  'Ensotek Cookie-Richtlinie: Kategorien, Zwecke und Verwaltung der Cookie-Einstellungen.',
-  'Ensotek Cookie-Richtlinie',
-  'Cookie-Richtlinie | Ensotek',
-  'Die Cookie-Richtlinie von Ensotek erläutert Cookie-Kategorien und die Verwaltung über Browsereinstellungen.',
-  'ensotek,legal,cookie richtlinie,cookies,analyse,einstellungen',
+  'KÖNIG ENERGETIK Cookie-Richtlinie: Kategorien, Zwecke und Verwaltung der Cookie-Einstellungen.',
+  'KÖNIG ENERGETIK Cookie-Richtlinie',
+  'Cookie-Richtlinie | KÖNIG ENERGETIK',
+  'Die Cookie-Richtlinie von KÖNIG ENERGETIK erläutert Cookie-Kategorien und die Verwaltung über Browsereinstellungen.',
+  'koenig energetik,legal,cookie richtlinie,cookies,analyse,einstellungen',
   NOW(3), NOW(3)
 )
 ON DUPLICATE KEY UPDATE

@@ -20,48 +20,19 @@ import {
   DEFAULT_LOCALE_FALLBACK,
 } from '@/i18n/server';
 
-/**
- * Default locale prefix kuralı:
- * - true  => default locale URL’leri prefix’siz: "/" , "/blog"
- * - false => default locale de prefix’li: "/tr", "/tr/blog"
- */
-const DEFAULT_LOCALE_PREFIXLESS = true;
-
-/* -------------------- utils -------------------- */
-
-function normLocale(l: any): string {
-  const v = String(l || '')
-    .trim()
-    .toLowerCase()
-    .replace('_', '-');
-  const short = (v.split('-')[0] || '').trim();
-  return short || DEFAULT_LOCALE_FALLBACK;
-}
-
-function uniq<T>(arr: T[]) {
-  return Array.from(new Set(arr));
-}
-
-function asStr(x: any): string | null {
-  return typeof x === 'string' && x.trim() ? x.trim() : null;
-}
-function asBool(x: any): boolean | null {
-  return typeof x === 'boolean' ? x : null;
-}
-function asObj(x: any): Record<string, any> | null {
-  return x && typeof x === 'object' && !Array.isArray(x) ? (x as Record<string, any>) : null;
-}
-function asStrArr(x: any): string[] {
-  if (!x) return [];
-  if (Array.isArray(x)) {
-    return x
-      .map((v) => String(v))
-      .map((s) => s.trim())
-      .filter(Boolean);
-  }
-  const s = asStr(x);
-  return s ? [s] : [];
-}
+import {
+  absUrlJoin,
+  asBool,
+  asObj,
+  asStr,
+  asStrArr,
+  localizedPath,
+  normLocaleShort,
+  normPath,
+  normalizeLocalhostOrigin,
+  stripTrailingSlash,
+  uniq,
+} from '@/seo/helpers';
 
 /**
  * ✅ Server runtime base URL (proxy-safe).
@@ -71,10 +42,14 @@ function asStrArr(x: any): string[] {
  *  3) host + https (fallback)
  */
 async function getRuntimeBaseUrl(): Promise<string> {
-  const env = String(process.env.NEXT_PUBLIC_SITE_URL || '')
-    .trim()
-    .replace(/\/+$/, '');
-  if (env) return env;
+  // 1) env (deterministic)
+  const env = stripTrailingSlash(String(process.env.NEXT_PUBLIC_SITE_URL || '').trim());
+  if (env) return normalizeLocalhostOrigin(env);
+
+  // 2) DB (site_settings.public_base_url, locale='*')
+  const publicBase = await fetchSetting('public_base_url', '*', { revalidate: 600 });
+  const fromDb = stripTrailingSlash(String(publicBase?.value || '').trim());
+  if (fromDb && /^https?:\/\//i.test(fromDb)) return normalizeLocalhostOrigin(fromDb);
 
   const h = await headers();
 
@@ -88,7 +63,7 @@ async function getRuntimeBaseUrl(): Promise<string> {
   const host = xfHost || String(h.get('host') || '').trim();
   const proto = (xfProto || 'https').trim();
 
-  if (host) return `${proto}://${host}`.replace(/\/+$/, '');
+  if (host) return normalizeLocalhostOrigin(stripTrailingSlash(`${proto}://${host}`));
 
   return 'http://localhost:3000';
 }
@@ -112,40 +87,15 @@ function toOgLocale(l: string): string {
 }
 
 /** Path normalizasyonu: başında / olsun; kök dışı ise sonda / olmasın */
-function normPath(pathname?: string): string {
-  let p = (pathname ?? '/').trim();
-  if (!p.startsWith('/')) p = `/${p}`;
-  if (p !== '/' && p.endsWith('/')) p = p.slice(0, -1);
-  return p;
-}
+// normPath imported from helpers
 
-/**
- * "/{locale}/..." path üretimi
- * - defaultPrefixless=true ise defaultLocale için "/blog" üretilir ("/tr/blog" değil).
- */
-function localizedPath(locale: string, pathname: string, defaultLocale: string): string {
-  const loc = normLocale(locale);
-  const def = normLocale(defaultLocale);
-  const p = normPath(pathname);
-
-  if (DEFAULT_LOCALE_PREFIXLESS && loc === def) return p;
-  if (p === '/') return `/${loc}`;
-  return `/${loc}${p}`;
-}
-
-function absUrl(baseUrl: string, pathOrUrl: string): string {
-  const v = String(pathOrUrl || '').trim();
-  if (!v) return baseUrl;
-  if (/^https?:\/\//i.test(v)) return v;
-  const p = v.startsWith('/') ? v : `/${v}`;
-  return `${baseUrl}${p}`;
-}
+// localizedPath + absUrlJoin imported from helpers (App Router: always "/{locale}/...")
 
 /* -------------------- SEO fetch (GLOBAL '*' aware, deterministic) -------------------- */
 
 async function resolveActiveLocales(provided?: string[]) {
   const list = provided && provided.length ? provided : await fetchActiveLocales();
-  const normalized = uniq(list.map(normLocale)).filter(Boolean);
+  const normalized = uniq(list.map((l) => normLocaleShort(l, DEFAULT_LOCALE_FALLBACK))).filter(Boolean);
   if (!normalized.length) normalized.push(DEFAULT_LOCALE_FALLBACK);
   return normalized;
 }
@@ -163,17 +113,17 @@ function buildSeoLocaleTryOrder(args: {
   defaultLocale: string;
   activeLocales: string[];
 }): string[] {
-  const req = normLocale(args.requestedLocale);
-  const def = normLocale(args.defaultLocale);
+  const req = normLocaleShort(args.requestedLocale, DEFAULT_LOCALE_FALLBACK);
+  const def = normLocaleShort(args.defaultLocale, DEFAULT_LOCALE_FALLBACK);
 
-  const act = uniq((args.activeLocales || []).map(normLocale)).filter(Boolean);
+  const act = uniq((args.activeLocales || []).map((l) => normLocaleShort(l, def))).filter(Boolean);
 
   // requested -> '*' -> default -> others -> fallback
   return uniq([req, '*', def, ...act, DEFAULT_LOCALE_FALLBACK].filter(Boolean));
 }
 
 async function fetchSeoRowWithFallback(locale: string, providedActiveLocales?: string[]) {
-  const loc = normLocale(locale);
+  const loc = normLocaleShort(locale, DEFAULT_LOCALE_FALLBACK);
 
   // key priority: seo -> site_seo
   const tryKeys = ['seo', 'site_seo'] as const;
@@ -224,13 +174,25 @@ export async function buildMetadataFromSeo(
 
   const active = await resolveActiveLocales(args.activeLocales);
   const defaultLocale = await getDefaultLocale();
-  const locale = normLocale(args.locale);
+  const locale = normLocaleShort(args.locale, DEFAULT_LOCALE_FALLBACK);
 
   // Defaults (DB-driven)
-  const siteName = asStr(seo.site_name) || 'konigsmassage';
+  const siteName = asStr(seo.site_name) || 'KÖNIG ENERGETIK';
   const titleDefault = asStr(seo.title_default) || siteName;
   const titleTemplate = asStr(seo.title_template) || `%s | ${siteName}`;
-  const description = asStr(seo.description) || '';
+  const rawDescription =
+    asStr(seo.description) ||
+    asStr(seo.description_default) ||
+    asStr(seo.site_description) ||
+    '';
+
+  const description =
+    rawDescription ||
+    (locale === 'de'
+      ? 'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung.'
+      : locale === 'tr'
+        ? 'Bonn’da enerjetik masaj seansları: bilinçli dokunuş, net sınırlar ve derin gevşeme.'
+        : 'Energetic massage sessions in Bonn with mindful touch, clear boundaries, and deep relaxation.');
 
   // Open Graph
   const og = asObj(seo.open_graph) || {};
@@ -240,7 +202,7 @@ export async function buildMetadataFromSeo(
   // Legacy support: og.image varsa images[0] gibi davran
   const legacyOne = asStr(og?.image);
   const ogImages = uniq([...(legacyOne ? [legacyOne] : []), ...asStrArr(og?.images)])
-    .map((u) => absUrl(baseUrl, u))
+    .map((u) => absUrlJoin(baseUrl, u))
     .filter(Boolean);
 
   // Twitter
@@ -258,18 +220,18 @@ export async function buildMetadataFromSeo(
   const pathname = normPath(args.pathname);
 
   // ✅ canonical SSR tek kaynak
-  const canonical = absUrl(baseUrl, localizedPath(locale, pathname, defaultLocale));
+  const canonical = absUrlJoin(baseUrl, localizedPath(locale, pathname, defaultLocale));
 
   // ✅ hreflang SSR tek kaynak
   const languages: Record<string, string> = {};
   for (const l of active) {
-    languages[l] = absUrl(baseUrl, localizedPath(l, pathname, defaultLocale));
+    languages[l] = absUrlJoin(baseUrl, localizedPath(l, pathname, defaultLocale));
   }
-  languages['x-default'] = absUrl(baseUrl, localizedPath(defaultLocale, pathname, defaultLocale));
+  languages['x-default'] = absUrlJoin(baseUrl, localizedPath(defaultLocale, pathname, defaultLocale));
 
   const ogLocale = toOgLocale(locale);
   const ogAltLocales = active
-    .filter((l) => normLocale(l) !== normLocale(locale))
+    .filter((l) => normLocaleShort(l, DEFAULT_LOCALE_FALLBACK) !== normLocaleShort(locale, DEFAULT_LOCALE_FALLBACK))
     .map((l) => toOgLocale(l));
 
   const metadata: Metadata = {

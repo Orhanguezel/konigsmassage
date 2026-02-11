@@ -1,31 +1,59 @@
 // =============================================================
 // FILE: src/components/containers/auth/Login.tsx
+// FINAL – Auth Login
+// - Tailwind v4 Semantic Tokens
+// - Standard list of inputs
 // =============================================================
-"use client";
 
-import React, { useState, useMemo, FormEvent } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
+'use client';
+
+import React, { useState, useMemo, FormEvent } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import {
   useLoginMutation,
   useOauthStartMutation,
-} from "@/integrations/rtk/hooks";
-import { tokenStore } from "@/integrations/core/token";
-import { normalizeError } from "@/integrations/core/errors";
+} from '@/integrations/rtk/hooks';
+import { tokenStore } from '@/integrations/core/token';
+import { normalizeError } from '@/integrations/core/errors';
 
-// Yeni i18n helper'lar
-import { useResolvedLocale } from "@/i18n/locale";
-import { useUiSection } from "@/i18n/uiDb";
+// i18n
+import { useLocaleShort } from '@/i18n/useLocaleShort';
+import { useUiSection } from '@/i18n/uiDb';
+import { localizePath } from '@/i18n/url';
 
+function trimSlash(x: string) {
+  return String(x || '').replace(/\/+$/, '');
+}
+
+function isAdminUser(user: any): boolean {
+  const role = user?.role;
+  const roles = user?.roles;
+
+  const roleName =
+    typeof role === 'string'
+      ? role
+      : typeof role?.name === 'string'
+        ? role.name
+        : null;
+
+  if (roleName === 'admin') return true;
+
+  if (Array.isArray(roles)) return roles.map(String).includes('admin');
+  if (typeof roles === 'string') return roles.split(',').map((s) => s.trim()).includes('admin');
+  return false;
+}
 
 const Login: React.FC = () => {
   const router = useRouter();
-  const locale = useResolvedLocale();
-  const { ui } = useUiSection("ui_auth", locale);
+  const locale = useLocaleShort();
+  const { ui } = useUiSection('ui_auth', locale as any);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const registerHref = useMemo(() => localizePath(locale, '/register'), [locale]);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
   const [login, loginState] = useLoginMutation();
@@ -44,10 +72,7 @@ const Login: React.FC = () => {
 
     if (!email.trim() || !password) {
       setFormError(
-        ui(
-          "login_error_required",
-          "Email and password are required.",
-        ),
+        ui('login_error_required', 'Email and password are required.'),
       );
       return;
     }
@@ -58,202 +83,189 @@ const Login: React.FC = () => {
         password,
       }).unwrap();
 
-      // access_token'ı RTK baseQuery için sakla
-      if (resp.access_token) tokenStore.set(resp.access_token);
-
-      // User bilgisini de saklayalım (admin’de gösterebiliriz)
-      if (typeof window !== "undefined" && resp.user) {
-        window.localStorage.setItem("user", JSON.stringify(resp.user));
+      if (resp.access_token) {
+        tokenStore.set(resp.access_token);
       }
 
-      // Login başarılı → admin ana sayfasına
-      router.push("/admin");
+      if (typeof window !== 'undefined' && resp.user) {
+        window.localStorage.setItem('user', JSON.stringify(resp.user));
+      }
+
+      const adminBase = trimSlash(String(process.env.NEXT_PUBLIC_ADMIN_URL || '').trim());
+      if (typeof window !== 'undefined' && adminBase && isAdminUser(resp.user)) {
+        window.location.assign(`${adminBase}/admin`);
+        return;
+      }
+
+      router.push(localizePath(locale, '/'));
     } catch {
-      // Hata loginState.error üzerinden gösteriliyor
+      // Error is handled via loginState.error
     }
   };
 
   const handleGoogleLogin = async () => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     setFormError(null);
     try {
-      const currentUrl = window.location.origin || "";
+      const currentUrl = window.location.origin || '';
       const resp = await googleStart({ redirectTo: currentUrl }).unwrap();
       if (resp.url) {
         window.location.href = resp.url;
       }
     } catch (err) {
       const n = normalizeError(err as any);
-      setFormError(
-        n.message ||
-        ui(
-          "login_error_google_generic",
-          "An error occurred while starting Google login.",
-        ),
-      );
+      const defMsg = ui('login_error_google_generic', 'An error occurred while starting Google login.');
+      setFormError(n.message || defMsg);
     }
   };
 
   const errorToShow = formError || apiErrorMessage;
 
   return (
-    <section className="tp-login-area pt-120 pb-120">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-lg-6 col-md-8">
-            <div className="tp-login-wrapper p-4 p-md-5 shadow-sm bg-white rounded">
-              <h3 className="mb-3 text-center">
-                {ui("login_title", "Sign In")}
-              </h3>
-              <p className="text-center mb-4">
-                {ui(
-                  "login_lead",
-                  "Sign in to your account or create a new one.",
-                )}{" "}
-                <Link href="/register" className="text-primary">
-                  {ui("login_register_link", "Create an account")}
-                </Link>
-                .
-              </p>
+    <section className="bg-bg-primary py-20 min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-sand-200/20 rounded-full blur-3xl" />
+      </div>
 
-              {errorToShow ? (
-                <div className="alert alert-danger py-2 small mb-3">
-                  {errorToShow}
-                </div>
-              ) : null}
-
-              <form onSubmit={handleSubmit} className="tp-login-form">
-                <div className="mb-3">
-                  <label htmlFor="login-email" className="form-label">
-                    {ui("login_email_label", "Email")}
-                  </label>
-                  <input
-                    id="login-email"
-                    type="email"
-                    className="form-control"
-                    placeholder={ui(
-                      "login_email_placeholder",
-                      "example@konigsmassage.com",
-                    )}
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="login-password" className="form-label">
-                    {ui("login_password_label", "Password")}
-                  </label>
-                  <input
-                    id="login-password"
-                    type="password"
-                    className="form-control"
-                    placeholder={ui(
-                      "login_password_placeholder",
-                      "Your password",
-                    )}
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div className="form-check">
-                    <input
-                      id="remember-me"
-                      className="form-check-input"
-                      type="checkbox"
-                      disabled={isLoading}
-                    />
-                    <label
-                      className="form-check-label small"
-                      htmlFor="remember-me"
-                    >
-                      {ui("login_remember_me", "Remember me")}
-                    </label>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-100 mb-3 solid__btn d-inline-flex justify-content-center align-items-center gap-2"
-                  disabled={isLoading}
-                >
-                  {loginState.isLoading
-                    ? ui("login_loading", "Signing in...")
-                    : ui("login_submit", "Sign In")}
-                </button>
-              </form>
-
-              <div className="text-center mb-3">
-                <span className="d-inline-block position-relative">
-                  <span className="px-2 bg-white position-relative z-1">
-                    {ui("login_or", "or")}
-                  </span>
-                  <span className="login-divider" />
-                </span>
-              </div>
-
-              <button
-                type="button"
-                className="w-100 border__btn d-inline-flex justify-content-center align-items-center gap-2"
-                onClick={handleGoogleLogin}
-                disabled={isLoading}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-md mx-auto bg-white p-8 md:p-12 rounded-lg shadow-soft">
+          
+          <div className="text-center mb-8">
+            <h3 className="text-3xl font-serif font-bold text-text-primary mb-3">
+              {ui('login_title', 'Sign In')}
+            </h3>
+            <p className="text-text-secondary leading-relaxed">
+              {ui('login_lead', 'Sign in to your account or create a new one.')}{' '}
+              <Link
+                href={registerHref}
+                className="text-brand-primary font-bold hover:text-brand-hover transition-colors"
               >
-                {googleState.isLoading ? (
-                  <>{ui("login_google_loading", "Redirecting to Google...")}</>
-                ) : (
-                  <>
-                    <span className="login-google-icon">G</span>
-                    <span>
-                      {ui(
-                        "login_google_button",
-                        "Continue with Google",
-                      )}
-                    </span>
-                  </>
-                )}
-              </button>
+                {ui('login_register_link', 'Create an account')}
+              </Link>
+              .
+            </p>
+          </div>
 
-              <p className="mt-4 text-center small text-muted">
-                {ui("login_no_account", "Don't have an account?")}{" "}
-                <Link href="/register" className="text-primary">
-                  {ui("login_register_cta", "Sign up")}
-                </Link>
-              </p>
+          {errorToShow && (
+            <div
+              role="alert"
+              aria-live="polite"
+              className="bg-rose-50 border border-rose-100 text-rose-700 px-4 py-3 rounded-md mb-6 text-sm flex items-start gap-2"
+            >
+              <span className="mt-0.5">⚠️</span>
+              <span className="font-medium">{errorToShow}</span>
             </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="login-email" className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide">
+                {ui('login_email_label', 'Email')}
+              </label>
+              <input
+                id="login-email"
+                type="email"
+                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                placeholder={ui('login_email_placeholder', 'example@konigsmassage.com')}
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="login-password" className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide">
+                {ui('login_password_label', 'Password')}
+              </label>
+              <input
+                id="login-password"
+                type="password"
+                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                placeholder={ui('login_password_placeholder', 'Your password')}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-brand-primary focus:ring-brand-primary border-sand-300 rounded cursor-pointer accent-brand-primary"
+                  disabled={isLoading}
+                />
+                <label
+                  className="ml-2 block text-sm text-text-secondary cursor-pointer select-none"
+                  htmlFor="remember-me"
+                >
+                  {ui('login_remember_me', 'Remember me')}
+                </label>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-brand-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-brand-hover transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center uppercase tracking-widest text-sm"
+              disabled={isLoading}
+            >
+              {loginState.isLoading
+                ? ui('login_loading', 'Signing in...')
+                : ui('login_submit', 'Sign In')}
+            </button>
+          </form>
+
+          <div className="relative my-8 text-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-sand-200" />
+            </div>
+            <div className="relative">
+              <span className="px-3 bg-white text-text-muted text-sm uppercase tracking-wider font-medium">
+                {ui('login_or', 'or')}
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="w-full border border-sand-200 bg-sand-50 text-text-primary font-bold py-3 px-4 rounded-sm hover:bg-white hover:border-sand-300 transition-all flex justify-center items-center gap-3 group"
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+          >
+            {googleState.isLoading ? (
+              <span className="text-sm">{ui('login_google_loading', 'Redirecting to Google...')}</span>
+            ) : (
+              <>
+                <svg className="w-5 h-5 text-text-secondary group-hover:text-brand-primary transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                </svg>
+                <span className="text-sm">
+                  {ui('login_google_button', 'Continue with Google')}
+                </span>
+              </>
+            )}
+          </button>
+
+          <div className="mt-8 text-center">
+             <p className="text-sm text-text-secondary">
+               {ui('login_no_account', "Don't have an account?")}{' '}
+               <Link
+                 href={registerHref}
+                 className="text-brand-primary font-bold hover:text-brand-hover hover:underline transition-all"
+               >
+                 {ui('login_register_cta', 'Sign up here')}
+               </Link>
+             </p>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .login-divider {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 50%;
-          border-bottom: 1px solid #e5e5e5;
-          transform: translateY(-50%);
-          z-index: 0;
-        }
-        .login-google-icon {
-          display: inline-flex;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          font-weight: 600;
-          background: #fff;
-        }
-      `}</style>
     </section>
   );
 };

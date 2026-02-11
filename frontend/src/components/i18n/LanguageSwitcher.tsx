@@ -4,7 +4,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import { useActiveLocales } from '@/i18n/activeLocales';
 import { switchLocale } from '@/i18n/switchLocale';
@@ -34,6 +34,10 @@ function resolveCurrentLocaleFromPath(asPath: string, activeLocales: string[]): 
 
 export default function LanguageSwitcher() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const asPath = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
+
   const { locales, isLoading } = useActiveLocales();
 
   const activeLocales = useMemo(
@@ -42,8 +46,8 @@ export default function LanguageSwitcher() {
   );
 
   const current = useMemo(() => {
-    return resolveCurrentLocaleFromPath(router.asPath || '/', activeLocales);
-  }, [router.asPath, activeLocales]);
+    return resolveCurrentLocaleFromPath(asPath || '/', activeLocales);
+  }, [asPath, activeLocales]);
 
   if (isLoading) return null;
   if (!activeLocales.length) return null;
@@ -59,7 +63,7 @@ export default function LanguageSwitcher() {
             <li key={code} className="list-inline-item">
               <button
                 type="button"
-                onClick={() => switchLocale(router, code, activeLocales)}
+                onClick={() => switchLocale(router, asPath, code, activeLocales)}
                 className="bg-transparent border-0 p-0 cursor-pointer"
                 aria-current={isCurrent ? 'true' : undefined}
                 aria-label={`Switch language to ${code.toUpperCase()}`}

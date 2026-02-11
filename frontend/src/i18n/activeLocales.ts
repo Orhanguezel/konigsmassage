@@ -7,7 +7,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FALLBACK_LOCALE } from '@/i18n/config';
-import { normLocaleTag } from '@/i18n/localeUtils';
+import { normLocaleTag, normalizeLocales } from '@/i18n/localeUtils';
+import { fetchJsonNoStore, getPublicApiBase, unwrapMaybeData } from '@/i18n/publicMetaApi';
 
 type AppLocaleMeta = {
   code?: unknown;
@@ -17,56 +18,9 @@ type AppLocaleMeta = {
 };
 
 function computeLocales(meta: AppLocaleMeta[] | null | undefined): string[] {
-  const arr = Array.isArray(meta) ? meta : [];
-
-  const active = arr
-    .filter((x) => x && (x as any).is_active !== false)
-    .map((x) => normLocaleTag((x as any).code))
-    .filter(Boolean) as string[];
-
-  const uniq = Array.from(new Set(active));
-
-  const def = arr.find((x) => (x as any)?.is_default === true && (x as any)?.is_active !== false);
-  const defCode = def ? normLocaleTag((def as any).code) : '';
-
-  const out = defCode ? [defCode, ...uniq.filter((x) => x !== defCode)] : uniq;
-
   const fb = normLocaleTag(FALLBACK_LOCALE) || 'de';
-  return out.length ? out : [fb];
-}
-
-function getApiBase(): string {
-  const raw =
-    (process.env.NEXT_PUBLIC_API_BASE_URL || '').trim() ||
-    (process.env.NEXT_PUBLIC_API_URL || '').trim() ||
-    (process.env.API_BASE_URL || '').trim();
-
-  const base = raw.replace(/\/+$/, '');
-
-  // ✅ Senin projede RTK çağrıları /api/... gidiyor.
-  // Env yanlışlıkla https://www.konigsmassage.de verildiyse burada /api ekleyerek tolere ediyoruz.
-  // Env zaten .../api ise aynen kalır.
-  if (base && !/\/api$/i.test(base)) return `${base}/api`;
-
-  return base;
-}
-
-async function fetchJson<T>(url: string): Promise<T | null> {
-  try {
-    const res = await fetch(url, { credentials: 'omit', cache: 'no-store' });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
-  } catch {
-    return null;
-  }
-}
-
-function normalizeAppLocalesValue(v: any): AppLocaleMeta[] {
-  if (Array.isArray(v)) return v as AppLocaleMeta[];
-  if (v && typeof v === 'object' && 'data' in v && Array.isArray((v as any).data)) {
-    return (v as any).data as AppLocaleMeta[];
-  }
-  return [];
+  const normalized = normalizeLocales(meta);
+  return normalized.length ? normalized : [fb];
 }
 
 // ✅ Minimal in-memory cache (page lifetime)
@@ -92,7 +46,7 @@ export function useActiveLocales() {
       return;
     }
 
-    const base = getApiBase();
+    const base = getPublicApiBase();
     if (!base) {
       __cache = { at: Date.now(), meta: null };
       setMeta(null);
@@ -104,8 +58,9 @@ export function useActiveLocales() {
     (async () => {
       // ✅ Varsayım: GET {API_BASE}/site_settings/app-locales
       // API_BASE burada .../api ile biter.
-      const raw = await fetchJson<any>(`${base}/site_settings/app-locales`);
-      const arr = normalizeAppLocalesValue(raw);
+      const raw = await fetchJsonNoStore<any>(`${base}/site_settings/app-locales`);
+      const unwrapped = unwrapMaybeData<any>(raw);
+      const arr = Array.isArray(unwrapped) ? (unwrapped as AppLocaleMeta[]) : [];
 
       const next = arr.length ? arr : null;
       __cache = { at: Date.now(), meta: next };

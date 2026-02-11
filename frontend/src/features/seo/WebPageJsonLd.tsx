@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { SupportedLocale } from "@/types/common";
-import { absoluteUrl, compact } from "./utils";
+import { absoluteUrl, compact } from "@/seo";
 
 type Props = {
   locale: SupportedLocale;

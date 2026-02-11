@@ -1,7 +1,7 @@
 // src/features/seotest/BreadcrumbJsonLd.tsx
 
 import React from "react";
-import { absoluteUrl, compact } from "./utils";
+import { absoluteUrl, compact } from "@/seo";
 
 export default function BreadcrumbJsonLd({
   items,

@@ -1,7 +1,7 @@
 -- =============================================================
--- 049-1.4_site_settings_ui_legal_notice.sql  [FINAL]
--- ui_legal_notice (Legal Notice / Impressum page UI strings) — Königs Massage (DE/EN/TR)
---  - Key: ui_legal_notice
+-- 049-1.5_site_settings_ui_privacy_notice.sql  [FINAL]
+-- ui_privacy_notice (Privacy Notice page UI strings)
+--  - Key: ui_privacy_notice
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
 --  - Upsert: ON DUPLICATE KEY UPDATE
@@ -14,30 +14,25 @@ SET time_zone = '+00:00';
 START TRANSACTION;
 
 -- =============================================================
--- ui_legal_notice (TR/EN/DE)
+-- ui_privacy_notice (TR/EN/DE)
 -- =============================================================
 INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at)
 VALUES
 (
   UUID(),
-  'ui_legal_notice',
+  'ui_privacy_notice',
   'tr',
   CAST(
     JSON_OBJECT(
-      -- Banner / Page titles
-      'ui_legal_notice_page_title',        'Yasal Bilgilendirme',
-      'ui_legal_notice_fallback_title',    'Yasal Bilgilendirme',
-
-      -- Empty states
-      'ui_legal_notice_empty',             'Yasal bilgilendirme içeriği bulunamadı.',
-      'ui_legal_notice_empty_text',        'Yasal bilgilendirme içeriği yakında yayınlanacaktır.',
-
-      -- SEO (pages/legal-notice.tsx)
-      'ui_legal_notice_page_description',
-        'Königs Massage yasal bilgilendirme: sorumluluk reddi, harici bağlantılar, telif hakları ve sorumluluk sınırları.',
-      'ui_legal_notice_meta_title',        'Yasal Bilgilendirme | Königs Massage',
-      'ui_legal_notice_meta_description',
-        'Königs Massage yasal bilgilendirme: sorumluluk reddi, harici bağlantılar, telif hakları ve sorumluluk sınırları.'
+      'ui_privacy_notice_page_title',        'Gizlilik Bildirimi',
+      'ui_privacy_notice_fallback_title',    'Gizlilik Bildirimi',
+      'ui_privacy_notice_empty',             'Gizlilik bildirimi içeriği bulunamadı.',
+      'ui_privacy_notice_empty_text',        'Gizlilik bildirimi içeriği yakında yayınlanacaktır.',
+      'ui_privacy_notice_page_description',
+        'KÖNIG ENERGETIK gizlilik bildirimi: kişisel verilerin işlenmesi, amaçlar, saklama süreleri, güvenlik önlemleri ve haklarınız.',
+      'ui_privacy_notice_meta_title',        'Gizlilik Bildirimi | KÖNIG ENERGETIK',
+      'ui_privacy_notice_meta_description',
+        'KÖNIG ENERGETIK gizlilik bildirimi: kişisel verilerin işlenmesi, amaçlar, saklama süreleri, güvenlik önlemleri ve haklarınız.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -46,24 +41,19 @@ VALUES
 ),
 (
   UUID(),
-  'ui_legal_notice',
+  'ui_privacy_notice',
   'en',
   CAST(
     JSON_OBJECT(
-      -- Banner / Page titles
-      'ui_legal_notice_page_title',        'Legal Notice (Imprint)',
-      'ui_legal_notice_fallback_title',    'Legal Notice (Imprint)',
-
-      -- Empty states
-      'ui_legal_notice_empty',             'Legal notice content not found.',
-      'ui_legal_notice_empty_text',        'The legal notice (imprint) will be published here soon.',
-
-      -- SEO
-      'ui_legal_notice_page_description',
-        'Königs Massage legal notice (imprint): provider information, disclaimers, external links, copyright, and limitation of liability (Germany).',
-      'ui_legal_notice_meta_title',        'Legal Notice (Imprint) | Königs Massage',
-      'ui_legal_notice_meta_description',
-        'Königs Massage legal notice (imprint): provider information, disclaimers, external links, copyright, and limitation of liability (Germany).'
+      'ui_privacy_notice_page_title',        'Privacy Notice',
+      'ui_privacy_notice_fallback_title',    'Privacy Notice',
+      'ui_privacy_notice_empty',             'Privacy notice content not found.',
+      'ui_privacy_notice_empty_text',        'The privacy notice content will be published here soon.',
+      'ui_privacy_notice_page_description',
+        'KÖNIG ENERGETIK privacy notice: how we process personal data, purposes, retention periods, security measures, and your rights.',
+      'ui_privacy_notice_meta_title',        'Privacy Notice | KÖNIG ENERGETIK',
+      'ui_privacy_notice_meta_description',
+        'KÖNIG ENERGETIK privacy notice: how we process personal data, purposes, retention periods, security measures, and your rights.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -72,24 +62,19 @@ VALUES
 ),
 (
   UUID(),
-  'ui_legal_notice',
+  'ui_privacy_notice',
   'de',
   CAST(
     JSON_OBJECT(
-      -- Banner / Page titles
-      'ui_legal_notice_page_title',        'Impressum',
-      'ui_legal_notice_fallback_title',    'Impressum',
-
-      -- Empty states
-      'ui_legal_notice_empty',             'Impressum nicht gefunden.',
-      'ui_legal_notice_empty_text',        'Das Impressum wird hier in Kürze veröffentlicht.',
-
-      -- SEO
-      'ui_legal_notice_page_description',
-        'Königs Massage Impressum: Anbieterkennzeichnung nach deutschem Recht, Haftungsausschluss, externe Links, Urheberrecht und Haftungsbeschränkung.',
-      'ui_legal_notice_meta_title',        'Impressum | Königs Massage',
-      'ui_legal_notice_meta_description',
-        'Königs Massage Impressum: Anbieterkennzeichnung nach deutschem Recht, Haftungsausschluss, externe Links, Urheberrecht und Haftungsbeschränkung.'
+      'ui_privacy_notice_page_title',        'Datenschutzhinweis',
+      'ui_privacy_notice_fallback_title',    'Datenschutzhinweis',
+      'ui_privacy_notice_empty',             'Datenschutzhinweis nicht gefunden.',
+      'ui_privacy_notice_empty_text',        'Der Datenschutzhinweis wird hier in Kürze veröffentlicht.',
+      'ui_privacy_notice_page_description',
+        'KÖNIG ENERGETIK Datenschutzhinweis: Verarbeitung personenbezogener Daten, Zwecke, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.',
+      'ui_privacy_notice_meta_title',        'Datenschutzhinweis | KÖNIG ENERGETIK',
+      'ui_privacy_notice_meta_description',
+        'KÖNIG ENERGETIK Datenschutzhinweis: Verarbeitung personenbezogener Daten, Zwecke, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),

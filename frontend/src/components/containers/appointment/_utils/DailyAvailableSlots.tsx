@@ -63,13 +63,12 @@ export const DailyAvailableSlots: React.FC<DailyAvailableSlotsProps> = ({
   }, [d, loading, fetching, error, available.length, t]);
 
   return (
-    <div className="ens-appointment__slots mt-15">
-      <div className="d-flex align-items-center justify-content-between mb-10">
-
+    <div className="mt-8">
+      <div className="flex items-center justify-between mb-4">
         {onRefresh ? (
           <button
             type="button"
-            className="btn btn-outline-secondary btn-sm"
+            className="text-xs text-text-secondary hover:text-brand-primary underline transition-colors"
             onClick={onRefresh}
             disabled={!!disabled || loading || fetching}
           >
@@ -79,9 +78,11 @@ export const DailyAvailableSlots: React.FC<DailyAvailableSlotsProps> = ({
       </div>
 
       {statusText ? (
-        <div className="alert alert-light mb-0">{statusText}</div>
+        <div className="bg-sand-50 border border-sand-200 rounded-sm p-4 text-center text-text-secondary text-sm font-medium">
+          {statusText}
+        </div>
       ) : (
-        <div className="list-group">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
           {available.map((s) => {
             const time = slotTime(s);
             const selected = safeStr(selectedTime) === time;
@@ -90,17 +91,17 @@ export const DailyAvailableSlots: React.FC<DailyAvailableSlotsProps> = ({
               <button
                 key={String((s as any).id || time)}
                 type="button"
-                className={
-                  'list-group-item list-group-item-action d-flex align-items-center justify-content-between' +
-                  (selected ? ' active' : '')
-                }
+                className={`
+                  relative flex items-center justify-center py-2.5 px-2 rounded-sm border text-sm font-bold transition-all duration-200
+                  ${selected 
+                    ? 'bg-brand-primary text-white border-brand-primary shadow-sm' 
+                    : 'bg-white text-brand-dark border-sand-200 hover:border-brand-primary hover:text-brand-primary hover:bg-sand-50'
+                  }
+                `}
                 onClick={() => onPickTime(time)}
                 disabled={!!disabled}
               >
-                <span className="text-nowrap">{time || '-'}</span>
-                <span className="badge bg-success-subtle text-success border border-success-subtle">
-                  {t('ui_appointment_slot_status_available', 'Müsait')}
-                </span>
+                <span>{time || '-'}</span>
               </button>
             );
           })}

@@ -29,12 +29,12 @@ const LOCALE_SCHEMA = z
 
 /* ------- enums ------- */
 const SERVICE_TYPES = [
-  'maintenance_repair',
-  'modernization',
-  'spare_parts_components',
-  'applications_references',
-  'engineering_support',
-  'production',
+  'massage',
+  'facial',
+  'body_treatment',
+  'scrub',
+  'pack',
+  'wellness',
   'other',
 ] as const;
 
@@ -73,6 +73,14 @@ export const upsertServiceParentBodySchema = z.object({
   featured_image: z.string().url().max(500).nullable().optional(),
   image_url: z.string().url().max(500).nullable().optional(),
   image_asset_id: z.string().length(36).nullable().optional(),
+
+  // technical fields (non-i18n)
+  area: z.string().max(255).nullable().optional(),
+  duration: z.string().max(255).nullable().optional(),
+  maintenance: z.string().max(255).nullable().optional(),
+  season: z.string().max(255).nullable().optional(),
+  thickness: z.string().max(255).nullable().optional(),
+  equipment: z.string().max(255).nullable().optional(),
 });
 export type UpsertServiceParentBody = z.infer<typeof upsertServiceParentBodySchema>;
 

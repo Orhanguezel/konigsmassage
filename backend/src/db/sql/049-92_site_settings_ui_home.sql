@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 049-92_site_settings_ui_home.sql (FINAL — Königs Massage)
+-- FILE: 049-92_site_settings_ui_home.sql (FINAL — KÖNIG ENERGETIK)
 --  - FIX 1093: no SELECT from site_settings inside INSERT
 --  - Adds ui_home_meta_title / ui_home_meta_description
 --  - Prevents Title == H1
@@ -17,9 +17,9 @@ VALUES
   'ui_home',
   'tr',
   CAST(JSON_OBJECT(
-    'ui_home_h1', 'Königs Massage – Profesyonel Masaj ve Terapi Hizmetleri',
-    'ui_home_meta_title', 'Königs Massage – Masaj ve Wellness',
-    'ui_home_meta_description', 'Masaj ve wellness odakli icerikler. Rahatlama, stres yonetimi, hareket ve beslenme uzerine pratik blog yazilari.'
+    'ui_home_h1', 'KÖNIG ENERGETIK – Bonn’da Enerjetik Masaj',
+    'ui_home_meta_title', 'KÖNIG ENERGETIK – Bonn’da Enerjetik Masaj',
+    'ui_home_meta_description', 'Bonn’da enerjetik masaj seansları ve blog yazıları: rahatlama, beden farkındalığı, nefes ve günlük hayatta denge.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -29,9 +29,9 @@ VALUES
   'ui_home',
   'en',
   CAST(JSON_OBJECT(
-    'ui_home_h1', 'Königs Massage – Professional Massage and Therapy Services',
-    'ui_home_meta_title', 'Königs Massage – Massage and Wellness',
-    'ui_home_meta_description', 'Massage and wellness focused content with practical blog posts on relaxation, stress management, mobility and nutrition.'
+    'ui_home_h1', 'KÖNIG ENERGETIK – Energetic Massage in Bonn',
+    'ui_home_meta_title', 'KÖNIG ENERGETIK – Energetic Massage in Bonn',
+    'ui_home_meta_description', 'Energetic massage sessions in Bonn and blog posts on relaxation, body awareness, breath, and everyday balance.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -41,9 +41,9 @@ VALUES
   'ui_home',
   'de',
   CAST(JSON_OBJECT(
-    'ui_home_h1', 'Königs Massage – Professionelle Massage- und Therapieangebote',
-    'ui_home_meta_title', 'Königs Massage – Massage und Wellness',
-    'ui_home_meta_description', 'Inhalte zu Massage und Wellness. Praktische Blogbeiträge zu Entspannung, Stressmanagement, Mobilität und Ernährung.'
+    'ui_home_h1', 'KÖNIG ENERGETIK – Energetische Massage in Bonn',
+    'ui_home_meta_title', 'KÖNIG ENERGETIK – Energetische Massage in Bonn',
+    'ui_home_meta_description', 'Energetische Massage in Bonn und Blogbeiträge zu Entspannung, Körperwahrnehmung, Atmung und Balance im Alltag.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)

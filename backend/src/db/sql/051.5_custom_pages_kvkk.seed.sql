@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 051.5_custom_pages_kvkk.seed.sql (FINAL — Königsmassage, rerunnable)
--- Königsmassage – Custom Page: Datenschutz / KVKK (TR/EN/DE)
+-- FILE: 051.5_custom_pages_kvkk.seed.sql (FINAL — KÖNIG ENERGETIK, rerunnable)
+-- KÖNIG ENERGETIK – Custom Page: Datenschutz / KVKK (TR/EN/DE)
 -- ✅ custom_pages.module_key = 'kvkk'
 -- Category/SubCategory: optional (NULL) — admin panelden düzenlenir
 -- NOT: Bu dosyada BLOK YORUM (/* */) YOKTUR. Sadece "--" kullanılır.
@@ -109,13 +109,13 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">KVKK / Gizlilik</h1>',
         '<p class="text-slate-700 mb-8">',
-          'Königs Massage, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve ilgili mevzuat kapsamında kişisel verilerinizi işler ve korur. ',
+          'KÖNIG ENERGETIK, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve ilgili mevzuat kapsamında kişisel verilerinizi işler ve korur. ',
           'Bu sayfa; genel bilgilendirme niteliğindedir ve veri kategorileri, amaçlar, hukuki sebepler ve ilgili kişi haklarına dair özet sunar.',
         '</p>',
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Veri Sorumlusu</h2>',
           '<p class="text-slate-700">',
-            'Kişisel verileriniz, veri sorumlusu sıfatıyla Königs Massage tarafından KVKK ve ilgili mevzuata uygun olarak işlenebilir.',
+            'Kişisel verileriniz, veri sorumlusu sıfatıyla KÖNIG ENERGETIK tarafından KVKK ve ilgili mevzuata uygun olarak işlenebilir.',
           '</p>',
         '</div>',
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
@@ -166,11 +166,11 @@ VALUES
       '</section>'
     )
   ),
-  'Königs Massage KVKK/Gizlilik sayfası: kişisel verilerin işlenmesi ve ilgili kişi haklarına ilişkin genel bilgilendirme.',
-  'Königs Massage KVKK bilgilendirme sayfası',
-  'KVKK / Gizlilik | Königs Massage',
-  'Königs Massage KVKK bilgilendirmesi: veri işleme amaçları, hukuki sebepler, güvenlik önlemleri ve başvuru hakları.',
-  'konigsmassage,legal,kvkk,gizlilik,kisisel veri,veri guvenligi,randevu',
+  'KÖNIG ENERGETIK KVKK/Gizlilik sayfası: kişisel verilerin işlenmesi ve ilgili kişi haklarına ilişkin genel bilgilendirme.',
+  'KÖNIG ENERGETIK KVKK bilgilendirme sayfası',
+  'KVKK / Gizlilik | KÖNIG ENERGETIK',
+  'KÖNIG ENERGETIK KVKK bilgilendirmesi: veri işleme amaçları, hukuki sebepler, güvenlik önlemleri ve başvuru hakları.',
+  'koenig energetik,legal,kvkk,gizlilik,kisisel veri,veri guvenligi,randevu',
   NOW(3), NOW(3)
 ),
 (
@@ -183,12 +183,12 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Privacy / PDPL (KVKK)</h1>',
         '<p class="text-slate-700 mb-8">',
-          'Königs Massage processes and protects personal data in accordance with Turkish PDPL (KVKK No. 6698) and applicable regulations. ',
+          'KÖNIG ENERGETIK processes and protects personal data in accordance with Turkish PDPL (KVKK No. 6698) and applicable regulations. ',
           'This page provides a general overview of data categories, purposes, legal grounds and data subject rights.',
         '</p>',
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Data Controller</h2>',
-          '<p class="text-slate-700">Königs Massage may process personal data as the data controller in line with applicable laws.</p>',
+          '<p class="text-slate-700">KÖNIG ENERGETIK may process personal data as the data controller in line with applicable laws.</p>',
         '</div>',
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
@@ -236,11 +236,11 @@ VALUES
       '</section>'
     )
   ),
-  'Königs Massage privacy/PDPL overview: data categories, purposes, legal grounds and rights.',
-  'Königs Massage privacy notice page',
-  'Privacy / PDPL (KVKK) | Königs Massage',
-  'Overview of personal data processing at Königs Massage: purposes, legal grounds, security measures and data subject rights.',
-  'konigsmassage,legal,privacy,pdpl,kvkk,data protection,appointments',
+  'KÖNIG ENERGETIK privacy/PDPL overview: data categories, purposes, legal grounds and rights.',
+  'KÖNIG ENERGETIK privacy notice page',
+  'Privacy / PDPL (KVKK) | KÖNIG ENERGETIK',
+  'Overview of personal data processing at KÖNIG ENERGETIK: purposes, legal grounds, security measures and data subject rights.',
+  'koenig energetik,legal,privacy,pdpl,kvkk,data protection,appointments',
   NOW(3), NOW(3)
 ),
 (
@@ -253,12 +253,12 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Datenschutz</h1>',
         '<p class="text-slate-700 mb-8">',
-          'Königs Massage verarbeitet personenbezogene Daten im Einklang mit den anwendbaren gesetzlichen Vorgaben (insbesondere DSGVO, soweit anwendbar). ',
+          'KÖNIG ENERGETIK verarbeitet personenbezogene Daten im Einklang mit den anwendbaren gesetzlichen Vorgaben (insbesondere DSGVO, soweit anwendbar). ',
           'Diese Seite bietet eine allgemeine Übersicht zu Kategorien, Zwecken, Rechtsgrundlagen und Betroffenenrechten.',
         '</p>',
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Verantwortlicher</h2>',
-          '<p class="text-slate-700">Königs Massage kann personenbezogene Daten als Verantwortlicher rechtskonform verarbeiten.</p>',
+          '<p class="text-slate-700">KÖNIG ENERGETIK kann personenbezogene Daten als Verantwortlicher rechtskonform verarbeiten.</p>',
         '</div>',
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
@@ -306,11 +306,11 @@ VALUES
       '</section>'
     )
   ),
-  'Königs Massage Datenschutzhinweis: Kategorien, Zwecke, Rechtsgrundlagen und Betroffenenrechte.',
-  'Königs Massage Datenschutz Seite',
-  'Datenschutz | Königs Massage',
-  'Informationen zur Verarbeitung personenbezogener Daten bei Königs Massage: Zwecke, Rechtsgrundlagen, Sicherheitsmaßnahmen und Betroffenenrechte.',
-  'konigsmassage,legal,datenschutz,dsgvo,privacy,personenbezogene daten,termine',
+  'KÖNIG ENERGETIK Datenschutzhinweis: Kategorien, Zwecke, Rechtsgrundlagen und Betroffenenrechte.',
+  'KÖNIG ENERGETIK Datenschutz Seite',
+  'Datenschutz | KÖNIG ENERGETIK',
+  'Informationen zur Verarbeitung personenbezogener Daten bei KÖNIG ENERGETIK: Zwecke, Rechtsgrundlagen, Sicherheitsmaßnahmen und Betroffenenrechte.',
+  'koenig energetik,legal,datenschutz,dsgvo,privacy,personenbezogene daten,termine',
   NOW(3), NOW(3)
 )
 ON DUPLICATE KEY UPDATE

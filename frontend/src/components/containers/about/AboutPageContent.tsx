@@ -5,7 +5,7 @@
 // - H1 forbidden: CMS html <h1> -> <h2>
 // - ✅ FIX: ui() missing-key returns key itself => treat as empty/fallback
 // - ✅ Pattern: t(key, fb) wrapper
-// - ✅ CHANGE: Removed Extra blocks (What/Why/Goal) completely (kept header + seo/title flow)
+// - ✅ REPLACE: Legacy Bootstrap/Template classes with Tailwind v4
 // =============================================================
 
 'use client';
@@ -16,55 +16,12 @@ import Image from 'next/image';
 // RTK – Custom Pages Public
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
 import type { CustomPageDto } from '@/integrations/types';
+import { downgradeH1ToH2, extractHtmlFromAny, isRemoteUrl } from '@/integrations/types';
 
 // Helpers
 import { toCdnSrc } from '@/shared/media';
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
-
-const downgradeH1ToH2 = (rawHtml: string) =>
-  String(rawHtml || '')
-    .replace(/<h1(\s|>)/gi, '<h2$1')
-    .replace(/<\/h1>/gi, '</h2>');
-
-function safeJson<T>(v: any, fallback: T): T {
-  if (v == null) return fallback;
-  if (typeof v === 'object') return v as T;
-  if (typeof v !== 'string') return fallback;
-
-  const s = v.trim();
-  if (!s) return fallback;
-
-  try {
-    return JSON.parse(s) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function extractHtmlFromAny(v: unknown): string {
-  if (!v) return '';
-
-  if (typeof v === 'object') {
-    const html = (v as any)?.html;
-    return typeof html === 'string' ? html.trim() : '';
-  }
-
-  if (typeof v === 'string') {
-    const s = v.trim();
-    if (!s) return '';
-
-    if (s.startsWith('{') || s.startsWith('[')) {
-      const obj = safeJson<any>(s, null);
-      const html = obj?.html;
-      if (typeof html === 'string' && html.trim()) return html.trim();
-    }
-
-    return s;
-  }
-
-  return '';
-}
 
 function pickFirstPublished(items: any): CustomPageDto | null {
   const arr: CustomPageDto[] = Array.isArray(items) ? (items as any) : [];
@@ -72,9 +29,19 @@ function pickFirstPublished(items: any): CustomPageDto | null {
   return published[0] ?? null;
 }
 
-function isRemoteUrl(src: unknown): src is string {
-  if (typeof src !== 'string') return false;
-  return /^https?:\/\//i.test(src) || /^\/\//.test(src);
+function safeJsonArray(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map((x) => String(x || '').trim()).filter(Boolean);
+  if (typeof v === 'string') {
+    const s = v.trim();
+    if (!s) return [];
+    try {
+      const parsed = JSON.parse(s);
+      return Array.isArray(parsed) ? parsed.map((x) => String(x || '').trim()).filter(Boolean) : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
 }
 
 const AboutPageContent: React.FC = () => {
@@ -115,7 +82,7 @@ const AboutPageContent: React.FC = () => {
 
   // Header strings (keep these — do NOT remove)
   const headerSubtitlePrefix = useMemo(
-    () => String(readUi('ui_about_subprefix', 'konigsmassage') || '').trim() || 'konigsmassage',
+    () => String(readUi('ui_about_subprefix', 'KÖNIG ENERGETIK') || '').trim() || 'KÖNIG ENERGETIK',
     [readUi],
   );
 
@@ -126,12 +93,13 @@ const AboutPageContent: React.FC = () => {
 
   const headerTitle = useMemo(() => {
     const v = String(readUi('ui_about_page_title', '') || '').trim();
-    return v || 'konigsmassage';
-  }, [readUi]);
+    if (v) return v;
+    if (locale === 'de') return 'Über mich';
+    if (locale === 'tr') return 'Hakkımda';
+    return 'About';
+  }, [readUi, locale]);
 
   const headerLead = useMemo(() => String(readUi('ui_about_page_lead', '') || '').trim(), [readUi]);
-
-
 
   // CMS html (DB)
   const html = useMemo(() => {
@@ -143,107 +111,125 @@ const AboutPageContent: React.FC = () => {
     return raw ? downgradeH1ToH2(raw) : '';
   }, [page]);
 
+  const featuredImageRaw = useMemo(() => String((page as any)?.featured_image ?? '').trim(), [page]);
+
   // Featured image
   const imgSrc = useMemo(() => {
-    const raw = String((page as any)?.featured_image ?? '').trim();
-    if (!raw) return '';
+    if (!featuredImageRaw) return '';
 
-    const cdn = toCdnSrc(raw, 1200, 800, 'fill');
-    return (cdn || raw) as any;
-  }, [page]);
+    const cdn = toCdnSrc(featuredImageRaw, 1200, 800, 'fill');
+    return (cdn || featuredImageRaw) as any;
+  }, [featuredImageRaw]);
 
   const imgAlt = useMemo(() => {
     const alt = String((page as any)?.featured_image_alt ?? '').trim();
-    return alt|| 'about image';
+    return alt || 'about image';
   }, [page]);
 
+  const gallery = useMemo(() => {
+    const raw = (page as any)?.images;
+    const list = safeJsonArray(raw);
+    const unique = Array.from(new Set(list));
+    return unique.filter(Boolean);
+  }, [page]);
+
+  const galleryThumbs = useMemo(() => {
+    const list = gallery.filter((x) => x && x !== featuredImageRaw);
+    return list.slice(0, 3);
+  }, [gallery, featuredImageRaw]);
+
   return (
-    <section className="about__area grey-bg z-index-11 p-relative pt-120 pb-60 ens-about">
-      <div className="container">
+    <section className="relative py-20 z-10 bg-bg-primary text-text-primary">
+      <div className="container mx-auto px-4">
         {/* Header (KEEP) */}
-        <div className="row">
-          <div className="col-12">
-            <div className="section__title-wrapper mb-40 text-center">
-              <span className="section__subtitle-2">
-                <span>{headerSubtitlePrefix}</span>
-                {headerSubtitleLabel ? ` ${headerSubtitleLabel}` : null}
-              </span>
+        <div className="mb-12 text-center">
+          <div className="mb-4">
+            <span className="block text-brand-primary font-bold uppercase tracking-wide mb-2 text-sm md:text-base">
+              <span>{headerSubtitlePrefix}</span>
+              {headerSubtitleLabel ? ` ${headerSubtitleLabel}` : null}
+            </span>
 
-              <h2 className="section__title-2">{headerTitle}</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-text-primary leading-tight">
+              {headerTitle}
+            </h2>
 
-              {headerLead ? <p className="mt-10 mb-0">{headerLead}</p> : null}
-            </div>
+            {headerLead ? <p className="mt-4 mb-0 text-text-secondary max-w-2xl mx-auto">{headerLead}</p> : null}
           </div>
         </div>
 
         {/* Loading */}
         {isLoading && (
-          <div className="row mb-40">
-            <div className="col-12">
-              <div className="ens-skel ens-skel--md" aria-hidden />
-              <div className="ens-skel ens-skel--md ens-skel--w80 mt-10" aria-hidden />
-              <div className="ens-skel ens-skel--md ens-skel--w60 mt-10" aria-hidden />
-            </div>
+          <div className="mb-10 max-w-4xl mx-auto">
+            <div className="h-4 bg-gray-200 rounded w-full mb-2.5 animate-pulse" aria-hidden />
+            <div className="h-4 bg-gray-200 rounded w-4/5 mb-2.5 animate-pulse" aria-hidden />
+            <div className="h-4 bg-gray-200 rounded w-3/5 animate-pulse" aria-hidden />
           </div>
         )}
 
         {/* Empty / Error */}
         {!isLoading && (!page || isError) && (
-          <div className="row">
-            <div className="col-12">
-              <div className="alert alert-warning">
-                {readUi('ui_about_empty', 'Content not found.')}
-              </div>
+          <div className="max-w-4xl mx-auto">
+            <div className="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50" role="alert">
+              {readUi('ui_about_empty', 'Content not found.')}
             </div>
           </div>
         )}
 
         {!!page && !isLoading && (
-          <>
-            <div className="row align-items-center mb-40" data-aos="fade-up" data-aos-delay={150}>
-              {/* Image LEFT */}
-              <div className="col-xl-6 col-lg-6">
-                <div className="blog__thumb-wrapper mb-30 mb-lg-0">
-                  <div className="blog__thumb w-img">
-                    {imgSrc ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12" data-aos="fade-up" data-aos-delay={150}>
+            {/* Image LEFT */}
+            <div className="w-full">
+              <div className="rounded-2xl overflow-hidden shadow-medium bg-bg-secondary border border-border-light">
+                <div className="w-full h-auto aspect-3/2 relative">
+                  {imgSrc ? (
+                    <Image
+                      src={imgSrc}
+                      alt={imgAlt}
+                      fill
+                      className="object-cover"
+                      unoptimized={isRemoteUrl(imgSrc)}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  ) : null}
+                </div>
+              </div>
+
+              {galleryThumbs.length ? (
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {galleryThumbs.map((src) => (
+                    <div key={src} className="relative aspect-square rounded-xl overflow-hidden border border-border-light bg-bg-secondary shadow-soft">
                       <Image
-                        src={imgSrc}
+                        src={src}
                         alt={imgAlt}
-                        width={1200}
-                        height={800}
-                        className="img-fluid"
-                        unoptimized={isRemoteUrl(imgSrc)}
-                        loading="lazy"
+                        fill
+                        className="object-cover"
+                        unoptimized={isRemoteUrl(src)}
+                        sizes="(max-width: 768px) 33vw, 160px"
                       />
-                    ) : null}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-
-              {/* Content RIGHT */}
-              <div className="col-xl-6 col-lg-6">
-                <div className="blog__content-wrapper mb-30 mb-lg-0" id="content">
-                  <div className="blog__content">
-
-                    {html ? (
-                      <div
-                        className="postbox__text tp-postbox-details ens-about__html"
-                        dangerouslySetInnerHTML={{ __html: html }}
-                      />
-                    ) : (
-                      <div className="postbox__text">
-                        <p className="mb-0">
-                          {readUi('ui_about_empty_text', 'Content will be published here.')}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              ) : null}
             </div>
 
-            {/* ✅ REMOVED: Extra blocks (What/Why/Goal) */}
-          </>
+            {/* Content RIGHT */}
+            <div className="w-full">
+              <div className="prose prose-lg prose-rose text-text-secondary max-w-none">
+                {html ? (
+                  <div
+                    className="prose-h2:font-serif prose-h2:text-text-primary prose-a:text-brand-primary"
+                    dangerouslySetInnerHTML={{ __html: html }}
+                  />
+                ) : (
+                  <div>
+                    <p className="mb-0">
+                      {readUi('ui_about_empty_text', 'Content will be published here.')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </section>

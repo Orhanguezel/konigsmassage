@@ -87,11 +87,11 @@ export const DEFAULT_OG_IMAGE = '/img/og-default.jpg';
  * Asıl değerler site_settings.seo / site_settings.site_seo içinden gelir.
  */
 export const DEFAULT_SEO_GLOBAL: SeoObject = {
-  site_name: 'Königs Massage',
-  title_default: 'Königs Massage – Massage and Wellness',
-  title_template: '%s – Königs Massage',
+  site_name: 'KÖNIG ENERGETIK',
+  title_default: 'KÖNIG ENERGETIK – Energetische Massage in Bonn',
+  title_template: '%s – KÖNIG ENERGETIK',
   description:
-    'Massage and wellness content with practical blog posts about relaxation, stress management, mobility and nutrition.',
+    'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung. Termine nach Vereinbarung.',
   open_graph: {
     type: 'website',
     images: [DEFAULT_OG_IMAGE],
@@ -114,25 +114,25 @@ export const DEFAULT_SEO_GLOBAL: SeoObject = {
  */
 export const DEFAULT_SITE_META_DEFAULT_BY_LOCALE: Record<string, SiteMetaDefaultObject> = {
   tr: {
-    title: 'Königs Massage – Masaj ve Wellness',
+    title: 'KÖNIG ENERGETIK – Bonn’da Enerjetik Masaj',
     description:
-      'Masaj ve wellness odakli icerikler. Blogda rahatlama, stres yonetimi, hareket ve beslenme uzerine pratik ipuclari ve rehberler.',
+      'Bonn’da enerjetik masaj: bilinçli dokunuş, net sınırlar ve derin gevşeme. Seanslar ön görüşme ile, randevuya göre.',
     keywords:
-      'koenigs massage, masaj, wellness, rahatlama, stres yonetimi, hareket, beslenme, blog',
+      'koenig energetik, enerjetik masaj, bonn, anastasia könig, rahatlama, beden farkındalığı, thai yoga, aroma, ayak refleks, randevu',
   },
   en: {
-    title: 'Königs Massage – Massage and Wellness',
+    title: 'KÖNIG ENERGETIK – Energetic Massage in Bonn',
     description:
-      'Massage and wellness focused content. Blog posts with practical tips on relaxation, stress management, mobility and nutrition.',
+      'Energetic massage sessions in Bonn with mindful touch, clear boundaries, and deep relaxation. Appointments by arrangement.',
     keywords:
-      'koenigs massage, massage, wellness, relaxation, stress management, mobility, nutrition, blog',
+      'koenig energetik, energetic massage, bonn, anastasia könig, relaxation, body awareness, thai yoga massage, aroma energy, foot reflex, appointment',
   },
   de: {
-    title: 'Königs Massage – Massage und Wellness',
+    title: 'KÖNIG ENERGETIK – Energetische Massage in Bonn',
     description:
-      'Inhalte zu Massage und Wellness. Blog mit praktischen Tipps zu Entspannung, Stressmanagement, Mobilität und Ernährung.',
+      'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung. Termine nach Vereinbarung.',
     keywords:
-      'koenigs massage, massage, wellness, entspannung, stressmanagement, mobilitaet, ernaehrung, blog',
+      'könig energetik, energetische massage, bonn, anastasia könig, entspannung, körperwahrnehmung, thai yoga massage, aroma-energie, fußreflex, termin',
   },
 };
 
@@ -248,7 +248,7 @@ export function parseSeoFromSettings(input: unknown): SeoObject {
 }
 
 /**
- * site_settings.site_meta_default parse helper (Königs Massage uyumlu):
+ * site_settings.site_meta_default parse helper (KÖNIG ENERGETIK uyumlu):
  *
  * Desteklenen DB formatları:
  *

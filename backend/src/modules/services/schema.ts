@@ -36,6 +36,14 @@ export const services = mysqlTable(
     image_url: varchar('image_url', { length: 500 }),
     image_asset_id: char('image_asset_id', { length: 36 }),
 
+    // technical fields (non-i18n)
+    area: varchar('area', { length: 255 }),
+    duration: varchar('duration', { length: 255 }),
+    maintenance: varchar('maintenance', { length: 255 }),
+    season: varchar('season', { length: 255 }),
+    thickness: varchar('thickness', { length: 255 }),
+    equipment: varchar('equipment', { length: 255 }),
+
     created_at: datetime('created_at', { fsp: 3 })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP(3)`),
@@ -84,6 +92,14 @@ export const servicesI18n = mysqlTable(
     includes: varchar('includes', { length: 255 }),
     warranty: varchar('warranty', { length: 128 }),
     image_alt: varchar('image_alt', { length: 255 }),
+
+    // Optional localized "service details" (used by FE sidebar)
+    area: varchar('area', { length: 255 }),
+    duration: varchar('duration', { length: 255 }),
+    maintenance: varchar('maintenance', { length: 255 }),
+    season: varchar('season', { length: 255 }),
+    thickness: varchar('thickness', { length: 255 }),
+    equipment: varchar('equipment', { length: 255 }),
 
     tags: varchar('tags', { length: 255 }),
     meta_title: varchar('meta_title', { length: 255 }),

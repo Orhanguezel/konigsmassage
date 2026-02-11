@@ -6,7 +6,7 @@
 // =============================================================
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 
 // i18n + UI (STANDARD)
 import { useLocaleShort } from '@/i18n/useLocaleShort';
@@ -72,6 +72,9 @@ export default function CookieSettingsModal({
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_cookie', locale as any);
 
+  const titleId = useId();
+  const descId = useId();
+
   const [analytics, setAnalytics] = useState<boolean>(!!consent.analytics);
 
   useEffect(() => {
@@ -130,74 +133,88 @@ export default function CookieSettingsModal({
 
   return (
     <div
-      className="ccm__backdrop"
+      className="fixed inset-0 z-[10050] bg-black/60 p-4 flex items-end sm:items-center justify-center"
       role="dialog"
       aria-modal="true"
-      aria-label={finalTitle}
+      aria-labelledby={titleId}
+      aria-describedby={descId}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="ccm__modal" onMouseDown={(e) => e.stopPropagation()}>
-        <div className="ccm__head">
-          <div className="ccm__titles">
-            <div className="ccm__title">{finalTitle}</div>
-            <div className="ccm__desc">{finalDesc}</div>
+      <div
+        className="w-full max-w-lg rounded-2xl bg-white border border-sand-200 shadow-2xl overflow-hidden"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4 p-6 border-b border-sand-200">
+          <div className="min-w-0">
+            <p id={titleId} className="text-lg font-serif font-bold text-text-primary leading-snug">
+              {finalTitle}
+            </p>
+            <p id={descId} className="mt-2 text-sm text-text-secondary leading-relaxed">
+              {finalDesc}
+            </p>
           </div>
 
           <button
             type="button"
-            className="ccm__close"
+            className="shrink-0 w-9 h-9 rounded-full border border-sand-200 text-text-secondary hover:text-text-primary hover:bg-sand-50 transition-colors"
             onClick={onClose}
             aria-label={finalAriaClose}
             title={finalAriaClose}
           >
-            ×
+            <span aria-hidden="true">×</span>
           </button>
         </div>
 
-        <div className="ccm__content">
-          {/* Necessary */}
-          <div className="ccm__row">
-            <div className="ccm__rowText">
-              <div className="ccm__rowTitle">{finalLabelNecessary}</div>
-              <div className="ccm__rowDesc">{finalDescNecessary}</div>
+        <div className="p-6 space-y-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="font-bold text-text-primary">{finalLabelNecessary}</p>
+              <p className="mt-1 text-sm text-text-secondary leading-relaxed">{finalDescNecessary}</p>
             </div>
-
-            <div className="ccm__rowCtrl">
-              <span className="ccm__pill ccm__pill--on">{ui('cc_pill_on', 'On')}</span>
-            </div>
+            <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-brand-primary/10 text-brand-dark border border-brand-primary/15">
+              {ui('cc_pill_on', 'On')}
+            </span>
           </div>
 
-          <div className="ccm__divider" />
+          <div className="h-px bg-sand-200" />
 
-          {/* Analytics */}
-          <div className="ccm__row">
-            <div className="ccm__rowText">
-              <div className="ccm__rowTitle">{finalLabelAnalytics}</div>
-              <div className="ccm__rowDesc">{finalDescAnalytics}</div>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="font-bold text-text-primary">{finalLabelAnalytics}</p>
+              <p className="mt-1 text-sm text-text-secondary leading-relaxed">{finalDescAnalytics}</p>
             </div>
 
-            <div className="ccm__rowCtrl">
-              <label className="ccm__switch" aria-label={finalLabelAnalytics}>
-                <input
-                  type="checkbox"
-                  checked={analytics}
-                  onChange={(e) => setAnalytics(e.target.checked)}
-                />
-                <span className="ccm__slider" />
-              </label>
-            </div>
+            <label className="shrink-0 inline-flex items-center gap-3 select-none">
+              <span className="sr-only">{finalLabelAnalytics}</span>
+              <input
+                type="checkbox"
+                checked={analytics}
+                onChange={(e) => setAnalytics(e.target.checked)}
+                className="sr-only peer"
+              />
+              <span className="relative w-12 h-7 rounded-full bg-sand-300 peer-checked:bg-brand-primary transition-colors border border-sand-300 peer-checked:border-brand-primary">
+                <span className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5" />
+              </span>
+            </label>
           </div>
         </div>
 
-        <div className="ccm__actions">
-          {/* ✅ Colors come from existing button system */}
-          <button type="button" className="ccm__btn border__btn s-2" onClick={onClose}>
+        <div className="p-6 pt-0 flex flex-col sm:flex-row gap-3 sm:justify-end">
+          <button
+            type="button"
+            className="inline-flex justify-center items-center px-4 py-2.5 rounded-lg border border-sand-200 text-sm font-bold text-text-primary hover:bg-sand-50 transition-colors"
+            onClick={onClose}
+          >
             {finalBtnCancel}
           </button>
 
-          <button type="button" className="ccm__btn solid__btn" onClick={() => onSave(nextState)}>
+          <button
+            type="button"
+            className="inline-flex justify-center items-center px-4 py-2.5 rounded-lg bg-brand-primary text-white text-sm font-bold hover:bg-brand-hover transition-colors shadow-sm"
+            onClick={() => onSave(nextState)}
+          >
             {finalBtnSave}
           </button>
         </div>

@@ -222,16 +222,16 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
 
   return (
     <div className="mt-3">
-      {label && <label className="form-label small d-block mb-1">{label}</label>}
+      {label && <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>}
 
       {/* Tabs */}
-      <div className="d-flex border-bottom mb-1 small">
+      <div className="flex border-b mb-1 text-sm">
         <button
           type="button"
-          className={`btn btn-sm border-0 rounded-0 ${
+          className={`px-3 py-1 border-0 rounded-t ${
             activeTab === 'visual'
-              ? 'btn-light fw-semibold'
-              : 'btn-link text-decoration-none text-muted'
+              ? 'bg-gray-100 font-semibold text-gray-900'
+              : 'text-gray-500 hover:text-gray-700'
           }`}
           onClick={() => setActiveTab('visual')}
           disabled={disabled}
@@ -240,10 +240,10 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
         </button>
         <button
           type="button"
-          className={`btn btn-sm border-0 rounded-0 ${
+          className={`px-3 py-1 border-0 rounded-t ${
             activeTab === 'source'
-              ? 'btn-light fw-semibold'
-              : 'btn-link text-decoration-none text-muted'
+              ? 'bg-gray-100 font-semibold text-gray-900'
+              : 'text-gray-500 hover:text-gray-700'
           }`}
           onClick={() => setActiveTab('source')}
           disabled={disabled}
@@ -252,12 +252,12 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
         </button>
       </div>
 
-      <div className="border rounded position-relative">
+      <div className="border rounded relative">
         {/* Toolbar */}
-        <div className="border-bottom bg-light px-2 py-1 d-flex flex-wrap gap-1 small">
+        <div className="border-b bg-gray-50 px-2 py-1 flex flex-wrap gap-1 text-sm">
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'bold')}
             disabled={disabled || activeTab !== 'visual'}
             title="Kalın"
@@ -266,7 +266,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
           </button>
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'italic')}
             disabled={disabled || activeTab !== 'visual'}
             title="İtalik"
@@ -275,7 +275,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
           </button>
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'underline')}
             disabled={disabled || activeTab !== 'visual'}
             title="Altı çizili"
@@ -283,12 +283,12 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
             <span style={{ textDecoration: 'underline' }}>U</span>
           </button>
 
-          <span className="vr mx-1" />
+          <span className="w-px h-auto bg-gray-300 mx-1" />
 
           {/* formatBlock */}
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'formatBlock', '<p>')}
             disabled={disabled || activeTab !== 'visual'}
             title="Paragraf"
@@ -297,7 +297,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
           </button>
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'formatBlock', '<h2>')}
             disabled={disabled || activeTab !== 'visual'}
             title="Başlık (H2)"
@@ -306,7 +306,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
           </button>
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'formatBlock', '<h3>')}
             disabled={disabled || activeTab !== 'visual'}
             title="Alt başlık (H3)"
@@ -314,11 +314,11 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
             H3
           </button>
 
-          <span className="vr mx-1" />
+          <span className="w-px h-auto bg-gray-300 mx-1" />
 
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'insertUnorderedList')}
             disabled={disabled || activeTab !== 'visual'}
             title="Madde işaretli liste"
@@ -327,7 +327,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
           </button>
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'insertOrderedList')}
             disabled={disabled || activeTab !== 'visual'}
             title="Numaralı liste"
@@ -335,11 +335,11 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
             1.
           </button>
 
-          <span className="vr mx-1" />
+          <span className="w-px h-auto bg-gray-300 mx-1" />
 
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'insertTable')}
             disabled={disabled || activeTab !== 'visual'}
             title="Tablo ekle"
@@ -349,7 +349,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
 
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'insertImage')}
             disabled={disabled || activeTab !== 'visual'}
             title={onUploadImage ? 'Resim yükle ve ekle' : "Resim URL'si ile ekle"}
@@ -357,11 +357,11 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
             Resim
           </button>
 
-          <span className="vr mx-1" />
+          <span className="w-px h-auto bg-gray-300 mx-1" />
 
           <button
             type="button"
-            className="btn btn-sm btn-outline-secondary"
+            className="px-2 py-1 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
             onMouseDown={(e) => handleToolbarMouseDown(e, 'removeFormat')}
             disabled={disabled || activeTab !== 'visual'}
             title="Biçimlendirmeyi temizle"
@@ -374,7 +374,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              className="d-none"
+              className="hidden"
               onChange={handleFileInputChange}
             />
           )}
@@ -398,7 +398,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
           />
         ) : (
           <textarea
-            className="form-control form-control-sm border-0 font-monospace"
+            className="w-full px-2 py-2 border-0 font-mono text-sm focus:outline-none"
             style={{ height, maxHeight: '600px', resize: 'vertical' }}
             value={html}
             onChange={(e) => propagateChange(e.target.value)}
@@ -408,8 +408,8 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
         )}
       </div>
 
-      <div className="form-text small">
-        <ul className="mb-0 ps-3">
+      <div className="mt-1 text-xs text-gray-500">
+        <ul className="mb-0 pl-3">
           <li>
             <strong>Görsel editör</strong> sekmesinde tablo, başlık, liste vb. zengin içeriği
             düzenleyebilirsin.
@@ -431,9 +431,9 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
 
       {/* Live Preview */}
       <div className="mt-3">
-        <div className="small text-muted mb-1">Önizleme</div>
+        <div className="text-xs text-gray-500 mb-1">Önizleme</div>
         <div
-          className="border rounded p-2 bg-light"
+          className="border rounded p-2 bg-gray-50"
           style={{
             minHeight: '120px',
             maxHeight: '400px',
@@ -444,7 +444,7 @@ const RichContentEditor: React.FC<RichContentEditorProps> = ({
           {html && html.trim() ? (
             <div dangerouslySetInnerHTML={{ __html: html }} />
           ) : (
-            <p className="text-muted small mb-0">
+            <p className="text-gray-500 text-xs mb-0">
               Henüz içerik yok. Yazdıkça burada anlık olarak gözükecek.
             </p>
           )}

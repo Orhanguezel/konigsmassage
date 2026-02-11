@@ -1,23 +1,19 @@
 // =============================================================
 // FILE: src/components/containers/blog/BlogDetails.tsx
-// UPDATED — Multi-image gallery + Lightbox modal (NEWS template pattern)
-// - Hero + thumbs under hero
-// - Click hero / double click thumb => opens ImageLightboxModal
-// - Other blogs (DB) uses router.pathname + slug (no hardcoded /blog/:slug)
-// - Share kept (sidebar or main preserved)
-// - Reviews kept in SIDEBAR (under Other blogs)
-// - Contact Info: ✅ use InfoContactCard (reusable) instead of manual contact_info parsing
-// - SCSS-driven, accordion dynamic, no inline style
+// FINAL – Blog Details (Single)
+// - App Router: reads slug from useParams()
+// - ✅ Locale-prefixed internal links via localizePath()
+// - Prose content + Lightbox gallery
 // =============================================================
 
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 
-// RTK – Custom Pages (public)
+// RTK
 import {
   useGetCustomPageBySlugPublicQuery,
   useListCustomPagesPublicQuery,
@@ -26,37 +22,22 @@ import type { CustomPageDto } from '@/integrations/types';
 
 // Helpers
 import { toCdnSrc } from '@/shared/media';
-import { excerpt } from '@/shared/text';
 
 // i18n
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
+import { localizePath } from '@/i18n/url';
 
-// Reviews + Share
-import ReviewList from '@/components/common/public/ReviewList';
+// Lightbox
+import ImageLightboxModal, { type LightboxImage } from '@/components/common/public/ImageLightboxModal';
+import OtherServicesSidebar from '@/components/containers/services/OtherServicesSidebar';
 import ReviewForm from '@/components/common/public/ReviewForm';
+import ReviewList from '@/components/common/public/ReviewList';
+import ContactCtaCard from '@/components/common/public/ContactCtaCard';
 import SocialShare from '@/components/common/public/SocialShare';
-
-// Lightbox (same as NewsDetail template)
-import ImageLightboxModal, {
-  type LightboxImage,
-} from '@/components/common/public/ImageLightboxModal';
-
-
-
-const HERO_W = 1200;
-const HERO_H = 700;
 
 const THUMB_W = 220;
 const THUMB_H = 140;
-
-type AccordionItem = { title: string; body: string };
-
-function readSlug(q: unknown): string {
-  if (typeof q === 'string') return q.trim();
-  if (Array.isArray(q)) return String(q[0] ?? '').trim();
-  return '';
-}
 
 function safeStr(v: unknown): string {
   if (typeof v === 'string') return v.trim();
@@ -64,93 +45,46 @@ function safeStr(v: unknown): string {
   return String(v).trim();
 }
 
-function asStringArray(v: unknown): string[] {
-  if (Array.isArray(v)) return v.map((x) => safeStr(x)).filter(Boolean);
-  const s = safeStr(v);
-  if (!s) return [];
-  return s
-    .split(',')
-    .map((x) => x.trim())
-    .filter(Boolean);
-}
-
-/** UI DB / API value parse helpers (site_settings value may be stringified JSON) */
-function tryParseJson<T>(v: unknown): T | null {
-  try {
-    if (v == null) return null;
-    if (typeof v === 'object') return v as T;
-    const s = safeStr(v);
-    if (!s) return null;
-    return JSON.parse(s) as T;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Tailwind uygulanmasın:
- * - class/style attr kaldır
- * - ilk h1'i düşür (sayfa başlığını component basıyor)
- */
 function stripPresentationAttrs(html: string): string {
   const src = safeStr(html);
   if (!src) return '';
-
   const noClass = src.replace(/\sclass="[^"]*"/gi, '');
   const noStyle = noClass.replace(/\sstyle="[^"]*"/gi, '');
-  const dropFirstH1 = noStyle.replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i, '');
-
-  return dropFirstH1.trim();
+  // Remove first h1 if present, we render title separately
+  return noStyle.replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i, '').trim();
 }
 
-/** content_html içinden img src yakala (basit ve güvenli) */
 function extractImgSrcListFromHtml(html: string): string[] {
   const src = safeStr(html);
   if (!src) return [];
-
   const out: string[] = [];
   const re = /<img\b[^>]*?\ssrc\s*=\s*["']([^"']+)["'][^>]*>/gi;
   let m: RegExpExecArray | null;
-
   while ((m = re.exec(src))) {
     const u = safeStr(m[1]);
     if (u) out.push(u);
     if (out.length >= 12) break;
   }
-
   return out;
 }
 
-/**
- * Blog kaydından “gallery images” toparla (NewsDetail ile aynı yaklaşım):
- * - featured_image
- * - images/gallery/media alanları (array veya json-string)
- * - content_html içindeki img tag'leri
- */
 function buildGalleryImages(post: any, title: string): LightboxImage[] {
   const unique = new Set<string>();
   const gallery: LightboxImage[] = [];
 
   const add = (rawUrl: string, alt?: string) => {
     const u = safeStr(rawUrl);
-    if (!u) return;
-    if (unique.has(u)) return;
+    if (!u || unique.has(u)) return;
     unique.add(u);
-
-    const thumb = toCdnSrc(u, THUMB_W, THUMB_H, 'fill') || u;
-    const raw = toCdnSrc(u, 1600, 1200, 'fit') || u;
-
     gallery.push({
-      raw,
-      thumb,
+      raw: toCdnSrc(u, 1600, 1200, 'fit') || u,
+      thumb: toCdnSrc(u, THUMB_W, THUMB_H, 'fill') || u,
       alt: safeStr(alt) || safeStr(title) || 'image',
     });
   };
 
-  // 1) featured
   add(safeStr(post?.featured_image), safeStr(post?.featured_image_alt));
 
-  // 2) common candidates (blog tarafında da olası alanlar)
   const candidates = [
     post?.images,
     post?.images_json,
@@ -158,161 +92,194 @@ function buildGalleryImages(post: any, title: string): LightboxImage[] {
     post?.gallery,
     post?.media,
     post?.media_items,
-    post?.storage_image_ids,
   ];
 
   for (const c of candidates) {
     if (!c) continue;
-
-    // array
     if (Array.isArray(c)) {
-      for (const it of c) {
+      c.forEach((it: any) => {
         if (typeof it === 'string') add(it);
-        else if (it && typeof it === 'object')
-          add((it as any).url || (it as any).src || (it as any).raw, (it as any).alt);
-      }
-      continue;
-    }
-
-    // json string
-    if (typeof c === 'string') {
-      const parsed = tryParseJson<any>(c);
-      if (Array.isArray(parsed)) {
-        for (const it of parsed) {
-          if (typeof it === 'string') add(it);
-          else if (it && typeof it === 'object') add(it.url || it.src || it.raw, it.alt);
+        else if (it && typeof it === 'object') add(it.url || it.src || it.raw, it.alt);
+      });
+    } else if (typeof c === 'string') {
+      try {
+        const parsed = JSON.parse(c);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((it: any) => {
+            if (typeof it === 'string') add(it);
+            else if (it && typeof it === 'object') add(it.url || it.src || it.raw, it.alt);
+          });
         }
-      } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.items)) {
-        for (const it of parsed.items) {
-          if (typeof it === 'string') add(it);
-          else if (it && typeof it === 'object') add(it.url || it.src || it.raw, it.alt);
-        }
+      } catch {
+        // ignore
       }
     }
   }
 
-  // 3) content_html img src
-  const htmlImgs = extractImgSrcListFromHtml(safeStr(post?.content_html));
-  for (const u of htmlImgs) add(u);
+  extractImgSrcListFromHtml(safeStr(post?.content_html)).forEach((u) => add(u));
 
   return gallery.slice(0, 12);
 }
 
-const BlogDetails: React.FC = () => {
-  const router = useRouter();
-  const locale = useLocaleShort();
+export default function BlogDetails() {
+  const locale = useLocaleShort(); // "de" | "en" | "tr" short
   const { ui } = useUiSection('ui_blog', locale as any);
 
-  // Accordion open state (none open by default)
-  const [openIdx, setOpenIdx] = useState<number>(-1);
+  const fb = useMemo(() => {
+    if (locale === 'tr') {
+      return {
+        backToList: 'Tüm yazılara dön',
+        otherBlogsTitle: 'Diğer yazılar',
+        loading: 'Yükleniyor...',
+        notFound: 'Blog içeriği bulunamadı.',
+        galleryTitle: 'Galeriyi aç',
+        like: 'Beğen',
+        liked: 'Beğenildi',
+        share: 'Paylaş',
+        commentsTitle: 'Yorumlar',
+        leaveComment: 'Yorum bırak',
+        commentLabel: 'Yorumunuz',
+        commentSubmit: 'Yorum gönder',
+        contactCtaTitle: 'Sorunuz mu var?',
+        contactCtaDesc: 'Seanslar veya randevu ile ilgili sorularınız için bize ulaşabilirsiniz.',
+        contactPhone: 'Telefon',
+        contactWhatsapp: 'WhatsApp',
+        contactForm: 'İletişim formu',
+      };
+    }
+
+    if (locale === 'de') {
+      return {
+        backToList: 'Zur Übersicht',
+        otherBlogsTitle: 'Weitere Beiträge',
+        loading: 'Wird geladen...',
+        notFound: 'Blogbeitrag nicht gefunden.',
+        galleryTitle: 'Galerie öffnen',
+        like: 'Gefällt mir',
+        liked: 'Gefällt mir',
+        share: 'Teilen',
+        commentsTitle: 'Kommentare',
+        leaveComment: 'Kommentar hinterlassen',
+        commentLabel: 'Ihr Kommentar',
+        commentSubmit: 'Kommentar senden',
+        contactCtaTitle: 'Noch Fragen?',
+        contactCtaDesc: 'Wenn Sie Fragen zur Sitzung oder zur Terminvereinbarung haben, kontaktieren Sie uns gern.',
+        contactPhone: 'Telefon',
+        contactWhatsapp: 'WhatsApp',
+        contactForm: 'Kontaktformular',
+      };
+    }
+
+    return {
+      backToList: 'Back to all posts',
+      otherBlogsTitle: 'Other posts',
+      loading: 'Loading...',
+      notFound: 'Blog post not found.',
+      galleryTitle: 'Open gallery',
+      like: 'Like',
+      liked: 'Liked',
+      share: 'Share',
+      commentsTitle: 'Comments',
+      leaveComment: 'Leave a comment',
+      commentLabel: 'Your comment',
+      commentSubmit: 'Post comment',
+      contactCtaTitle: 'Have a question?',
+      contactCtaDesc: 'If you have questions about a session or scheduling, feel free to contact us.',
+      contactPhone: 'Phone',
+      contactWhatsapp: 'WhatsApp',
+      contactForm: 'Contact form',
+    };
+  }, [locale]);
+
+  const params = useParams<{ slug?: string | string[] }>();
+  const slug = useMemo(() => {
+    const v = params?.slug;
+    return Array.isArray(v) ? safeStr(v[0]) : safeStr(v);
+  }, [params]);
+
+  const isSlugReady = !!slug;
 
   const t = useMemo(
     () => ({
-      backToList: ui('ui_blog_back_to_list', 'Back to all blog posts'),
-      categoriesTitle: ui('ui_blog_other_blogs_title', 'Other blogs'),
-      contactTitle: ui('ui_blog_sidebar_contact_title', 'Contact Info'),
-      loading: ui('ui_blog_loading', 'Loading blog...'),
-      notFound: ui('ui_blog_not_found', 'Blog post not found.'),
-      writeReview: ui('ui_blog_write_comment', 'Write a review'),
-      tagsLabel: ui('ui_blog_tags', 'Tags'),
-      shareTitle: ui('ui_blog_share_title', 'Share'),
-      galleryTitle: ui('ui_blog_gallery_title', 'Gallery'),
-
-      // sidebar fallbacks (only if blog list cannot be fetched)
-      sb1: ui('ui_blog_sidebar_item_1', ''),
-      sb2: ui('ui_blog_sidebar_item_2', ''),
-      sb3: ui('ui_blog_sidebar_item_3', ''),
+      backToList: ui('ui_blog_back_to_list', fb.backToList),
+      otherBlogsTitle: ui('ui_blog_other_blogs_title', fb.otherBlogsTitle),
+      loading: ui('ui_blog_loading', fb.loading),
+      notFound: ui('ui_blog_not_found', fb.notFound),
+      galleryTitle: ui('ui_blog_gallery_title', fb.galleryTitle),
+      like: ui('ui_blog_like', fb.like),
+      liked: ui('ui_blog_liked', fb.liked),
+      share: ui('ui_blog_share', fb.share),
+      commentsTitle: ui('ui_blog_comments_title', fb.commentsTitle),
+      leaveComment: ui('ui_blog_leave_comment', fb.leaveComment),
+      commentLabel: ui('ui_blog_comment_label', fb.commentLabel),
+      commentSubmit: ui('ui_blog_comment_submit', fb.commentSubmit),
+      contactCtaTitle: ui('ui_blog_contact_cta_title', fb.contactCtaTitle),
+      contactCtaDesc: ui('ui_blog_contact_cta_desc', fb.contactCtaDesc),
+      contactPhone: ui('ui_blog_contact_phone', fb.contactPhone),
+      contactWhatsapp: ui('ui_blog_contact_whatsapp', fb.contactWhatsapp),
+      contactForm: ui('ui_blog_contact_form', fb.contactForm),
     }),
-    [ui],
+    [ui, fb],
   );
 
-  const slug = useMemo(() => readSlug(router.query.slug), [router.query.slug]);
-  const isSlugReady = !!slug;
+  // ✅ Locale-prefixed URLs
+  const blogListHref = useMemo(() => localizePath(locale, '/blog'), [locale]);
 
-  const { data, isLoading, isError } = useGetCustomPageBySlugPublicQuery({ slug, locale } as any, {
-    skip: !isSlugReady,
-  });
+  const { data, isLoading, isError } = useGetCustomPageBySlugPublicQuery(
+    { slug, locale } as any,
+    { skip: !isSlugReady },
+  );
 
   const post = data as CustomPageDto | undefined;
+  const hasPost = !!post && !!post.id && !isError;
+  const title = safeStr(post?.title);
 
-  const postId = useMemo(() => safeStr((post as any)?.id), [post]);
-  const hasPost = !!post && !!postId && !isError;
-
-  const title = useMemo(() => safeStr((post as any)?.title), [post]);
-
-  // Content: content_html -> content.html -> summary -> content_text excerpt
   const rawHtml = useMemo(() => {
-    const html = safeStr((post as any)?.content_html);
-    if (html) return html;
-
-    const c = (post as any)?.content;
-    if (
-      c &&
-      typeof c === 'object' &&
-      typeof (c as any).html === 'string' &&
-      safeStr((c as any).html)
-    ) {
-      return safeStr((c as any).html);
-    }
-
-    const summary = safeStr((post as any)?.summary);
-    if (summary) return `<p>${summary}</p>`;
-
-    const txt = excerpt(safeStr((post as any)?.content_text), 1000).trim();
-    return txt ? `<p>${txt}</p>` : '';
+    return safeStr((post as any)?.content_html) || safeStr(((post as any)?.content as any)?.html) || '';
   }, [post]);
 
   const contentHtml = useMemo(() => stripPresentationAttrs(rawHtml), [rawHtml]);
 
-  const tags = useMemo(() => {
-    const raw = (post as any)?.tags ?? (post as any)?.tag_list ?? (post as any)?.tags_csv ?? '';
-    return asStringArray(raw);
-  }, [post]);
+  // Gallery
+  const galleryImages = useMemo(() => buildGalleryImages(post, title), [post, title]);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const activeImage = galleryImages.length ? galleryImages[activeIdx % galleryImages.length] : null;
+  const heroSrc = activeImage ? activeImage.raw || activeImage.thumb : '';
 
-  // ✅ Sidebar items fallback: tags -> ui_blog_sidebar_items (JSON) -> sb1..sb3
-  const sidebarItems = useMemo(() => {
-    if (tags.length) return tags.slice(0, 8);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
-    const json = tryParseJson<string[] | { items?: string[] }>(ui('ui_blog_sidebar_items', ''));
-    const fromJson = Array.isArray(json)
-      ? json
-      : json && typeof json === 'object' && Array.isArray((json as any).items)
-      ? ((json as any).items as string[])
-      : [];
+  // Like (client-only)
+  const likeKey = useMemo(() => (slug ? `blog_like:${slug}` : ''), [slug]);
+  const [liked, setLiked] = useState(false);
 
-    const legacy = [t.sb1, t.sb2, t.sb3].map(safeStr).filter(Boolean);
+  useEffect(() => {
+    if (!likeKey) return;
+    try {
+      setLiked(window.localStorage.getItem(likeKey) === '1');
+    } catch {
+      setLiked(false);
+    }
+  }, [likeKey]);
 
-    const normalized = fromJson.map(safeStr).filter(Boolean).slice(0, 8);
-    return normalized.length ? normalized : legacy.slice(0, 8);
-  }, [tags, ui, t.sb1, t.sb2, t.sb3]);
+  const toggleLike = () => {
+    if (!likeKey) return;
+    setLiked((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(likeKey, next ? '1' : '0');
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
 
-  // ✅ Accordion items: only ui_blog_accordion_items JSON
-  const accordionItems = useMemo<AccordionItem[]>(() => {
-    const json = tryParseJson<AccordionItem[] | { items?: AccordionItem[] } | null>(
-      ui('ui_blog_accordion_items', ''),
-    );
-
-    const fromJson = Array.isArray(json)
-      ? json
-      : json && typeof json === 'object' && Array.isArray((json as any).items)
-      ? ((json as any).items as AccordionItem[])
-      : [];
-
-    return fromJson
-      .map((x) => ({ title: safeStr((x as any)?.title), body: safeStr((x as any)?.body) }))
-      .filter((x) => x.title && x.body)
-      .slice(0, 10);
-  }, [ui]);
-
-  // -----------------------------------------
-  // OTHER BLOGS LIST (DB) for "Other blogs"
-  // -----------------------------------------
+  // Other blogs
   const { data: otherBlogsData } = useListCustomPagesPublicQuery(
     {
       module_key: 'blog',
       locale,
-      limit: 10,
-      offset: 0,
+      limit: 5,
       sort: 'created_at',
       order: 'desc',
       is_published: 1,
@@ -321,378 +288,231 @@ const BlogDetails: React.FC = () => {
   );
 
   const otherBlogs = useMemo(() => {
-    const raw =
-      (otherBlogsData as any)?.items ??
-      (otherBlogsData as any)?.data ??
-      (otherBlogsData as any)?.rows ??
-      otherBlogsData ??
-      [];
-
-    const arr = Array.isArray(raw) ? raw : [];
-
+    const arr = ((otherBlogsData as any)?.items || []) as any[];
     return arr
-      .map((x: any) => ({
-        id: safeStr(x?.id),
-        slug: safeStr(x?.slug),
-        title: safeStr(x?.title),
-      }))
-      .filter((x) => x.slug && x.title)
-      .filter((x) => x.slug !== slug && x.id !== postId)
-      .slice(0, 8);
-  }, [otherBlogsData, slug, postId]);
+      .filter((p) => safeStr(p.slug) !== slug && p.id !== post?.id)
+      .slice(0, 4)
+      .map((p) => ({
+        id: p.id,
+        title: safeStr(p.title),
+        slug: safeStr(p.slug),
+        date: p.created_at,
+      }));
+  }, [otherBlogsData, slug, post?.id]);
 
-  // No hardcoded "/blog": use current route template
-  const makeOtherHref = useCallback(
-    (s: string) => ({
-      pathname: router.pathname,
-      query: { ...router.query, slug: s },
-    }),
-    [router.pathname, router.query],
-  );
-
-  const sidebarOtherBlogTitles = useMemo(() => {
-    if (otherBlogs.length) return { mode: 'links' as const, items: otherBlogs };
-    return { mode: 'text' as const, items: sidebarItems };
-  }, [otherBlogs, sidebarItems]);
-
-  // -----------------------------
-  // Gallery (multi-image)
-  // -----------------------------
-  const galleryImages = useMemo<LightboxImage[]>(
-    () => buildGalleryImages(post as any, title),
-    [post, title],
-  );
-
-  const [activeIdx, setActiveIdx] = useState<number>(0);
-  const safeActiveIdx = useMemo(() => {
-    const len = galleryImages.length;
-    if (!len) return 0;
-    const i = activeIdx % len;
-    return i < 0 ? i + len : i;
-  }, [activeIdx, galleryImages.length]);
-
-  const activeImage = galleryImages[safeActiveIdx];
-
-  const heroSrc = useMemo(() => {
-    const raw = safeStr(activeImage?.raw);
-    if (!raw) return '';
-    return toCdnSrc(raw, HERO_W, HERO_H, 'fill') || raw;
-  }, [activeImage?.raw]);
-
-  // Lightbox state
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-
-  const openLightboxAt = useCallback((idx: number) => {
-    setActiveIdx(idx);
-    setLightboxOpen(true);
-  }, []);
-
-  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
-
-  // ----------------------------
-  // RENDER STATES
-  // ----------------------------
-  if (!isSlugReady) {
+  if (!isSlugReady || isLoading) {
     return (
-      <section className="technical__area pt-120 pb-60 cus-faq">
-        <div className="container">
-          <div className="row" data-aos="fade-up" data-aos-delay="300">
-            <div className="col-12">
-              <p>{t.loading}</p>
-              <div className="ens-skel ens-skel--md mt-10" />
-              <div className="ens-skel ens-skel--md ens-skel--w80 mt-10" />
-            </div>
-          </div>
+      <div className="py-20 text-center bg-bg-primary">
+        <div className="animate-pulse">
+          <div className="h-4 bg-sand-200 rounded w-48 mx-auto mb-4" />
+          <div className="h-64 bg-sand-200 rounded w-full max-w-4xl mx-auto" />
         </div>
-      </section>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <section className="technical__area pt-120 pb-60 cus-faq">
-        <div className="container">
-          <div className="row" data-aos="fade-up" data-aos-delay="300">
-            <div className="col-12">
-              <p>{t.loading}</p>
-              <div className="ens-skel ens-skel--md mt-10" />
-              <div className="ens-skel ens-skel--md ens-skel--w80 mt-10" />
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
     );
   }
 
   if (!hasPost) {
     return (
-      <section className="technical__area pt-120 pb-60 cus-faq">
-        <div className="container">
-          <div className="row" data-aos="fade-up" data-aos-delay="300">
-            <div className="col-12">
-              <p>{t.notFound}</p>
-              <div className="ens-blog__back mt-10">
-                <Link href="/blog" locale={locale} className="link-more" aria-label={t.backToList}>
-                  ← {t.backToList}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="py-20 text-center bg-bg-primary min-h-[50vh] flex flex-col items-center justify-center">
+        <h3 className="text-xl font-bold text-text-primary mb-4">{t.notFound}</h3>
+        <Link href={blogListHref} className="text-brand-primary font-bold hover:underline">
+          {t.backToList}
+        </Link>
+      </div>
     );
   }
 
-  // ----------------------------
-  // MAIN RENDER
-  // ----------------------------
   return (
     <>
-      <section className="technical__area pt-120 pb-60 cus-faq">
-        <div className="container">
-          <div className="row" data-aos="fade-up" data-aos-delay="300">
-            {/* MAIN */}
-            <div className="col-xl-8 col-lg-12">
-              <div className="technical__main-wrapper mb-60">
-                {/* Back */}
-                <div className="ens-blog__back mb-35">
-                  <Link
-                    href="/blog"
-                    locale={locale}
-                    className="link-more"
-                    aria-label={t.backToList}
-                  >
-                    ← {t.backToList}
-                  </Link>
-                </div>
+      <section className="bg-bg-primary py-20 relative">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* SIDEBAR (LEFT) */}
+            <div className="lg:col-span-4 order-2 lg:order-1">
+              <div className="sticky top-24 space-y-8">
+                <OtherServicesSidebar />
 
-                {/* HERO (click => modal) */}
-                <button
-                  type="button"
-                  className="ens-gallery__heroBtn"
-                  onClick={() => openLightboxAt(safeActiveIdx)}
-                  aria-label={t.galleryTitle}
-                  title={t.galleryTitle}
-                >
-                  <div className="technical__thumb mb-20 ens-blog__hero">
-                    <Image
-                      src={(heroSrc as any) }
-                      alt={safeStr((post as any)?.featured_image_alt) || title || 'blog image'}
-                      width={HERO_W}
-                      height={HERO_H}
-                      priority
-                    />
-                  </div>
-                </button>
-
-                {/* THUMBS under hero */}
-                {galleryImages.length > 1 && (
-                  <div className="ens-gallery__thumbs" aria-label={t.galleryTitle}>
-                    {galleryImages.map((img, i) => {
-                      const src = safeStr(img.thumb || img.raw);
-                      if (!src) return null;
-
-                      const isActive = i === safeActiveIdx;
-                      return (
-                        <button
-                          key={`${img.raw}-${i}`}
-                          type="button"
-                          className={`ens-gallery__thumb ${isActive ? 'is-active' : ''}`}
-                          onClick={() => setActiveIdx(i)}
-                          onDoubleClick={() => openLightboxAt(i)}
-                          aria-label={`${t.galleryTitle} ${i + 1}`}
-                          title={`${i + 1}/${galleryImages.length}`}
-                        >
-                          <span className="ens-gallery__thumbImg">
-                            <Image
-                              src={src}
-                              alt={safeStr(img.alt) || title || 'thumbnail'}
-                              fill
-                              sizes="96px"
-                            />
-                          </span>
-                        </button>
-                      );
-                    })}
+                {otherBlogs.length > 0 && (
+                  <div className="bg-bg-secondary p-6 rounded-xl shadow-soft border border-border-light">
+                    <h3 className="text-xl font-bold font-serif text-text-primary mb-6 border-b border-border-light pb-2">
+                      {t.otherBlogsTitle}
+                    </h3>
+                    <ul className="space-y-4">
+                      {otherBlogs.map((b) => {
+                        const href = localizePath(locale, `/blog/${b.slug}`);
+                        return (
+                          <li key={b.id}>
+                            <Link href={href} className="group block">
+                              <h4 className="font-medium text-text-primary group-hover:text-brand-primary transition-colors leading-snug mb-1">
+                                {b.title}
+                              </h4>
+                              {b.date && (
+                                <span className="text-xs font-semibold text-text-muted">
+                                  {new Date(b.date).toLocaleDateString(locale)}
+                                </span>
+                              )}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
                 )}
-
-                {/* CONTENT WRAPPER (uses your BLOG SCSS) */}
-                <div className="blog__content-wrapper">
-                  {/* TITLE + SUMMARY */}
-                  <div className="blog__content-item">
-                    <div className="technical__content mb-25">
-                      <div className="technical__title">
-                        <h3 className="postbox__title">{title || t.notFound}</h3>
-                      </div>
-                      {safeStr((post as any)?.summary) && (
-                        <p className="postbox__text">{safeStr((post as any)?.summary)}</p>
-                      )}
-                    </div>
-
-                    {/* BODY */}
-                    {!!contentHtml && (
-                      <div className="technical__content">
-                        <div
-                          className="tp-postbox-details postbox__text"
-                          dangerouslySetInnerHTML={{ __html: contentHtml }}
-                        />
-                      </div>
-                    )}
-
-                    {/* TAGS */}
-                    {tags.length > 0 && (
-                      <div className="postbox__tag-wrapper">
-                        <div className="postbox__tag-title">{t.tagsLabel}:</div>
-                        <div className="postbox__tag">
-                          {tags.map((tag) => (
-                            <Link key={tag} href="/blog" locale={locale} aria-label={`tag: ${tag}`}>
-                              {tag}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Accordion (only if items exist) */}
-                  {accordionItems.length > 0 && (
-                    <div className="bd-faq__wrapper-2 mb-45 mt-40">
-                      <div className="bd-faq__accordion style-2">
-                        <div className="accordion" id="blogAccordion">
-                          {accordionItems.map((it, idx) => (
-                            <div className="accordion-item" key={`${it.title}-${idx}`}>
-                              <h2 className="accordion-header" id={`blogHeading${idx}`}>
-                                <button
-                                  type="button"
-                                  className={
-                                    (openIdx === idx ? '' : ' collapsed') + ' accordion-button'
-                                  }
-                                  onClick={() => setOpenIdx(openIdx === idx ? -1 : idx)}
-                                  aria-expanded={openIdx === idx}
-                                  aria-controls={`blogCollapse${idx}`}
-                                >
-                                  {it.title}
-                                </button>
-                              </h2>
-
-                              <div
-                                id={`blogCollapse${idx}`}
-                                className={`accordion-collapse collapse${
-                                  openIdx === idx ? ' show' : ''
-                                }`}
-                                aria-labelledby={`blogHeading${idx}`}
-                              >
-                                <div className="accordion-body">
-                                  <p>{it.body}</p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
 
-            {/* SIDEBAR */}
-            <div className="col-xl-4 col-lg-6">
-              <div className="sideber__widget">
-                {/* Other blogs */}
-                <div className="sideber__widget-item mb-40">
-                  <div className="sidebar__category">
-                    <div className="sidebar__contact-title mb-35">
-                      <h3>{t.categoriesTitle}</h3>
-                    </div>
+            {/* MAIN CONTENT */}
+            <div className="lg:col-span-8 order-1 lg:order-2">
+              <div className="mb-8">
+                <Link
+                  href={blogListHref}
+                  className="inline-flex items-center text-text-muted hover:text-brand-primary transition-colors text-sm font-bold uppercase tracking-wide group mb-6"
+                >
+                  <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> {t.backToList}
+                </Link>
 
-                    <ul>
-                      {sidebarOtherBlogTitles.mode === 'links'
-                        ? sidebarOtherBlogTitles.items.map((b) => (
-                            <li key={b.slug}>
-                              <Link
-                                href={makeOtherHref(b.slug)}
-                                locale={locale}
-                                aria-label={b.title}
-                              >
-                                {b.title}
-                              </Link>
-                            </li>
-                          ))
-                        : sidebarOtherBlogTitles.items.map((name) => (
-                            <li key={name}>
-                              <span>{name}</span>
-                            </li>
-                          ))}
-                    </ul>
-                  </div>
-                </div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-text-primary leading-tight mb-6">
+                  {title}
+                </h1>
+              </div>
 
-                {/* Share (same pattern as NewsDetail sidebar) */}
-                <div className="sideber__widget-item mb-40">
-                  <div className="sidebar__category">
-                    <div className="sidebar__contact-title mb-35">
-                      <h3>{t.shareTitle}</h3>
-                    </div>
-
-                    <SocialShare
-                      title={title}
-                      text={safeStr((post as any)?.summary) || title}
-                      showLabel={false}
-                      showCompanySocials={true}
+              {/* HERO */}
+              {heroSrc && (
+                <div className="mb-8 rounded-xl overflow-hidden shadow-medium bg-sand-100 relative group">
+                  <div className="aspect-video relative cursor-pointer" onClick={() => setLightboxOpen(true)}>
+                    <Image
+                      src={heroSrc as any}
+                      alt={title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      priority
                     />
-                  </div>
-                </div>
-
-                {/* REVIEWS (under Other blogs): blog */}
-                {!!postId && (
-                  <div className="sideber__widget-item mb-40">
-                    <div className="sidebar__contact">
-                      <div className="sidebar__contact-title mb-35">
-                        <h3>{t.writeReview}</h3>
-                      </div>
-
-                      <div className="sidebar__contact-inner">
-                        <div className="mb-25">
-                          <ReviewList
-                            targetType="blog"
-                            targetId={postId}
-                            locale={locale}
-                            showHeader={false}
-                            className="blog__detail-reviews"
-                          />
-                        </div>
-
-                        <ReviewForm
-                          targetType="blog"
-                          targetId={postId}
-                          locale={locale}
-                          className="blog__detail-review-form"
-                          toggleLabel={t.writeReview}
-                        />
-                      </div>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                      <span className="text-white opacity-0 group-hover:opacity-100 bg-black/50 px-3 py-1 rounded text-sm transition-opacity">
+                        {t.galleryTitle}
+                      </span>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
+
+              {/* Actions (under image) */}
+              <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={toggleLike}
+                    className={[
+                      'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
+                      liked
+                        ? 'bg-brand-primary text-white border-brand-primary'
+                        : 'bg-bg-secondary text-text-primary border-border-light hover:bg-sand-100',
+                    ].join(' ')}
+                    aria-pressed={liked}
+                  >
+                    <span aria-hidden="true">{liked ? '♥' : '♡'}</span>
+                    <span>{liked ? t.liked : t.like}</span>
+                  </button>
+
+                  <a
+                    href="#comments"
+                    className="inline-flex items-center gap-2 rounded-full border border-border-light bg-bg-secondary px-4 py-2 text-sm font-semibold text-text-primary hover:bg-sand-100 transition-colors"
+                  >
+                    <span aria-hidden="true">💬</span>
+                    <span>{t.commentsTitle}</span>
+                  </a>
+                </div>
+
+                <SocialShare
+                  className="flex items-center justify-start sm:justify-end"
+                  showLabel={false}
+                  label={t.share}
+                  title={title}
+                  text={safeStr((post as any)?.summary)}
+                />
+              </div>
+
+              {/* Thumbs */}
+              {galleryImages.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-4 mb-8">
+                  {galleryImages.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setActiveIdx(i);
+                        setLightboxOpen(true);
+                      }}
+                      className={`relative w-24 h-16 rounded-md overflow-hidden shrink-0 border-2 transition-all ${
+                        i === activeIdx ? 'border-brand-primary' : 'border-transparent opacity-70 hover:opacity-100'
+                      }`}
+                      type="button"
+                    >
+                      <Image src={(img.thumb || img.raw) as any} alt="thumb" fill className="object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Content */}
+              <div className="bg-bg-secondary p-8 md:p-10 rounded-xl shadow-soft border border-border-light">
+                <div className="prose prose-lg prose-rose max-w-none prose-headings:font-serif prose-headings:text-text-primary prose-a:text-brand-primary prose-p:text-base prose-p:leading-[1.8] prose-li:text-base prose-li:leading-[1.8] prose-ul:mb-6 prose-ol:mb-6 prose-p:mb-6">
+                  {contentHtml ? (
+                    <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+                  ) : (
+                    <p>{safeStr((post as any)?.summary)}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Comments */}
+              <div id="comments" className="mt-12">
+                <ReviewList
+                  targetType="blog"
+                  targetId={post.id}
+                  locale={locale}
+                  variant="comments"
+                  titleOverride={t.commentsTitle}
+                />
+
+                <div className="mt-8">
+                  <ReviewForm
+                    targetType="blog"
+                    targetId={post.id}
+                    locale={locale}
+                    initialOpen={false}
+                    showToggle
+                    titleOverride={t.leaveComment}
+                    hideRating
+                    commentLabelOverride={t.commentLabel}
+                    submitTextOverride={t.commentSubmit}
+                  />
+                </div>
+
+                <div className="mt-10">
+                  <ContactCtaCard
+                    title={t.contactCtaTitle}
+                    description={t.contactCtaDesc}
+                    phoneLabel={t.contactPhone}
+                    whatsappLabel={t.contactWhatsapp}
+                    formLabel={t.contactForm}
+                    contactHref={localizePath(locale, '/contact')}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Lightbox modal */}
       <ImageLightboxModal
         open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
         images={galleryImages}
-        index={safeActiveIdx}
+        index={activeIdx}
+        onIndexChange={setActiveIdx}
         title={title}
-        onClose={closeLightbox}
-        onIndexChange={(i) => setActiveIdx(i)}
-        showThumbs={true}
+        showThumbs
       />
     </>
   );
-};
-
-export default BlogDetails;
+}

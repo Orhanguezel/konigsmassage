@@ -1,0 +1,355 @@
+'use client';
+
+// =============================================================
+// FILE: src/app/(main)/admin/users/_components/users-list-client.tsx
+// FINAL — Admin Users List (users_admin.endpoints uyumlu)
+// - route: /admin/users
+// - roles: admin | moderator | user
+// =============================================================
+
+import * as React from 'react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Search, Filter, RefreshCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+
+import type { UserRoleName, AdminUserView, AdminUsersListParams } from '@/integrations/shared';
+import { useListUsersAdminQuery } from '@/integrations/hooks';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+
+function boolParam(v: string | null): boolean | undefined {
+  if (v == null) return undefined;
+  const s = v.trim();
+  if (s === '1' || s === 'true') return true;
+  if (s === '0' || s === 'false') return false;
+  return undefined;
+}
+
+function safeInt(v: string | null, fb: number): number {
+  const n = Number(v ?? '');
+  return Number.isFinite(n) && n >= 0 ? n : fb;
+}
+
+function pickQuery(sp: URLSearchParams): AdminUsersListParams {
+  const q = sp.get('q') ?? undefined;
+  const role = (sp.get('role') ?? undefined) as UserRoleName | undefined;
+  const is_active = boolParam(sp.get('is_active'));
+  const limit = safeInt(sp.get('limit'), 20) || 20;
+  const offset = safeInt(sp.get('offset'), 0);
+
+  const sort = (sp.get('sort') ?? undefined) as AdminUsersListParams['sort'] | undefined;
+  const order = (sp.get('order') ?? undefined) as AdminUsersListParams['order'] | undefined;
+
+  return {
+    ...(q ? { q } : {}),
+    ...(role ? { role } : {}),
+    ...(typeof is_active === 'boolean' ? { is_active } : {}),
+    limit,
+    offset,
+    ...(sort ? { sort } : {}),
+    ...(order ? { order } : {}),
+  };
+}
+
+function toSearchParams(p: AdminUsersListParams): string {
+  const sp = new URLSearchParams();
+  if (p.q) sp.set('q', p.q);
+  if (p.role) sp.set('role', p.role);
+  if (typeof p.is_active === 'boolean') sp.set('is_active', p.is_active ? '1' : '0');
+  if (p.limit != null) sp.set('limit', String(p.limit));
+  if (p.offset != null) sp.set('offset', String(p.offset));
+  if (p.sort) sp.set('sort', p.sort);
+  if (p.order) sp.set('order', p.order);
+  return sp.toString();
+}
+
+export default function UsersListClient() {
+  const router = useRouter();
+  const sp = useSearchParams();
+  const t = useAdminT();
+
+  function roleLabel(r: UserRoleName) {
+    if (r === 'admin') return t('admin.users.roles.admin');
+    if (r === 'moderator') return t('admin.users.roles.moderator');
+    return t('admin.users.roles.user');
+  }
+
+  function statusBadge(u: AdminUserView) {
+    if (!u.is_active) return <Badge variant="destructive">{t('admin.users.list.table.statusInactive')}</Badge>;
+    return <Badge variant="secondary">{t('admin.users.list.table.statusActive')}</Badge>;
+  }
+
+  function displayName(u: Pick<AdminUserView, 'full_name'>) {
+    const n = String(u.full_name ?? '').trim();
+    return n || t('admin.users.list.table.unknownUser');
+  }
+
+  const params = React.useMemo(() => pickQuery(sp), [sp]);
+  const usersQ = useListUsersAdminQuery(params);
+
+  // UI state (controlled) – URL ile senkron
+  const [q, setQ] = React.useState(params.q ?? '');
+  const [role, setRole] = React.useState<UserRoleName | 'all'>((params.role as any) ?? 'all');
+  const [onlyActive, setOnlyActive] = React.useState<boolean | 'all'>(
+    typeof params.is_active === 'boolean' ? (params.is_active ? true : false) : 'all',
+  );
+
+  React.useEffect(() => {
+    setQ(params.q ?? '');
+    setRole((params.role as any) ?? 'all');
+    setOnlyActive(
+      typeof params.is_active === 'boolean' ? (params.is_active ? true : false) : 'all',
+    );
+  }, [params.q, params.role, params.is_active]);
+
+  function apply(next: Partial<AdminUsersListParams>) {
+    const merged: AdminUsersListParams = {
+      ...params,
+      ...next,
+      offset: next.offset != null ? next.offset : 0,
+    };
+
+    if (!merged.q) delete (merged as any).q;
+    if (!merged.role) delete (merged as any).role;
+    if (typeof merged.is_active !== 'boolean') delete (merged as any).is_active;
+
+    const qs = toSearchParams(merged);
+    router.push(qs ? `/admin/users?${qs}` : `/admin/users`);
+  }
+
+  function onSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    apply({ q: q.trim() || undefined });
+  }
+
+  const limit = params.limit ?? 20;
+  const offset = params.offset ?? 0;
+
+  const canPrev = offset > 0;
+  const canNext = (usersQ.data?.length ?? 0) >= limit;
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-lg font-semibold">{t('admin.users.list.title')}</h1>
+        <p className="text-sm text-muted-foreground">
+          {t('admin.users.list.description')}
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader className="gap-2">
+          <CardTitle className="text-base">{t('admin.users.list.filters.title')}</CardTitle>
+          <CardDescription>{t('admin.users.list.filters.description')}</CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <form onSubmit={onSearchSubmit} className="flex flex-col gap-3 lg:flex-row lg:items-end">
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="q">{t('admin.users.list.filters.searchLabel')}</Label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="q"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder={t('admin.users.list.filters.searchPlaceholder')}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            <div className="w-full space-y-2 lg:w-56">
+              <Label>{t('admin.users.list.filters.roleLabel')}</Label>
+              <Select
+                value={role}
+                onValueChange={(v) => {
+                  const vv = v as UserRoleName | 'all';
+                  setRole(vv);
+                  apply({ role: vv === 'all' ? undefined : (vv as UserRoleName) });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('admin.users.list.filters.rolePlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('admin.users.roles.all')}</SelectItem>
+                  <SelectItem value="admin">{t('admin.users.roles.admin')}</SelectItem>
+                  <SelectItem value="moderator">{t('admin.users.roles.moderator')}</SelectItem>
+                  <SelectItem value="user">{t('admin.users.roles.user')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Filter className="size-4 text-muted-foreground" />
+              <Label className="text-sm">{t('admin.users.list.filters.onlyActive')}</Label>
+              <Switch
+                checked={onlyActive === true}
+                onCheckedChange={(v) => {
+                  const next = v ? true : 'all';
+                  setOnlyActive(next);
+                  apply({ is_active: v ? true : undefined });
+                }}
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <Button type="submit" disabled={usersQ.isFetching}>
+                {t('admin.users.list.filters.searchButton')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setQ('');
+                  setRole('all');
+                  setOnlyActive('all');
+                  router.push('/admin/users');
+                }}
+                disabled={usersQ.isFetching}
+              >
+                {t('admin.users.list.filters.resetButton')}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => usersQ.refetch()}
+                disabled={usersQ.isFetching}
+                title={t('admin.users.list.filters.refreshButton')}
+              >
+                <RefreshCcw className="size-4" />
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{t('admin.users.list.table.title')}</CardTitle>
+          <CardDescription>
+            {usersQ.isFetching
+              ? t('admin.users.list.table.loading')
+              : t('admin.users.list.table.totalRecords', { count: usersQ.data?.length ?? 0 })}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          {usersQ.isError ? (
+            <div className="rounded-md border p-4 text-sm">
+              {t('admin.users.list.table.loadError')}{' '}
+              <Button
+                variant="link"
+                className="px-1"
+                onClick={() => {
+                  toast.error(t('admin.users.list.table.loadError'));
+                  usersQ.refetch();
+                }}
+              >
+                {t('admin.users.list.table.retryButton')}
+              </Button>
+            </div>
+          ) : null}
+
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('admin.users.list.table.fullName')}</TableHead>
+                  <TableHead>{t('admin.users.list.table.email')}</TableHead>
+                  <TableHead>{t('admin.users.list.table.phone')}</TableHead>
+                  <TableHead>{t('admin.users.list.table.status')}</TableHead>
+                  <TableHead>{t('admin.users.list.table.role')}</TableHead>
+                  <TableHead className="text-right">{t('admin.users.list.table.actions')}</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {(usersQ.data ?? []).map((u) => (
+                  <TableRow key={u.id}>
+                    <TableCell className="font-medium">{displayName(u)}</TableCell>
+                    <TableCell>{u.email ?? '—'}</TableCell>
+                    <TableCell>{u.phone ?? '—'}</TableCell>
+                    <TableCell>{statusBadge(u)}</TableCell>
+                    <TableCell>
+                      <Badge variant={u.roles.includes('admin') ? 'default' : 'secondary'}>
+                        {roleLabel(u.roles[0] ?? 'user')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button asChild variant="outline" size="sm">
+                        <Link prefetch={false} href={`/admin/users/${encodeURIComponent(u.id)}`}>
+                          {t('admin.users.list.table.viewButton')}
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+
+                {!usersQ.isFetching && (usersQ.data?.length ?? 0) === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                      {t('admin.users.list.table.noRecords')}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-muted-foreground">
+              {t('admin.users.list.pagination.offset', { offset })} • {t('admin.users.list.pagination.limit', { limit })}
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!canPrev || usersQ.isFetching}
+                onClick={() => apply({ offset: Math.max(0, offset - limit) })}
+              >
+                <ChevronLeft className="mr-1 size-4" />
+                {t('admin.users.list.pagination.previous')}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!canNext || usersQ.isFetching}
+                onClick={() => apply({ offset: offset + limit })}
+              >
+                {t('admin.users.list.pagination.next')}
+                <ChevronRight className="ml-1 size-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

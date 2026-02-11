@@ -1,6 +1,6 @@
 -- =============================================================
--- 049-92_site_settings_ui_errors.sql (FIXED)
--- konigsmassage – UI Errors (site_settings.ui_errors)
+-- 049-93_site_settings_ui_errors.sql (UI Errors)
+-- KÖNIG ENERGETIK – UI Errors (site_settings.ui_errors)
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
 -- =============================================================

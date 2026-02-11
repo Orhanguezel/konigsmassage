@@ -1,5 +1,5 @@
 -- =============================================================
--- 048_site_settings_ui_feedback.sql  (Feedback / Reviews UI strings) [FINAL — KONIGS MASSAGE]
+-- 048_site_settings_ui_feedback.sql  (Feedback / Reviews UI strings) [FINAL — KÖNIG ENERGETIK]
 --  - Key: ui_feedback
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
@@ -16,18 +16,18 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'tr',
   CAST(JSON_OBJECT(
     -- left block
-    'ui_feedback_subprefix',              'königs massage',
+    'ui_feedback_subprefix',              'KÖNIG ENERGETIK',
     'ui_feedback_sublabel',               'Müşteri Yorumları',
     'ui_feedback_title',                  'Müşterilerimizin deneyimleri',
-    'ui_feedback_paragraph',              'Geri bildirimleriniz; hizmet kalitemizi, konforu ve randevu deneyimini sürekli geliştirmemize yardımcı olur.',
+    'ui_feedback_paragraph',              'Geri bildirimleriniz; seans deneyimini, iletişimi ve konforu sürekli geliştirmemize yardımcı olur.',
     'ui_feedback_role_customer',          'Müşteri',
     'ui_feedback_prev',                   'Önceki yorum',
     'ui_feedback_next',                   'Sonraki yorum',
 
     -- placeholders (no data)
-    'ui_feedback_placeholder_1',          'Randevu süreci çok kolaydı. Masaj sonrası gerçekten hafifledim.',
-    'ui_feedback_placeholder_2',          'Profesyonel yaklaşım ve hijyen konusunda çok iyiler. Kesinlikle tavsiye ederim.',
-    'ui_feedback_placeholder_3',          'Sırt ve omuz gerginliğim için derin doku masajı harikaydı. Tekrar geleceğim.',
+    'ui_feedback_placeholder_1',          'Randevu süreci çok kolaydı. Seans sonrası daha sakin ve dengede hissettim.',
+    'ui_feedback_placeholder_2',          'Nazik ve saygılı yaklaşım. Net sınırlar ve çok özenli bir atmosfer vardı.',
+    'ui_feedback_placeholder_3',          'Sakin tempo ve bilinçli dokunuşlar çok iyi geldi. Tekrar randevu alacağım.',
 
     -- Feedback.tsx (modal + CTA)
     'ui_feedback_write_button',           'Yorum yaz',
@@ -81,7 +81,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'en',
   CAST(JSON_OBJECT(
     -- left block
-    'ui_feedback_subprefix',              'königs massage',
+    'ui_feedback_subprefix',              'KÖNIG ENERGETIK',
     'ui_feedback_sublabel',               'Customer Reviews',
     'ui_feedback_title',                  'What customers say',
     'ui_feedback_paragraph',              'Your feedback helps us continuously improve service quality, comfort, and the appointment experience.',
@@ -90,9 +90,9 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_feedback_next',                   'Next review',
 
     -- placeholders (no data)
-    'ui_feedback_placeholder_1',          'Booking was easy and the massage left me feeling much lighter.',
-    'ui_feedback_placeholder_2',          'Very professional, great hygiene, and a calm atmosphere. Highly recommended.',
-    'ui_feedback_placeholder_3',          'Deep tissue work on my back and shoulders was excellent. I will book again.',
+    'ui_feedback_placeholder_1',          'Booking was easy, and after the session I felt calmer and more grounded.',
+    'ui_feedback_placeholder_2',          'Respectful approach, clear boundaries, and a calm atmosphere. Highly recommended.',
+    'ui_feedback_placeholder_3',          'Gentle, mindful pacing. It helped me relax deeply. I will book again.',
 
     -- Feedback.tsx (modal + CTA)
     'ui_feedback_write_button',           'Write a review',
@@ -146,7 +146,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'de',
   CAST(JSON_OBJECT(
     -- left block
-    'ui_feedback_subprefix',              'königs massage',
+    'ui_feedback_subprefix',              'KÖNIG ENERGETIK',
     'ui_feedback_sublabel',               'Kundenbewertungen',
     'ui_feedback_title',                  'Was unsere Kunden sagen',
     'ui_feedback_paragraph',              'Ihr Feedback hilft uns, Servicequalität, Komfort und das Termin-Erlebnis kontinuierlich zu verbessern.',
@@ -155,9 +155,9 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_feedback_next',                   'Nächste Bewertung',
 
     -- placeholders (no data)
-    'ui_feedback_placeholder_1',          'Die Buchung war einfach und die Massage hat mir spürbar gutgetan.',
-    'ui_feedback_placeholder_2',          'Sehr professionell, hygienisch und entspannte Atmosphäre. Klare Empfehlung.',
-    'ui_feedback_placeholder_3',          'Die Tiefengewebsmassage für Rücken und Schultern war hervorragend. Ich buche wieder.',
+    'ui_feedback_placeholder_1',          'Die Buchung war einfach und nach der Sitzung fühlte ich mich ruhiger und geerdeter.',
+    'ui_feedback_placeholder_2',          'Respektvoll, klare Grenzen und eine ruhige Atmosphäre. Klare Empfehlung.',
+    'ui_feedback_placeholder_3',          'Sanftes Tempo, achtsame Berührung. Ich konnte sehr gut loslassen und buche wieder.',
 
     -- Feedback.tsx (modal + CTA)
     'ui_feedback_write_button',           'Bewertung schreiben',

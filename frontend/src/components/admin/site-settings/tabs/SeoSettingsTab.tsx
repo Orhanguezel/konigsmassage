@@ -27,7 +27,7 @@ import {
 
 import type { SiteSetting, SettingValue } from '@/integrations/types';
 
-import { DEFAULT_SEO_GLOBAL, DEFAULT_SITE_META_DEFAULT_BY_LOCALE } from '@/seo/seoSchema';
+import { DEFAULT_SEO_GLOBAL, DEFAULT_SITE_META_DEFAULT_BY_LOCALE } from '@/seo';
 
 import { AdminImageUploadField } from '@/components/common/AdminImageUploadField';
 

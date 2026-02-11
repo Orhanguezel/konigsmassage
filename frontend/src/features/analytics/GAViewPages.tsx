@@ -7,7 +7,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef } from 'react';
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useAnalyticsSettings } from './useAnalyticsSettings';
 
 declare global {
@@ -29,9 +29,10 @@ function isValidGa4Id(v: unknown) {
 }
 
 export default function GAViewPages() {
-  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { locale, ga4Id, gtmId } = useAnalyticsSettings();
-
+  
   const hasGtm = useMemo(() => isValidGtmId(gtmId), [gtmId]);
   const hasGa = useMemo(() => isValidGa4Id(ga4Id), [ga4Id]);
 
@@ -41,14 +42,16 @@ export default function GAViewPages() {
 
   useEffect(() => {
     if (!hasAnyAnalytics) return;
-    if (!router.isReady) return;
+    
+    // Simulate current URL
+    const nextUrl = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
 
-    const send = (nextUrl: string) => {
+    const send = (url: string) => {
       try {
         if (typeof window === 'undefined') return;
         if (window.__analyticsConsentGranted !== true) return;
 
-        const path = (nextUrl || '/').split(/[?#]/)[0] || '/';
+        const path = (url || '/').split(/[?#]/)[0] || '/';
         const abs = window.location.origin + path;
 
         if (lastAbsUrlRef.current === abs) return;
@@ -68,37 +71,21 @@ export default function GAViewPages() {
             event: 'konigsmassage_page_view',
             ...payload,
           });
-          return;
         }
-
-        // 2) gtag.js fallback path
-        if (hasGa && window.gtag) {
-          window.gtag('event', 'page_view', payload);
+        
+        // 2) GA4 direct
+        else if (hasGa && typeof window.gtag === 'function') {
+           window.gtag('event', 'page_view', payload);
         }
-      } catch {
-        // ignore
+      } catch (e) {
+          // ignore
       }
     };
+    
+    send(nextUrl);
 
-    // first load
-    send(router.asPath || router.pathname || '/');
-
-    const onRouteChangeComplete = (url: string) => send(url);
-
-    router.events.on('routeChangeComplete', onRouteChangeComplete);
-    return () => {
-      router.events.off('routeChangeComplete', onRouteChangeComplete);
-    };
-  }, [
-    router.isReady,
-    router.events,
-    router.asPath,
-    router.pathname,
-    hasAnyAnalytics,
-    hasGtm,
-    hasGa,
-    locale,
-  ]);
+    // No routeChangeComplete in App Router. The effect itself runs on change.
+  }, [pathname, searchParams, hasAnyAnalytics, hasGtm, hasGa, locale]);
 
   return null;
 }

@@ -70,6 +70,14 @@ CREATE TABLE `services_i18n` (
   `warranty`         VARCHAR(128)           DEFAULT NULL,
   `image_alt`        VARCHAR(255)           DEFAULT NULL,
 
+  -- Optional localized "service details" (used by FE sidebar)
+  `area`             VARCHAR(255)           DEFAULT NULL,
+  `duration`         VARCHAR(255)           DEFAULT NULL,
+  `maintenance`      VARCHAR(255)           DEFAULT NULL,
+  `season`           VARCHAR(255)           DEFAULT NULL,
+  `thickness`        VARCHAR(255)           DEFAULT NULL,
+  `equipment`        VARCHAR(255)           DEFAULT NULL,
+
   `tags`             VARCHAR(255)           DEFAULT NULL,
   `meta_title`       VARCHAR(255)           DEFAULT NULL,
   `meta_description` VARCHAR(500)           DEFAULT NULL,

@@ -35,15 +35,15 @@ export const AdminLocaleSelect: React.FC<AdminLocaleSelectProps> = ({
   const hasOptions = Array.isArray(options) && options.length > 0;
 
   return (
-    <div className="input-group input-group-sm">
-      <span className="input-group-text">
+    <div className="flex items-center text-sm">
+      <span className="bg-gray-100 text-gray-700 border border-r-0 border-gray-300 rounded-l px-3 py-2 flex items-center whitespace-nowrap">
         {label}
-        {loading && <span className="ms-1 spinner-border spinner-border-sm" />}
+        {loading && <span className="ml-1 w-3 h-3 border-2 border-gray-500 border-t-transparent rounded-full animate-spin inline-block" />}
       </span>
 
       <select
         id={id}
-        className="form-select"
+        className="form-select block w-full border border-gray-300 rounded-r px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm disabled:bg-gray-100 disabled:text-gray-500"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled || loading || !hasOptions}

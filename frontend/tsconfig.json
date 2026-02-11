@@ -6,7 +6,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -51,9 +51,12 @@
     "test-results/service.list.spec.ts",
     "test-results/team.detail.spec.ts",
     "test-results/team.list.spec.ts",
-    "src/components/admin/bookings/_components/slotPlan.ts"
+    "src/components/admin/bookings/_components/slotPlan.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/pages_backup/**/*"
   ]
 }

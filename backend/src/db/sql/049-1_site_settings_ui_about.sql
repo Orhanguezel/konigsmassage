@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 049-1_site_settings_ui_about.sql (Königs Massage – About UI) [FINAL / CLEAN]
+-- FILE: 049-1_site_settings_ui_about.sql (KÖNIG ENERGETIK – About UI) [FINAL / CLEAN]
 -- site_settings.key = 'ui_about'
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
@@ -31,17 +31,17 @@ VALUES
     JSON_OBJECT(
       -- Banner / Header
       'ui_about_page_title',        'Hakkımda',
-      'ui_about_subprefix',         'Königs Massage',
+      'ui_about_subprefix',         'KÖNIG ENERGETIK',
       'ui_about_sublabel',          'Hakkımda',
       'ui_about_page_lead',
-        'Bonn’da klasik masaj, spor masajı ve fasya terapisi odaklı, kişiye özel seanslar.',
+        'Bonn’da enerjetik masaj: bilinçli dokunuş, net sınırlar ve sakin bir atmosferde kişiye özel seanslar.',
 
       -- SEO (pages/about.tsx)
-      'ui_about_meta_title',        'Hakkımda | Königs Massage',
+      'ui_about_meta_title',        'Hakkımda | KÖNIG ENERGETIK',
       'ui_about_meta_description',
-        'Königs Massage hakkında: Bonn’da klasik masaj, spor masajı ve fasya terapisi odaklı kişiye özel seanslar. Hijyen, konfor ve bütüncül yaklaşım.',
+        'Anastasia König ve KÖNIG ENERGETIK: Bonn’da enerjetik masaj seansları. Achtsam dokunuş, net sınırlar ve derin gevşemeye alan.',
       'ui_about_page_description',
-        'Königs Massage hakkında bilgi: seans yaklaşımı, hijyen ve kişiye özel masaj uygulamaları.',
+        'KÖNIG ENERGETIK hakkında: yaklaşım, güvenli alan ve Bonn’da enerjetik masaj seansları.',
       'ui_about_og_image',          '',
 
       -- AboutSection CTA
@@ -49,7 +49,7 @@ VALUES
       'ui_about_read_more',         'Devamı',
 
       -- About page content states (AboutPageContent.tsx + AboutSection.tsx)
-      'ui_about_fallback_title',    'Königs Massage',
+      'ui_about_fallback_title',    'KÖNIG ENERGETIK',
       'ui_about_empty',             'Hakkımda içeriği bulunamadı.',
       'ui_about_error',             'İçerik yüklenemedi.',
       'ui_about_empty_text',
@@ -72,17 +72,17 @@ VALUES
     JSON_OBJECT(
       -- Banner / Header
       'ui_about_page_title',        'About',
-      'ui_about_subprefix',         'Königs Massage',
+      'ui_about_subprefix',         'KÖNIG ENERGETIK',
       'ui_about_sublabel',          'About',
       'ui_about_page_lead',
-        'Personalized sessions in Bonn focused on classic massage, sports massage, and fascia therapy.',
+        'Energetic massage sessions in Bonn with mindful touch, clear boundaries, and a calm atmosphere.',
 
       -- SEO
-      'ui_about_meta_title',        'About | Königs Massage',
+      'ui_about_meta_title',        'About | KÖNIG ENERGETIK',
       'ui_about_meta_description',
-        'About Königs Massage: tailored sessions in Bonn focused on classic massage, sports massage, and fascia therapy, with high hygiene standards.',
+        'About Anastasia König and KÖNIG ENERGETIK: energetic massage sessions in Bonn, mindful touch, clear boundaries, and deep relaxation.',
       'ui_about_page_description',
-        'About Königs Massage: approach, hygiene, and personalized massage sessions in Bonn.',
+        'About KÖNIG ENERGETIK: approach, safe space, and energetic massage sessions in Bonn.',
       'ui_about_og_image',          '',
 
       -- AboutSection CTA
@@ -90,7 +90,7 @@ VALUES
       'ui_about_read_more',         'Read more',
 
       -- Content states
-      'ui_about_fallback_title',    'Königs Massage',
+      'ui_about_fallback_title',    'KÖNIG ENERGETIK',
       'ui_about_empty',             'About content not found.',
       'ui_about_error',             'Failed to load content.',
       'ui_about_empty_text',
@@ -113,17 +113,17 @@ VALUES
     JSON_OBJECT(
       -- Banner / Header
       'ui_about_page_title',        'Über mich',
-      'ui_about_subprefix',         'Königs Massage',
+      'ui_about_subprefix',         'KÖNIG ENERGETIK',
       'ui_about_sublabel',          'Über mich',
       'ui_about_page_lead',
-        'Individuelle Behandlungen in Bonn mit Fokus auf klassische Massage, Sportmassage und Faszientherapie.',
+        'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und ruhige Atmosphäre.',
 
       -- SEO
-      'ui_about_meta_title',        'Über mich | Königs Massage',
+      'ui_about_meta_title',        'Über mich | KÖNIG ENERGETIK',
       'ui_about_meta_description',
-        'Über Königs Massage: individuelle Behandlungen in Bonn – klassische Massage, Sportmassage und Faszientherapie – mit hohen Hygienestandards.',
+        'Über Anastasia König und KÖNIG ENERGETIK: energetische Massage in Bonn, achtsam, klar abgegrenzt und individuell.',
       'ui_about_page_description',
-        'Über Königs Massage: Ansatz, Hygiene und individuell abgestimmte Massagen in Bonn.',
+        'Über KÖNIG ENERGETIK: Ansatz, geschützter Rahmen und energetische Massage-Sitzungen in Bonn.',
       'ui_about_og_image',          '',
 
       -- AboutSection CTA
@@ -131,7 +131,7 @@ VALUES
       'ui_about_read_more',         'Mehr lesen',
 
       -- Content states
-      'ui_about_fallback_title',    'Königs Massage',
+      'ui_about_fallback_title',    'KÖNIG ENERGETIK',
       'ui_about_empty',             'Über-mich-Inhalt nicht gefunden.',
       'ui_about_error',             'Inhalt konnte nicht geladen werden.',
       'ui_about_empty_text',

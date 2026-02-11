@@ -23,15 +23,19 @@ import {
 
 import type { FooterSectionDto, PublicMenuItemDto } from '@/integrations/types';
 
-import { useResolvedLocale } from '@/i18n/locale';
+import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { localizePath } from '@/i18n/url';
 import { useUiSection } from '@/i18n/uiDb';
 
 const isExternalHref = (href: string) =>
   /^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href) || /^#/i.test(href);
 
-const Footer: React.FC = () => {
-  const locale = useResolvedLocale();
+type FooterProps = { locale?: string };
+
+const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
+  // Hooks her zaman aynı sırada çağrılmalı!
+  const fallbackLocale = useLocaleShort();
+  const locale = localeProp || fallbackLocale;
   const { ui } = useUiSection('ui_footer', locale);
 
   // --------- site_settings: brand + contact + socials ----------
@@ -95,13 +99,12 @@ const Footer: React.FC = () => {
     locale,
   });
 
-  const sections: FooterSectionDto[] = useMemo(
-    () =>
-      (footerSections ?? [])
-        .slice()
-        .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)),
-    [footerSections],
-  );
+  const sections: FooterSectionDto[] = useMemo(() => {
+    // eslint-disable-next-line no-console
+    return (footerSections ?? [])
+      .slice()
+      .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)) as FooterSectionDto[];
+  }, [footerSections]);
 
   // Bu template’te ilk 3 section link kolonları için kullanılıyor
   const section1 = sections[0];
@@ -145,11 +148,12 @@ const Footer: React.FC = () => {
     if (isExternalHref(rawUrl)) {
       const external = /^https?:\/\//i.test(rawUrl);
       return (
-        <li key={item.id}>
+        <li key={item.id} className="mb-2.5">
           <a
             href={rawUrl}
             target={external ? '_blank' : undefined}
             rel={external ? 'noopener noreferrer' : undefined}
+            className="text-text-secondary hover:text-brand-primary transition-colors duration-300 text-base"
           >
             {item.title || rawUrl}
           </a>
@@ -160,8 +164,13 @@ const Footer: React.FC = () => {
     const href = localizePath(locale, rawUrl);
 
     return (
-      <li key={item.id}>
-        <Link href={href}>{item.title || rawUrl}</Link>
+      <li key={item.id} className="mb-2.5">
+        <Link
+          href={href}
+          className="text-text-secondary hover:text-brand-primary transition-colors duration-300 text-base"
+        >
+          {item.title || rawUrl}
+        </Link>
       </li>
     );
   };
@@ -175,10 +184,12 @@ const Footer: React.FC = () => {
     const items = itemsBySectionId.get(sec.id) ?? [];
 
     return (
-      <div className={colClass}>
-        <div className={`footer__widget mb-55 ${extraWidgetClass ?? ''}`}>
-          <div className="footer__title">
-            <h3>{sec.title || sec.slug || ui('ui_footer_section', 'Links')}</h3>
+      <div className={`${colClass} w-full`}>
+        <div className={`mb-12 ${extraWidgetClass ?? ''}`}>
+          <div className="mb-6">
+            <h3 className="text-xl font-serif font-bold text-text-primary mb-6 relative pb-4 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-12 after:h-0.5 after:bg-brand-primary">
+              {sec.title || sec.slug || ui('ui_footer_section', 'Links')}
+            </h3>
           </div>
           <div className="footer__link">
             <ul>{items.map(renderMenuItem)}</ul>
@@ -191,37 +202,53 @@ const Footer: React.FC = () => {
   const homeHref = localizePath(locale, '/');
 
   return (
-    <footer>
-      <section className="footer__border footer-bg grey__bg p-relative z-index-11 pt-120 pb-60">
-        <div className="container">
-          <div className="row">
+    <footer className="w-full">
+      <section className="bg-bg-primary pt-20 pb-10 border-t border-border-light">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* 1. kolon – COMPANY (footer__col-1) */}
-            {renderSectionColumn(section1, 'col-xl-2 col-lg-3 col-md-6 col-sm-6', 'footer__col-1')}
+            {renderSectionColumn(section1, 'col-span-1', 'footer__col-1')}
 
             {/* 2. kolon – Services (footer__col-2) */}
-            {renderSectionColumn(section2, 'col-xl-4 col-lg-3 col-md-6 col-sm-6', 'footer__col-2')}
+            {renderSectionColumn(
+              section2,
+              'col-span-1 md:col-span-2 lg:col-span-1',
+              'footer__col-2',
+            )}
 
             {/* 3. kolon – Explore (footer__col-3) */}
-            {renderSectionColumn(section3, 'col-xl-3 col-lg-3 col-md-6 col-sm-6', 'footer__col-3')}
+            {renderSectionColumn(section3, 'col-span-1', 'footer__col-3')}
 
             {/* 4. kolon – Logo + Contact + Socials (site_settings) */}
-            <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-              <div className="footer__widget mb-55">
-                <div className="footer__logo mb-20">
+            <div className="col-span-1">
+              <div className="mb-12">
+                <div className="mb-6">
                   <Link href={homeHref} aria-label={brandName || 'Home'}>
                     <SiteLogo alt={brandName || 'Logo'} priority={false} />
                   </Link>
                 </div>
-                <div className="footer__contact mb-30">
+
+                <div className="flex flex-col gap-3 mb-8 text-text-secondary">
                   {addrLines.map((ln, i) => (
-                    <span key={`addr-${i}`}>{ln}</span>
+                    <span key={`addr-${i}`} className="block">
+                      {ln}
+                    </span>
                   ))}
 
-                  {phone && <span>{phone}</span>}
-                  {email && <span>{email}</span>}
-                  {website && <span>{website}</span>}
+                  {phone && (
+                    <span className="block font-medium hover:text-brand-primary transition-colors">
+                      {phone}
+                    </span>
+                  )}
+                  {email && (
+                    <span className="block hover:text-brand-primary transition-colors">{email}</span>
+                  )}
+                  {website && (
+                    <span className="block hover:text-brand-primary transition-colors">{website}</span>
+                  )}
                 </div>
-                <div className="touch__social">
+
+                <div>
                   <SocialLinks socials={socials} size="md" />
                 </div>
               </div>
@@ -231,13 +258,15 @@ const Footer: React.FC = () => {
       </section>
 
       {/* Alt telif satırı – stil korunarak dinamik metin */}
-      <div className="footer__copyright grey-bg-2">
-        <div className="container">
-          <div className="copyright__inner-2">
-            <div className="copyright__text text-center">
-              <p>
+      <div className="bg-bg-secondary py-6 border-t border-border-light">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center items-center">
+            <div className="text-center">
+              <p className="text-sm text-text-secondary m-0">
                 {ui('ui_footer_copyright_prefix', 'Copyright')} © {new Date().getFullYear()}{' '}
-                {brandName || 'konigsmassage'}{' '}
+                <span className="font-semibold text-text-primary">
+                  {brandName || 'konigsmassage'}
+                </span>{' '}
                 {ui('ui_footer_copyright_suffix', 'All rights reserved.')}
               </p>
             </div>

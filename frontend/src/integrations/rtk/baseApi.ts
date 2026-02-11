@@ -37,7 +37,7 @@ function guessDevBackend(): string {
       const loc = window.location;
       const host = loc.hostname || 'localhost';
       const proto = loc.protocol || 'http:';
-      return `${proto}//${host}:8086/api`;
+      return `${proto}//${host}:8093/api`;
     }
   } catch {
     /* noop */

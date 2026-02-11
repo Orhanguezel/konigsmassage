@@ -6,7 +6,7 @@
 
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useId, useMemo } from 'react';
 import type { ResourcePublicItemDto } from '@/integrations/types/resources.types';
 
 import { safeStr, therapistLabelText } from '../_utils/appointmentHelpers';
@@ -41,6 +41,7 @@ export const TherapistSelect: React.FC<TherapistSelectProps> = ({
   t,
   disabled,
 }) => {
+  const selectId = useId();
   const rid = safeStr(selectedId);
 
   const isSingle = resources.length === 1;
@@ -65,37 +66,48 @@ export const TherapistSelect: React.FC<TherapistSelectProps> = ({
       : t('ui_appointment_resource_placeholder', 'Terapist seçin');
 
   return (
-    <div className="form-group mb-15">
-
-      <select
-        className="form-select form-control"
-        value={rid}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={!!disabled || isSingle || loading || fetching}
+    <div className="mb-6">
+      <label
+        htmlFor={selectId}
+        className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide"
       >
-        {/* Tek terapistte placeholder göstermiyoruz, direkt option */}
-        {!isSingle ? <option value="">{placeholder}</option> : null}
+        {t('ui_appointment_resource_label', 'Terapist')}
+      </label>
+      <div className="relative">
+        <select
+          id={selectId}
+          className="w-full px-4 py-3 bg-sand-50 border border-sand-200 text-brand-dark rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          value={rid}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={!!disabled || isSingle || loading || fetching}
+        >
+          {/* Tek terapistte placeholder göstermiyoruz, direkt option */}
+          {!isSingle ? <option value="">{placeholder}</option> : null}
 
-        {(isSingle ? resources : options).map((r) => {
-          const id = safeStr((r as any).id);
-          const name = therapistLabelText(r);
-          const suffix = getSuffix && id ? safeStr(getSuffix(id)) : '';
-          return (
-            <option key={id || name} value={id}>
-              {suffix ? `${name} • ${suffix}` : name}
-            </option>
-          );
-        })}
-      </select>
+          {(isSingle ? resources : options).map((r) => {
+            const id = safeStr((r as any).id);
+            const name = therapistLabelText(r);
+            const suffix = getSuffix && id ? safeStr(getSuffix(id)) : '';
+            return (
+              <option key={id || name} value={id}>
+                {suffix ? `${name} • ${suffix}` : name}
+              </option>
+            );
+          })}
+        </select>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">
+           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
 
       {error ? (
-        <div className="form-text text-warning">
+        <div className="text-rose-600 text-sm mt-2 font-medium">
           {t('ui_appointment_resource_error', 'Terapistler yüklenemedi.')}
         </div>
       ) : null}
 
       {!loading && !fetching && !error && resources.length === 0 ? (
-        <div className="form-text text-warning">
+        <div className="text-brand-clay text-sm mt-2 font-medium">
           {t(
             'ui_appointment_resource_empty',
             'Şu an terapist bulunamadı. Lütfen daha sonra tekrar deneyin.',
@@ -104,7 +116,7 @@ export const TherapistSelect: React.FC<TherapistSelectProps> = ({
       ) : null}
 
       {isSingle ? (
-        <div className="form-text">
+        <div className="text-text-secondary text-sm mt-2 italic">
           {t('ui_appointment_single_therapist', 'Terapist otomatik seçildi.')}
         </div>
       ) : null}

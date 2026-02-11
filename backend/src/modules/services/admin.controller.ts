@@ -181,6 +181,13 @@ export const createServiceAdmin: RouteHandler<{ Body: UpsertServiceBody }> = asy
       featured_image: coverFeaturedImage,
       image_asset_id: typeof b.image_asset_id !== 'undefined' ? b.image_asset_id ?? null : null,
 
+      area: typeof b.area !== 'undefined' ? b.area ?? null : null,
+      duration: typeof b.duration !== 'undefined' ? b.duration ?? null : null,
+      maintenance: typeof b.maintenance !== 'undefined' ? b.maintenance ?? null : null,
+      season: typeof b.season !== 'undefined' ? b.season ?? null : null,
+      thickness: typeof b.thickness !== 'undefined' ? b.thickness ?? null : null,
+      equipment: typeof b.equipment !== 'undefined' ? b.equipment ?? null : null,
+
       created_at: now as any,
       updated_at: now as any,
     });
@@ -257,7 +264,13 @@ export const updateServiceAdmin: RouteHandler<{
       typeof b.display_order !== 'undefined' ||
       typeof b.featured_image !== 'undefined' ||
       typeof b.image_url !== 'undefined' ||
-      typeof b.image_asset_id !== 'undefined';
+      typeof b.image_asset_id !== 'undefined' ||
+      typeof b.area !== 'undefined' ||
+      typeof b.duration !== 'undefined' ||
+      typeof b.maintenance !== 'undefined' ||
+      typeof b.season !== 'undefined' ||
+      typeof b.thickness !== 'undefined' ||
+      typeof b.equipment !== 'undefined';
 
     if (hasParentPatch) {
       const parentPatch: any = {};
@@ -269,6 +282,13 @@ export const updateServiceAdmin: RouteHandler<{
 
       if (typeof b.image_asset_id !== 'undefined')
         parentPatch.image_asset_id = b.image_asset_id ?? null;
+
+      if (typeof b.area !== 'undefined') parentPatch.area = b.area ?? null;
+      if (typeof b.duration !== 'undefined') parentPatch.duration = b.duration ?? null;
+      if (typeof b.maintenance !== 'undefined') parentPatch.maintenance = b.maintenance ?? null;
+      if (typeof b.season !== 'undefined') parentPatch.season = b.season ?? null;
+      if (typeof b.thickness !== 'undefined') parentPatch.thickness = b.thickness ?? null;
+      if (typeof b.equipment !== 'undefined') parentPatch.equipment = b.equipment ?? null;
 
       // cover mirror (fail-safe)
       const hasFeatured = typeof b.featured_image !== 'undefined';

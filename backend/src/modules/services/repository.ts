@@ -44,6 +44,14 @@ export type ServiceMerged = {
   image_url: string | null;
   image_asset_id: string | null;
 
+  // technical fields (non-i18n)
+  area: string | null;
+  duration: string | null;
+  maintenance: string | null;
+  season: string | null;
+  thickness: string | null;
+  equipment: string | null;
+
   created_at: string | Date;
   updated_at: string | Date;
 
@@ -121,6 +129,21 @@ function baseSelect(iReq: any, iDef: any) {
     featured_image: services.featured_image,
     image_url: services.image_url,
     image_asset_id: services.image_asset_id,
+
+    area: sql<string>`COALESCE(${iReq.area}, ${iDef.area}, ${services.area})`.as('area'),
+    duration: sql<string>`COALESCE(${iReq.duration}, ${iDef.duration}, ${services.duration})`.as(
+      'duration',
+    ),
+    maintenance: sql<string>`COALESCE(${iReq.maintenance}, ${iDef.maintenance}, ${services.maintenance})`.as(
+      'maintenance',
+    ),
+    season: sql<string>`COALESCE(${iReq.season}, ${iDef.season}, ${services.season})`.as('season'),
+    thickness: sql<string>`COALESCE(${iReq.thickness}, ${iDef.thickness}, ${services.thickness})`.as(
+      'thickness',
+    ),
+    equipment: sql<string>`COALESCE(${iReq.equipment}, ${iDef.equipment}, ${services.equipment})`.as(
+      'equipment',
+    ),
 
     created_at: services.created_at,
     updated_at: services.updated_at,
@@ -270,21 +293,29 @@ export async function getServiceMergedBySlug(
   defaultLocale: LocaleCode,
   slug: string,
 ) {
-  const iReq = alias(servicesI18n, 'si_req');
-  const iDef = alias(servicesI18n, 'si_def');
-
-  const rows = await db
-    .select(baseSelect(iReq, iDef))
-    .from(services)
-    .leftJoin(iReq, and(eq(iReq.service_id, services.id), eq(iReq.locale, locale)))
-    .leftJoin(iDef, and(eq(iDef.service_id, services.id), eq(iDef.locale, defaultLocale)))
-    .where(
-      sql`( ${iReq.id} IS NOT NULL AND ${iReq.slug} = ${slug} )
-          OR ( ${iReq.id} IS NULL AND ${iDef.slug} = ${slug} )`,
+  // 1) Find service_id by slug in any locale, preferring:
+  //    requested locale > default locale > anything else.
+  const match = await db
+    .select({ service_id: servicesI18n.service_id })
+    .from(servicesI18n)
+    .where(eq(servicesI18n.slug, slug))
+    .orderBy(
+      sql<number>`
+        CASE
+          WHEN ${servicesI18n.locale} = ${locale} THEN 0
+          WHEN ${servicesI18n.locale} = ${defaultLocale} THEN 1
+          ELSE 2
+        END
+      `,
+      asc(servicesI18n.locale),
     )
     .limit(1);
 
-  return (rows[0] ?? null) as unknown as ServiceMerged | null;
+  const serviceId = (match[0] as any)?.service_id as string | undefined;
+  if (!serviceId) return null;
+
+  // 2) Fetch merged row for the resolved service_id using locale fallbacks.
+  return await getServiceMergedById(locale, defaultLocale, serviceId);
 }
 
 /* ----------------------- create/update/delete ----------------------- */
@@ -317,6 +348,13 @@ export async function upsertServiceI18n(
     warranty: typeof data.warranty === 'string' ? data.warranty : null,
     image_alt: typeof data.image_alt === 'string' ? data.image_alt : null,
 
+    area: typeof data.area === 'string' ? data.area : null,
+    duration: typeof data.duration === 'string' ? data.duration : null,
+    maintenance: typeof data.maintenance === 'string' ? data.maintenance : null,
+    season: typeof data.season === 'string' ? data.season : null,
+    thickness: typeof data.thickness === 'string' ? data.thickness : null,
+    equipment: typeof data.equipment === 'string' ? data.equipment : null,
+
     tags: typeof data.tags === 'string' ? data.tags : null,
     meta_title: typeof data.meta_title === 'string' ? data.meta_title : null,
     meta_description: typeof data.meta_description === 'string' ? data.meta_description : null,
@@ -336,6 +374,12 @@ export async function upsertServiceI18n(
     'includes',
     'warranty',
     'image_alt',
+    'area',
+    'duration',
+    'maintenance',
+    'season',
+    'thickness',
+    'equipment',
     'tags',
     'meta_title',
     'meta_description',

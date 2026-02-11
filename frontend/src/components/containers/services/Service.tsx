@@ -1,47 +1,31 @@
-// =============================================================
-// FILE: src/components/containers/services/Service.tsx
-// Public Services List (PATTERN: useLocaleShort + useUiSection)
-// Fixes:
-// - ❌ toLocaleShort helper removed
-// - ✅ locale source: useLocaleShort()
-// - ✅ no inline styles (hero image uses next/image instead of backgroundImage)
-// - ✅ removed default_locale site_settings dependency (backend fallback should handle)
-// =============================================================
 'use client';
 
 import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// RTK – public services
+// RTK
 import { useListServicesPublicQuery } from '@/integrations/rtk/hooks';
 
 // Helpers
 import { excerpt } from '@/shared/text';
 import { toCdnSrc } from '@/shared/media';
-
-// i18n (PATTERN)
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { localizePath } from '@/i18n/url';
 
-import { SkeletonLine, SkeletonStack } from '@/components/ui/skeleton';
-
 // Icons
 import {
-  FiTool,
-  FiLayers,
-  FiPackage,
-  FiRefreshCcw,
-  FiSettings,
-  FiTarget,
-  FiUserPlus,
-  FiFileText,
-  FiShoppingCart,
-  FiArrowRight,
-} from 'react-icons/fi';
-import { MdAdsClick } from 'react-icons/md';
-import { GiFactory } from 'react-icons/gi';
+  IconActivity,
+  IconArrowRight,
+  IconHeart,
+  IconMoon,
+  IconSmile,
+  IconSun,
+  IconZap,
+} from '@/components/ui/icons';
+
+const FALLBACK_IMG = 'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748870864/uploads/anastasia/service-images/50-1748870861414-723178027.webp';
 
 function safeStr(v: unknown): string {
   if (typeof v === 'string') return v.trim();
@@ -51,19 +35,18 @@ function safeStr(v: unknown): string {
 
 function ServiceIcon({ label, size = 40 }: { label: string; size?: number }) {
   const t = (label || '').toLowerCase();
-  if (/\bppc|\bads?|\breklam|\badvert/i.test(t)) return <MdAdsClick size={size} />;
-  if (/performans|content|içerik|contenido/i.test(t)) return <FiFileText size={size} />;
-  if (/lead|müşteri|cliente|prospect/i.test(t)) return <FiUserPlus size={size} />;
-  if (/strateji|planlam|strategy|estrateg/i.test(t)) return <FiTarget size={size} />;
-  if (/ürün|product|producto|danışman/i.test(t)) return <FiShoppingCart size={size} />;
-  if (/mühendis|engineer|soporte|support/i.test(t)) return <FiTool size={size} />;
-  if (/uygulama|referans|aplicac|reference/i.test(t)) return <FiLayers size={size} />;
-  if (/parça|parca|repuesto|component|komponent/i.test(t)) return <FiPackage size={size} />;
-  if (/modern|upgrade|moderniz/i.test(t)) return <FiRefreshCcw size={size} />;
-  if (/bakım|onarım|mantenimiento|repar|maintenance|repair/i.test(t))
-    return <FiSettings size={size} />;
-  if (/üretim|uretim|producción|production|manufact/i.test(t)) return <GiFactory size={size} />;
-  return <FiLayers size={size} />;
+  
+  if (/sport|sports|spor|athlet|athletik|deep\s*tissue|tiefen|tiefengewebe/.test(t))
+    return <IconActivity size={size} />;
+  if (/relax|relaxing|entspann|calm|ruhe|anti\s*stress|stress|stres/.test(t))
+    return <IconMoon size={size} />;
+  if (/thai|thaimassage|shiatsu|reflex|reflexzonen|fuß|fuss|foot|ayak/.test(t))
+    return <IconZap size={size} />;
+  if (/aroma|aromatherapy|aroma\s*therap|öl|oel|oil/.test(t)) return <IconHeart size={size} />;
+  if (/hot\s*stone|stone|taş|tas|stein/.test(t)) return <IconSun size={size} />;
+  if (/face|gesicht|yüz|yuz|beauty|kosmetik|cosmetic/.test(t)) return <IconSmile size={size} />;
+
+  return <IconHeart size={size} />;
 }
 
 type ServiceCardVM = {
@@ -80,7 +63,7 @@ const Service: React.FC = () => {
 
   const { data, isLoading } = useListServicesPublicQuery({
     locale,
-    limit: 6,
+    limit: 12, // More items for the main page
     order: 'display_order.asc',
   } as any);
 
@@ -91,18 +74,21 @@ const Service: React.FC = () => {
       const imgBase =
         safeStr(s?.featured_image_url) || safeStr(s?.image_url) || safeStr(s?.featured_image);
 
-      const title = safeStr(s?.name) || ui('ui_services_placeholder_title', 'Our service');
+      const title = safeStr(s?.title) || safeStr(s?.name) || ui('ui_services_placeholder_title', 'Our service');
 
-      const rawSummary = safeStr(s?.description) || safeStr(s?.includes);
+      const rawSummary = safeStr(s?.summary) || safeStr(s?.short_description) || safeStr(s?.description);
 
       const summary = rawSummary
         ? excerpt(rawSummary, 150)
-        : ui('ui_services_placeholder_summary', 'Service description is coming soon.');
+        : ui('ui_services_placeholder_summary', 'Description coming soon.');
 
-      const src = (imgBase && (toCdnSrc(imgBase, 640, 420, 'fill') || imgBase)) || '';
+      let src = FALLBACK_IMG;
+      if (imgBase) {
+        src = toCdnSrc(imgBase, 640, 420, 'fill') || imgBase;
+      }
 
       return {
-        id: safeStr(s?.id) || safeStr(s?.slug) || cryptoRandomId(),
+        id: safeStr(s?.id) || safeStr(s?.slug) || Math.random().toString(36).slice(2),
         title,
         summary,
         slug: safeStr(s?.slug),
@@ -110,89 +96,97 @@ const Service: React.FC = () => {
       };
     });
 
-    if (!mapped.length) {
+    if (!mapped.length && !isLoading) {
       return new Array(3).fill(0).map((_, i) => ({
         id: `ph-${i + 1}`,
-        title: ui('ui_services_placeholder_title', 'Our service'),
-        summary: ui('ui_services_placeholder_summary', 'Service description is coming soon.'),
+        title: ui('ui_services_placeholder_title', 'Service'),
+        summary: ui('ui_services_placeholder_summary', 'Coming soon.'),
         slug: '',
-        src: '',
+        src: FALLBACK_IMG,
       }));
     }
 
     return mapped;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, ui]);
+  }, [data, ui, isLoading]);
 
   return (
-    <div className="service__area service__bg z-index-1 pt-120 pb-90">
-      <div className="container">
-        {/* Başlık */}
-        <div className="row tik">
-          <div className="col-12">
-            <div className="section__title-wrapper text-center mb-65">
-              <span className="section__subtitle">
-                <span>{ui('ui_services_subprefix', 'konigsmassage')}</span>{' '}
-                {ui('ui_services_sublabel', 'Services')}
-              </span>
+    <div className="bg-bg-primary relative py-20 lg:py-32 min-h-screen">
+       {/* Decor */}
+      <div className="absolute top-0 right-0 w-1/4 h-full bg-sand-50/50 skew-x-12 translate-x-1/2 pointer-events-none" />
 
-              <h2 className="section__title">
-                {ui('ui_services_title', 'What we do')}
-                <span className="down__mark-middle" />
-              </h2>
-            </div>
-          </div>
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Header */}
+        <div className="text-center mb-16 max-w-2xl mx-auto">
+            <span className="inline-block py-1 px-3 rounded-full bg-sand-100 text-brand-dark text-xs font-bold uppercase tracking-widest mb-4">
+                 {ui('ui_services_subprefix', 'Königs Massage')} {ui('ui_services_sublabel', 'Services')}
+            </span>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-text-primary leading-tight mb-6">
+              {ui('ui_services_title', 'Our Treatments')}
+            </h2>
+            <p className="text-text-secondary text-lg">
+                Discover our range of professional massage therapies designed to help you relax, recover, and rejuvenate.
+            </p>
         </div>
 
-        {/* Kartlar */}
-        <div className="row tik" data-aos="fade-left" data-aos-delay="300">
-          {cards.map((it) => {
-            const href = it.slug
-              ? localizePath(locale, `/services/${encodeURIComponent(it.slug)}`)
-              : localizePath(locale, '/service');
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up">
+            {isLoading && cards.length === 0 ? (
+                 Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="flex w-full flex-col bg-white rounded-2xl border border-sand-200 overflow-hidden h-112.5">
+                        <div className="h-56 bg-sand-100 animate-pulse" />
+                        <div className="p-8 space-y-4">
+                            <div className="h-6 bg-sand-100 rounded w-3/4 animate-pulse" />
+                            <div className="h-4 bg-sand-100 rounded w-full animate-pulse" />
+                            <div className="h-4 bg-sand-100 rounded w-5/6 animate-pulse" />
+                        </div>
+                    </div>
+                 ))
+            ) : (
+                cards.map((it) => {
+                    const href = it.slug
+                    ? localizePath(locale, `/services/${encodeURIComponent(it.slug)}`)
+                    : localizePath(locale, '/service');
 
-            return (
-              <div className="col-xl-4 col-lg-6 col-md-6" key={it.id}>
-                <div className="service__item mb-30">
-                  {/* NO inline style: use Image */}
-                  <div className="service__thumb include__bg service-two-cmn" aria-hidden="true">
-                    <Image src={it.src} alt="" width={640} height={420} loading="lazy" />
-                  </div>
+                    return (
+                    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-sand-200 hover:border-sand-300 flex flex-col" key={it.id}>
+                        <div className="relative h-64 overflow-hidden bg-sand-100">
+                             <Image 
+                                src={it.src} 
+                                alt={it.title}
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                            
+                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur p-2 rounded-full text-brand-primary shadow-sm z-20 transform transition-transform group-hover:scale-110">
+                                <ServiceIcon label={it.title} size={24} />
+                            </div>
+                        </div>
 
-                  <div className="service__icon transition-3" aria-hidden="true">
-                    <ServiceIcon label={it.title} />
-                  </div>
-
-                  <div className="service__content">
-                    <h3>
-                      <Link href={href}>{it.title}</Link>
-                    </h3>
-                    <p>{it.summary}</p>
-                  </div>
-
-                  <div className="service__link">
-                    <Link
-                      href={href}
-                      aria-label={`${it.title} — ${ui(
-                        'ui_services_details_aria',
-                        'view service details',
-                      )}`}
-                    >
-                      <FiArrowRight />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-
-          {isLoading ? (
-            <div className="col-12 mt-10" aria-hidden>
-              <SkeletonStack>
-                <SkeletonLine style={{ height: 8 }} />
-              </SkeletonStack>
-            </div>
-          ) : null}
+                        <div className="p-8 flex flex-col flex-1">
+                            <h3 className="text-2xl font-serif font-bold mb-3 text-brand-dark group-hover:text-brand-primary transition-colors">
+                                <Link href={href} className="focus:outline-none">
+                                    <span className="absolute inset-0 z-0" />
+                                    {it.title}
+                                </Link>
+                            </h3>
+                            <p className="text-text-secondary mb-6 line-clamp-3 leading-relaxed flex-1">
+                                {it.summary}
+                            </p>
+                            
+                            <div className="pt-4 border-t border-sand-100 flex justify-between items-center text-brand-dark group-hover:text-brand-primary transition-colors mt-auto">
+                                <span className="text-sm font-bold uppercase tracking-wider">
+                                    {ui('ui_services_btn_detail', 'Details')}
+                                </span>
+                                <IconArrowRight className="transform group-hover:translate-x-1 transition-transform" size={18} />
+                            </div>
+                        </div>
+                    </div>
+                    );
+                })
+            )}
         </div>
       </div>
     </div>
@@ -200,16 +194,3 @@ const Service: React.FC = () => {
 };
 
 export default Service;
-
-// -------------------------------------------------------------
-// local helper: stable id when DB id missing
-// -------------------------------------------------------------
-function cryptoRandomId(): string {
-  try {
-    // browser-safe
-    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-      return crypto.randomUUID();
-    }
-  } catch {}
-  return `id-${Math.random().toString(16).slice(2)}-${Date.now()}`;
-}

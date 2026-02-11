@@ -5,7 +5,7 @@
 
 import React from 'react';
 import type { SupportedLocale } from '@/types/common';
-import { absoluteUrl, compact } from '@/features/seo/utils';
+import { absoluteUrl, compact } from '@/seo';
 
 type OfferInput = {
   price?: number | string;

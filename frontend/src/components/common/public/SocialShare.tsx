@@ -9,10 +9,21 @@
 'use client';
 
 import React, { useCallback, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
+import {
+  IconCopy,
+  IconFacebook,
+  IconInstagram,
+  IconLinkedIn,
+  IconMail,
+  IconTikTok,
+  IconTwitterX,
+  IconWhatsApp,
+  IconYoutube,
+} from '@/components/ui/icons';
 
 type Socials = Partial<{
   facebook: string;
@@ -90,7 +101,8 @@ function buildShareLinks(input: { url: string; title?: string; text?: string }) 
 }
 
 export default function SocialShare(props: SocialShareProps) {
-  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const locale = useLocaleShort();
 
   const showLabel = props.showLabel ?? true;
@@ -136,16 +148,23 @@ export default function SocialShare(props: SocialShareProps) {
     return (pick ?? {}) as Socials;
   }, [props.showCompanySocials, socialsTrg, socialsEn]);
 
+  const asPath = useMemo(() => {
+    const p = safeStr(pathname);
+    const qs = safeStr(searchParams?.toString());
+    if (!p) return '';
+    return qs ? `${p}?${qs}` : p;
+  }, [pathname, searchParams]);
+
   // --- share url (prefer baseUrl + asPath, fallback window)
   const shareUrl = useMemo(() => {
     if (safeStr(props.url)) return safeStr(props.url);
 
-    const path = safeStr(router.asPath);
+    const path = safeStr(asPath);
     if (baseUrl && path) return `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
 
     if (typeof window !== 'undefined') return window.location.href;
     return '';
-  }, [props.url, router.asPath, baseUrl]);
+  }, [props.url, asPath, baseUrl]);
 
   const links = useMemo(
     () => buildShareLinks({ url: shareUrl, title: props.title, text: props.text }),
@@ -211,13 +230,13 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="Share on Facebook"
               title="Facebook"
             >
-              <i className="fa-brands fa-facebook-f" aria-hidden="true" />
+              <IconFacebook />
             </a>
           )}
 
           {shareFlags.x && (
             <a href={links.x} target="_blank" rel="noreferrer" aria-label="Share on X" title="X">
-              <i className="fa-brands fa-x-twitter" aria-hidden="true" />
+              <IconTwitterX />
             </a>
           )}
 
@@ -229,7 +248,7 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="Share on LinkedIn"
               title="LinkedIn"
             >
-              <i className="fa-brands fa-linkedin-in" aria-hidden="true" />
+              <IconLinkedIn />
             </a>
           )}
 
@@ -241,13 +260,13 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="Share on WhatsApp"
               title="WhatsApp"
             >
-              <i className="fa-brands fa-whatsapp" aria-hidden="true" />
+              <IconWhatsApp />
             </a>
           )}
 
           {shareFlags.email && (
             <a href={links.email} aria-label="Share via Email" title="Email">
-              <i className="fa-regular fa-envelope" aria-hidden="true" />
+              <IconMail />
             </a>
           )}
 
@@ -260,7 +279,7 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="Copy link"
               title={copied ? 'Copied' : 'Copy link'}
             >
-              <i className="fa-regular fa-copy" aria-hidden="true" />
+              <IconCopy />
             </a>
           )}
         </div>
@@ -277,7 +296,7 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="Instagram"
               title="Instagram"
             >
-              <i className="fa-brands fa-instagram" aria-hidden="true" />
+              <IconInstagram />
             </a>
           )}
           {safeStr(companySocials.facebook) && (
@@ -288,7 +307,7 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="Facebook"
               title="Facebook"
             >
-              <i className="fa-brands fa-facebook-f" aria-hidden="true" />
+              <IconFacebook />
             </a>
           )}
           {safeStr(companySocials.youtube) && (
@@ -299,7 +318,7 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="YouTube"
               title="YouTube"
             >
-              <i className="fa-brands fa-youtube" aria-hidden="true" />
+              <IconYoutube />
             </a>
           )}
           {safeStr(companySocials.linkedin) && (
@@ -310,7 +329,7 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="LinkedIn"
               title="LinkedIn"
             >
-              <i className="fa-brands fa-linkedin-in" aria-hidden="true" />
+              <IconLinkedIn />
             </a>
           )}
           {safeStr(companySocials.x) && (
@@ -321,7 +340,7 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="X"
               title="X"
             >
-              <i className="fa-brands fa-x-twitter" aria-hidden="true" />
+              <IconTwitterX />
             </a>
           )}
           {safeStr(companySocials.tiktok) && (
@@ -332,11 +351,30 @@ export default function SocialShare(props: SocialShareProps) {
               aria-label="TikTok"
               title="TikTok"
             >
-              <i className="fa-brands fa-tiktok" aria-hidden="true" />
+              <IconTikTok />
             </a>
           )}
         </div>
       )}
+
+      <style jsx>{`
+        .touch__social {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          flex-wrap: wrap;
+        }
+
+        .touch__social a {
+          display: inline-flex;
+        }
+
+        .touch__social :global(svg) {
+          width: 16px;
+          height: 16px;
+          display: block;
+        }
+      `}</style>
     </div>
   );
 }

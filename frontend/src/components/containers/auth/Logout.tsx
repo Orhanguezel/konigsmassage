@@ -1,76 +1,77 @@
 // =============================================================
 // FILE: src/components/containers/auth/Logout.tsx
+// FINAL – Auth Logout
 // =============================================================
-"use client";
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/router";
-import { useLogoutMutation } from "@/integrations/rtk/hooks";
-import { tokenStore } from "@/integrations/core/token";
-import { normalizeError } from "@/integrations/core/errors";
+'use client';
 
-// i18n helper'lar
-import { useResolvedLocale } from "@/i18n/locale";
-import { useUiSection } from "@/i18n/uiDb";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useLogoutMutation } from '@/integrations/rtk/hooks';
+import { tokenStore } from '@/integrations/core/token';
+import { normalizeError } from '@/integrations/core/errors';
 
+// i18n
+import { useLocaleShort } from '@/i18n/useLocaleShort';
+import { useUiSection } from '@/i18n/uiDb';
+import { localizePath } from '@/i18n/url';
 
 const Logout: React.FC = () => {
   const router = useRouter();
   const [logout, logoutState] = useLogoutMutation();
 
-  const locale = useResolvedLocale();
-  const { ui } = useUiSection("ui_auth", locale);
+  const locale = useLocaleShort();
+  const { ui } = useUiSection('ui_auth', locale as any);
 
   useEffect(() => {
     let canceled = false;
-
     const run = async () => {
       try {
         await logout().unwrap();
       } catch (err) {
         if (!canceled) {
           const n = normalizeError(err as any);
-          console.warn("logout error:", n.message);
+          console.warn('logout error:', n.message);
         }
       } finally {
         tokenStore.set(null);
         if (!canceled) {
-          router.push("/login");
+          router.push(localizePath(locale, '/login'));
         }
       }
     };
-
     run();
-
     return () => {
       canceled = true;
     };
-  }, [logout, router]);
+  }, [logout, router, locale]);
 
   return (
-    <section className="tp-logout-area pt-120 pb-120">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-lg-6 col-md-8 text-center">
-            <div className="p-4 p-md-5 shadow-sm bg-white rounded">
-              <h3 className="mb-3">
-                {ui("logout_title", "Signing out...")}
-              </h3>
-              <p className="text-muted small">
-                {ui(
-                  "logout_lead",
-                  "Please wait, you will be redirected to the login page in a few seconds.",
-                )}
-              </p>
-              {logoutState.isError ? (
-                <p className="text-danger small mt-2">
-                  {ui(
-                    "logout_error",
-                    "There was a problem signing out from the server, but your local session has been cleared.",
-                  )}
-                </p>
-              ) : null}
+    <section className="bg-bg-primary min-h-screen pt-32 pb-32 flex items-center justify-center">
+      <div className="container mx-auto px-4">
+        <div className="max-w-lg mx-auto text-center">
+          <div className="p-10 bg-white rounded-lg shadow-soft border border-sand-100">
+            <div className="mb-6 flex justify-center">
+               <div className="w-16 h-16 border-4 border-brand-primary border-t-transparent rounded-full animate-spin" />
             </div>
+            
+            <h3 className="text-2xl font-serif font-bold text-text-primary mb-4">
+              {ui('logout_title', 'Signing out...')}
+            </h3>
+            
+            <p className="text-text-secondary leading-relaxed mb-4">
+              {ui('logout_lead', 'Please wait session is being cleared.')}
+            </p>
+
+            {logoutState.isError && (
+              <p
+                role="alert"
+                aria-live="polite"
+                className="text-rose-600 text-sm bg-rose-50 p-2 rounded inline-block border border-rose-100"
+              >
+                {ui('logout_error', 'Problem signing out on server, but local session cleared.')}
+              </p>
+            )}
           </div>
         </div>
       </div>

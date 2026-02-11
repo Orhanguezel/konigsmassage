@@ -2,8 +2,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import type { LayoutSeoOverrides } from '@/seo/layoutSeoStore';
-import { resetLayoutSeo, setLayoutSeo } from '@/seo/layoutSeoStore';
+import type { LayoutSeoOverrides } from '@/seo';
+import { resetLayoutSeo, setLayoutSeo } from '@/seo';
 
 /**
  * Page-level override setter (navigation-safe)

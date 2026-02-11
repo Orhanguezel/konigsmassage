@@ -1,5 +1,5 @@
 -- =============================================================
--- 049-92_site_settings_ui_appointment.sql (FINAL)
+-- 049-93_site_settings_ui_appointment.sql (FINAL)
 -- ui_appointment: Public appointment page + availability + weekly plan + admin WH labels
 --  - Key: ui_appointment
 --  - Value: JSON (stored as TEXT)
@@ -21,12 +21,25 @@ VALUES
   CAST(JSON_OBJECT(
     'ui_appointment_page_title',         'Randevu Al',
     'ui_appointment_page_lead',          'Terapist seçin, tarih ve saat belirleyin, ardından formu gönderin.',
-    'ui_appointment_meta_title',         'Randevu Al | Königs Massage',
-    'ui_appointment_meta_description',   'Königs Massage üzerinden online randevu talebi oluşturun.',
+    'ui_appointment_title',              'Randevu Al',
+    'ui_appointment_desc',               'Size uygun terapisti ve saati seçerek kolayca randevu oluşturabilirsiniz.',
+    'ui_appointment_meta_title',         'Randevu Al | KÖNIG ENERGETIK',
+    'ui_appointment_meta_description',   'KÖNIG ENERGETIK üzerinden randevu talebi oluşturun. Seanslar ön görüşme ve onay ile planlanır.',
     'ui_appointment_og_image',           '',
 
-    'ui_appointment_subprefix',          'Königs Massage',
+    'ui_appointment_subprefix',          'KÖNIG ENERGETIK',
     'ui_appointment_sublabel',           'Randevu',
+
+    'ui_appointment_cover_image',        '',
+    'ui_appointment_cover_image_alt',    'KÖNIG ENERGETIK — Termin',
+
+    'ui_appointment_home_cta_title',     'Randevu Al',
+    'ui_appointment_home_cta_desc',      'Size uygun zamanı seçerek kolayca randevu oluşturabilirsiniz.',
+    'ui_appointment_home_cta_btn',       'Randevu Al',
+
+    'ui_appointment_step_label',         'Adım',
+    'ui_appointment_step1_title',        'Terapist ve Zaman',
+    'ui_appointment_step2_title',        'Kişisel Bilgiler',
 
     'ui_appointment_left_title',         'Randevu Talebi',
     'ui_appointment_left_tagline',       'Size en uygun terapisti, tarihi ve saati seçin.',
@@ -42,12 +55,25 @@ VALUES
     'ui_appointment_phone',              'Telefon',
     'ui_appointment_email',              'E-posta',
     'ui_appointment_time',               'Saat',
+    'ui_appointment_time_label',         'Saat Seçimi',
+
+    'ui_appointment_field_name',         'Ad Soyad',
+    'ui_appointment_field_phone',        'Telefon',
+    'ui_appointment_field_email',        'E-posta',
+    'ui_appointment_field_note',         'Notunuz (Opsiyonel)',
+
+    'ui_appointment_ph_name',            'Adınız Soyadınız',
+    'ui_appointment_ph_phone',           '05xx xxx xx xx',
+    'ui_appointment_ph_email',           'ornek@email.com',
+    'ui_appointment_ph_note',            'Varsa özel istekleriniz...',
 
     'ui_appointment_btn_submit',         'Randevu Talebini Gönder',
     'ui_appointment_btn_loading',        'Gönderiliyor...',
+    'ui_appointment_btn_sending',        'Gönderiliyor...',
     'ui_appointment_refresh',            'Yenile',
 
     'ui_appointment_error_generic',      'Bir hata oluştu. Lütfen tekrar deneyin.',
+    'ui_appointment_form_error',         'Bir hata oluştu.',
     'ui_appointment_err_resource',       'Lütfen bir terapist seçin.',
     'ui_appointment_err_date',           'Lütfen geçerli bir tarih seçin.',
     'ui_appointment_err_name',           'Lütfen adınızı girin.',
@@ -57,6 +83,15 @@ VALUES
     'ui_appointment_err_not_available',  'Seçilen saat şu an uygun değil.',
 
     'ui_appointment_success',            'Talebiniz alındı. En kısa sürede sizinle iletişime geçeceğiz.',
+    'ui_appointment_success_title',      'Talebiniz Alındı!',
+    'ui_appointment_success_msg',        'Talebiniz bize ulaştı. En kısa sürede sizinle iletişime geçeceğiz.',
+    'ui_appointment_success_home',       'Ana Sayfaya Dön',
+
+    'ui_appointment_selected_service_label',   'Seçili hizmet',
+    'ui_appointment_selected_service_loading', 'Yükleniyor...',
+    'ui_appointment_selected_service_error',   'Hizmet bulunamadı. Lütfen tekrar seçin.',
+    'ui_appointment_change_service',           'Değiştir',
+    'ui_appointment_view_service',             'Görüntüle',
 
     'ui_appointment_resource_loading',   'Terapistler yükleniyor...',
     'ui_appointment_resource_placeholder','Terapist seçin',
@@ -80,9 +115,14 @@ VALUES
     'ui_appointment_therapist_unknown',  'Bilinmiyor',
 
     'ui_appointment_weekly_title',        'Haftalık Plan',
+    'ui_appointment_weekly_desc',         'Seçilen terapistin haftalık çalışma saatlerini aşağıda görebilirsiniz.',
     'ui_appointment_weekly_pick_therapist','Haftalık planı görmek için terapist seçin.',
     'ui_appointment_weekly_wh_loading',   'Yükleniyor...',
     'ui_appointment_weekly_wh_error',     'Çalışma saatleri yüklenemedi.',
+
+    'ui_appointment_info_title',          'Önemli Bilgi',
+    'ui_appointment_info_text',
+      'Randevularınızın kesinleşmesi için onay SMS/E-posta beklemeniz gerekmektedir. İptal işlemlerini en geç 24 saat önceden bildiriniz.',
 
     'ui_dow_1', 'Pazartesi',
     'ui_dow_2', 'Salı',
@@ -140,12 +180,25 @@ VALUES
   CAST(JSON_OBJECT(
     'ui_appointment_page_title',        'Book Appointment',
     'ui_appointment_page_lead',         'Select a therapist, choose a date and time, then submit the form.',
+    'ui_appointment_title',             'Book Appointment',
+    'ui_appointment_desc',              'Choose a therapist and time slot to request an appointment.',
     'ui_appointment_meta_title',        'Book Appointment',
-    'ui_appointment_meta_description',  'Book an appointment at Königs Massage.',
+    'ui_appointment_meta_description',  'Request an appointment at KÖNIG ENERGETIK. Sessions are arranged after a short pre-chat and consent.',
     'ui_appointment_og_image',          '',
 
-    'ui_appointment_subprefix',         'Königs Massage',
+    'ui_appointment_subprefix',         'KÖNIG ENERGETIK',
     'ui_appointment_sublabel',          'Appointment',
+
+    'ui_appointment_cover_image',       '',
+    'ui_appointment_cover_image_alt',   'KÖNIG ENERGETIK — Appointment',
+
+    'ui_appointment_home_cta_title',    'Book Appointment',
+    'ui_appointment_home_cta_desc',     'Choose a suitable time and send your appointment request easily.',
+    'ui_appointment_home_cta_btn',      'Book Appointment',
+
+    'ui_appointment_step_label',        'Step',
+    'ui_appointment_step1_title',       'Therapist & Time',
+    'ui_appointment_step2_title',       'Personal Details',
 
     'ui_appointment_left_title',        'Book Appointment',
     'ui_appointment_left_tagline',      'Choose the therapist, date and time that suits you best.',
@@ -161,12 +214,25 @@ VALUES
     'ui_appointment_phone',             'Phone',
     'ui_appointment_email',             'Email',
     'ui_appointment_time',              'Time',
+    'ui_appointment_time_label',        'Select time',
+
+    'ui_appointment_field_name',        'Full name',
+    'ui_appointment_field_phone',       'Phone',
+    'ui_appointment_field_email',       'Email',
+    'ui_appointment_field_note',        'Note (optional)',
+
+    'ui_appointment_ph_name',           'Your full name',
+    'ui_appointment_ph_phone',          'e.g. +49 151 234 56 78',
+    'ui_appointment_ph_email',          'you@example.com',
+    'ui_appointment_ph_note',           'Any notes or requests...',
 
     'ui_appointment_btn_submit',        'Submit Appointment Request',
     'ui_appointment_btn_loading',       'Submitting...',
+    'ui_appointment_btn_sending',       'Submitting...',
     'ui_appointment_refresh',           'Refresh',
 
     'ui_appointment_error_generic',     'Something went wrong. Please try again.',
+    'ui_appointment_form_error',        'Something went wrong.',
     'ui_appointment_err_resource',      'Please select a therapist.',
     'ui_appointment_err_date',          'Please select a valid date.',
     'ui_appointment_err_name',          'Please enter your name.',
@@ -176,6 +242,15 @@ VALUES
     'ui_appointment_err_not_available', 'The selected time is not available right now.',
 
     'ui_appointment_success',           'Your request has been received. We will contact you shortly.',
+    'ui_appointment_success_title',     'Request received!',
+    'ui_appointment_success_msg',       'We have received your request. We will contact you shortly.',
+    'ui_appointment_success_home',      'Back to Home',
+
+    'ui_appointment_selected_service_label',   'Selected service',
+    'ui_appointment_selected_service_loading', 'Loading...',
+    'ui_appointment_selected_service_error',   'Service not found. Please pick a service again.',
+    'ui_appointment_change_service',           'Change',
+    'ui_appointment_view_service',             'View',
 
     'ui_appointment_resource_loading',  'Loading therapists...',
     'ui_appointment_resource_placeholder','Select therapist',
@@ -199,9 +274,14 @@ VALUES
     'ui_appointment_therapist_unknown',  'Unknown',
 
     'ui_appointment_weekly_title',       'Weekly Schedule',
+    'ui_appointment_weekly_desc',        'You can view the selected therapist’s weekly working hours below.',
     'ui_appointment_weekly_pick_therapist','Select a therapist to view the weekly schedule.',
     'ui_appointment_weekly_wh_loading',  'Loading...',
     'ui_appointment_weekly_wh_error',    'Working hours could not be loaded.',
+
+    'ui_appointment_info_title',         'Important',
+    'ui_appointment_info_text',
+      'Your appointment is confirmed after approval via SMS/email. Please notify cancellations at least 24 hours in advance.',
 
     'ui_dow_1', 'Monday',
     'ui_dow_2', 'Tuesday',
@@ -259,12 +339,25 @@ VALUES
   CAST(JSON_OBJECT(
     'ui_appointment_page_title',        'Termin buchen',
     'ui_appointment_page_lead',         'Therapeut auswählen, Datum und Uhrzeit festlegen und Formular senden.',
+    'ui_appointment_title',             'Termin buchen',
+    'ui_appointment_desc',              'Therapeut und Zeitfenster wählen und eine Terminanfrage senden.',
     'ui_appointment_meta_title',        'Termin buchen',
-    'ui_appointment_meta_description',  'Online Termin bei Königs Massage buchen.',
+    'ui_appointment_meta_description',  'Terminanfrage bei KÖNIG ENERGETIK. Sitzungen nach kurzem Vorgespräch und Einverständnis.',
     'ui_appointment_og_image',          '',
 
-    'ui_appointment_subprefix',         'Königs Massage',
+    'ui_appointment_subprefix',         'KÖNIG ENERGETIK',
     'ui_appointment_sublabel',          'Termin',
+
+    'ui_appointment_cover_image',       '',
+    'ui_appointment_cover_image_alt',   'KÖNIG ENERGETIK — Termin',
+
+    'ui_appointment_home_cta_title',    'Termin buchen',
+    'ui_appointment_home_cta_desc',     'Wählen Sie einen passenden Zeitpunkt und senden Sie Ihre Terminanfrage einfach.',
+    'ui_appointment_home_cta_btn',      'Termin buchen',
+
+    'ui_appointment_step_label',        'Schritt',
+    'ui_appointment_step1_title',       'Therapeut & Zeit',
+    'ui_appointment_step2_title',       'Persönliche Angaben',
 
     'ui_appointment_left_title',        'Termin buchen',
     'ui_appointment_left_tagline',      'Wählen Sie Therapeut, Datum und Uhrzeit, die am besten passen.',
@@ -280,12 +373,25 @@ VALUES
     'ui_appointment_phone',             'Telefon',
     'ui_appointment_email',             'E-Mail',
     'ui_appointment_time',              'Uhrzeit',
+    'ui_appointment_time_label',        'Uhrzeit auswählen',
+
+    'ui_appointment_field_name',        'Name',
+    'ui_appointment_field_phone',       'Telefon',
+    'ui_appointment_field_email',       'E-Mail',
+    'ui_appointment_field_note',        'Notiz (optional)',
+
+    'ui_appointment_ph_name',           'Ihr Name',
+    'ui_appointment_ph_phone',          'z. B. +49 151 234 56 78',
+    'ui_appointment_ph_email',          'sie@example.com',
+    'ui_appointment_ph_note',           'Hinweise oder Wünsche...',
 
     'ui_appointment_btn_submit',        'Terminanfrage senden',
     'ui_appointment_btn_loading',       'Wird gesendet...',
+    'ui_appointment_btn_sending',       'Wird gesendet...',
     'ui_appointment_refresh',           'Aktualisieren',
 
     'ui_appointment_error_generic',     'Ein Fehler ist aufgetreten. Bitte erneut versuchen.',
+    'ui_appointment_form_error',        'Ein Fehler ist aufgetreten.',
     'ui_appointment_err_resource',      'Bitte einen Therapeuten auswählen.',
     'ui_appointment_err_date',          'Bitte ein gültiges Datum auswählen.',
     'ui_appointment_err_name',          'Bitte Ihren Namen eingeben.',
@@ -295,6 +401,15 @@ VALUES
     'ui_appointment_err_not_available', 'Die gewählte Uhrzeit ist aktuell nicht verfügbar.',
 
     'ui_appointment_success',           'Ihre Anfrage wurde erhalten. Wir melden uns in Kürze.',
+    'ui_appointment_success_title',     'Anfrage erhalten!',
+    'ui_appointment_success_msg',       'Ihre Anfrage wurde erhalten. Wir melden uns in Kürze.',
+    'ui_appointment_success_home',      'Zur Startseite',
+
+    'ui_appointment_selected_service_label',   'Ausgewählter Service',
+    'ui_appointment_selected_service_loading', 'Wird geladen...',
+    'ui_appointment_selected_service_error',   'Service nicht gefunden. Bitte wählen Sie erneut.',
+    'ui_appointment_change_service',           'Ändern',
+    'ui_appointment_view_service',             'Ansehen',
 
     'ui_appointment_resource_loading',  'Therapeuten werden geladen...',
     'ui_appointment_resource_placeholder','Therapeut auswählen',
@@ -318,9 +433,14 @@ VALUES
     'ui_appointment_therapist_unknown',  'Unbekannt',
 
     'ui_appointment_weekly_title',       'Wöchentlicher Plan',
+    'ui_appointment_weekly_desc',        'Unten sehen Sie die wöchentlichen Arbeitszeiten des ausgewählten Therapeuten.',
     'ui_appointment_weekly_pick_therapist','Wählen Sie einen Therapeuten, um den Wochenplan zu sehen.',
     'ui_appointment_weekly_wh_loading',  'Wird geladen...',
     'ui_appointment_weekly_wh_error',    'Arbeitszeiten konnten nicht geladen werden.',
+
+    'ui_appointment_info_title',         'Wichtiger Hinweis',
+    'ui_appointment_info_text',
+      'Ihr Termin ist nach Bestätigung per SMS/E-Mail verbindlich. Bitte Stornierungen spätestens 24 Stunden vorher mitteilen.',
 
     'ui_dow_1', 'Montag',
     'ui_dow_2', 'Dienstag',

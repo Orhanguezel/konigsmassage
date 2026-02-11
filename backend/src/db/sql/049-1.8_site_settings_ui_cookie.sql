@@ -1,6 +1,6 @@
 -- =============================================================
 -- 049-1.8_site_settings_ui_cookie.sql
--- konigsmassage – UI Cookie + Cookie Policy (site_settings)
+-- KÖNIG ENERGETIK – UI Cookie + Cookie Policy (site_settings)
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
 --  - Re-runnable: ON DUPLICATE KEY UPDATE (requires UNIQUE(key, locale))
@@ -136,8 +136,8 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'tr',
   CAST(JSON_OBJECT(
     'ui_cookie_policy_page_title',        'Çerez Politikası',
-    'ui_cookie_policy_meta_title',        'Çerez Politikası | konigsmassage',
-    'ui_cookie_policy_meta_description',  'konigsmassage çerez politikası: çerez kategorileri, amaçları ve tercih yönetimi.',
+    'ui_cookie_policy_meta_title',        'Çerez Politikası | KÖNIG ENERGETIK',
+    'ui_cookie_policy_meta_description',  'KÖNIG ENERGETIK çerez politikası: çerez kategorileri, amaçları ve tercih yönetimi.',
     'ui_cookie_policy_page_description',  'Çerez kullanımımız ve tercihlerinizi nasıl yönetebileceğiniz hakkında bilgi edinin.',
 
     'ui_cookie_policy_fallback_title',    'Çerez Politikası',
@@ -153,8 +153,8 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'en',
   CAST(JSON_OBJECT(
     'ui_cookie_policy_page_title',        'Cookie Policy',
-    'ui_cookie_policy_meta_title',        'Cookie Policy | konigsmassage',
-    'ui_cookie_policy_meta_description',  'konigsmassage cookie policy: cookie categories, purposes, and preference management.',
+    'ui_cookie_policy_meta_title',        'Cookie Policy | KÖNIG ENERGETIK',
+    'ui_cookie_policy_meta_description',  'KÖNIG ENERGETIK cookie policy: cookie categories, purposes, and preference management.',
     'ui_cookie_policy_page_description',  'Learn how we use cookies and how you can manage your preferences.',
 
     'ui_cookie_policy_fallback_title',    'Cookie Policy',
@@ -170,8 +170,8 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'de',
   CAST(JSON_OBJECT(
     'ui_cookie_policy_page_title',        'Cookie-Richtlinie',
-    'ui_cookie_policy_meta_title',        'Cookie-Richtlinie | konigsmassage',
-    'ui_cookie_policy_meta_description',  'konigsmassage Cookie-Richtlinie: Kategorien, Zwecke und Verwaltung Ihrer Einstellungen.',
+    'ui_cookie_policy_meta_title',        'Cookie-Richtlinie | KÖNIG ENERGETIK',
+    'ui_cookie_policy_meta_description',  'KÖNIG ENERGETIK Cookie-Richtlinie: Kategorien, Zwecke und Verwaltung Ihrer Einstellungen.',
     'ui_cookie_policy_page_description',  'Erfahren Sie, wie wir Cookies verwenden und wie Sie Ihre Einstellungen verwalten können.',
 
     'ui_cookie_policy_fallback_title',    'Cookie-Richtlinie',

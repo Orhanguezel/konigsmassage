@@ -2,7 +2,6 @@
 // !!! no "use client"
 import React from "react";
 import HeaderClient from "./HeaderClient";
-import type { StaticImageData } from "next/image";
 
 type SimpleBrand = {
   name: string;
@@ -14,10 +13,10 @@ type SimpleBrand = {
 
 export type HeaderProps = {
   brand?: SimpleBrand;
-  logoSrc?: StaticImageData | string;
+  locale?: string;
 };
 
-export default function Header({ brand, logoSrc }: HeaderProps) {
+export default function Header({ brand, locale }: HeaderProps) {
   // Eğer brand gelmezse HeaderClient site_settings üzerinden dolduracak.
-  return <HeaderClient brand={brand} logoSrc={logoSrc} />;
+  return <HeaderClient brand={brand} locale={locale} />;
 }

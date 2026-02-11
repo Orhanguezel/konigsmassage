@@ -1,7 +1,7 @@
 // src/features/seo/ServiceJsonLd.tsx
 
 import React from 'react';
-import { absoluteUrl, compact } from './utils';
+import { absoluteUrl, compact } from '@/seo';
 
 type Props = {
   name: string;

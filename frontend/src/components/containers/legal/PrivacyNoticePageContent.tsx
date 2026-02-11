@@ -1,20 +1,8 @@
-// =============================================================
-// FILE: src/components/containers/legal/PrivacyNoticePageContent.tsx
-// konigsmassage – Privacy Notice Content (SINGLE PAGE) (I18N + SAFE)
-// Data: custom_pages (module_key="privacy_notice") -> first published
-// - Locale aware query
-// - DB content supports: content_html OR content(JSON {html}) OR JSON-string OR raw HTML
-// - H1 forbidden: CMS html <h1> -> <h2>
-// - Minimal CSS fallbacks for Tailwind-like classes used in seeds (purge/JIT)
-// =============================================================
-
 'use client';
 
 import React, { useMemo } from 'react';
-
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
 import type { CustomPageDto } from '@/integrations/types';
-
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 
@@ -38,18 +26,14 @@ function safeJson<T>(v: any, fallback: T): T {
 
 function extractHtmlFromPage(page: any): string {
   if (!page) return '';
-
   const ch = String(page?.content_html ?? '').trim();
   if (ch) return ch;
-
   const c = page?.content ?? page?.content_json ?? page?.contentJson;
   if (!c) return '';
-
   if (typeof c === 'object') {
     const html = (c as any)?.html;
     return typeof html === 'string' ? html.trim() : '';
   }
-
   if (typeof c === 'string') {
     const s = c.trim();
     if (!s) return '';
@@ -60,7 +44,6 @@ function extractHtmlFromPage(page: any): string {
     }
     return s;
   }
-
   return '';
 }
 
@@ -69,6 +52,15 @@ function pickFirstPublished(items: any): CustomPageDto | null {
   const published = arr.filter((p) => !!p?.is_published);
   return published[0] ?? null;
 }
+
+const THEME_COLORS = {
+    textDark: '#292524',
+    textMedium: '#57534e',
+    primary: '#881337',
+    bgWhite: '#ffffff',
+    bgSand: '#fafaf9',
+    border: '#e7e5e4',
+};
 
 const PrivacyNoticePageContent: React.FC = () => {
   const locale = useLocaleShort();
@@ -86,110 +78,96 @@ const PrivacyNoticePageContent: React.FC = () => {
 
   const title = useMemo(() => {
     const t = String((page as any)?.title ?? '').trim();
-    return (
-      t ||
-      String(ui('ui_privacy_notice_fallback_title', 'Aydınlatma Metni') || '').trim() ||
-      'Aydınlatma Metni'
-    );
+    return t || String(ui('ui_privacy_notice_fallback_title', 'Privacy Notice') || '').trim() || 'Privacy Notice';
   }, [page, ui]);
 
   const html = useMemo(() => {
     const raw = extractHtmlFromPage(page);
-    return raw ? downgradeH1ToH2(raw) : '';
+    const safe = raw ? downgradeH1ToH2(raw) : '';
+    return safe;
   }, [page]);
 
   const cmsFallbackCss = useMemo(
     () => `
-      .cms-html { color: #0f172a; }
-      .cms-html h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 800; margin: 0 0 .75rem; color: #0f172a; }
-      .cms-html h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 800; margin: 0 0 .75rem; color: #0f172a; }
-      .cms-html h3 { font-size: 1.125rem; line-height: 1.75rem; font-weight: 800; margin: 0 0 .5rem; color: #0f172a; }
-      .cms-html p { margin: 0 0 1rem; color: #334155; line-height: 1.75; }
-      .cms-html ul { margin: .5rem 0 1rem; padding-left: 1.25rem; color: #334155; }
-      .cms-html li { margin: .25rem 0; }
+      .cms-html { color: ${THEME_COLORS.textMedium}; font-family: sans-serif; }
+      
+      .cms-html h1, .cms-html h2, .cms-html h3, .cms-html h4 {
+        color: ${THEME_COLORS.primary};
+        font-family: serif;
+        font-weight: 700;
+      }
+      .cms-html h1 { font-size: 2.25rem; line-height: 2.5rem; margin: 0 0 1rem; }
+      .cms-html h2 { font-size: 1.875rem; line-height: 2.25rem; margin: 2rem 0 1rem; }
+      .cms-html h3 { font-size: 1.5rem; line-height: 2rem; margin: 1.5rem 0 0.75rem; }
+      .cms-html h4 { font-size: 1.25rem; line-height: 1.75rem; margin: 1.5rem 0 0.5rem; }
 
-      .cms-html .container { max-width: 72rem; margin-left: auto; margin-right: auto; }
-      .cms-html .mx-auto { margin-left: auto; margin-right: auto; }
-      .cms-html .px-4 { padding-left: 1rem; padding-right: 1rem; }
-      .cms-html .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+      .cms-html p { margin: 0 0 1rem; line-height: 1.8; color: ${THEME_COLORS.textMedium}; }
+      .cms-html strong { color: ${THEME_COLORS.textDark}; font-weight: 700; }
+      
+      .cms-html ul { margin: 1rem 0; padding-left: 1.5rem; list-style-type: disc; }
+      .cms-html ol { margin: 1rem 0; padding-left: 1.5rem; list-style-type: decimal; }
+      .cms-html li { margin: 0.5rem 0; color: ${THEME_COLORS.textMedium}; }
 
-      .cms-html .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-      .cms-html .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-      .cms-html .md\\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-      .cms-html .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+      .cms-html .container { max-width: 100%; }
+      .cms-html .text-3xl { font-size: 1.875rem; }
+      .cms-html .text-xl { font-size: 1.25rem; }
       .cms-html .font-semibold { font-weight: 600; }
-
-      .cms-html .text-slate-900 { color: #0f172a !important; }
-      .cms-html .text-slate-700 { color: #334155 !important; }
-      .cms-html .text-white { color: #ffffff !important; }
-      .cms-html .text-white\\/90 { color: rgba(255,255,255,.9) !important; }
-
-      .cms-html .mb-3 { margin-bottom: .75rem !important; }
-      .cms-html .mb-4 { margin-bottom: 1rem !important; }
-      .cms-html .mb-6 { margin-bottom: 1.5rem !important; }
-      .cms-html .mb-8 { margin-bottom: 2rem !important; }
-
-      .cms-html .bg-white { background: #ffffff !important; }
-      .cms-html .bg-slate-900 { background: #0f172a !important; }
-
-      .cms-html .border { border-width: 1px; border-style: solid; }
-      .cms-html .border-slate-200 { border-color: #e2e8f0 !important; }
-
-      .cms-html .rounded-2xl { border-radius: 1rem !important; }
-      .cms-html .p-6 { padding: 1.5rem !important; }
-
-      .cms-html .grid { display: grid !important; }
-      .cms-html .gap-6 { gap: 1.5rem !important; }
-      .cms-html .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-      .cms-html .list-disc { list-style-type: disc !important; }
-      .cms-html .pl-6 { padding-left: 1.5rem !important; }
-      .cms-html .space-y-2 > * + * { margin-top: .5rem !important; }
+      
+      .cms-html .text-slate-900 { color: ${THEME_COLORS.textDark} !important; }
+      .cms-html .text-slate-700 { color: ${THEME_COLORS.textMedium} !important; }
+      
+      .cms-html .bg-white { background: ${THEME_COLORS.bgWhite} !important; }
+      .cms-html .bg-gray-50 { background: ${THEME_COLORS.bgSand} !important; }
+      
+      .cms-html .border { border: 1px solid ${THEME_COLORS.border}; }
+      
+      .cms-html a { color: ${THEME_COLORS.primary}; text-decoration: underline; }
+      .cms-html a:hover { color: ${THEME_COLORS.textDark}; }
     `,
     [],
   );
 
   return (
-    <section className="about__area grey-bg z-index-11 p-relative pt-80 pb-60">
-      <div className="container">
+    <section className="bg-bg-primary relative min-h-[60vh] py-20 lg:py-32">
+       {/* Background Decor */}
+       <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-20 -right-20 w-96 h-96 bg-sand-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50" />
+          <div className="absolute top-40 -left-20 w-72 h-72 bg-rose-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50" />
+       </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         {isLoading && (
-          <div className="row mb-40">
-            <div className="col-12">
-              <div className="skeleton-line" style={{ height: 12 }} aria-hidden />
-            </div>
+            <div className="max-w-4xl mx-auto space-y-4">
+             <div className="h-4 bg-sand-200 rounded w-full animate-pulse" />
+             <div className="h-4 bg-sand-200 rounded w-5/6 animate-pulse" />
+             <div className="h-4 bg-sand-200 rounded w-4/6 animate-pulse" />
           </div>
         )}
 
         {!isLoading && (isError || !page) && (
-          <div className="row">
-            <div className="col-12">
-              <div className="alert alert-warning">
-                {ui('ui_privacy_notice_empty', 'Privacy notice content not found.')}
+          <div className="max-w-4xl mx-auto">
+              <div className="bg-sand-50 border border-sand-200 text-brand-dark px-6 py-4 rounded-xl" role="alert">
+                {ui('ui_privacy_notice_empty', 'Content not found.')}
               </div>
-            </div>
           </div>
         )}
 
         {!!page && !isLoading && (
-          <div className="row">
-            <div className="col-12">
+          <div className="max-w-4xl mx-auto">
               <style>{cmsFallbackCss}</style>
 
+              <div className="mb-12 text-center">
+                  <h1 className="text-4xl md:text-5xl font-serif font-bold text-brand-dark mb-4">{title}</h1>
+                  <div className="h-1 w-24 bg-brand-primary mx-auto rounded-full" />
+              </div>
+
               {html ? (
-                <div className="cms-html" dangerouslySetInnerHTML={{ __html: html }} />
+                <article className="prose prose-stone prose-lg max-w-none bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-sand-200 cms-html" dangerouslySetInnerHTML={{ __html: html }} />
               ) : (
-                <div className="alert alert-warning">
-                  {ui(
-                    'ui_privacy_notice_empty_text',
-                    'Aydınlatma metni içeriği yakında yayınlanacaktır.',
-                  )}
+                <div className="bg-sand-50 border border-sand-200 text-brand-dark px-6 py-4 rounded-xl" role="alert">
+                  {ui('ui_privacy_notice_empty_text', 'Content coming soon.')}
                 </div>
               )}
-
-              <span className="d-none" aria-hidden>
-                {title}
-              </span>
-            </div>
           </div>
         )}
       </div>
