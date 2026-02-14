@@ -125,6 +125,8 @@ bun run dev            # http://localhost:3000
 | Format | — | — | `bun run format` |
 | DB Seed | — | `bun run db:seed` | — |
 
+
+
 ## Production Deployment
 
 GitHub Actions ile `main` branch'e push yapildiginda otomatik deploy edilir.
