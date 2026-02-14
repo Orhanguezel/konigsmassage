@@ -4,9 +4,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
+import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
 import { useResolvedLocale } from '@/i18n/locale';
-import { useUIStrings, UI_FALLBACK_EN } from './ui';
+import { UI_FALLBACK_EN } from './ui';
+import type { SiteSettingRow } from '@/integrations/types';
+import type { TranslatedLabel } from '@/types/common';
 
 /**
  * DB tarafında kullanacağın section key'leri (site_settings.key)
@@ -428,26 +430,22 @@ export type UiSectionResult = {
   locale: string; // ✅ dynamic
 };
 
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                           */
+/* ------------------------------------------------------------------ */
+
 function unwrapMaybeData(x: any): any {
   if (!x) return x;
   if (typeof x !== 'object' || Array.isArray(x)) return x;
-
-  // common wrappers: { data: ... } or { value: ... }
   if ('data' in x) return (x as any).data;
   if ('value' in x) return (x as any).value;
-
   return x;
 }
 
 function tryParseJsonObject(input: unknown): Record<string, unknown> {
   const x = unwrapMaybeData(input);
-
   if (!x) return {};
-
-  // already object
   if (typeof x === 'object' && !Array.isArray(x)) return x as Record<string, unknown>;
-
-  // maybe stringified JSON
   if (typeof x === 'string') {
     const s = x.trim();
     if (!s) return {};
@@ -455,29 +453,78 @@ function tryParseJsonObject(input: unknown): Record<string, unknown> {
       try {
         const j = JSON.parse(s);
         if (j && typeof j === 'object' && !Array.isArray(j)) return j as Record<string, unknown>;
-      } catch {
-        return {};
-      }
+      } catch { return {}; }
     }
   }
-
   return {};
 }
 
+function tryParseJson(x: unknown): unknown {
+  if (typeof x !== 'string') return x;
+  const s = x.trim();
+  if (!s) return x;
+  if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) {
+    try { return JSON.parse(s); } catch { return x; }
+  }
+  return x;
+}
+
+function normShortLocale(x: unknown): string {
+  return String(x || '').trim().toLowerCase().replace('_', '-').split('-')[0].trim();
+}
+
+type SettingsValueRecord = { label?: TranslatedLabel; [k: string]: unknown };
+
+function normalizeValueToLabel(value: unknown): SettingsValueRecord {
+  const v = tryParseJson(value);
+  if (typeof v === 'string') return { label: { en: v } as TranslatedLabel };
+  if (v && typeof v === 'object' && !Array.isArray(v)) {
+    const obj = v as any;
+    if (obj.label && typeof obj.label === 'object' && !Array.isArray(obj.label)) return obj;
+    return { label: obj as TranslatedLabel };
+  }
+  return {};
+}
+
+/* ------------------------------------------------------------------ */
+/*  useUiSection — TÜM ui_* key'leri TEK istek ile çeker              */
+/*  RTK Query deduplication: tüm section'lar aynı cache'i paylaşır    */
+/* ------------------------------------------------------------------ */
+
 export function useUiSection(section: UiSectionKey, localeOverride?: string): UiSectionResult {
-  // ✅ single source of truth
   const locale = useResolvedLocale(localeOverride);
 
-  // 1) section bazlı JSON override (ui_header, ui_footer, ...)
-  const { data: uiSetting } = useGetSiteSettingByKeyQuery({ key: section, locale });
+  // ✅ TEK istek: GET /site_settings?prefix=ui_&locale=de
+  // RTK Query tüm useUiSection çağrılarını deduplicate eder (aynı args).
+  const { data: allUiSettings } = useListSiteSettingsQuery(
+    locale ? { prefix: 'ui_', locale } : undefined,
+  );
 
+  // Hızlı lookup Map (tüm ui_* satırları)
+  const allUiMap = useMemo(() => {
+    const m = new Map<string, SiteSettingRow>();
+    if (allUiSettings) {
+      for (const row of allUiSettings) m.set(row.key, row);
+    }
+    return m;
+  }, [allUiSettings]);
+
+  // 1) Section bazlı JSON override (ui_header, ui_footer, ...)
   const json = useMemo<Record<string, unknown>>(() => {
-    return tryParseJsonObject(uiSetting?.value);
-  }, [uiSetting?.value]);
+    const row = allUiMap.get(section);
+    return row ? tryParseJsonObject(row.value) : {};
+  }, [allUiMap, section]);
 
-  // 2) tekil key’ler (ui_header_nav_home gibi)
+  // 2) Tekil key'ler (ui_header_nav_home gibi) → label extraction
   const keys = SECTION_KEYS[section] ?? [];
-  const { t: tInner } = useUIStrings(keys, locale);
+  const keyMap = useMemo(() => {
+    const out: Record<string, SettingsValueRecord> = {};
+    for (const k of keys) {
+      const row = allUiMap.get(k);
+      if (row) out[k] = normalizeValueToLabel(row.value);
+    }
+    return out;
+  }, [allUiMap, keys]);
 
   const ui = (key: string, hardFallback = ''): string => {
     const k = String(key || '').trim();
@@ -488,8 +535,19 @@ export function useUiSection(section: UiSectionKey, localeOverride?: string): Ui
     if (typeof raw === 'string' && raw.trim()) return raw.trim();
 
     // B) tekil UI key DB
-    const fromDb = String(tInner(k) || '').trim();
-    if (fromDb && fromDb !== k) return fromDb;
+    const record = keyMap[k];
+    if (record) {
+      const label = (record.label || {}) as TranslatedLabel;
+      const l = normShortLocale(locale);
+      const val =
+        (l && (label as any)[l]) ||
+        (label as any).en ||
+        (label as any).tr ||
+        (Object.values(label || {})[0] as string) ||
+        '';
+      const fromDb = (typeof val === 'string' ? val : '').trim();
+      if (fromDb && fromDb !== k) return fromDb;
+    }
 
     // C) param hard fallback
     const hf = String(hardFallback || '').trim();
