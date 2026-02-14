@@ -28,20 +28,31 @@ jobs:
           bun install --frozen-lockfile || bun install
           bun run build
 
-      - name: Deploy backend to VPS (rsync)
-        uses: burnett01/rsync-deployments@v8
-        with:
-          switches: >-
-            -avz --delete
-            --exclude=node_modules
-            --exclude=.git
-            --exclude=.env
-            --exclude=.DS_Store
-          path: backend/
-          remote_path: /var/www/konigsmassage/backend
-          remote_host: ${{ secrets.VPS_HOST }}
-          remote_user: ${{ secrets.VPS_USER }}
-          remote_key: ${{ secrets.VPS_KEY }}
+      # ----------------------------
+      # SSH key setup (tek seferde, retry ile paylaşılır)
+      # ----------------------------
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -T 10 -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy backend to VPS (rsync with retry)
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          SSH_OPTS="-o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key"
+          for i in 1 2 3; do
+            rsync -avz --delete \
+              --exclude=node_modules --exclude=.git --exclude=.env --exclude=.DS_Store \
+              -e "ssh $SSH_OPTS" \
+              backend/ "${VPS_USER}@${VPS_HOST}:/var/www/konigsmassage/backend" \
+              && break
+            echo "⚠ Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
 
       # ----------------------------
       # Frontend (Next.js) — Bun only
@@ -54,20 +65,21 @@ jobs:
           bun install --frozen-lockfile || bun install
           bun run build
 
-      - name: Deploy frontend to VPS (rsync)
-        uses: burnett01/rsync-deployments@v8
-        with:
-          switches: >-
-            -avz --delete
-            --exclude=node_modules
-            --exclude=.git
-            --exclude=.env
-            --exclude=.DS_Store
-          path: frontend/
-          remote_path: /var/www/konigsmassage/frontend
-          remote_host: ${{ secrets.VPS_HOST }}
-          remote_user: ${{ secrets.VPS_USER }}
-          remote_key: ${{ secrets.VPS_KEY }}
+      - name: Deploy frontend to VPS (rsync with retry)
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          SSH_OPTS="-o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key"
+          for i in 1 2 3; do
+            rsync -avz --delete \
+              --exclude=node_modules --exclude=.git --exclude=.env --exclude=.DS_Store \
+              -e "ssh $SSH_OPTS" \
+              frontend/ "${VPS_USER}@${VPS_HOST}:/var/www/konigsmassage/frontend" \
+              && break
+            echo "⚠ Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
 
       # ----------------------------
       # PM2 reload (backend + frontend) + bind check
@@ -78,6 +90,8 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
+          timeout: 60s
+          command_timeout: 120s
           script: |
             set -e
 
