@@ -153,6 +153,11 @@ function guessExt(mime?: string): string {
   if (m === 'image/png') return '.png';
   if (m === 'image/webp') return '.webp';
   if (m === 'image/gif') return '.gif';
+  if (m === 'image/svg+xml') return '.svg';
+  if (m === 'image/x-icon' || m === 'image/vnd.microsoft.icon') return '.ico';
+  if (m === 'image/avif') return '.avif';
+  if (m === 'image/bmp') return '.bmp';
+  if (m === 'image/tiff') return '.tiff';
   if (m === 'application/pdf') return '.pdf';
   if (m === 'text/plain') return '.txt';
   if (m === 'application/zip') return '.zip';
@@ -258,6 +263,9 @@ async function uploadLocal(cfg: Cfg, buffer: Buffer, opts: UpOpts): Promise<Uplo
 function pickResourceType(mime?: string): 'auto' | 'image' | 'raw' | 'video' {
   const m = (mime || '').toLowerCase();
   if (m === 'application/pdf') return 'raw';
+  // ICO ve SVG Cloudinary'de resource_type:'image' olarak işlenemez
+  if (m === 'image/x-icon' || m === 'image/vnd.microsoft.icon') return 'raw';
+  if (m === 'image/svg+xml') return 'raw';
   if (m.startsWith('image/')) return 'image';
   if (m.startsWith('video/')) return 'video';
   return 'auto';

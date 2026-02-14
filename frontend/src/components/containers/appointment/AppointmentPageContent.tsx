@@ -101,13 +101,23 @@ export const AppointmentPageContent: React.FC = () => {
   const [localMsg, setLocalMsg] = useState<string>('');
   const [success, setSuccess] = useState(false);
 
+  // Admin panelden yönetilebilir cover image (site_appointment_cover key)
+  const { data: coverSetting } = useGetSiteSettingByKeyQuery({ key: 'site_appointment_cover' });
   const coverImage = useMemo(() => {
-    const raw = safeStr(ui('ui_appointment_cover_image', ''));
+    // 1) Admin panelden yüklenen resim (BrandMediaTab)
+    const fromSetting = safeStr(
+      typeof coverSetting?.value === 'object' && coverSetting?.value !== null
+        ? (coverSetting.value as any)?.url
+        : coverSetting?.value,
+    );
+    // 2) UI section'dan gelen (eski yöntem, fallback)
+    const fromUi = safeStr(ui('ui_appointment_cover_image', ''));
+    // 3) Hardcoded fallback
     const fallback =
       'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp';
-    const src = raw || fallback;
+    const src = fromSetting || fromUi || fallback;
     return toCdnSrc(src, 1200, 900, 'fill') || src;
-  }, [ui]);
+  }, [coverSetting, ui]);
 
   const coverAlt = useMemo(() => {
     return safeStr(ui('ui_appointment_cover_image_alt', '')) || t('ui_appointment_page_title', 'Appointment');

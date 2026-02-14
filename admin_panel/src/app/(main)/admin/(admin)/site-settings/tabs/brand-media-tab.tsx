@@ -42,6 +42,7 @@ export const SITE_MEDIA_KEYS = [
   'site_apple_touch_icon',
   'site_app_icon_512',
   'site_og_default_image',
+  'site_appointment_cover',
 ] as const;
 
 type MediaKey = (typeof SITE_MEDIA_KEYS)[number];
@@ -67,6 +68,7 @@ const previewConfig: Record<
   site_apple_touch_icon: { aspect: '1x1', fit: 'contain' },
   site_app_icon_512: { aspect: '1x1', fit: 'contain' },
   site_og_default_image: { aspect: '16x9', fit: 'cover' },
+  site_appointment_cover: { aspect: '16x9', fit: 'cover' },
 };
 
 /* ----------------------------- helpers ----------------------------- */

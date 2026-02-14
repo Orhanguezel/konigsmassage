@@ -1539,7 +1539,8 @@
             "site_favicon": "Favicon",
             "site_apple_touch_icon": "Apple Touch Icon",
             "site_app_icon_512": "App Icon 512x512",
-            "site_og_default_image": "Default OG Image"
+            "site_og_default_image": "Default OG Image",
+            "site_appointment_cover": "Appointment Cover Image"
           },
           "updated": "{label} updated.",
           "updateError": "Failed to save {label}.",

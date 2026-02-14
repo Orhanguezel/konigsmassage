@@ -433,7 +433,8 @@
             "site_favicon": "Favicon",
             "site_apple_touch_icon": "Apple Touch Icon",
             "site_app_icon_512": "App Icon 512x512",
-            "site_og_default_image": "Varsayılan OG Görseli"
+            "site_og_default_image": "Varsayılan OG Görseli",
+            "site_appointment_cover": "Randevu Kapak Görseli"
           },
           "updated": "{label} güncellendi.",
           "updateError": "{label} kaydedilirken hata oluştu.",
