@@ -15,10 +15,17 @@ const ROLE_WEIGHT: Record<RoleName, number> = {
 
 /** Kullanıcının rollerini çekip en yüksek öncelikli olanı döndürür. */
 export async function getPrimaryRole(userId: string): Promise<RoleName> {
-  const rows = await db
-    .select()
-    .from(userRoles)
-    .where(eq(userRoles.user_id, userId));
+  if (!userId) return "user";
+
+  let rows: Array<{ role: string }> = [];
+  try {
+    rows = await db
+      .select()
+      .from(userRoles)
+      .where(eq(userRoles.user_id, userId));
+  } catch {
+    return "user";
+  }
 
   if (!rows?.length) return "user";
 

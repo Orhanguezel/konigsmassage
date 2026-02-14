@@ -13,8 +13,8 @@ import { ArrowLeft, Save, Trash2, Loader2 } from 'lucide-react';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
-import { resolveAdminApiLocale } from '../../../../../../i18n/adminLocale';
-import { localeShortClientOr } from '../../../../../../i18n/localeShortClient';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClientOr } from '@/i18n/localeShortClient';
 
 import { cn } from '@/lib/utils';
 
@@ -25,7 +25,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { AdminLocaleSelect, type AdminLocaleOption } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
+import {
+  AdminLocaleSelect,
+  type AdminLocaleOption,
+} from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
 
 import {
   AlertDialog,
@@ -57,12 +60,7 @@ type FormData = {
 
 function getErrMsg(e: unknown, defaultMsg: string = 'Operation failed'): string {
   const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message ||
-    anyErr?.data?.message ||
-    anyErr?.message ||
-    defaultMsg
-  );
+  return anyErr?.data?.error?.message || anyErr?.data?.message || anyErr?.message || defaultMsg;
 }
 
 export default function AdminFooterSectionsDetailClient({ id }: { id: string }) {
@@ -71,7 +69,12 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
   const t = useAdminT();
 
   // Locale management
-  const { localeOptions, defaultLocaleFromDb, coerceLocale, loading: localesLoading } = useAdminLocales();
+  const {
+    localeOptions,
+    defaultLocaleFromDb,
+    coerceLocale,
+    loading: localesLoading,
+  } = useAdminLocales();
 
   const safeLocaleOptions: AdminLocaleOption[] = React.useMemo(() => {
     if (!Array.isArray(localeOptions)) return [];
@@ -82,7 +85,11 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
   }, [localeOptions]);
 
   const initialLocale = React.useMemo(() => {
-    return defaultLocaleFromDb || localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de') || 'de';
+    return (
+      defaultLocaleFromDb ||
+      localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de') ||
+      'de'
+    );
   }, [defaultLocaleFromDb]);
 
   // RTK Query - only fetch if editing
@@ -90,10 +97,7 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
     data: existingItem,
     isLoading: loadingItem,
     error: loadError,
-  } = useGetFooterSectionAdminQuery(
-    { id, locale: undefined },
-    { skip: isNew }
-  );
+  } = useGetFooterSectionAdminQuery({ id, locale: undefined }, { skip: isNew });
 
   const [createSection, { isLoading: isCreating }] = useCreateFooterSectionAdminMutation();
   const [updateSection, { isLoading: isUpdating }] = useUpdateFooterSectionAdminMutation();
@@ -149,7 +153,8 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
       return;
     }
 
-    const apiLocale = formData.locale || resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
+    const apiLocale =
+      formData.locale || resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
 
     try {
       if (isNew) {
@@ -251,12 +256,12 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
                 <CardTitle>
-                  {isNew ? t('footerSections.form.createTitle') : t('footerSections.form.editTitle')}
+                  {isNew
+                    ? t('footerSections.form.createTitle')
+                    : t('footerSections.form.editTitle')}
                 </CardTitle>
                 <CardDescription>
-                  {isNew
-                    ? t('footerSections.form.createDesc')
-                    : t('footerSections.form.editDesc')}
+                  {isNew ? t('footerSections.form.createDesc') : t('footerSections.form.editDesc')}
                 </CardDescription>
               </div>
               <Button
@@ -329,9 +334,13 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
                   />
                   <Label htmlFor="is_active" className="cursor-pointer text-sm">
                     {formData.is_active ? (
-                      <Badge variant="default">{t('footerSections.header.activeOptions.active')}</Badge>
+                      <Badge variant="default">
+                        {t('footerSections.header.activeOptions.active')}
+                      </Badge>
                     ) : (
-                      <Badge variant="secondary">{t('footerSections.header.activeOptions.inactive')}</Badge>
+                      <Badge variant="secondary">
+                        {t('footerSections.header.activeOptions.inactive')}
+                      </Badge>
                     )}
                   </Label>
                 </div>
@@ -348,9 +357,7 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, title: e.target.value }))
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                   placeholder={t('footerSections.form.titlePlaceholder')}
                   disabled={busy}
                   required
@@ -365,16 +372,12 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
                 <Input
                   id="slug"
                   value={formData.slug}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, slug: e.target.value }))
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
                   placeholder={t('footerSections.form.slugPlaceholder')}
                   disabled={busy}
                   required
                 />
-                <p className="text-xs text-muted-foreground">
-                  URL slug
-                </p>
+                <p className="text-xs text-muted-foreground">URL slug</p>
               </div>
             </div>
 
@@ -386,9 +389,7 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, description: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder={t('footerSections.form.descriptionPlaceholder')}
                 disabled={busy}
                 rows={4}
@@ -463,7 +464,9 @@ export default function AdminFooterSectionsDetailClient({ id }: { id: string }) 
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('footerSections.list.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>{t('footerSections.list.confirm')}</AlertDialogAction>
+            <AlertDialogAction onClick={handleDeleteConfirm}>
+              {t('footerSections.list.confirm')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

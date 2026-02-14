@@ -12,12 +12,37 @@ import type {
 } from '@/integrations/shared';
 import { normalizeAdminUser } from '@/integrations/shared';
 
-const ADMIN_USERS_BASE = '/users';
+const ADMIN_USERS_BASE = '/admin/users';
+
+type MaybeUsersListResponse = {
+  data?: unknown;
+  items?: unknown;
+  rows?: unknown;
+};
+
+function unwrapUsersList(input: unknown): AdminUserRaw[] {
+  if (Array.isArray(input)) return input as AdminUserRaw[];
+
+  const wrapped = (input ?? {}) as MaybeUsersListResponse;
+  if (Array.isArray(wrapped.data)) return wrapped.data as AdminUserRaw[];
+  if (Array.isArray(wrapped.items)) return wrapped.items as AdminUserRaw[];
+  if (Array.isArray(wrapped.rows)) return wrapped.rows as AdminUserRaw[];
+
+  return [];
+}
+
+function unwrapUser(input: unknown): AdminUserRaw {
+  if (!input || typeof input !== 'object') return input as AdminUserRaw;
+  const wrapped = input as { data?: unknown; item?: unknown };
+  if (wrapped.data && typeof wrapped.data === 'object') return wrapped.data as AdminUserRaw;
+  if (wrapped.item && typeof wrapped.item === 'object') return wrapped.item as AdminUserRaw;
+  return input as AdminUserRaw;
+}
 
 export const authAdminApi = baseApi.injectEndpoints({
   endpoints: (b) => ({
     /** GET /users */
-    adminList: b.query<AdminUserView[], AdminUsersListParams | void>({
+    adminList: b.query<AdminUserView[], AdminUsersListParams | undefined>({
       query: (params) => {
         const p = (params ?? {}) as AdminUsersListParams;
         const sp = new URLSearchParams();
@@ -34,11 +59,10 @@ export const authAdminApi = baseApi.injectEndpoints({
         return { url: qs ? `${ADMIN_USERS_BASE}?${qs}` : ADMIN_USERS_BASE, method: 'GET' };
       },
       transformResponse: (res: unknown): AdminUserView[] => {
-        if (!Array.isArray(res)) return [];
-        return (res as AdminUserRaw[]).map(normalizeAdminUser);
+        return unwrapUsersList(res).map(normalizeAdminUser);
       },
       providesTags: (result) =>
-        result && result.length
+        result?.length
           ? [
               ...result.map((u) => ({ type: 'AdminUsers' as const, id: u.id })),
               { type: 'AdminUsers' as const, id: 'LIST' },
@@ -49,7 +73,7 @@ export const authAdminApi = baseApi.injectEndpoints({
     /** GET /users/:id */
     adminGet: b.query<AdminUserView, { id: string }>({
       query: ({ id }) => ({ url: `${ADMIN_USERS_BASE}/${encodeURIComponent(id)}`, method: 'GET' }),
-      transformResponse: (res: unknown): AdminUserView => normalizeAdminUser(res as AdminUserRaw),
+      transformResponse: (res: unknown): AdminUserView => normalizeAdminUser(unwrapUser(res)),
       providesTags: (_r, _e, arg) => [{ type: 'AdminUsers' as const, id: arg.id }],
     }),
 
@@ -60,7 +84,7 @@ export const authAdminApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: patch,
       }),
-      transformResponse: (res: unknown): AdminUserView => normalizeAdminUser(res as AdminUserRaw),
+      transformResponse: (res: unknown): AdminUserView => normalizeAdminUser(unwrapUser(res)),
       invalidatesTags: (_r, _e, arg) => [
         { type: 'AdminUsers' as const, id: arg.id },
         { type: 'AdminUsers' as const, id: 'LIST' },

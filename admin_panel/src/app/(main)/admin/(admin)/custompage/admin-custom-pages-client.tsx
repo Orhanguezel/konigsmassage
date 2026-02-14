@@ -14,8 +14,8 @@ import { toast } from 'sonner';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
-import { resolveAdminApiLocale } from '../../../../../i18n/adminLocale';
-import { localeShortClient, localeShortClientOr } from '../../../../../i18n/localeShortClient';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 
 import type { CustomPageDto } from '@/integrations/shared';
 import {

@@ -65,18 +65,10 @@ export type AdminNavItemKey =
   | 'site_settings'
   | 'custom_pages'
   | 'services'
-  | 'projects'
-  | 'offers'
-  | 'pricing'
-  | 'brands'
-  | 'resume'
-  | 'skills'
   | 'sliders'
   | 'menu_items'
   | 'footer_sections'
   | 'faqs'
-  | 'popups'
-  | 'newsletter'
   | 'contacts'
   | 'reviews'
   | 'bookings'
@@ -88,8 +80,7 @@ export type AdminNavItemKey =
   | 'db'
   | 'audit'
   | 'availability'
-  | 'reports'
-  | 'resources';
+  | 'reports';
 
 export type AdminNavGroupKey = 'general' | 'content' | 'marketing' | 'communication' | 'system';
 
@@ -118,24 +109,10 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'site_settings', url: '/admin/site-settings', icon: Settings },
       { key: 'custom_pages', url: '/admin/custompage', icon: FileText },
       { key: 'services', url: '/admin/services', icon: Wrench },
-      { key: 'projects', url: '/admin/projects', icon: Package },
-      { key: 'pricing', url: '/admin/pricing', icon: Receipt },
-      { key: 'offers', url: '/admin/offers', icon: Newspaper },
-      { key: 'brands', url: '/admin/brands', icon: Star },
-      { key: 'resume', url: '/admin/resume', icon: FileText },
-      { key: 'skills', url: '/admin/skills', icon: Shield },
       { key: 'sliders', url: '/admin/slider', icon: Images },
       { key: 'menu_items', url: '/admin/menuitem', icon: Menu },
       { key: 'footer_sections', url: '/admin/footer-sections', icon: FileText },
       { key: 'faqs', url: '/admin/faqs', icon: HelpCircle },
-    ],
-  },
-  {
-    id: 3,
-    key: 'marketing',
-    items: [
-      { key: 'popups', url: '/admin/popups', icon: Megaphone },
-      { key: 'newsletter', url: '/admin/newsletter', icon: Mail },
     ],
   },
   {
@@ -145,6 +122,7 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'contacts', url: '/admin/contacts', icon: Contact2 },
       { key: 'reviews', url: '/admin/reviews', icon: MessageSquare },
       { key: 'bookings', url: '/admin/bookings', icon: Calendar },
+      { key: 'availability', url: '/admin/availability', icon: Clock },
       { key: 'mail', url: '/admin/mail', icon: Send },
     ],
   },
@@ -158,9 +136,7 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'storage', url: '/admin/storage', icon: HardDrive },
       { key: 'db', url: '/admin/db', icon: Database },
       { key: 'audit', url: '/admin/audit', icon: FileSearch },
-      { key: 'availability', url: '/admin/availability', icon: Clock },
       { key: 'reports', url: '/admin/reports', icon: BarChart },
-      { key: 'resources', url: '/admin/resources', icon: Briefcase },
     ],
   },
 ];
@@ -176,18 +152,10 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   site_settings: 'Site Settings',
   custom_pages: 'Custom Pages',
   services: 'Services',
-  projects: 'Projects',
-  offers: 'Offers',
-  pricing: 'Pricing',
-  brands: 'Brands',
-  resume: 'Resume',
-  skills: 'Skills',
   sliders: 'Sliders',
   menu_items: 'Menu Items',
   footer_sections: 'Footer Sections',
   faqs: 'FAQs',
-  popups: 'Popups',
-  newsletter: 'Newsletter',
   contacts: 'Contacts',
   reviews: 'Reviews',
   bookings: 'Bookings',
@@ -200,7 +168,6 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   audit: 'Audit',
   availability: 'Availability',
   reports: 'Reports',
-  resources: 'Resources',
 };
 
 export function buildAdminSidebarItems(copy?: Partial<AdminNavCopy> | null): NavGroup[] {

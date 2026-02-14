@@ -6,16 +6,12 @@
 // =============================================================
 
 import * as React from 'react';
-import { useAdminUiCopy } from '@/app/(main)/admin/_components/common/useAdminUiCopy';
 import { useListBookingsAdminQuery } from '@/integrations/hooks';
 
-import { BookingsHeader, type BookingsFilters } from './BookingsHeader';
-import { BookingsList } from './BookingsList';
+import { BookingsHeader, type BookingsFilters } from './bookings-header';
+import { BookingsList } from './bookings-list';
 
 export default function AdminBookingsClient() {
-  const { copy } = useAdminUiCopy();
-  const page = copy.pages?.bookings ?? {};
-
   const [filters, setFilters] = React.useState<BookingsFilters>({
     q: '',
     status: 'all',
@@ -27,7 +23,7 @@ export default function AdminBookingsClient() {
 
   const params = React.useMemo(
     () => ({
-      q: filters.q || undefined,
+      q: filters.q.trim() || undefined,
       status: filters.status === 'all' ? undefined : filters.status,
       is_read: filters.is_read === 'all' ? undefined : (filters.is_read === 'read' ? true : false),
       appointment_date: filters.appointment_date || undefined,
@@ -38,19 +34,20 @@ export default function AdminBookingsClient() {
     [filters],
   );
 
-  const { data: bookings = [], isLoading, refetch } = useListBookingsAdminQuery(params);
+  const { data: bookings = [], isLoading, isFetching, refetch } = useListBookingsAdminQuery(params);
+  const busy = isLoading || isFetching;
 
   return (
     <div className="space-y-6">
       <BookingsHeader
         filters={filters}
         total={bookings.length}
-        loading={isLoading}
+        loading={busy}
         onFiltersChange={setFilters}
         onRefresh={refetch}
       />
 
-      <BookingsList items={bookings} loading={isLoading} />
+      <BookingsList items={bookings} loading={busy} />
     </div>
   );
 }

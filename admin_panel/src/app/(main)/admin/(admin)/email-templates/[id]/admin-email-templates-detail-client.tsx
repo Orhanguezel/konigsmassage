@@ -11,24 +11,15 @@
 // =============================================================
 
 import * as React from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import { ArrowLeft, Code2, Loader2, Mail, Save, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Trash2, Loader2, Code2, Mail } from 'lucide-react';
 
-import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
-import { localeShortClient, localeShortClientOr } from '../../../../../../i18n/localeShortClient';
-
-import { cn } from '@/lib/utils';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
 import { AdminLocaleSelect } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
-
+import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,14 +30,25 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-
-import type { EmailTemplateAdminCreatePayload } from '@/integrations/shared';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import {
-  useGetEmailTemplateAdminQuery,
   useCreateEmailTemplateAdminMutation,
-  useUpdateEmailTemplateAdminMutation,
   useDeleteEmailTemplateAdminMutation,
+  useGetEmailTemplateAdminQuery,
+  useUpdateEmailTemplateAdminMutation,
 } from '@/integrations/hooks';
+import type {
+  EmailTemplateAdminCreatePayload,
+  EmailTemplateAdminTranslationDto,
+} from '@/integrations/shared';
+
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 
 type FormData = {
   template_key: string;
@@ -58,14 +60,17 @@ type FormData = {
   locale: string;
 };
 
-function getErrMsg(e: unknown): string {
-  const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message ||
-    anyErr?.data?.message ||
-    anyErr?.message ||
-    'İşlem başarısız'
-  );
+function getErrMsg(e: unknown, fallback: string): string {
+  const err = e as {
+    data?: { error?: { message?: unknown }; message?: unknown };
+    message?: unknown;
+  };
+
+  const candidates = [err?.data?.error?.message, err?.data?.message, err?.message];
+  for (const item of candidates) {
+    if (typeof item === 'string' && item.trim()) return item;
+  }
+  return fallback;
 }
 
 function parseVariables(input: string): string[] | null {
@@ -96,22 +101,47 @@ function stringifyVariables(vars: string[] | null | undefined): string {
   return vars.join(', ');
 }
 
+function findTranslationByLocale(
+  translations: EmailTemplateAdminTranslationDto[] | undefined,
+  locale: string | null | undefined,
+): EmailTemplateAdminTranslationDto | null {
+  if (!translations?.length) return null;
+
+  const normalizedLocale = localeShortClient(locale || '');
+  if (normalizedLocale) {
+    const exact = translations.find((item) => localeShortClient(item.locale) === normalizedLocale);
+    if (exact) return exact;
+  }
+
+  return translations[0] ?? null;
+}
+
 export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) {
   const router = useRouter();
-  const isNew = id === 'new';
+  const t = useAdminT();
+  const normalizedId = String(id || '').trim();
+  const isInvalidId = !normalizedId || normalizedId === 'undefined' || normalizedId === 'null';
+  const isNew = normalizedId === 'new';
 
   // Locale management
-  const { localeOptions, defaultLocaleFromDb, coerceLocale, loading: localesLoading } = useAdminLocales();
+  const {
+    localeOptions,
+    defaultLocaleFromDb,
+    coerceLocale,
+    loading: localesLoading,
+  } = useAdminLocales();
 
   // RTK Query - only fetch if editing
   const {
     data: existingItem,
     isLoading: loadingItem,
     error: loadError,
-  } = useGetEmailTemplateAdminQuery(
-    { id },
-    { skip: isNew }
-  );
+  } = useGetEmailTemplateAdminQuery({ id: normalizedId }, { skip: isNew || isInvalidId });
+
+  React.useEffect(() => {
+    if (!isInvalidId) return;
+    router.replace('/admin/email-templates');
+  }, [isInvalidId, router]);
 
   const [createTemplate, { isLoading: isCreating }] = useCreateEmailTemplateAdminMutation();
   const [updateTemplate, { isLoading: isUpdating }] = useUpdateEmailTemplateAdminMutation();
@@ -131,38 +161,77 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
       '',
   });
 
+  React.useEffect(() => {
+    if (localesLoading) return;
+    setFormData((prev) => {
+      const nextLocale = coerceLocale(prev.locale, defaultLocaleFromDb);
+      if (nextLocale === prev.locale) return prev;
+      return { ...prev, locale: nextLocale };
+    });
+  }, [coerceLocale, defaultLocaleFromDb, localesLoading]);
+
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
 
   // Load existing data
   React.useEffect(() => {
     if (!isNew && existingItem) {
-      // For edit mode, we might have translations
-      // Use the first translation or default to empty
-      const firstTranslation = existingItem.translations?.[0];
+      const preferredLocale =
+        defaultLocaleFromDb ||
+        localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de', 'de') ||
+        '';
+      const initialTranslation = findTranslationByLocale(
+        existingItem.translations,
+        preferredLocale,
+      );
+      const initialLocale = initialTranslation?.locale || preferredLocale;
 
       setFormData({
         template_key: existingItem.template_key || '',
-        template_name: firstTranslation?.template_name || '',
-        subject: firstTranslation?.subject || '',
-        content: firstTranslation?.content || '',
+        template_name: initialTranslation?.template_name || '',
+        subject: initialTranslation?.subject || '',
+        content: initialTranslation?.content || '',
         variables: stringifyVariables(existingItem.variables),
         is_active: existingItem.is_active,
-        locale:
-          firstTranslation?.locale ||
-          defaultLocaleFromDb ||
-          localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de', 'de') ||
-          '',
+        locale: initialLocale,
       });
     }
   }, [existingItem, isNew, defaultLocaleFromDb]);
 
-  // Update default locale if needed
+  // Keep translation fields synced when locale changes in edit mode.
   React.useEffect(() => {
-    if (isNew && defaultLocaleFromDb && !formData.locale) {
-      setFormData((prev) => ({ ...prev, locale: defaultLocaleFromDb }));
+    if (isNew || !existingItem) return;
+
+    const translation = findTranslationByLocale(existingItem.translations, formData.locale);
+    if (!translation) {
+      setFormData((prev) => {
+        if (!prev.template_name && !prev.subject && !prev.content) return prev;
+        return { ...prev, template_name: '', subject: '', content: '' };
+      });
+      return;
     }
-  }, [isNew, defaultLocaleFromDb, formData.locale]);
+
+    setFormData((prev) => {
+      if (
+        prev.template_name === translation.template_name &&
+        prev.subject === translation.subject &&
+        prev.content === translation.content
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        template_name: translation.template_name || '',
+        subject: translation.subject || '',
+        content: translation.content || '',
+      };
+    });
+  }, [isNew, existingItem, formData.locale]);
+
+  const activeTranslation = React.useMemo(
+    () => findTranslationByLocale(existingItem?.translations, formData.locale),
+    [existingItem?.translations, formData.locale],
+  );
 
   const busy = isCreating || isUpdating || isDeleting || loadingItem;
 
@@ -171,22 +240,22 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
 
     // Validation
     if (!formData.template_key.trim()) {
-      toast.error('Template Key gerekli');
+      toast.error(t('admin.emailTemplates.detail.validation.templateKeyRequired'));
       return;
     }
 
     if (!formData.template_name.trim()) {
-      toast.error('Template Name gerekli');
+      toast.error(t('admin.emailTemplates.detail.validation.templateNameRequired'));
       return;
     }
 
     if (!formData.subject.trim()) {
-      toast.error('Subject gerekli');
+      toast.error(t('admin.emailTemplates.detail.validation.subjectRequired'));
       return;
     }
 
     if (!formData.content.trim()) {
-      toast.error('Content gerekli');
+      toast.error(t('admin.emailTemplates.detail.validation.contentRequired'));
       return;
     }
 
@@ -207,11 +276,11 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
         };
 
         await createTemplate(payload).unwrap();
-        toast.success('Şablon oluşturuldu');
+        toast.success(t('admin.emailTemplates.detail.toast.created'));
         router.push('/admin/email-templates');
       } else {
         await updateTemplate({
-          id,
+          id: normalizedId,
           body: {
             template_key: formData.template_key.trim(),
             template_name: formData.template_name.trim(),
@@ -222,10 +291,10 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
             locale: apiLocale,
           },
         }).unwrap();
-        toast.success('Şablon güncellendi');
+        toast.success(t('admin.emailTemplates.detail.toast.updated'));
       }
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('admin.emailTemplates.common.operationFailed')));
     }
   };
 
@@ -237,11 +306,11 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
     if (isNew) return;
 
     try {
-      await deleteTemplate({ id }).unwrap();
-      toast.success('Şablon silindi');
+      await deleteTemplate({ id: normalizedId }).unwrap();
+      toast.success(t('admin.emailTemplates.detail.toast.deleted'));
       router.push('/admin/email-templates');
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('admin.emailTemplates.common.operationFailed')));
     }
   };
 
@@ -250,13 +319,18 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
     setFormData((prev) => ({ ...prev, locale: coerced }));
   };
 
+  if (isInvalidId) {
+    return null;
+  }
+
   if (loadError) {
     return (
       <div className="space-y-6">
         <Card>
           <CardContent className="py-12 text-center">
             <div className="text-destructive">
-              Kayıt yüklenemedi: {getErrMsg(loadError)}
+              {t('admin.emailTemplates.detail.loadError')}:{' '}
+              {getErrMsg(loadError, t('admin.emailTemplates.common.operationFailed'))}
             </div>
             <Button
               variant="outline"
@@ -264,7 +338,7 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
               className="mt-4 gap-2"
             >
               <ArrowLeft className="size-4" />
-              Listeye Dön
+              {t('admin.emailTemplates.detail.backToList')}
             </Button>
           </CardContent>
         </Card>
@@ -279,7 +353,7 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
           <CardContent className="flex items-center justify-center py-12">
             <div className="flex items-center gap-2">
               <Loader2 className="size-5 animate-spin" />
-              <span>Yükleniyor...</span>
+              <span>{t('admin.emailTemplates.common.loading')}</span>
             </div>
           </CardContent>
         </Card>
@@ -296,12 +370,14 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
                 <CardTitle>
-                  {isNew ? 'Yeni Email Template' : 'Email Template Düzenle'}
+                  {isNew
+                    ? t('admin.emailTemplates.detail.titleCreate')
+                    : t('admin.emailTemplates.detail.titleEdit')}
                 </CardTitle>
                 <CardDescription>
                   {isNew
-                    ? 'Yeni bir email şablonu oluşturun'
-                    : 'Mevcut email şablonunu düzenleyin'}
+                    ? t('admin.emailTemplates.detail.descriptionCreate')
+                    : t('admin.emailTemplates.detail.descriptionEdit')}
                 </CardDescription>
               </div>
               <Button
@@ -312,7 +388,7 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
                 className="gap-2"
               >
                 <ArrowLeft className="size-4" />
-                Geri
+                {t('admin.emailTemplates.detail.actions.back')}
               </Button>
             </div>
           </CardHeader>
@@ -321,7 +397,9 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
         {/* Section 1: Metadata */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Genel Bilgiler</CardTitle>
+            <CardTitle className="text-base">
+              {t('admin.emailTemplates.detail.sections.generalInfo')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-3">
@@ -339,7 +417,7 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
               {/* Active */}
               <div className="space-y-2">
                 <Label htmlFor="is_active" className="text-sm">
-                  Durum
+                  {t('admin.emailTemplates.detail.fields.statusLabel')}
                 </Label>
                 <div className="flex items-center gap-3 rounded-md border px-3 py-2">
                   <Switch
@@ -352,9 +430,9 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
                   />
                   <Label htmlFor="is_active" className="cursor-pointer text-sm">
                     {formData.is_active ? (
-                      <Badge variant="default">Aktif</Badge>
+                      <Badge variant="default">{t('admin.emailTemplates.common.active')}</Badge>
                     ) : (
-                      <Badge variant="secondary">Pasif</Badge>
+                      <Badge variant="secondary">{t('admin.emailTemplates.common.inactive')}</Badge>
                     )}
                   </Label>
                 </div>
@@ -366,7 +444,9 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
         {/* Section 2: Template Info */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Şablon Bilgileri</CardTitle>
+            <CardTitle className="text-base">
+              {t('admin.emailTemplates.detail.sections.templateInfo')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Template Key */}
@@ -374,28 +454,28 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
               <Label htmlFor="template_key" className="text-sm">
                 <div className="flex items-center gap-2">
                   <Code2 className="size-4" />
-                  Template Key <span className="text-destructive">*</span>
+                  {t('admin.emailTemplates.detail.fields.templateKeyLabel')}{' '}
+                  <span className="text-destructive">*</span>
                 </div>
               </Label>
               <Input
                 id="template_key"
                 value={formData.template_key}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, template_key: e.target.value }))
-                }
-                placeholder="welcome_email"
+                onChange={(e) => setFormData((prev) => ({ ...prev, template_key: e.target.value }))}
+                placeholder={t('admin.emailTemplates.detail.fields.templateKeyPlaceholder')}
                 disabled={busy || !isNew} // Key cannot be changed after creation
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Benzersiz anahtar (değiştirilemez). Örn: welcome_email, password_reset
+                {t('admin.emailTemplates.detail.fields.templateKeyHelp')}
               </p>
             </div>
 
             {/* Template Name */}
             <div className="space-y-2">
               <Label htmlFor="template_name" className="text-sm">
-                Template Name <span className="text-destructive">*</span>
+                {t('admin.emailTemplates.detail.fields.templateNameLabel')}{' '}
+                <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="template_name"
@@ -403,7 +483,7 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, template_name: e.target.value }))
                 }
-                placeholder="Hoş Geldiniz Emaili"
+                placeholder={t('admin.emailTemplates.detail.fields.templateNamePlaceholder')}
                 disabled={busy}
                 required
               />
@@ -414,21 +494,20 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
               <Label htmlFor="subject" className="text-sm">
                 <div className="flex items-center gap-2">
                   <Mail className="size-4" />
-                  Subject <span className="text-destructive">*</span>
+                  {t('admin.emailTemplates.detail.fields.subjectLabel')}{' '}
+                  <span className="text-destructive">*</span>
                 </div>
               </Label>
               <Input
                 id="subject"
                 value={formData.subject}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, subject: e.target.value }))
-                }
-                placeholder="Hoş Geldiniz {{name}}!"
+                onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
+                placeholder={t('admin.emailTemplates.detail.fields.subjectPlaceholder')}
                 disabled={busy}
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Email konusu. Değişkenler için &#123;&#123;variable&#125;&#125; kullanın.
+                {t('admin.emailTemplates.detail.fields.subjectHelp')}
               </p>
             </div>
           </CardContent>
@@ -437,29 +516,25 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
         {/* Section 3: Content */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Email İçeriği</CardTitle>
+            <CardTitle className="text-base">
+              {t('admin.emailTemplates.detail.sections.content')}
+            </CardTitle>
             <CardDescription>
-              HTML içerik. Değişkenler için &#123;&#123;variable&#125;&#125; formatını kullanın.
+              {t('admin.emailTemplates.detail.sections.contentDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Content */}
             <div className="space-y-2">
               <Label htmlFor="content" className="text-sm">
-                HTML Content <span className="text-destructive">*</span>
+                {t('admin.emailTemplates.detail.fields.contentLabel')}{' '}
+                <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="content"
                 value={formData.content}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, content: e.target.value }))
-                }
-                placeholder={`<html>
-  <body>
-    <h1>Merhaba {{name}}!</h1>
-    <p>Hoş geldiniz...</p>
-  </body>
-</html>`}
+                onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
+                placeholder={t('admin.emailTemplates.detail.fields.contentPlaceholder')}
                 disabled={busy}
                 rows={12}
                 required
@@ -472,38 +547,40 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
         {/* Section 4: Variables */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Değişkenler</CardTitle>
+            <CardTitle className="text-base">
+              {t('admin.emailTemplates.detail.sections.variables')}
+            </CardTitle>
             <CardDescription>
-              Email içeriğinde kullanılan değişkenleri tanımlayın (opsiyonel)
+              {t('admin.emailTemplates.detail.sections.variablesDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Variables */}
             <div className="space-y-2">
               <Label htmlFor="variables" className="text-sm">
-                Variables
+                {t('admin.emailTemplates.detail.fields.variablesLabel')}
               </Label>
               <Textarea
                 id="variables"
                 value={formData.variables}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, variables: e.target.value }))
-                }
-                placeholder='name, email, url veya ["name", "email", "url"]'
+                onChange={(e) => setFormData((prev) => ({ ...prev, variables: e.target.value }))}
+                placeholder={t('admin.emailTemplates.detail.fields.variablesPlaceholder')}
                 disabled={busy}
                 rows={3}
               />
               <p className="text-xs text-muted-foreground">
-                Virgülle ayrılmış (name, email, url) veya JSON array formatında ([&quot;name&quot;, &quot;email&quot;])
+                {t('admin.emailTemplates.detail.fields.variablesHelp')}
               </p>
             </div>
 
             {/* Show detected variables if editing */}
-            {!isNew && (existingItem?.translations?.[0]?.detected_variables ?? []).length > 0 && (
+            {!isNew && (activeTranslation?.detected_variables ?? []).length > 0 && (
               <div className="space-y-2">
-                <Label className="text-sm">İçerikte Tespit Edilen Değişkenler</Label>
+                <Label className="text-sm">
+                  {t('admin.emailTemplates.detail.fields.detectedVariablesLabel')}
+                </Label>
                 <div className="flex flex-wrap gap-1">
-                  {(existingItem?.translations?.[0]?.detected_variables ?? []).map((v) => (
+                  {(activeTranslation?.detected_variables ?? []).map((v) => (
                     <Badge key={v} variant="secondary">
                       {v}
                     </Badge>
@@ -529,12 +606,12 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
                   {isDeleting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />
-                      Siliniyor...
+                      {t('admin.emailTemplates.detail.actions.deleting')}
                     </>
                   ) : (
                     <>
                       <Trash2 className="size-4" />
-                      Sil
+                      {t('admin.emailTemplates.detail.actions.delete')}
                     </>
                   )}
                 </Button>
@@ -547,18 +624,18 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
                 onClick={() => router.push('/admin/email-templates')}
                 disabled={busy}
               >
-                İptal
+                {t('admin.emailTemplates.detail.actions.cancel')}
               </Button>
               <Button type="submit" disabled={busy} className="gap-2">
                 {isCreating || isUpdating ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    Kaydediliyor...
+                    {t('admin.emailTemplates.detail.actions.saving')}
                   </>
                 ) : (
                   <>
                     <Save className="size-4" />
-                    Kaydet
+                    {t('admin.emailTemplates.detail.actions.save')}
                   </>
                 )}
               </Button>
@@ -571,14 +648,19 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Silmek istediğinizden emin misiniz?</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.emailTemplates.detail.dialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              <strong>{formData.template_key || 'Bu şablon'}</strong> silinecek. Bu işlem geri alınamaz.
+              {t('admin.emailTemplates.detail.dialog.description', {
+                template:
+                  formData.template_key || t('admin.emailTemplates.detail.dialog.templateFallback'),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>İptal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>Sil</AlertDialogAction>
+            <AlertDialogCancel>{t('admin.emailTemplates.detail.dialog.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>
+              {t('admin.emailTemplates.detail.dialog.delete')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -3,7 +3,7 @@
 // FINAL — Admin Availability Page
 // =============================================================
 
-import AdminAvailabilityClient from './admin-availability-client';
+import AdminAvailabilityClient from './_components/admin-availability-client';
 
 export default function Page() {
   return <AdminAvailabilityClient />;

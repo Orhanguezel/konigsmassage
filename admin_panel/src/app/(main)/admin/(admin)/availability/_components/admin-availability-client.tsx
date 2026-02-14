@@ -9,10 +9,14 @@
 import * as React from 'react';
 import { toast } from 'sonner';
 
-import { AvailabilityHeader, type AvailabilityFilters } from './AvailabilityHeader';
-import { AvailabilityList } from './AvailabilityList';
+import { AvailabilityHeader, type AvailabilityFilters } from './availability-header';
+import { AvailabilityList } from './availability-list';
+import { getApiErrorMessage } from './availability-utils';
 
-import type { ResourcesAdminListQueryParams } from '@/integrations/shared';
+import type {
+  ResourceAdminListItemDto,
+  ResourcesAdminListQueryParams,
+} from '@/integrations/shared';
 import { useListResourcesAdminQuery } from '@/integrations/hooks';
 
 const DEFAULT_FILTERS: AvailabilityFilters = {
@@ -20,19 +24,6 @@ const DEFAULT_FILTERS: AvailabilityFilters = {
   type: '',
   status: 'all',
 };
-
-function getErrMessage(err: unknown): string {
-  const anyErr = err as any;
-  const m1 = anyErr?.data?.error?.message;
-  if (typeof m1 === 'string' && m1.trim()) return m1;
-  const m1b = anyErr?.data?.error;
-  if (typeof m1b === 'string' && m1b.trim()) return m1b;
-  const m2 = anyErr?.data?.message;
-  if (typeof m2 === 'string' && m2.trim()) return m2;
-  const m3 = anyErr?.error;
-  if (typeof m3 === 'string' && m3.trim()) return m3;
-  return 'İşlem başarısız. Lütfen tekrar deneyin.';
-}
 
 function parseSearch(input: string): { q?: string; external_ref_id?: string } {
   const raw = String(input ?? '').trim();
@@ -55,24 +46,24 @@ export default function AdminAvailabilityClient() {
       q: search.q,
       external_ref_id: search.external_ref_id,
       type: filters.type || undefined,
-      is_active:
-        filters.status === 'all' ? undefined : filters.status === 'active' ? true : false,
+      is_active: filters.status === 'all' ? undefined : filters.status === 'active' ? true : false,
       limit: 200,
       offset: 0,
       sort: 'updated_at',
       order: 'desc',
-    } as ResourcesAdminListQueryParams;
+    };
   }, [filters]);
 
   const listQ = useListResourcesAdminQuery(queryArgs, {
     refetchOnMountOrArgChange: true,
-  } as any);
+  });
 
   const loading = listQ.isLoading || listQ.isFetching;
-  const total = (listQ.data ?? []).length;
+  const rows: ResourceAdminListItemDto[] = listQ.data ?? [];
+  const total = rows.length;
 
   React.useEffect(() => {
-    if (listQ.isError) toast.error(getErrMessage(listQ.error));
+    if (listQ.isError) toast.error(getApiErrorMessage(listQ.error));
   }, [listQ.isError, listQ.error]);
 
   return (
@@ -85,7 +76,7 @@ export default function AdminAvailabilityClient() {
         onRefresh={() => listQ.refetch()}
       />
 
-      <AvailabilityList items={listQ.data as any} loading={loading} />
+      <AvailabilityList items={rows} loading={loading} />
     </div>
   );
 }

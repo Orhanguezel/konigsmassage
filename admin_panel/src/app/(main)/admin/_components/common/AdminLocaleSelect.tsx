@@ -12,6 +12,7 @@
 import React from 'react';
 import { Languages, Loader2 } from 'lucide-react';
 
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -52,12 +53,16 @@ export const AdminLocaleSelect: React.FC<AdminLocaleSelectProps> = ({
   options,
   loading = false,
   disabled = false,
-  label = 'Dil',
+  label,
   allowEmpty = true,
   emptySentinel = '__all__',
 }) => {
+  const t = useAdminT('admin.common');
   const hasOptions = Array.isArray(options) && options.length > 0;
   const isDisabled = disabled || loading || !hasOptions;
+
+  const resolvedLabel = String(label ?? t('locale')).trim() || t('locale');
+  const placeholderText = t('localePlaceholder', undefined, t('locale'));
 
   const mapToUiValue = React.useCallback(
     (v: string) => {
@@ -94,16 +99,16 @@ export const AdminLocaleSelect: React.FC<AdminLocaleSelectProps> = ({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <Label className="text-sm">{label}</Label>
+        <Label className="text-sm">{resolvedLabel}</Label>
         {loading ? (
           <Badge variant="secondary" className="gap-1">
             <Loader2 className="size-3.5 animate-spin" />
-            Yükleniyor
+            {t('loading')}
           </Badge>
         ) : (
           <Badge variant="secondary" className="gap-1">
             <Languages className="size-3.5" />
-            Locale
+            {t('locale')}
           </Badge>
         )}
       </div>
@@ -114,7 +119,7 @@ export const AdminLocaleSelect: React.FC<AdminLocaleSelectProps> = ({
         disabled={isDisabled}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Locale seç" />
+          <SelectValue placeholder={placeholderText} />
         </SelectTrigger>
         <SelectContent>
           {uiOptions.map((opt) => (
@@ -126,7 +131,7 @@ export const AdminLocaleSelect: React.FC<AdminLocaleSelectProps> = ({
       </Select>
 
       {!hasOptions && !loading ? (
-        <div className="text-xs text-muted-foreground">Locale seçenekleri bulunamadı.</div>
+        <div className="text-xs text-muted-foreground">{t('localeOptionsMissing')}</div>
       ) : null}
     </div>
   );

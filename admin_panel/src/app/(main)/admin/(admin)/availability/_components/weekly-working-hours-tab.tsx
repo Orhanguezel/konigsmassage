@@ -39,9 +39,9 @@ import {
 } from '@/integrations/hooks';
 
 // ✅ i18n (same pattern as Appointment)
-import { useLocaleShort } from '../../../../../../i18n/useLocaleShort';
-import { useUiSection } from '../../../../../../i18n/uiDb';
-import { isValidUiText } from '../../../../../../i18n/uiText';
+import { useLocaleShort } from '@/i18n/useLocaleShort';
+import { useUiSection } from '@/i18n/uiDb';
+import { isValidUiText } from '@/i18n/uiText';
 
 // ✅ helper
 const toStr = (v: unknown) => String(v ?? '').trim();
@@ -295,7 +295,9 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
               <TableHead style={{ width: 180 }}>{t('ui_admin_col_day', 'Gün')}</TableHead>
               <TableHead style={{ width: 120 }}>{t('ui_admin_col_start', 'Başlangıç')}</TableHead>
               <TableHead style={{ width: 120 }}>{t('ui_admin_col_end', 'Bitiş')}</TableHead>
-              <TableHead style={{ width: 120 }}>{t('ui_admin_col_session', 'Seans (dk)')}</TableHead>
+              <TableHead style={{ width: 120 }}>
+                {t('ui_admin_col_session', 'Seans (dk)')}
+              </TableHead>
               <TableHead style={{ width: 120 }}>{t('ui_admin_col_break', 'Ara (dk)')}</TableHead>
               <TableHead style={{ width: 110 }}>{t('ui_admin_col_capacity', 'Kapasite')}</TableHead>
               <TableHead style={{ width: 90 }}>{t('ui_admin_col_active', 'Aktif')}</TableHead>

@@ -32,6 +32,8 @@ const TYPE_LABEL: Record<string, string> = {
   other: 'Diğer',
 };
 
+const ALL = '__all__' as const;
+
 export const ResourcesHeader: React.FC<ResourcesHeaderProps> = ({
   filters,
   total,
@@ -70,7 +72,7 @@ export const ResourcesHeader: React.FC<ResourcesHeaderProps> = ({
                     onFiltersChange({ ...filters, type: (e.target.value as any) || '' })
                   }
                 >
-                  <option value="">Tümü</option>
+                  <option value={ALL}>Tümü</option>
                   {(Object.keys(TYPE_LABEL) as Array<ResourceType>).map((k) => (
                     <option key={k} value={k}>
                       {TYPE_LABEL[k]}

@@ -15,8 +15,8 @@ import { toast } from 'sonner';
 import { Plus, RefreshCcw, ArrowUp, ArrowDown, Save, Search, Trash2, Pencil } from 'lucide-react';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
-import { resolveAdminApiLocale } from '../../../../../../i18n/adminLocale';
-import { localeShortClient, localeShortClientOr } from '../../../../../../i18n/localeShortClient';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { cn } from '@/lib/utils';
@@ -200,7 +200,9 @@ export default function AdminServicesClient() {
       toast.success(t('admin.services.list.orderSaved'));
       listQ.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || t('admin.services.list.orderSaveError'));
+      toast.error(
+        err?.data?.error?.message || err?.message || t('admin.services.list.orderSaveError'),
+      );
     }
   }
 
@@ -223,7 +225,9 @@ export default function AdminServicesClient() {
       toast.success(t('admin.services.list.statusUpdated'));
       setRows((prev) => prev.map((r: any) => (r.id === id ? { ...r, is_active: next } : r)));
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || t('admin.services.list.statusUpdateError'));
+      toast.error(
+        err?.data?.error?.message || err?.message || t('admin.services.list.statusUpdateError'),
+      );
     }
   }
 
@@ -236,7 +240,9 @@ export default function AdminServicesClient() {
       toast.success(t('admin.services.list.featuredUpdated'));
       setRows((prev) => prev.map((r: any) => (r.id === id ? { ...r, featured: next } : r)));
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || t('admin.services.list.statusUpdateError'));
+      toast.error(
+        err?.data?.error?.message || err?.message || t('admin.services.list.statusUpdateError'),
+      );
     }
   }
 
@@ -244,7 +250,9 @@ export default function AdminServicesClient() {
     const id = String((item as any)?.id ?? '');
     if (!isUuidLike(id)) return;
 
-    const ok = window.confirm(t('admin.services.list.deleteConfirm', { name: String((item as any)?.name ?? 'Hizmet') }));
+    const ok = window.confirm(
+      t('admin.services.list.deleteConfirm', { name: String((item as any)?.name ?? 'Hizmet') }),
+    );
     if (!ok) return;
 
     try {
@@ -252,7 +260,9 @@ export default function AdminServicesClient() {
       toast.success(t('admin.services.list.deleted'));
       listQ.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || t('admin.services.list.deleteError'));
+      toast.error(
+        err?.data?.error?.message || err?.message || t('admin.services.list.deleteError'),
+      );
     }
   }
 
@@ -271,9 +281,7 @@ export default function AdminServicesClient() {
     <div className="space-y-6">
       <div className="space-y-1">
         <h1 className="text-lg font-semibold">{t('admin.services.header.title')}</h1>
-        <p className="text-sm text-muted-foreground">
-          {t('admin.services.header.description')}
-        </p>
+        <p className="text-sm text-muted-foreground">{t('admin.services.header.description')}</p>
       </div>
 
       <Card>
@@ -282,7 +290,8 @@ export default function AdminServicesClient() {
             <div className="space-y-1">
               <CardTitle className="text-base">{t('admin.services.header.filterLabel')}</CardTitle>
               <CardDescription>
-                {t('admin.services.header.totalLabel')} <span className="font-medium">{total}</span> • {t('admin.services.header.activeLocale')}{' '}
+                {t('admin.services.header.totalLabel')} <span className="font-medium">{total}</span>{' '}
+                • {t('admin.services.header.activeLocale')}{' '}
                 <Badge variant="secondary">{effectiveLocale || '—'}</Badge>
               </CardDescription>
             </div>
@@ -330,7 +339,9 @@ export default function AdminServicesClient() {
                 <SelectContent>
                   <SelectItem value="all">{t('admin.services.header.statusAll')}</SelectItem>
                   <SelectItem value="active">{t('admin.services.header.statusActive')}</SelectItem>
-                  <SelectItem value="inactive">{t('admin.services.header.statusInactive')}</SelectItem>
+                  <SelectItem value="inactive">
+                    {t('admin.services.header.statusInactive')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -353,7 +364,9 @@ export default function AdminServicesClient() {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">{t('admin.services.header.localeUrlSync')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('admin.services.header.localeUrlSync')}
+              </p>
             </div>
 
             <div className="flex items-center gap-2 pt-6 md:pt-7">
@@ -362,7 +375,9 @@ export default function AdminServicesClient() {
                 onCheckedChange={(v) => setFilters((p) => ({ ...p, featuredOnly: !!v }))}
                 disabled={busy}
               />
-              <span className="text-sm text-muted-foreground">{t('admin.services.header.featuredOnly')}</span>
+              <span className="text-sm text-muted-foreground">
+                {t('admin.services.header.featuredOnly')}
+              </span>
             </div>
 
             <div className="flex items-center gap-2 pt-6 md:pt-7">
@@ -380,7 +395,9 @@ export default function AdminServicesClient() {
             <div className="space-y-1">
               <CardTitle className="text-base">{t('admin.services.list.listTitle')}</CardTitle>
               <CardDescription>
-                {busy ? t('admin.services.list.loading') : t('admin.services.list.recordCount', { count: rows.length })}
+                {busy
+                  ? t('admin.services.list.loading')
+                  : t('admin.services.list.recordCount', { count: rows.length })}
               </CardDescription>
             </div>
 
@@ -419,7 +436,9 @@ export default function AdminServicesClient() {
                   <TableHead>{t('admin.services.list.slugColumn')}</TableHead>
                   <TableHead>{t('admin.services.list.featuredColumn')}</TableHead>
                   <TableHead>{t('admin.services.list.statusColumn')}</TableHead>
-                  <TableHead className="text-right">{t('admin.services.list.actionsColumn')}</TableHead>
+                  <TableHead className="text-right">
+                    {t('admin.services.list.actionsColumn')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -443,7 +462,11 @@ export default function AdminServicesClient() {
                             onCheckedChange={(v) => onToggleFeatured(p, !!v)}
                             disabled={busy || !isUuidLike(id)}
                           />
-                          <Badge variant="secondary">{featured ? t('admin.services.list.featuredYes') : t('admin.services.list.featuredNo')}</Badge>
+                          <Badge variant="secondary">
+                            {featured
+                              ? t('admin.services.list.featuredYes')
+                              : t('admin.services.list.featuredNo')}
+                          </Badge>
                         </div>
                       </TableCell>
 
@@ -455,9 +478,13 @@ export default function AdminServicesClient() {
                             disabled={busy || !isUuidLike(id)}
                           />
                           {active ? (
-                            <Badge variant="secondary">{t('admin.services.list.activeStatus')}</Badge>
+                            <Badge variant="secondary">
+                              {t('admin.services.list.activeStatus')}
+                            </Badge>
                           ) : (
-                            <Badge variant="destructive">{t('admin.services.list.inactiveStatus')}</Badge>
+                            <Badge variant="destructive">
+                              {t('admin.services.list.inactiveStatus')}
+                            </Badge>
                           )}
                         </div>
                       </TableCell>
@@ -541,21 +568,33 @@ export default function AdminServicesClient() {
                       {active ? (
                         <Badge variant="secondary">{t('admin.services.list.activeStatus')}</Badge>
                       ) : (
-                        <Badge variant="destructive">{t('admin.services.list.inactiveStatus')}</Badge>
+                        <Badge variant="destructive">
+                          {t('admin.services.list.inactiveStatus')}
+                        </Badge>
                       )}
-                      <Badge variant="secondary">{featured ? t('admin.services.list.featuredBadge') : t('admin.services.list.normalStatus')}</Badge>
+                      <Badge variant="secondary">
+                        {featured
+                          ? t('admin.services.list.featuredBadge')
+                          : t('admin.services.list.normalStatus')}
+                      </Badge>
                     </div>
 
                     <div className="mt-2 space-y-2 text-sm">
                       <div className="text-muted-foreground">
-                        <span className="font-medium text-foreground">{t('admin.services.list.slugLabel')}</span>{' '}
+                        <span className="font-medium text-foreground">
+                          {t('admin.services.list.slugLabel')}
+                        </span>{' '}
                         <span className="wrap-break-word">{slug}</span>
                       </div>
 
                       <div className="flex items-center justify-between rounded-md border p-3">
                         <div className="space-y-0.5">
-                          <div className="text-sm font-medium">{t('admin.services.list.featuredMobileLabel')}</div>
-                          <div className="text-xs text-muted-foreground">{t('admin.services.list.featuredMobileHelp')}</div>
+                          <div className="text-sm font-medium">
+                            {t('admin.services.list.featuredMobileLabel')}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {t('admin.services.list.featuredMobileHelp')}
+                          </div>
                         </div>
                         <Switch
                           checked={featured}
@@ -566,8 +605,12 @@ export default function AdminServicesClient() {
 
                       <div className="flex items-center justify-between rounded-md border p-3">
                         <div className="space-y-0.5">
-                          <div className="text-sm font-medium">{t('admin.services.list.activeMobileLabel')}</div>
-                          <div className="text-xs text-muted-foreground">{t('admin.services.list.activeMobileHelp')}</div>
+                          <div className="text-sm font-medium">
+                            {t('admin.services.list.activeMobileLabel')}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {t('admin.services.list.activeMobileHelp')}
+                          </div>
                         </div>
                         <Switch
                           checked={active}
@@ -631,9 +674,7 @@ export default function AdminServicesClient() {
           </div>
 
           {rows.length > 0 ? (
-            <p className="text-xs text-muted-foreground">
-              {t('admin.services.list.reorderHelp')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t('admin.services.list.reorderHelp')}</p>
           ) : null}
         </CardContent>
       </Card>

@@ -12,8 +12,9 @@ import { toast } from 'sonner';
 import { ArrowLeft, Save, Trash2, Loader2, Star } from 'lucide-react';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
-import { resolveAdminApiLocale } from '../../../../../../i18n/adminLocale';
-import { localeShortClientOr } from '../../../../../../i18n/localeShortClient';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClientOr } from '@/i18n/localeShortClient';
 
 import { cn } from '@/lib/utils';
 
@@ -24,7 +25,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { AdminLocaleSelect, type AdminLocaleOption } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
+import {
+  AdminLocaleSelect,
+  type AdminLocaleOption,
+} from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
 
 import {
   AlertDialog,
@@ -70,17 +74,20 @@ type FormData = {
   locale: string;
 };
 
-function getErrMsg(e: unknown): string {
+function getErrMsg(e: unknown, fallback: string): string {
   const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message ||
-    anyErr?.data?.message ||
-    anyErr?.message ||
-    'İşlem başarısız'
-  );
+  return anyErr?.data?.error?.message || anyErr?.data?.message || anyErr?.message || fallback;
 }
 
-function RatingInput({ value, onChange, disabled }: { value: number; onChange: (value: number) => void; disabled?: boolean }) {
+function RatingInput({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  disabled?: boolean;
+}) {
   const rating = Math.max(0, Math.min(5, Math.round(value || 0)));
 
   return (
@@ -96,7 +103,7 @@ function RatingInput({ value, onChange, disabled }: { value: number; onChange: (
           <Star
             className={cn(
               'size-6',
-              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'
+              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground',
             )}
           />
         </button>
@@ -109,9 +116,15 @@ function RatingInput({ value, onChange, disabled }: { value: number; onChange: (
 export default function AdminReviewsDetailClient({ id }: { id: string }) {
   const router = useRouter();
   const isNew = id === 'new';
+  const t = useAdminT('admin.reviews');
 
   // Locale management
-  const { localeOptions, defaultLocaleFromDb, coerceLocale, loading: localesLoading } = useAdminLocales();
+  const {
+    localeOptions,
+    defaultLocaleFromDb,
+    coerceLocale,
+    loading: localesLoading,
+  } = useAdminLocales();
 
   // ✅ FIX: Ensure localeOptions has correct type
   const safeLocaleOptions: AdminLocaleOption[] = React.useMemo(() => {
@@ -127,10 +140,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
     data: existingItem,
     isLoading: loadingItem,
     error: loadError,
-  } = useGetReviewAdminQuery(
-    { id },
-    { skip: isNew }
-  );
+  } = useGetReviewAdminQuery({ id }, { skip: isNew });
 
   const [createReview, { isLoading: isCreating }] = useCreateReviewAdminMutation();
   const [updateReview, { isLoading: isUpdating }] = useUpdateReviewAdminMutation();
@@ -138,7 +148,11 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
 
   // ✅ FIX: Initial locale with proper fallback
   const initialLocale = React.useMemo(() => {
-    return defaultLocaleFromDb || localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de') || 'de';
+    return (
+      defaultLocaleFromDb ||
+      localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de') ||
+      'de'
+    );
   }, [defaultLocaleFromDb]);
 
   // Form state
@@ -204,37 +218,38 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
 
     // Validation
     if (!formData.target_type.trim()) {
-      toast.error('Target Type gerekli');
+      toast.error(t('form.validation.targetTypeRequired'));
       return;
     }
 
     if (!formData.target_id.trim()) {
-      toast.error('Target ID gerekli');
+      toast.error(t('form.validation.targetIdRequired'));
       return;
     }
 
     if (!formData.name.trim()) {
-      toast.error('İsim gerekli');
+      toast.error(t('form.validation.nameRequired'));
       return;
     }
 
     if (!formData.email.trim()) {
-      toast.error('Email gerekli');
+      toast.error(t('form.validation.emailRequired'));
       return;
     }
 
     if (!formData.comment.trim()) {
-      toast.error('Yorum gerekli');
+      toast.error(t('form.validation.commentRequired'));
       return;
     }
 
     if (formData.rating < 0 || formData.rating > 5) {
-      toast.error('Rating 0-5 arasında olmalı');
+      toast.error(t('form.validation.ratingRange'));
       return;
     }
 
     // ✅ FIXED: Correct usage of resolveAdminApiLocale
-    const apiLocale = formData.locale || resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
+    const apiLocale =
+      formData.locale || resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
 
     try {
       if (isNew) {
@@ -258,7 +273,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
         };
 
         await createReview(payload).unwrap();
-        toast.success('Kayıt oluşturuldu');
+        toast.success(t('messages.created'));
         router.push('/admin/reviews');
       } else {
         await updateReview({
@@ -283,10 +298,10 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
             locale: apiLocale,
           },
         }).unwrap();
-        toast.success('Kayıt güncellendi');
+        toast.success(t('messages.updated'));
       }
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('messages.genericError')));
     }
   };
 
@@ -299,10 +314,10 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
 
     try {
       await deleteReview({ id }).unwrap();
-      toast.success('Kayıt silindi');
+      toast.success(t('messages.deleted'));
       router.push('/admin/reviews');
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('messages.genericError')));
     }
   };
 
@@ -317,7 +332,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
         <Card>
           <CardContent className="py-12 text-center">
             <div className="text-destructive">
-              Kayıt yüklenemedi: {getErrMsg(loadError)}
+              {t('messages.loadError')}: {getErrMsg(loadError, t('messages.genericError'))}
             </div>
             <Button
               variant="outline"
@@ -325,7 +340,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               className="mt-4 gap-2"
             >
               <ArrowLeft className="size-4" />
-              Listeye Dön
+              {t('actions.backToList')}
             </Button>
           </CardContent>
         </Card>
@@ -340,7 +355,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
           <CardContent className="flex items-center justify-center py-12">
             <div className="flex items-center gap-2">
               <Loader2 className="size-5 animate-spin" />
-              <span>Yükleniyor...</span>
+              <span>{t('admin.common.loading')}</span>
             </div>
           </CardContent>
         </Card>
@@ -356,13 +371,9 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
           <CardHeader>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
-                <CardTitle>
-                  {isNew ? 'Yeni Review' : 'Review Düzenle'}
-                </CardTitle>
+                <CardTitle>{isNew ? t('form.titles.create') : t('form.titles.edit')}</CardTitle>
                 <CardDescription>
-                  {isNew
-                    ? 'Yeni bir müşteri yorumu ekleyin'
-                    : 'Mevcut müşteri yorumunu düzenleyin'}
+                  {isNew ? t('form.descriptions.create') : t('form.descriptions.edit')}
                 </CardDescription>
               </div>
               <Button
@@ -373,7 +384,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                 className="gap-2"
               >
                 <ArrowLeft className="size-4" />
-                Geri
+                {t('admin.common.back')}
               </Button>
             </div>
           </CardHeader>
@@ -382,7 +393,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
         {/* Section 1: Metadata */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Genel Bilgiler</CardTitle>
+            <CardTitle className="text-base">{t('form.sections.meta')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-4">
@@ -394,13 +405,14 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                   options={safeLocaleOptions}
                   loading={localesLoading}
                   disabled={busy}
+                  label={t('form.fields.locale')}
                 />
               </div>
 
               {/* Display Order */}
               <div className="space-y-2">
                 <Label htmlFor="display_order" className="text-sm">
-                  Sıralama
+                  {t('form.fields.displayOrder')}
                 </Label>
                 <Input
                   id="display_order"
@@ -420,7 +432,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Approved */}
               <div className="space-y-2">
                 <Label htmlFor="is_approved" className="text-sm">
-                  Onay Durumu
+                  {t('form.fields.approved')}
                 </Label>
                 <div className="flex items-center gap-3 rounded-md border px-3 py-2">
                   <Switch
@@ -433,9 +445,9 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                   />
                   <Label htmlFor="is_approved" className="cursor-pointer text-sm">
                     {formData.is_approved ? (
-                      <Badge variant="default">Onaylı</Badge>
+                      <Badge variant="default">{t('labels.approved')}</Badge>
                     ) : (
-                      <Badge variant="secondary">Onaysız</Badge>
+                      <Badge variant="secondary">{t('labels.unapproved')}</Badge>
                     )}
                   </Label>
                 </div>
@@ -444,7 +456,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Active */}
               <div className="space-y-2">
                 <Label htmlFor="is_active" className="text-sm">
-                  Durum
+                  {t('form.fields.active')}
                 </Label>
                 <div className="flex items-center gap-3 rounded-md border px-3 py-2">
                   <Switch
@@ -457,9 +469,9 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                   />
                   <Label htmlFor="is_active" className="cursor-pointer text-sm">
                     {formData.is_active ? (
-                      <Badge variant="default">Aktif</Badge>
+                      <Badge variant="default">{t('labels.active')}</Badge>
                     ) : (
-                      <Badge variant="secondary">Pasif</Badge>
+                      <Badge variant="secondary">{t('labels.inactive')}</Badge>
                     )}
                   </Label>
                 </div>
@@ -471,14 +483,14 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
         {/* Section 2: Customer Info */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Müşteri Bilgileri</CardTitle>
+            <CardTitle className="text-base">{t('form.sections.customer')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               {/* Target Type */}
               <div className="space-y-2">
                 <Label htmlFor="target_type" className="text-sm">
-                  Target Type <span className="text-destructive">*</span>
+                  {t('form.fields.targetType')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="target_type"
@@ -486,7 +498,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, target_type: e.target.value }))
                   }
-                  placeholder="Örn: testimonial, product, service"
+                  placeholder={t('form.placeholders.targetType')}
                   disabled={busy}
                   required
                 />
@@ -495,15 +507,13 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Target ID */}
               <div className="space-y-2">
                 <Label htmlFor="target_id" className="text-sm">
-                  Target ID <span className="text-destructive">*</span>
+                  {t('form.fields.targetId')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="target_id"
                   value={formData.target_id}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, target_id: e.target.value }))
-                  }
-                  placeholder="UUID veya identifier"
+                  onChange={(e) => setFormData((prev) => ({ ...prev, target_id: e.target.value }))}
+                  placeholder={t('form.placeholders.targetId')}
                   disabled={busy}
                   required
                 />
@@ -514,15 +524,13 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-sm">
-                  İsim <span className="text-destructive">*</span>
+                  {t('form.fields.name')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  placeholder="Örn: Ahmet Yılmaz"
+                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  placeholder={t('form.placeholders.name')}
                   disabled={busy}
                   required
                 />
@@ -531,16 +539,14 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm">
-                  Email <span className="text-destructive">*</span>
+                  {t('form.fields.email')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  placeholder="ornek@email.com"
+                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                  placeholder={t('form.placeholders.email')}
                   disabled={busy}
                   required
                 />
@@ -550,7 +556,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
             {/* Rating */}
             <div className="space-y-2">
               <Label htmlFor="rating" className="text-sm">
-                Rating <span className="text-destructive">*</span>
+                {t('form.fields.rating')} <span className="text-destructive">*</span>
               </Label>
               <RatingInput
                 value={formData.rating}
@@ -564,21 +570,19 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
         {/* Section 3: Review Content */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Yorum İçeriği</CardTitle>
+            <CardTitle className="text-base">{t('form.sections.content')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title" className="text-sm">
-                Başlık
+                {t('form.fields.title')}
               </Label>
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, title: e.target.value }))
-                }
-                placeholder="Yorum başlığı (opsiyonel)"
+                onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                placeholder={t('form.placeholders.title')}
                 disabled={busy}
               />
             </div>
@@ -586,15 +590,13 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
             {/* Comment */}
             <div className="space-y-2">
               <Label htmlFor="comment" className="text-sm">
-                Yorum <span className="text-destructive">*</span>
+                {t('form.fields.comment')} <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="comment"
                 value={formData.comment}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, comment: e.target.value }))
-                }
-                placeholder="Müşteri yorumu..."
+                onChange={(e) => setFormData((prev) => ({ ...prev, comment: e.target.value }))}
+                placeholder={t('form.placeholders.comment')}
                 disabled={busy}
                 rows={5}
                 required
@@ -606,25 +608,21 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
         {/* Section 4: Testimonial Extras */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Testimonial Ek Bilgileri</CardTitle>
-            <CardDescription>
-              Bu alanlar testimonial görünümü için kullanılır (opsiyonel)
-            </CardDescription>
+            <CardTitle className="text-base">{t('form.sections.extras')}</CardTitle>
+            <CardDescription>{t('form.sections.extrasDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               {/* Role */}
               <div className="space-y-2">
                 <Label htmlFor="role" className="text-sm">
-                  Rol / Pozisyon
+                  {t('form.fields.role')}
                 </Label>
                 <Input
                   id="role"
                   value={formData.role}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, role: e.target.value }))
-                  }
-                  placeholder="Örn: CEO, Müdür"
+                  onChange={(e) => setFormData((prev) => ({ ...prev, role: e.target.value }))}
+                  placeholder={t('form.placeholders.role')}
                   disabled={busy}
                 />
               </div>
@@ -632,15 +630,13 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Company */}
               <div className="space-y-2">
                 <Label htmlFor="company" className="text-sm">
-                  Şirket
+                  {t('form.fields.company')}
                 </Label>
                 <Input
                   id="company"
                   value={formData.company}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, company: e.target.value }))
-                  }
-                  placeholder="Şirket adı"
+                  onChange={(e) => setFormData((prev) => ({ ...prev, company: e.target.value }))}
+                  placeholder={t('form.placeholders.company')}
                   disabled={busy}
                 />
               </div>
@@ -650,14 +646,12 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Avatar URL */}
               <div className="space-y-2">
                 <Label htmlFor="avatar_url" className="text-sm">
-                  Avatar URL
+                  {t('form.fields.avatarUrl')}
                 </Label>
                 <Input
                   id="avatar_url"
                   value={formData.avatar_url}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, avatar_url: e.target.value }))
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, avatar_url: e.target.value }))}
                   placeholder="/assets/imgs/avatar.png"
                   disabled={busy}
                 />
@@ -666,14 +660,12 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
               {/* Logo URL */}
               <div className="space-y-2">
                 <Label htmlFor="logo_url" className="text-sm">
-                  Logo URL
+                  {t('form.fields.logoUrl')}
                 </Label>
                 <Input
                   id="logo_url"
                   value={formData.logo_url}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, logo_url: e.target.value }))
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, logo_url: e.target.value }))}
                   placeholder="/assets/imgs/logo.png"
                   disabled={busy}
                 />
@@ -683,14 +675,12 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
             {/* Profile Href */}
             <div className="space-y-2">
               <Label htmlFor="profile_href" className="text-sm">
-                Profil Linki
+                {t('form.fields.profileHref')}
               </Label>
               <Input
                 id="profile_href"
                 value={formData.profile_href}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, profile_href: e.target.value }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, profile_href: e.target.value }))}
                 placeholder="https://linkedin.com/in/..."
                 disabled={busy}
               />
@@ -702,15 +692,13 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
         {!isNew && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Admin Yanıtı</CardTitle>
-              <CardDescription>
-                Bu yoruma admin olarak yanıt verebilirsiniz
-              </CardDescription>
+              <CardTitle className="text-base">{t('form.sections.adminReply')}</CardTitle>
+              <CardDescription>{t('form.sections.adminReplyDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="admin_reply" className="text-sm">
-                  Yanıt
+                  {t('form.fields.adminReply')}
                 </Label>
                 <Textarea
                   id="admin_reply"
@@ -718,7 +706,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, admin_reply: e.target.value }))
                   }
-                  placeholder="Admin yanıtı (opsiyonel)"
+                  placeholder={t('form.placeholders.adminReply')}
                   disabled={busy}
                   rows={4}
                 />
@@ -742,12 +730,12 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                   {isDeleting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" />
-                      Siliniyor...
+                      {t('actions.deleting')}
                     </>
                   ) : (
                     <>
                       <Trash2 className="size-4" />
-                      Sil
+                      {t('admin.common.delete')}
                     </>
                   )}
                 </Button>
@@ -760,18 +748,18 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
                 onClick={() => router.push('/admin/reviews')}
                 disabled={busy}
               >
-                İptal
+                {t('admin.common.cancel')}
               </Button>
               <Button type="submit" disabled={busy} className="gap-2">
                 {isCreating || isUpdating ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    Kaydediliyor...
+                    {t('admin.common.saving')}
                   </>
                 ) : (
                   <>
                     <Save className="size-4" />
-                    Kaydet
+                    {t('admin.common.save')}
                   </>
                 )}
               </Button>
@@ -784,14 +772,18 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Silmek istediğinizden emin misiniz?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              <strong>{formData.name || 'Bu kayıt'}</strong> tarafından yapılan yorum silinecek. Bu işlem geri alınamaz.
+              {t('deleteDialog.description', {
+                name: formData.name || t('deleteDialog.fallbackName'),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>İptal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>Sil</AlertDialogAction>
+            <AlertDialogCancel>{t('admin.common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>
+              {t('admin.common.delete')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

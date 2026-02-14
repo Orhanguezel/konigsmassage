@@ -4,10 +4,8 @@ module.exports = {
     {
       name: 'konigsmassage-frontend',
       cwd: '/var/www/konigsmassage/frontend',
-
-      // Next.js start via Bun
-      script: '/home/orhan/.bun/bin/bun',
-      args: 'run start -- -p 3055 -H 127.0.0.1',
+      script: '/usr/bin/env',
+      args: 'bash ./scripts/pm2-start-frontend.sh',
 
       exec_mode: 'fork',
       instances: 1,
@@ -27,6 +25,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: '3055',
+        HOST: '127.0.0.1',
         HOSTNAME: '127.0.0.1',
         NEXT_TELEMETRY_DISABLED: '1',
       },

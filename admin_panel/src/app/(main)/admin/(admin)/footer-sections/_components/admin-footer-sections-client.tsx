@@ -13,7 +13,7 @@ import { Plus, RefreshCcw, Search, Trash2, Pencil, Loader2 } from 'lucide-react'
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
-import { localeShortClientOr } from '../../../../../../i18n/localeShortClient';
+import { localeShortClientOr } from '@/i18n/localeShortClient';
 
 import { cn } from '@/lib/utils';
 
@@ -23,7 +23,10 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { AdminLocaleSelect, type AdminLocaleOption } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
+import {
+  AdminLocaleSelect,
+  type AdminLocaleOption,
+} from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
 
 import {
   Select,
@@ -93,12 +96,7 @@ function truncate(text: string | null | undefined, max = 40) {
 
 function getErrMsg(e: unknown, defaultMsg: string = 'Operation failed'): string {
   const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message ||
-    anyErr?.data?.message ||
-    anyErr?.message ||
-    defaultMsg
-  );
+  return anyErr?.data?.error?.message || anyErr?.data?.message || anyErr?.message || defaultMsg;
 }
 
 export default function AdminFooterSectionsClient() {
@@ -107,7 +105,12 @@ export default function AdminFooterSectionsClient() {
   const t = useAdminT();
 
   // Locale management
-  const { localeOptions, defaultLocaleFromDb, coerceLocale, loading: localesLoading } = useAdminLocales();
+  const {
+    localeOptions,
+    defaultLocaleFromDb,
+    coerceLocale,
+    loading: localesLoading,
+  } = useAdminLocales();
 
   const safeLocaleOptions: AdminLocaleOption[] = React.useMemo(() => {
     if (!Array.isArray(localeOptions)) return [];
@@ -130,8 +133,12 @@ export default function AdminFooterSectionsClient() {
   React.useEffect(() => {
     if (!filters.locale && defaultLocaleFromDb) {
       const urlLocale = searchParams.get('locale') || '';
-      const initialLocale = urlLocale || defaultLocaleFromDb || localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de') || 'de';
-      
+      const initialLocale =
+        urlLocale ||
+        defaultLocaleFromDb ||
+        localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de') ||
+        'de';
+
       setFilters((prev) => ({ ...prev, locale: initialLocale }));
     }
   }, [defaultLocaleFromDb, searchParams, filters.locale]);
@@ -139,10 +146,10 @@ export default function AdminFooterSectionsClient() {
   // Update URL when locale changes (with guard to prevent loop)
   React.useEffect(() => {
     if (!filters.locale) return;
-    
+
     const currentUrlLocale = searchParams.get('locale') || '';
     if (currentUrlLocale === filters.locale) return;
-    
+
     const params = new URLSearchParams(searchParams.toString());
     params.set('locale', filters.locale);
     router.replace(`?${params.toString()}`, { scroll: false });
@@ -198,7 +205,11 @@ export default function AdminFooterSectionsClient() {
         id: item.id,
         data: { is_active: !item.is_active },
       }).unwrap();
-      toast.success(item.is_active ? t('footerSections.list.statusPassive') : t('footerSections.list.statusActive'));
+      toast.success(
+        item.is_active
+          ? t('footerSections.list.statusPassive')
+          : t('footerSections.list.statusActive'),
+      );
     } catch (err) {
       toast.error(getErrMsg(err, 'Status update failed'));
     }
@@ -237,9 +248,7 @@ export default function AdminFooterSectionsClient() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
                 <CardTitle>{t('footerSections.header.title')}</CardTitle>
-                <CardDescription>
-                  {t('footerSections.header.description')}
-                </CardDescription>
+                <CardDescription>{t('footerSections.header.description')}</CardDescription>
               </div>
               <Button
                 onClick={() => router.push('/admin/footer-sections/new')}
@@ -287,9 +296,15 @@ export default function AdminFooterSectionsClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t('footerSections.header.activeOptions.all')}</SelectItem>
-                    <SelectItem value="active">{t('footerSections.header.activeOptions.active')}</SelectItem>
-                    <SelectItem value="inactive">{t('footerSections.header.activeOptions.inactive')}</SelectItem>
+                    <SelectItem value="all">
+                      {t('footerSections.header.activeOptions.all')}
+                    </SelectItem>
+                    <SelectItem value="active">
+                      {t('footerSections.header.activeOptions.active')}
+                    </SelectItem>
+                    <SelectItem value="inactive">
+                      {t('footerSections.header.activeOptions.inactive')}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -313,9 +328,7 @@ export default function AdminFooterSectionsClient() {
                   disabled={busy}
                   className="w-full gap-2 sm:w-auto"
                 >
-                  <RefreshCcw
-                    className={cn('size-4', isFetching && 'animate-spin')}
-                  />
+                  <RefreshCcw className={cn('size-4', isFetching && 'animate-spin')} />
                   {t('common.refresh', undefined, 'Refresh')}
                 </Button>
               </div>
@@ -345,10 +358,14 @@ export default function AdminFooterSectionsClient() {
                   <TableHead className="w-16">#</TableHead>
                   <TableHead>{t('footerSections.list.title')}</TableHead>
                   <TableHead>{t('footerSections.list.slug')}</TableHead>
-                  <TableHead className="w-24 text-center">{t('footerSections.list.active')}</TableHead>
+                  <TableHead className="w-24 text-center">
+                    {t('footerSections.list.active')}
+                  </TableHead>
                   <TableHead className="w-32">Locale</TableHead>
                   <TableHead className="w-44">{t('footerSections.list.createdAt')}</TableHead>
-                  <TableHead className="w-40 text-right">{t('footerSections.list.actions')}</TableHead>
+                  <TableHead className="w-40 text-right">
+                    {t('footerSections.list.actions')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -485,7 +502,9 @@ export default function AdminFooterSectionsClient() {
                   </div>
 
                   <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">{t('footerSections.list.slug')}</Label>
+                    <Label className="text-xs text-muted-foreground">
+                      {t('footerSections.list.slug')}
+                    </Label>
                     <code className="block rounded bg-muted px-2 py-1 text-xs">
                       {item.slug || '-'}
                     </code>
@@ -538,7 +557,9 @@ export default function AdminFooterSectionsClient() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('footerSections.list.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>{t('footerSections.list.confirm')}</AlertDialogAction>
+            <AlertDialogAction onClick={handleDeleteConfirm}>
+              {t('footerSections.list.confirm')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -11,40 +11,15 @@
 // =============================================================
 
 import * as React from 'react';
+
 import { useRouter, useSearchParams } from 'next/navigation';
+
+import { Code2, Loader2, Mail, Pencil, Plus, RefreshCcw, Search, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Plus, RefreshCcw, Search, Trash2, Pencil, Loader2, Code2, Mail } from 'lucide-react';
 
-import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
-import { localeShortClient, localeShortClientOr } from '../../../../../../i18n/localeShortClient';
-
-import { cn } from '@/lib/utils';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
 import { AdminLocaleSelect } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
+import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,13 +30,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-
-import type { EmailTemplateAdminListItemDto, EmailTemplateAdminListQueryParams } from '@/integrations/shared';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  useDeleteEmailTemplateAdminMutation,
   useListEmailTemplatesAdminQuery,
   useUpdateEmailTemplateAdminMutation,
-  useDeleteEmailTemplateAdminMutation,
 } from '@/integrations/hooks';
+import type {
+  EmailTemplateAdminListItemDto,
+  EmailTemplateAdminListQueryParams,
+} from '@/integrations/shared';
+import { cn } from '@/lib/utils';
+
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 
 type ActiveFilter = 'all' | 'active' | 'inactive';
 
@@ -71,12 +72,12 @@ type Filters = {
   locale: string;
 };
 
-function fmtDate(val: string | Date | null | undefined) {
+function fmtDate(val: string | Date | null | undefined, locale?: string) {
   if (!val) return '-';
   try {
     const d = new Date(val);
     if (Number.isNaN(d.getTime())) return String(val);
-    return d.toLocaleString('tr-TR', {
+    return d.toLocaleString(locale || undefined, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -94,22 +95,31 @@ function truncate(text: string | null | undefined, max = 60) {
   return t.slice(0, max - 1) + '…';
 }
 
-function getErrMsg(e: unknown): string {
-  const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message ||
-    anyErr?.data?.message ||
-    anyErr?.message ||
-    'İşlem başarısız'
-  );
+function getErrMsg(e: unknown, fallback: string): string {
+  const err = e as {
+    data?: { error?: { message?: unknown }; message?: unknown };
+    message?: unknown;
+  };
+
+  const candidates = [err?.data?.error?.message, err?.data?.message, err?.message];
+  for (const item of candidates) {
+    if (typeof item === 'string' && item.trim()) return item;
+  }
+  return fallback;
 }
 
 export default function AdminEmailTemplatesClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useAdminT();
 
   // Locale management
-  const { localeOptions, defaultLocaleFromDb, coerceLocale, loading: localesLoading } = useAdminLocales();
+  const {
+    localeOptions,
+    defaultLocaleFromDb,
+    coerceLocale,
+    loading: localesLoading,
+  } = useAdminLocales();
 
   const urlLocale = searchParams.get('locale') || '';
   const initialLocale =
@@ -123,6 +133,15 @@ export default function AdminEmailTemplatesClient() {
     activeFilter: 'all',
     locale: initialLocale,
   });
+
+  React.useEffect(() => {
+    if (localesLoading) return;
+    setFilters((prev) => {
+      const nextLocale = coerceLocale(prev.locale, defaultLocaleFromDb);
+      if (nextLocale === prev.locale) return prev;
+      return { ...prev, locale: nextLocale };
+    });
+  }, [coerceLocale, defaultLocaleFromDb, localesLoading]);
 
   // Update URL when locale changes
   React.useEffect(() => {
@@ -163,10 +182,13 @@ export default function AdminEmailTemplatesClient() {
   const [deleteTemplate] = useDeleteEmailTemplateAdminMutation();
 
   const total = items.length;
+  const dateLocale = localeShortClient(filters.locale) || undefined;
 
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [itemToDelete, setItemToDelete] = React.useState<EmailTemplateAdminListItemDto | null>(null);
+  const [itemToDelete, setItemToDelete] = React.useState<EmailTemplateAdminListItemDto | null>(
+    null,
+  );
 
   const handleSearch = (value: string) => {
     setFilters((prev) => ({ ...prev, search: value }));
@@ -187,10 +209,14 @@ export default function AdminEmailTemplatesClient() {
         id: item.id,
         body: { is_active: !item.is_active },
       }).unwrap();
-      toast.success(item.is_active ? 'Pasif yapıldı' : 'Aktif yapıldı');
+      toast.success(
+        item.is_active
+          ? t('admin.emailTemplates.list.toast.deactivated')
+          : t('admin.emailTemplates.list.toast.activated'),
+      );
       refetch();
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('admin.emailTemplates.common.operationFailed')));
     }
   };
 
@@ -208,12 +234,12 @@ export default function AdminEmailTemplatesClient() {
 
     try {
       await deleteTemplate({ id: itemToDelete.id }).unwrap();
-      toast.success('Kayıt silindi');
+      toast.success(t('admin.emailTemplates.list.toast.deleted'));
       setDeleteDialogOpen(false);
       setItemToDelete(null);
       refetch();
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('admin.emailTemplates.common.operationFailed')));
     }
   };
 
@@ -227,10 +253,8 @@ export default function AdminEmailTemplatesClient() {
           <CardHeader>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
-                <CardTitle>Email Templates</CardTitle>
-                <CardDescription>
-                  Email şablonlarını yönetin. Her şablon farklı dillerde içerik içerebilir.
-                </CardDescription>
+                <CardTitle>{t('admin.emailTemplates.list.title')}</CardTitle>
+                <CardDescription>{t('admin.emailTemplates.list.description')}</CardDescription>
               </div>
               <Button
                 onClick={() => router.push('/admin/email-templates/new')}
@@ -238,7 +262,7 @@ export default function AdminEmailTemplatesClient() {
                 className="gap-2"
               >
                 <Plus className="size-4" />
-                Yeni Ekle
+                {t('admin.emailTemplates.list.addButton')}
               </Button>
             </div>
           </CardHeader>
@@ -249,13 +273,13 @@ export default function AdminEmailTemplatesClient() {
               {/* Search */}
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="search" className="text-sm">
-                  Ara
+                  {t('admin.emailTemplates.list.filters.searchLabel')}
                 </Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="search"
-                    placeholder="Template key, name, subject..."
+                    placeholder={t('admin.emailTemplates.list.filters.searchPlaceholder')}
                     value={filters.search}
                     onChange={(e) => handleSearch(e.target.value)}
                     disabled={busy}
@@ -267,7 +291,7 @@ export default function AdminEmailTemplatesClient() {
               {/* Active Filter */}
               <div className="space-y-2">
                 <Label htmlFor="activeFilter" className="text-sm">
-                  Durum
+                  {t('admin.emailTemplates.list.filters.statusLabel')}
                 </Label>
                 <Select
                   value={filters.activeFilter}
@@ -278,9 +302,15 @@ export default function AdminEmailTemplatesClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tümü</SelectItem>
-                    <SelectItem value="active">Aktif</SelectItem>
-                    <SelectItem value="inactive">Pasif</SelectItem>
+                    <SelectItem value="all">
+                      {t('admin.emailTemplates.list.filters.statusOptions.all')}
+                    </SelectItem>
+                    <SelectItem value="active">
+                      {t('admin.emailTemplates.list.filters.statusOptions.active')}
+                    </SelectItem>
+                    <SelectItem value="inactive">
+                      {t('admin.emailTemplates.list.filters.statusOptions.inactive')}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -300,25 +330,18 @@ export default function AdminEmailTemplatesClient() {
             {/* Refresh */}
             <div className="flex items-center justify-between gap-2">
               <div className="text-sm text-muted-foreground">
-                Toplam <strong>{total}</strong> kayıt
+                {t('admin.emailTemplates.list.totalRecords', { count: total })}
               </div>
-              <Button
-                variant="outline"
-                onClick={() => refetch()}
-                disabled={busy}
-                className="gap-2"
-              >
-                <RefreshCcw
-                  className={cn('size-4', isFetching && 'animate-spin')}
-                />
-                Yenile
+              <Button variant="outline" onClick={() => refetch()} disabled={busy} className="gap-2">
+                <RefreshCcw className={cn('size-4', isFetching && 'animate-spin')} />
+                {t('admin.emailTemplates.list.refreshButton')}
               </Button>
             </div>
 
             {isFetching && (
               <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
-                <span>Yükleniyor...</span>
+                <span>{t('admin.emailTemplates.list.fetching')}</span>
               </div>
             )}
           </CardContent>
@@ -330,13 +353,23 @@ export default function AdminEmailTemplatesClient() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Template Key</TableHead>
-                  <TableHead>Name & Subject</TableHead>
-                  <TableHead className="w-48">Variables</TableHead>
-                  <TableHead className="w-24 text-center">Aktif</TableHead>
-                  <TableHead className="w-32">Locale</TableHead>
-                  <TableHead className="w-44">Tarih</TableHead>
-                  <TableHead className="w-40 text-right">İşlemler</TableHead>
+                  <TableHead>{t('admin.emailTemplates.list.table.headers.templateKey')}</TableHead>
+                  <TableHead>{t('admin.emailTemplates.list.table.headers.nameSubject')}</TableHead>
+                  <TableHead className="w-48">
+                    {t('admin.emailTemplates.list.table.headers.variables')}
+                  </TableHead>
+                  <TableHead className="w-24 text-center">
+                    {t('admin.emailTemplates.list.table.headers.active')}
+                  </TableHead>
+                  <TableHead className="w-32">
+                    {t('admin.emailTemplates.list.table.headers.locale')}
+                  </TableHead>
+                  <TableHead className="w-44">
+                    {t('admin.emailTemplates.list.table.headers.date')}
+                  </TableHead>
+                  <TableHead className="w-40 text-right">
+                    {t('admin.emailTemplates.list.table.headers.actions')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -345,14 +378,14 @@ export default function AdminEmailTemplatesClient() {
                     <TableCell colSpan={7} className="h-24 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Loader2 className="size-5 animate-spin" />
-                        <span>Yükleniyor...</span>
+                        <span>{t('admin.emailTemplates.list.loading')}</span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : items.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="h-24 text-center">
-                      Kayıt bulunamadı.
+                      {t('admin.emailTemplates.list.empty')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -408,9 +441,10 @@ export default function AdminEmailTemplatesClient() {
                         )}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        <div>{fmtDate(item.created_at)}</div>
+                        <div>{fmtDate(item.created_at, dateLocale)}</div>
                         <div className="text-[10px]">
-                          Güncelleme: {fmtDate(item.updated_at)}
+                          {t('admin.emailTemplates.list.table.updatedLabel')}:{' '}
+                          {fmtDate(item.updated_at, dateLocale)}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -423,7 +457,7 @@ export default function AdminEmailTemplatesClient() {
                             className="gap-2"
                           >
                             <Pencil className="size-3.5" />
-                            Düzenle
+                            {t('admin.emailTemplates.list.actions.edit')}
                           </Button>
                           <Button
                             variant="outline"
@@ -433,7 +467,7 @@ export default function AdminEmailTemplatesClient() {
                             className="gap-2"
                           >
                             <Trash2 className="size-3.5" />
-                            Sil
+                            {t('admin.emailTemplates.list.actions.delete')}
                           </Button>
                         </div>
                       </TableCell>
@@ -452,14 +486,14 @@ export default function AdminEmailTemplatesClient() {
               <CardContent className="flex items-center justify-center py-12">
                 <div className="flex items-center gap-2">
                   <Loader2 className="size-5 animate-spin" />
-                  <span>Yükleniyor...</span>
+                  <span>{t('admin.emailTemplates.list.loading')}</span>
                 </div>
               </CardContent>
             </Card>
           ) : items.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
-                Kayıt bulunamadı.
+                {t('admin.emailTemplates.list.empty')}
               </CardContent>
             </Card>
           ) : (
@@ -483,7 +517,9 @@ export default function AdminEmailTemplatesClient() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">Aktif</Label>
+                      <Label className="text-sm">
+                        {t('admin.emailTemplates.list.mobile.activeLabel')}
+                      </Label>
                       <Switch
                         checked={item.is_active}
                         onCheckedChange={() => handleToggleActive(item)}
@@ -495,7 +531,9 @@ export default function AdminEmailTemplatesClient() {
                   {/* Variables */}
                   {item.detected_variables && item.detected_variables.length > 0 && (
                     <div className="space-y-2">
-                      <Label className="text-xs text-muted-foreground">Variables</Label>
+                      <Label className="text-xs text-muted-foreground">
+                        {t('admin.emailTemplates.list.mobile.variablesLabel')}
+                      </Label>
                       <div className="flex flex-wrap gap-1">
                         {item.detected_variables.map((v) => (
                           <Badge key={v} variant="secondary" className="text-[10px]">
@@ -508,8 +546,14 @@ export default function AdminEmailTemplatesClient() {
 
                   {/* Dates */}
                   <div className="space-y-1 text-xs text-muted-foreground">
-                    <div>Oluşturma: {fmtDate(item.created_at)}</div>
-                    <div>Güncelleme: {fmtDate(item.updated_at)}</div>
+                    <div>
+                      {t('admin.emailTemplates.list.mobile.createdLabel')}:{' '}
+                      {fmtDate(item.created_at, dateLocale)}
+                    </div>
+                    <div>
+                      {t('admin.emailTemplates.list.mobile.updatedLabel')}:{' '}
+                      {fmtDate(item.updated_at, dateLocale)}
+                    </div>
                   </div>
 
                   {/* Actions */}
@@ -522,7 +566,7 @@ export default function AdminEmailTemplatesClient() {
                       className="flex-1 gap-2"
                     >
                       <Pencil className="size-3.5" />
-                      Düzenle
+                      {t('admin.emailTemplates.list.actions.edit')}
                     </Button>
                     <Button
                       variant="outline"
@@ -532,7 +576,7 @@ export default function AdminEmailTemplatesClient() {
                       className="flex-1 gap-2"
                     >
                       <Trash2 className="size-3.5" />
-                      Sil
+                      {t('admin.emailTemplates.list.actions.delete')}
                     </Button>
                   </div>
                 </CardContent>
@@ -546,14 +590,20 @@ export default function AdminEmailTemplatesClient() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Silmek istediğinizden emin misiniz?</AlertDialogTitle>
+            <AlertDialogTitle>{t('admin.emailTemplates.list.dialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              <strong>{itemToDelete?.template_key || 'Bu şablon'}</strong> silinecek. Bu işlem geri alınamaz.
+              {t('admin.emailTemplates.list.dialog.description', {
+                template:
+                  itemToDelete?.template_key ||
+                  t('admin.emailTemplates.list.dialog.templateFallback'),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>İptal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>Sil</AlertDialogAction>
+            <AlertDialogCancel>{t('admin.emailTemplates.list.dialog.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>
+              {t('admin.emailTemplates.list.dialog.delete')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

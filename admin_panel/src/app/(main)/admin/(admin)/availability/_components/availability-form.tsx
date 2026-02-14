@@ -13,14 +13,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import type { AvailabilityResourceValues, ResourceRowDto, ResourceType } from '@/integrations/shared';
+import type {
+  AvailabilityResourceValues,
+  ResourceRowDto,
+  ResourceType,
+} from '@/integrations/shared';
 import { RESOURCE_TYPE_VALUES, isUuidLike, toActiveBool } from '@/integrations/shared';
 
-import { ResourceTab } from './tabs/ResourceTab';
-import { WeeklyWorkingHoursTab } from './_components/WeeklyWorkingHoursTab';
-import { DailyPlanTab } from './tabs/DailyPlanTab';
-
-const toStr = (v: unknown) => String(v ?? '').trim();
+import { WeeklyWorkingHoursTab } from './weekly-working-hours-tab';
+import { toStr } from './availability-utils';
+import { DailyPlanTab } from '../tabs/daily-plan-tab';
+import { ResourceTab } from '../tabs/resource-tab';
 
 export type AvailabilityFormProps = {
   mode: 'create' | 'edit';
@@ -48,30 +51,26 @@ export const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
   const [dailyEditCtx, setDailyEditCtx] = useState<{ dow?: number; wh_id?: string }>({});
 
   const [values, setValues] = useState<AvailabilityResourceValues>(() => {
-    const dtoType = toStr((initialData as any)?.type) as ResourceType;
+    const dtoType = toStr(initialData?.type) as ResourceType;
     const safeType: ResourceType = RESOURCE_TYPE_VALUES.includes(dtoType) ? dtoType : 'therapist';
     return {
-      title: toStr((initialData as any)?.title),
+      title: toStr(initialData?.title),
       type: safeType,
-      is_active: toActiveBool((initialData as any)?.is_active ?? 1),
-      capacity: Number((initialData as any)?.capacity ?? 1),
-      external_ref_id: (initialData as any)?.external_ref_id
-        ? String((initialData as any)?.external_ref_id)
-        : null,
+      is_active: toActiveBool(initialData?.is_active ?? 1),
+      capacity: Number(initialData?.capacity ?? 1),
+      external_ref_id: initialData?.external_ref_id ? String(initialData.external_ref_id) : null,
     };
   });
 
   useEffect(() => {
-    const dtoType = toStr((initialData as any)?.type) as ResourceType;
+    const dtoType = toStr(initialData?.type) as ResourceType;
     const safeType: ResourceType = RESOURCE_TYPE_VALUES.includes(dtoType) ? dtoType : 'therapist';
     setValues({
-      title: toStr((initialData as any)?.title),
+      title: toStr(initialData?.title),
       type: safeType,
-      is_active: toActiveBool((initialData as any)?.is_active ?? 1),
-      capacity: Number((initialData as any)?.capacity ?? 1),
-      external_ref_id: (initialData as any)?.external_ref_id
-        ? String((initialData as any)?.external_ref_id)
-        : null,
+      is_active: toActiveBool(initialData?.is_active ?? 1),
+      capacity: Number(initialData?.capacity ?? 1),
+      external_ref_id: initialData?.external_ref_id ? String(initialData.external_ref_id) : null,
     });
   }, [initialData]);
 
@@ -125,7 +124,10 @@ export const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
       </CardHeader>
 
       <CardContent>
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as 'resource' | 'weekly' | 'daily')}
+        >
           <TabsList className="mb-4">
             <TabsTrigger value="resource" disabled={disabled}>
               Kaynak

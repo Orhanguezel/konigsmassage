@@ -107,12 +107,14 @@
         "remove": "Remove",
         "clear": "Clear",
         "reset": "Reset",
-        "restore": "Restore",
-        "apply": "Apply",
-        "locale": "Language",
-        "key": "Key",
-        "value": "Value",
-        "source": "Source",
+	        "restore": "Restore",
+	        "apply": "Apply",
+	        "locale": "Language",
+	        "localePlaceholder": "Select language",
+	        "localeOptionsMissing": "No locale options found.",
+	        "key": "Key",
+	        "value": "Value",
+	        "source": "Source",
         "exists": "Exists",
         "doesNotExist": "Does not exist",
         "note": "Note",
@@ -563,19 +565,394 @@
           "title": "Invalid ID",
           "description": "Not a UUID:"
         },
-        "actions": {
-          "backToList": "Back to list",
-          "back": "Back",
-          "create": "Create",
-          "creating": "Creating...",
-          "save": "Save",
-          "saving": "Saving..."
-        }
-      },
-      
-      "customPage": {
-        "title": "Custom Pages",
-        "subtitle": "List static content pages",
+	        "actions": {
+	          "backToList": "Back to list",
+	          "back": "Back",
+	          "create": "Create",
+	          "creating": "Creating...",
+	          "save": "Save",
+	          "saving": "Saving..."
+	        }
+	      },
+	      "contacts": {
+	        "header": {
+	          "title": "Contacts",
+	          "subtitle": "Manage contact form submissions."
+	        },
+	        "filters": {
+	          "title": "Filters",
+	          "description": "Search, status and sorting options.",
+	          "searchPlaceholder": "Search by name, email or subject...",
+	          "statusLabel": "Status",
+	          "statusAll": "All",
+	          "statusNew": "New",
+	          "statusInProgress": "In progress",
+	          "statusClosed": "Closed",
+	          "orderByLabel": "Order by",
+	          "orderByCreated": "Created At",
+	          "orderByUpdated": "Updated At",
+	          "orderByStatus": "Status",
+	          "orderByName": "Name",
+	          "orderLabel": "Order",
+	          "orderDesc": "Descending",
+	          "orderAsc": "Ascending",
+	          "onlyUnresolved": "Only unresolved"
+	        },
+	        "list": {
+	          "title": "List",
+	          "description": "View and manage contact messages.",
+	          "loading": "Loading contacts...",
+	          "empty": "No contacts found."
+	        },
+	        "columns": {
+	          "name": "Name",
+	          "email": "Email",
+	          "subject": "Subject",
+	          "status": "Status",
+	          "createdAt": "Created"
+	        },
+	        "status": {
+	          "new": "New",
+	          "inProgress": "In progress",
+	          "closed": "Closed"
+	        },
+	        "details": {
+	          "title": "Details",
+	          "name": "Name",
+	          "email": "Email",
+	          "phone": "Phone",
+	          "subject": "Subject",
+	          "message": "Message",
+	          "createdAt": "Created",
+	          "updatedAt": "Updated",
+	          "id": "ID"
+	        },
+	        "editDialog": {
+	          "title": "Edit contact",
+	          "description": "Update status, resolution and admin note.",
+	          "statusLabel": "Status",
+	          "resolvedLabel": "Resolved",
+	          "adminNoteLabel": "Admin note",
+	          "adminNotePlaceholder": "Internal note for staff..."
+	        },
+	        "messages": {
+	          "saved": "Saved.",
+	          "saveError": "Failed to save changes.",
+	          "deleted": "Deleted.",
+	          "deleteError": "Failed to delete message.",
+	          "loadError": "Failed to load contacts."
+	        },
+		        "confirmDelete": "You are about to delete this contact message.\n\nName: {name}\nEmail: {email}\nSubject: {subject}\nID: {id}\n\nDo you want to continue?"
+		      },
+		      "reviews": {
+		        "header": {
+		          "title": "Reviews & Testimonials",
+		          "description": "Manage customer reviews and testimonials."
+		        },
+		        "actions": {
+		          "create": "New review",
+		          "backToList": "Back to list",
+		          "deleting": "Deleting..."
+		        },
+		        "filters": {
+		          "searchLabel": "Search",
+		          "searchPlaceholder": "Name, email, comment...",
+		          "approvedLabel": "Approval",
+		          "activeLabel": "Status",
+		          "minRatingLabel": "Min rating",
+		          "minRatingPlaceholder": "0",
+		          "maxRatingLabel": "Max rating",
+		          "maxRatingPlaceholder": "5",
+		          "localeLabel": "Language",
+		          "options": {
+		            "all": "All",
+		            "approved": "Approved",
+		            "unapproved": "Unapproved",
+		            "active": "Active",
+		            "inactive": "Inactive"
+		          }
+		        },
+		        "summary": {
+		          "total": "Total {total} records"
+		        },
+		        "table": {
+		          "columns": {
+		            "nameEmail": "Name & Email",
+		            "rating": "Rating",
+		            "comment": "Comment",
+		            "approved": "Approved",
+		            "active": "Active",
+		            "locale": "Locale",
+		            "date": "Date"
+		          },
+		          "empty": "No records found.",
+		          "updatedAt": "Updated"
+		        },
+		        "labels": {
+		          "approved": "Approved",
+		          "unapproved": "Unapproved",
+		          "active": "Active",
+		          "inactive": "Inactive",
+		          "comment": "Comment",
+		          "createdAt": "Created",
+		          "updatedAt": "Updated"
+		        },
+		        "deleteDialog": {
+		          "title": "Delete review?",
+		          "description": "{name} review will be deleted. This action cannot be undone.",
+		          "fallbackName": "This record"
+		        },
+		        "messages": {
+		          "activated": "Activated.",
+		          "deactivated": "Deactivated.",
+		          "approved": "Approved.",
+		          "approvalRemoved": "Approval removed.",
+		          "created": "Record created.",
+		          "updated": "Record updated.",
+		          "deleted": "Record deleted.",
+		          "loadError": "Failed to load record.",
+		          "genericError": "Operation failed. Please try again."
+		        },
+			        "form": {
+			          "titles": {
+			            "create": "New review",
+			            "edit": "Edit review"
+			          },
+		          "descriptions": {
+		            "create": "Add a new customer review.",
+		            "edit": "Edit the existing customer review."
+		          },
+		          "sections": {
+		            "meta": "General",
+		            "customer": "Customer information",
+		            "content": "Review content",
+		            "extras": "Testimonial extras",
+		            "extrasDescription": "Optional fields used by testimonial layout.",
+		            "adminReply": "Admin reply",
+		            "adminReplyDescription": "You can reply to this review as admin."
+		          },
+		          "fields": {
+		            "locale": "Language",
+		            "displayOrder": "Display order",
+		            "approved": "Approval",
+		            "active": "Active",
+		            "targetType": "Target type",
+		            "targetId": "Target ID",
+		            "name": "Name",
+		            "email": "Email",
+		            "rating": "Rating",
+		            "title": "Title",
+		            "comment": "Comment",
+		            "role": "Role / Position",
+		            "company": "Company",
+		            "avatarUrl": "Avatar URL",
+		            "logoUrl": "Logo URL",
+		            "profileHref": "Profile link",
+		            "adminReply": "Reply"
+		          },
+		          "placeholders": {
+		            "targetType": "e.g. testimonial, product, service",
+		            "targetId": "UUID or identifier",
+		            "name": "e.g. Jane Doe",
+		            "email": "example@email.com",
+		            "title": "Optional review title",
+		            "comment": "Customer review...",
+		            "role": "e.g. CEO, Manager",
+		            "company": "Company name",
+		            "adminReply": "Optional admin reply"
+		          },
+		          "validation": {
+		            "targetTypeRequired": "Target type is required.",
+		            "targetIdRequired": "Target ID is required.",
+		            "nameRequired": "Name is required.",
+		            "emailRequired": "Email is required.",
+		            "commentRequired": "Comment is required.",
+		            "ratingRange": "Rating must be between 0 and 5."
+			          }
+			        }
+			      },
+			      "bookings": {
+			        "header": {
+			          "title": "Bookings",
+			          "description": "Filter, view and update booking requests."
+			        },
+			        "summary": {
+			          "total": "Total {total}"
+			        },
+			        "states": {
+			          "loadingInline": "Loading…",
+			          "loading": "Loading bookings...",
+			          "empty": "No records found.",
+			          "resourcesLoading": "Loading resources..."
+			        },
+			        "filters": {
+			          "searchLabel": "Search",
+			          "searchPlaceholder": "Name / Email / Phone",
+			          "statusLabel": "Status",
+			          "statusOptions": {
+			            "all": "All",
+			            "new": "New",
+			            "confirmed": "Confirmed",
+			            "rejected": "Rejected",
+			            "completed": "Completed",
+			            "cancelled": "Cancelled",
+			            "expired": "Expired"
+			          },
+			          "readLabel": "Read",
+			          "readOptions": {
+			            "all": "All",
+			            "unread": "Unread",
+			            "read": "Read"
+			          },
+			          "dateLabel": "Date",
+			          "resourceIdLabel": "Resource ID",
+			          "resourceIdPlaceholder": "(optional)",
+			          "serviceIdLabel": "Service ID",
+			          "serviceIdPlaceholder": "(optional)"
+			        },
+			        "badges": {
+			          "unread": "Unread"
+			        },
+			        "status": {
+			          "new": "New",
+			          "confirmed": "Confirmed",
+			          "rejected": "Rejected",
+			          "completed": "Completed",
+			          "cancelled": "Cancelled",
+			          "expired": "Expired"
+			        },
+			        "read": {
+			          "read": "Read",
+			          "unread": "Unread"
+			        },
+			        "list": {
+			          "title": "Booking list",
+			          "description": "Manage bookings and quick actions.",
+			          "views": {
+			            "table": "Table",
+			            "cards": "Cards"
+			          },
+			          "columns": {
+			            "status": "Status",
+			            "customer": "Customer",
+			            "date": "Date",
+			            "resource": "Resource",
+			            "service": "Service"
+			          }
+			        },
+			        "labels": {
+			          "dateTime": "Date/time",
+			          "resource": "Resource",
+			          "service": "Service",
+			          "customerMessage": "Customer message",
+			          "selected": "Selected",
+			          "available": "Available",
+			          "full": "Full",
+			          "inactive": "Inactive"
+			        },
+			        "tooltips": {
+			          "acceptDisabled": "Only \"New\" requests can be accepted.",
+			          "rejectDisabled": "This status cannot be rejected.",
+			          "alreadyRead": "Already read",
+			          "decisionAlreadyMade": "A decision has already been made for this booking."
+			        },
+			        "actions": {
+			          "accept": "Accept",
+			          "accepting": "Accepting...",
+			          "reject": "Reject",
+			          "rejecting": "Rejecting...",
+			          "markRead": "Mark read",
+			          "backToList": "Back to list"
+			        },
+			        "decision": {
+			          "titleAccept": "Accept booking",
+			          "titleReject": "Reject booking",
+			          "actionAccept": "Accept",
+			          "actionReject": "Reject",
+			          "noteLabel": "Decision note (optional)",
+			          "notePlaceholder": "This note may be shown to the customer via email template.",
+			          "noteHelp": "This action triggers email template + notifications in backend.",
+			          "processing": "Processing..."
+			        },
+			        "confirm": {
+			          "delete": "You are about to delete this booking.\n\nCustomer: {name}\nDate: {dateTime}\n\nDo you want to continue?",
+			          "reject": "You are about to reject this booking request. Do you want to continue?"
+			        },
+			        "messages": {
+			          "created": "Record created.",
+			          "updated": "Record updated.",
+			          "deleted": "Booking deleted.",
+			          "deleteError": "Failed to delete booking.",
+			          "markedRead": "Marked as read.",
+			          "accepted": "Booking accepted. (Email + notification triggered)",
+			          "rejected": "Booking rejected. (Email + notification triggered)",
+			          "loadError": "Failed to load record.",
+			          "genericError": "Operation failed. Please try again."
+			        },
+			        "form": {
+			          "titles": {
+			            "create": "New booking",
+			            "edit": "Edit booking"
+			          },
+			          "description": "Manage customer info, date/time, resource and status fields.",
+			          "fields": {
+			            "name": "Name",
+			            "email": "Email",
+			            "phone": "Phone",
+			            "locale": "Locale",
+			            "status": "Status",
+			            "isRead": "Read",
+			            "serviceId": "Service ID",
+			            "resource": "Resource",
+			            "date": "Date",
+			            "time": "Time",
+			            "customerMessage": "Customer message",
+			            "adminNote": "Admin note",
+			            "decisionNote": "Decision note"
+			          },
+			          "placeholders": {
+			            "serviceId": "(optional)",
+			            "resource": "Select resource",
+			            "time": "Select time",
+			            "select": "Select...",
+			            "optional": "(optional)",
+			            "decisionNote": "(optional) Can be shown to the customer in accept/reject email."
+			          },
+			          "help": {
+			            "locale": "Customer preferred language. Email templates use this locale.",
+			            "status": "Use Accept/Reject actions for decision note + email + notifications.",
+			            "date": "Daily plan is fetched by this date.",
+			            "pickResourceAndDate": "Pick resource + date.",
+			            "slotsLoading": "Loading slots...",
+			            "slotCount": "{count} slots"
+			          },
+			          "validation": {
+			            "requiredCustomerFields": "Name, email and phone are required.",
+			            "resourceRequired": "Resource selection is required.",
+			            "invalidDate": "Select a valid date. (YYYY-MM-DD)",
+			            "invalidTime": "Select a valid time. (HH:mm)"
+			          },
+			          "availability": {
+			            "checking": "Checking availability...",
+			            "noSlot": "No slot record found (can be created via plan).",
+			            "available": "Available ({reserved}/{cap})",
+			            "unavailable": "Full / inactive ({reserved}/{cap})"
+			          }
+			        },
+			        "plan": {
+			          "title": "Daily plan",
+			          "description": "Slots come from daily plan endpoint. Only available slots can be selected.",
+			          "columns": {
+			            "time": "Time",
+			            "status": "Status",
+			            "capacity": "Capacity"
+			          }
+			        }
+			      },
+			      
+			      "customPage": {
+			        "title": "Custom Pages",
+			        "subtitle": "List static content pages",
         "newPage": "New Page",
         "allLanguages": "All languages",
         "allModules": "All Modules",
@@ -1445,6 +1822,127 @@
             "admin": "Admin",
             "moderator": "Moderator",
             "user": "User"
+          }
+        },
+        "emailTemplates": {
+          "common": {
+            "operationFailed": "Operation failed. Please try again.",
+            "loading": "Loading...",
+            "active": "Active",
+            "inactive": "Inactive"
+          },
+          "list": {
+            "title": "Email Templates",
+            "description": "Manage email templates. Each template can have content in different languages.",
+            "addButton": "Add New",
+            "filters": {
+              "searchLabel": "Search",
+              "searchPlaceholder": "Template key, name, subject...",
+              "statusLabel": "Status",
+              "statusOptions": {
+                "all": "All",
+                "active": "Active",
+                "inactive": "Inactive"
+              }
+            },
+            "totalRecords": "Total {count} records",
+            "refreshButton": "Refresh",
+            "fetching": "Loading...",
+            "loading": "Loading...",
+            "empty": "No records found.",
+            "table": {
+              "headers": {
+                "templateKey": "Template Key",
+                "nameSubject": "Name & Subject",
+                "variables": "Variables",
+                "active": "Active",
+                "locale": "Locale",
+                "date": "Date",
+                "actions": "Actions"
+              },
+              "updatedLabel": "Updated"
+            },
+            "actions": {
+              "edit": "Edit",
+              "delete": "Delete"
+            },
+            "mobile": {
+              "activeLabel": "Active",
+              "variablesLabel": "Variables",
+              "createdLabel": "Created",
+              "updatedLabel": "Updated"
+            },
+            "toast": {
+              "activated": "Set to active.",
+              "deactivated": "Set to inactive.",
+              "deleted": "Record deleted."
+            },
+            "dialog": {
+              "title": "Are you sure you want to delete?",
+              "description": "{template} will be deleted. This action cannot be undone.",
+              "templateFallback": "This template",
+              "cancel": "Cancel",
+              "delete": "Delete"
+            }
+          },
+          "detail": {
+            "loadError": "Failed to load record",
+            "backToList": "Back to list",
+            "titleCreate": "New Email Template",
+            "titleEdit": "Edit Email Template",
+            "descriptionCreate": "Create a new email template",
+            "descriptionEdit": "Edit existing email template",
+            "sections": {
+              "generalInfo": "General Information",
+              "templateInfo": "Template Information",
+              "content": "Email Content",
+              "contentDescription": "HTML content. Use {{variable}} format for variables.",
+              "variables": "Variables",
+              "variablesDescription": "Define variables used in email content (optional)"
+            },
+            "fields": {
+              "statusLabel": "Status",
+              "templateKeyLabel": "Template Key",
+              "templateKeyPlaceholder": "welcome_email",
+              "templateKeyHelp": "Unique key (cannot be changed). Example: welcome_email, password_reset",
+              "templateNameLabel": "Template Name",
+              "templateNamePlaceholder": "Welcome Email",
+              "subjectLabel": "Subject",
+              "subjectPlaceholder": "Welcome {{name}}!",
+              "subjectHelp": "Email subject. Use {{variable}} for dynamic fields.",
+              "contentLabel": "HTML Content",
+              "contentPlaceholder": "<html><body><h1>Hello {{name}}!</h1><p>Welcome...</p></body></html>",
+              "variablesLabel": "Variables",
+              "variablesPlaceholder": "name, email, url or [\"name\", \"email\", \"url\"]",
+              "variablesHelp": "Use comma-separated values (name, email, url) or JSON array ([\"name\", \"email\"]).",
+              "detectedVariablesLabel": "Detected Variables in Content"
+            },
+            "validation": {
+              "templateKeyRequired": "Template key is required.",
+              "templateNameRequired": "Template name is required.",
+              "subjectRequired": "Subject is required.",
+              "contentRequired": "Content is required."
+            },
+            "actions": {
+              "back": "Back",
+              "delete": "Delete",
+              "deleting": "Deleting...",
+              "cancel": "Cancel",
+              "save": "Save",
+              "saving": "Saving..."
+            },
+            "toast": {
+              "created": "Template created.",
+              "updated": "Template updated.",
+              "deleted": "Template deleted."
+            },
+            "dialog": {
+              "title": "Are you sure you want to delete?",
+              "description": "{template} will be deleted. This action cannot be undone.",
+              "templateFallback": "This template",
+              "cancel": "Cancel",
+              "delete": "Delete"
+            }
           }
         },
         "userRoles": {

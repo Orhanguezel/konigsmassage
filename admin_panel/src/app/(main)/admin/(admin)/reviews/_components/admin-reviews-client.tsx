@@ -10,13 +10,25 @@
 import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { Plus, RefreshCcw, Search, Trash2, Pencil, Loader2, Star, CheckCircle2, XCircle } from 'lucide-react';
+import {
+  Plus,
+  RefreshCcw,
+  Search,
+  Trash2,
+  Pencil,
+  Loader2,
+  Star,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
-import { resolveAdminApiLocale } from '../../../../../../i18n/adminLocale';
-import { localeShortClientOr } from '../../../../../../i18n/localeShortClient';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 
 import { cn } from '@/lib/utils';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +36,10 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { AdminLocaleSelect, type AdminLocaleOption } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
+import {
+  AdminLocaleSelect,
+  type AdminLocaleOption,
+} from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
 
 import {
   Select,
@@ -73,12 +88,12 @@ type Filters = {
   locale: string;
 };
 
-function fmtDate(val: string | null | undefined) {
+function fmtDate(val: string | null | undefined, locale?: string) {
   if (!val) return '-';
   try {
     const d = new Date(val);
     if (Number.isNaN(d.getTime())) return String(val);
-    return d.toLocaleString('tr-TR', {
+    return d.toLocaleString(locale || undefined, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -96,14 +111,9 @@ function truncate(text: string | null | undefined, max = 60) {
   return t.slice(0, max - 1) + '…';
 }
 
-function getErrMsg(e: unknown): string {
+function getErrMsg(e: unknown, fallback: string): string {
   const anyErr = e as any;
-  return (
-    anyErr?.data?.error?.message ||
-    anyErr?.data?.message ||
-    anyErr?.message ||
-    'İşlem başarısız'
-  );
+  return anyErr?.data?.error?.message || anyErr?.data?.message || anyErr?.message || fallback;
 }
 
 function RatingStars({ rating }: { rating: number }) {
@@ -115,7 +125,7 @@ function RatingStars({ rating }: { rating: number }) {
           key={i}
           className={cn(
             'size-3.5',
-            i < stars ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'
+            i < stars ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground',
           )}
         />
       ))}
@@ -126,9 +136,16 @@ function RatingStars({ rating }: { rating: number }) {
 export default function AdminReviewsClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useAdminT('admin.reviews');
+  const adminUiLocale = usePreferencesStore((s) => s.adminLocale);
 
   // Locale management
-  const { localeOptions, defaultLocaleFromDb, coerceLocale, loading: localesLoading } = useAdminLocales();
+  const {
+    localeOptions,
+    defaultLocaleFromDb,
+    coerceLocale,
+    loading: localesLoading,
+  } = useAdminLocales();
 
   // ✅ FIX: Ensure localeOptions has correct type
   const safeLocaleOptions: AdminLocaleOption[] = React.useMemo(() => {
@@ -139,8 +156,11 @@ export default function AdminReviewsClient() {
     }));
   }, [localeOptions]);
 
-  const urlLocale = searchParams.get('locale') || '';
-  const initialLocale = urlLocale || defaultLocaleFromDb || localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de') || '';
+  const urlLocale = localeShortClient(searchParams.get('locale') || '');
+  const initialLocale =
+    urlLocale ||
+    defaultLocaleFromDb ||
+    localeShortClientOr(typeof window !== 'undefined' ? navigator.language : 'de');
 
   const [filters, setFilters] = React.useState<Filters>({
     search: '',
@@ -153,16 +173,21 @@ export default function AdminReviewsClient() {
 
   // Update URL when locale changes
   React.useEffect(() => {
-    if (!filters.locale) return;
+    const next = localeShortClient(filters.locale);
+    if (!next) return;
+    const cur = localeShortClient(searchParams.get('locale') || '');
+    if (cur === next) return;
     const params = new URLSearchParams(searchParams.toString());
-    params.set('locale', filters.locale);
+    params.set('locale', next);
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [filters.locale, router, searchParams]);
 
   // Build query params
   const queryParams = React.useMemo((): AdminReviewListQueryParams => {
     // ✅ FIXED: Correct usage of resolveAdminApiLocale with all parameters
-    const apiLocale = filters.locale || resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
+    const apiLocale =
+      localeShortClient(filters.locale) ||
+      resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
 
     return {
       search: filters.search || undefined,
@@ -187,12 +212,7 @@ export default function AdminReviewsClient() {
   }, [filters, localeOptions, defaultLocaleFromDb]);
 
   // RTK Query
-  const {
-    data: result,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useListReviewsAdminQuery(queryParams);
+  const { data: result, isLoading, isFetching, refetch } = useListReviewsAdminQuery(queryParams);
 
   const [updateReview] = useUpdateReviewAdminMutation();
   const [deleteReview] = useDeleteReviewAdminMutation();
@@ -227,10 +247,10 @@ export default function AdminReviewsClient() {
         id: item.id,
         patch: { is_active: !item.is_active },
       }).unwrap();
-      toast.success(item.is_active ? 'Pasif yapıldı' : 'Aktif yapıldı');
+      toast.success(item.is_active ? t('messages.deactivated') : t('messages.activated'));
       refetch();
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('messages.genericError')));
     }
   };
 
@@ -240,10 +260,10 @@ export default function AdminReviewsClient() {
         id: item.id,
         patch: { is_approved: !item.is_approved },
       }).unwrap();
-      toast.success(item.is_approved ? 'Onay kaldırıldı' : 'Onaylandı');
+      toast.success(item.is_approved ? t('messages.approvalRemoved') : t('messages.approved'));
       refetch();
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('messages.genericError')));
     }
   };
 
@@ -261,16 +281,16 @@ export default function AdminReviewsClient() {
 
     try {
       await deleteReview({ id: itemToDelete.id }).unwrap();
-      toast.success('Kayıt silindi');
+      toast.success(t('messages.deleted'));
       setDeleteDialogOpen(false);
       setItemToDelete(null);
       refetch();
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t('messages.genericError')));
     }
   };
 
-  const busy = isLoading;
+  const busy = isLoading || isFetching;
 
   return (
     <>
@@ -280,10 +300,8 @@ export default function AdminReviewsClient() {
           <CardHeader>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
-                <CardTitle>Reviews & Testimonials</CardTitle>
-                <CardDescription>
-                  Müşteri yorumlarını ve değerlendirmelerini yönetin.
-                </CardDescription>
+                <CardTitle>{t('header.title')}</CardTitle>
+                <CardDescription>{t('header.description')}</CardDescription>
               </div>
               <Button
                 onClick={() => router.push('/admin/reviews/new')}
@@ -291,7 +309,7 @@ export default function AdminReviewsClient() {
                 className="gap-2"
               >
                 <Plus className="size-4" />
-                Yeni Ekle
+                {t('actions.create')}
               </Button>
             </div>
           </CardHeader>
@@ -302,13 +320,13 @@ export default function AdminReviewsClient() {
               {/* Search */}
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="search" className="text-sm">
-                  Ara
+                  {t('filters.searchLabel')}
                 </Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="search"
-                    placeholder="İsim, email, yorum..."
+                    placeholder={t('filters.searchPlaceholder')}
                     value={filters.search}
                     onChange={(e) => handleSearch(e.target.value)}
                     disabled={busy}
@@ -320,7 +338,7 @@ export default function AdminReviewsClient() {
               {/* Approved Filter */}
               <div className="space-y-2">
                 <Label htmlFor="approvedFilter" className="text-sm">
-                  Onay Durumu
+                  {t('filters.approvedLabel')}
                 </Label>
                 <Select
                   value={filters.approvedFilter}
@@ -331,9 +349,9 @@ export default function AdminReviewsClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tümü</SelectItem>
-                    <SelectItem value="approved">Onaylı</SelectItem>
-                    <SelectItem value="unapproved">Onaysız</SelectItem>
+                    <SelectItem value="all">{t('filters.options.all')}</SelectItem>
+                    <SelectItem value="approved">{t('filters.options.approved')}</SelectItem>
+                    <SelectItem value="unapproved">{t('filters.options.unapproved')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -341,7 +359,7 @@ export default function AdminReviewsClient() {
               {/* Active Filter */}
               <div className="space-y-2">
                 <Label htmlFor="activeFilter" className="text-sm">
-                  Durum
+                  {t('filters.activeLabel')}
                 </Label>
                 <Select
                   value={filters.activeFilter}
@@ -352,9 +370,9 @@ export default function AdminReviewsClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tümü</SelectItem>
-                    <SelectItem value="active">Aktif</SelectItem>
-                    <SelectItem value="inactive">Pasif</SelectItem>
+                    <SelectItem value="all">{t('filters.options.all')}</SelectItem>
+                    <SelectItem value="active">{t('filters.options.active')}</SelectItem>
+                    <SelectItem value="inactive">{t('filters.options.inactive')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -365,7 +383,7 @@ export default function AdminReviewsClient() {
               {/* Min Rating */}
               <div className="space-y-2">
                 <Label htmlFor="minRating" className="text-sm">
-                  Min. Rating
+                  {t('filters.minRatingLabel')}
                 </Label>
                 <Input
                   id="minRating"
@@ -374,7 +392,7 @@ export default function AdminReviewsClient() {
                   max={5}
                   value={filters.minRating}
                   onChange={(e) => setFilters((prev) => ({ ...prev, minRating: e.target.value }))}
-                  placeholder="0"
+                  placeholder={t('filters.minRatingPlaceholder')}
                   disabled={busy}
                 />
               </div>
@@ -382,7 +400,7 @@ export default function AdminReviewsClient() {
               {/* Max Rating */}
               <div className="space-y-2">
                 <Label htmlFor="maxRating" className="text-sm">
-                  Max. Rating
+                  {t('filters.maxRatingLabel')}
                 </Label>
                 <Input
                   id="maxRating"
@@ -391,7 +409,7 @@ export default function AdminReviewsClient() {
                   max={5}
                   value={filters.maxRating}
                   onChange={(e) => setFilters((prev) => ({ ...prev, maxRating: e.target.value }))}
-                  placeholder="5"
+                  placeholder={t('filters.maxRatingPlaceholder')}
                   disabled={busy}
                 />
               </div>
@@ -404,6 +422,7 @@ export default function AdminReviewsClient() {
                   options={safeLocaleOptions}
                   loading={localesLoading}
                   disabled={busy}
+                  label={t('filters.localeLabel')}
                 />
               </div>
 
@@ -415,23 +434,19 @@ export default function AdminReviewsClient() {
                   disabled={busy}
                   className="w-full gap-2"
                 >
-                  <RefreshCcw
-                    className={cn('size-4', isFetching && 'animate-spin')}
-                  />
-                  Yenile
+                  <RefreshCcw className={cn('size-4', isFetching && 'animate-spin')} />
+                  {t('admin.common.refresh')}
                 </Button>
               </div>
             </div>
 
             {/* Info */}
             <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
-              <span>
-                Toplam <strong>{total}</strong> kayıt
-              </span>
+              <span>{t('summary.total', { total })}</span>
               {isFetching && (
                 <div className="flex items-center gap-2">
                   <Loader2 className="size-4 animate-spin" />
-                  <span>Yükleniyor...</span>
+                  <span>{t('admin.common.loading')}</span>
                 </div>
               )}
             </div>
@@ -444,14 +459,14 @@ export default function AdminReviewsClient() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>İsim & Email</TableHead>
-                  <TableHead className="w-32">Rating</TableHead>
-                  <TableHead>Yorum</TableHead>
-                  <TableHead className="w-24 text-center">Onaylı</TableHead>
-                  <TableHead className="w-24 text-center">Aktif</TableHead>
-                  <TableHead className="w-32">Locale</TableHead>
-                  <TableHead className="w-44">Tarih</TableHead>
-                  <TableHead className="w-44 text-right">İşlemler</TableHead>
+                  <TableHead>{t('table.columns.nameEmail')}</TableHead>
+                  <TableHead className="w-32">{t('table.columns.rating')}</TableHead>
+                  <TableHead>{t('table.columns.comment')}</TableHead>
+                  <TableHead className="w-24 text-center">{t('table.columns.approved')}</TableHead>
+                  <TableHead className="w-24 text-center">{t('table.columns.active')}</TableHead>
+                  <TableHead className="w-32">{t('table.columns.locale')}</TableHead>
+                  <TableHead className="w-44">{t('table.columns.date')}</TableHead>
+                  <TableHead className="w-44 text-right">{t('admin.common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -460,14 +475,14 @@ export default function AdminReviewsClient() {
                     <TableCell colSpan={8} className="h-24 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Loader2 className="size-5 animate-spin" />
-                        <span>Yükleniyor...</span>
+                        <span>{t('admin.common.loading')}</span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : items.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="h-24 text-center">
-                      Kayıt bulunamadı.
+                      {t('table.empty')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -519,9 +534,9 @@ export default function AdminReviewsClient() {
                         )}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        <div>{fmtDate(item.created_at)}</div>
+                        <div>{fmtDate(item.created_at, adminUiLocale)}</div>
                         <div className="text-[10px]">
-                          Güncelleme: {fmtDate(item.updated_at)}
+                          {t('table.updatedAt')}: {fmtDate(item.updated_at, adminUiLocale)}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -534,7 +549,7 @@ export default function AdminReviewsClient() {
                             className="gap-2"
                           >
                             <Pencil className="size-3.5" />
-                            Düzenle
+                            {t('admin.common.edit')}
                           </Button>
                           <Button
                             variant="outline"
@@ -544,7 +559,7 @@ export default function AdminReviewsClient() {
                             className="gap-2"
                           >
                             <Trash2 className="size-3.5" />
-                            Sil
+                            {t('admin.common.delete')}
                           </Button>
                         </div>
                       </TableCell>
@@ -563,14 +578,14 @@ export default function AdminReviewsClient() {
               <CardContent className="flex items-center justify-center py-12">
                 <div className="flex items-center gap-2">
                   <Loader2 className="size-5 animate-spin" />
-                  <span>Yükleniyor...</span>
+                  <span>{t('admin.common.loading')}</span>
                 </div>
               </CardContent>
             </Card>
           ) : items.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
-                Kayıt bulunamadı.
+                {t('table.empty')}
               </CardContent>
             </Card>
           ) : (
@@ -598,7 +613,7 @@ export default function AdminReviewsClient() {
                           size="icon-sm"
                           onClick={() => handleToggleApproved(item)}
                           disabled={busy}
-                          title={item.is_approved ? 'Onaylı' : 'Onaysız'}
+                          title={item.is_approved ? t('labels.approved') : t('labels.unapproved')}
                         >
                           {item.is_approved ? (
                             <CheckCircle2 className="size-4 text-green-600" />
@@ -615,12 +630,16 @@ export default function AdminReviewsClient() {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Yorum</Label>
+                    <Label className="text-xs text-muted-foreground">{t('labels.comment')}</Label>
                     <p className="text-sm">{truncate(item.comment, 120)}</p>
                   </div>
                   <div className="space-y-1 text-xs text-muted-foreground">
-                    <div>Oluşturma: {fmtDate(item.created_at)}</div>
-                    <div>Güncelleme: {fmtDate(item.updated_at)}</div>
+                    <div>
+                      {t('labels.createdAt')}: {fmtDate(item.created_at, adminUiLocale)}
+                    </div>
+                    <div>
+                      {t('labels.updatedAt')}: {fmtDate(item.updated_at, adminUiLocale)}
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -631,7 +650,7 @@ export default function AdminReviewsClient() {
                       className="flex-1 gap-2"
                     >
                       <Pencil className="size-3.5" />
-                      Düzenle
+                      {t('admin.common.edit')}
                     </Button>
                     <Button
                       variant="outline"
@@ -641,7 +660,7 @@ export default function AdminReviewsClient() {
                       className="flex-1 gap-2"
                     >
                       <Trash2 className="size-3.5" />
-                      Sil
+                      {t('admin.common.delete')}
                     </Button>
                   </div>
                 </CardContent>
@@ -655,14 +674,18 @@ export default function AdminReviewsClient() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Silmek istediğinizden emin misiniz?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              <strong>{itemToDelete?.name || 'Bu kayıt'}</strong> tarafından yapılan yorum silinecek. Bu işlem geri alınamaz.
+              {t('deleteDialog.description', {
+                name: itemToDelete?.name || t('deleteDialog.fallbackName'),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>İptal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>Sil</AlertDialogAction>
+            <AlertDialogCancel>{t('admin.common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>
+              {t('admin.common.delete')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

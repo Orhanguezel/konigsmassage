@@ -139,6 +139,8 @@ export const ServicesHeader: React.FC<ServicesHeaderProps> = ({
   const activeValue = boolLikeToSelectValue(filters.is_active);
   const featuredValue = boolLikeToSelectValue(filters.featured);
 
+  const ALL = '__all__' as const;
+
   return (
     <Card>
       <CardHeader className="gap-2">
@@ -208,7 +210,7 @@ export const ServicesHeader: React.FC<ServicesHeaderProps> = ({
                 <SelectValue placeholder={t('admin.services.header.statusAllAlt')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t('admin.services.header.statusAllAlt')}</SelectItem>
+                <SelectItem value={ALL}>{t('admin.services.header.statusAllAlt')}</SelectItem>
                 <SelectItem value="1">{t('admin.services.header.statusOnlyActive')}</SelectItem>
                 <SelectItem value="0">{t('admin.services.header.statusOnlyInactive')}</SelectItem>
               </SelectContent>
@@ -226,7 +228,7 @@ export const ServicesHeader: React.FC<ServicesHeaderProps> = ({
                 <SelectValue placeholder={t('admin.services.header.statusAllAlt')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t('admin.services.header.statusAllAlt')}</SelectItem>
+                <SelectItem value={ALL}>{t('admin.services.header.statusAllAlt')}</SelectItem>
                 <SelectItem value="1">{t('admin.services.header.featuredItems')}</SelectItem>
                 <SelectItem value="0">{t('admin.services.header.featuredOthers')}</SelectItem>
               </SelectContent>

@@ -16,6 +16,12 @@ function isPlainObject(v: unknown): v is PlainObject {
   return !!v && typeof v === 'object' && !Array.isArray(v);
 }
 
+function getPlainChild(obj: PlainObject | null, key: string): PlainObject | null {
+  if (!obj) return null;
+  const candidate = obj[key];
+  return isPlainObject(candidate) ? (candidate as PlainObject) : null;
+}
+
 function normalizeAdminLocaleJson(raw: unknown): PlainObject {
   const base: PlainObject = isPlainObject(raw) ? (raw as PlainObject) : {};
   const adminBase: PlainObject = isPlainObject(base.admin) ? (base.admin as PlainObject) : {};
@@ -33,8 +39,26 @@ function normalizeAdminLocaleJson(raw: unknown): PlainObject {
 
   // tr.json gibi: admin.db.siteSettings (yanlış yerde)
   const adminDb = isPlainObject(admin.db) ? (admin.db as PlainObject) : null;
-  if (!isPlainObject(admin.siteSettings) && adminDb && isPlainObject((adminDb as any).siteSettings)) {
-    admin.siteSettings = (adminDb as any).siteSettings as PlainObject;
+  const nestedDbSiteSettings = getPlainChild(adminDb, 'siteSettings');
+  if (!isPlainObject(admin.siteSettings) && nestedDbSiteSettings) {
+    admin.siteSettings = nestedDbSiteSettings;
+  }
+
+  // Legacy locale shapes: users/userRoles can be nested under siteSettings.
+  // Normalize them to admin.users and admin.userRoles so feature modules can
+  // use a consistent key path in all locales.
+  const adminSiteSettings = isPlainObject(admin.siteSettings) ? (admin.siteSettings as PlainObject) : null;
+  const nestedUsers = getPlainChild(adminSiteSettings, 'users');
+  const nestedUserRoles = getPlainChild(adminSiteSettings, 'userRoles');
+  const nestedEmailTemplates = getPlainChild(adminSiteSettings, 'emailTemplates');
+  if (!isPlainObject(admin.users) && nestedUsers) {
+    admin.users = nestedUsers;
+  }
+  if (!isPlainObject(admin.userRoles) && nestedUserRoles) {
+    admin.userRoles = nestedUserRoles;
+  }
+  if (!isPlainObject(admin.emailTemplates) && nestedEmailTemplates) {
+    admin.emailTemplates = nestedEmailTemplates;
   }
 
   // tr.json gibi: services key'leri root'ta dağınık (en.json admin.services ile uyumlu)

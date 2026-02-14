@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 
 import { useAuthTokenMutation } from '@/integrations/hooks';
 import { useAdminTranslations } from '@/i18n';
-import { useLocaleShort } from '../../../../i18n/useLocaleShort';
+import { useLocaleShort } from '@/i18n/useLocaleShort';
 
 type FormValues = {
   email: string;

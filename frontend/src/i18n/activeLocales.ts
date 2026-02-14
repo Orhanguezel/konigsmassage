@@ -1,14 +1,14 @@
 // =============================================================
 // FILE: src/i18n/activeLocales.ts
-// (DYNAMIC LOCALES) - FIXED (/api tolerant + stable normalization)
+// (DYNAMIC LOCALES) - Uses RTK Query for deduplication
 // =============================================================
 
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 import { FALLBACK_LOCALE } from '@/i18n/config';
 import { normLocaleTag, normalizeLocales } from '@/i18n/localeUtils';
-import { fetchJsonNoStore, getPublicApiBase, unwrapMaybeData } from '@/i18n/publicMetaApi';
+import { useGetAppLocalesPublicQuery } from '@/integrations/rtk/hooks';
 
 type AppLocaleMeta = {
   code?: unknown;
@@ -23,54 +23,15 @@ function computeLocales(meta: AppLocaleMeta[] | null | undefined): string[] {
   return normalized.length ? normalized : [fb];
 }
 
-// ✅ Minimal in-memory cache (page lifetime)
-let __cache: { at: number; meta: AppLocaleMeta[] | null } | null = null;
-const CACHE_TTL_MS = 60_000;
-
 export function useActiveLocales() {
-  const [meta, setMeta] = useState<AppLocaleMeta[] | null>(() => {
-    if (__cache && Date.now() - __cache.at < CACHE_TTL_MS) return __cache.meta;
-    return null;
-  });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { data: appLocalesData, isLoading } = useGetAppLocalesPublicQuery();
 
-  const didFetchRef = useRef(false);
-
-  useEffect(() => {
-    if (didFetchRef.current) return;
-    didFetchRef.current = true;
-
-    // cache validse fetch yok
-    if (__cache && Date.now() - __cache.at < CACHE_TTL_MS) {
-      setMeta(__cache.meta);
-      return;
+  const locales = useMemo<string[]>(() => {
+    if (!appLocalesData || !Array.isArray(appLocalesData)) {
+      return computeLocales(null);
     }
-
-    const base = getPublicApiBase();
-    if (!base) {
-      __cache = { at: Date.now(), meta: null };
-      setMeta(null);
-      return;
-    }
-
-    setIsLoading(true);
-
-    (async () => {
-      // ✅ Varsayım: GET {API_BASE}/site_settings/app-locales
-      // API_BASE burada .../api ile biter.
-      const raw = await fetchJsonNoStore<any>(`${base}/site_settings/app-locales`);
-      const unwrapped = unwrapMaybeData<any>(raw);
-      const arr = Array.isArray(unwrapped) ? (unwrapped as AppLocaleMeta[]) : [];
-
-      const next = arr.length ? arr : null;
-      __cache = { at: Date.now(), meta: next };
-
-      setMeta(next);
-      setIsLoading(false);
-    })();
-  }, []);
-
-  const locales = useMemo<string[]>(() => computeLocales(meta), [meta]);
+    return computeLocales(appLocalesData as AppLocaleMeta[]);
+  }, [appLocalesData]);
 
   return { locales, isLoading };
 }

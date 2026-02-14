@@ -9,12 +9,22 @@
 import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { Plus, RefreshCcw, ArrowUp, ArrowDown, Save, Search, Trash2, Pencil, GripVertical } from 'lucide-react';
+import {
+  Plus,
+  RefreshCcw,
+  ArrowUp,
+  ArrowDown,
+  Save,
+  Search,
+  Trash2,
+  Pencil,
+  GripVertical,
+} from 'lucide-react';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
-import { resolveAdminApiLocale } from '../../../../../../i18n/adminLocale';
-import { localeShortClient, localeShortClientOr } from '../../../../../../i18n/localeShortClient';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 
 import { cn } from '@/lib/utils';
 import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
@@ -42,7 +52,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import type { AdminMenuItemDto, AdminMenuItemListQueryParams, MenuLocation } from '@/integrations/shared';
+import type {
+  AdminMenuItemDto,
+  AdminMenuItemListQueryParams,
+  MenuLocation,
+} from '@/integrations/shared';
 import {
   useListMenuItemsAdminQuery,
   useUpdateMenuItemAdminMutation,
@@ -191,12 +205,7 @@ export default function AdminMenuItemClient() {
     return qp;
   }, [filters.search, effectiveLocale, is_active, filters.location]);
 
-  const {
-    data: result,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useListMenuItemsAdminQuery(queryParams);
+  const { data: result, isLoading, isFetching, refetch } = useListMenuItemsAdminQuery(queryParams);
 
   // ✅ FIX: Extract items array from response
   const items = React.useMemo(() => {
@@ -307,9 +316,7 @@ export default function AdminMenuItemClient() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="text-2xl font-bold">{t('header.title')}</CardTitle>
-              <CardDescription>
-                {t('header.total', { count: displayItems.length })}
-              </CardDescription>
+              <CardDescription>{t('header.total', { count: displayItems.length })}</CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
               {reorderMode ? (
@@ -432,7 +439,9 @@ export default function AdminMenuItemClient() {
                 <Label htmlFor="activeFilter">{t('header.activeLabel')}</Label>
                 <Select
                   value={filters.activeFilter}
-                  onValueChange={(v) => setFilters((p) => ({ ...p, activeFilter: v as ActiveFilter }))}
+                  onValueChange={(v) =>
+                    setFilters((p) => ({ ...p, activeFilter: v as ActiveFilter }))
+                  }
                 >
                   <SelectTrigger id="activeFilter">
                     <SelectValue />
@@ -470,7 +479,10 @@ export default function AdminMenuItemClient() {
               <TableBody>
                 {displayItems.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={reorderMode ? 8 : 7} className="h-24 text-center text-muted-foreground">
+                    <TableCell
+                      colSpan={reorderMode ? 8 : 7}
+                      className="h-24 text-center text-muted-foreground"
+                    >
                       {busy ? t('list.loading') : t('list.noData')}
                     </TableCell>
                   </TableRow>
@@ -480,7 +492,7 @@ export default function AdminMenuItemClient() {
                     key={item.id}
                     className={cn(
                       !reorderMode && 'cursor-pointer hover:bg-muted/50',
-                      !item.is_active && 'opacity-50'
+                      !item.is_active && 'opacity-50',
                     )}
                     onClick={() => !reorderMode && handleEdit(item)}
                   >
@@ -587,7 +599,7 @@ export default function AdminMenuItemClient() {
                 key={item.id}
                 className={cn(
                   !reorderMode && 'cursor-pointer transition-colors hover:bg-muted/50',
-                  !item.is_active && 'opacity-50'
+                  !item.is_active && 'opacity-50',
                 )}
                 onClick={() => !reorderMode && handleEdit(item)}
               >
@@ -629,7 +641,9 @@ export default function AdminMenuItemClient() {
                       <Badge variant={item.is_active ? 'default' : 'secondary'}>
                         {item.is_active ? t('header.active') : t('header.inactive')}
                       </Badge>
-                      <span className="text-muted-foreground">{t('header.sortOrder')}: {item.display_order}</span>
+                      <span className="text-muted-foreground">
+                        {t('header.sortOrder')}: {item.display_order}
+                      </span>
                     </div>
                   </div>
                   {!reorderMode && (

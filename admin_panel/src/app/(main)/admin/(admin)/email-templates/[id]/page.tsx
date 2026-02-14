@@ -3,8 +3,11 @@
 // FINAL — Admin Email Template Detail/Edit Page
 // =============================================================
 
-import AdminEmailTemplatesDetailClient from './admin-email-templates-detail-client';
+import AdminEmailTemplatesDetailClient from "./admin-email-templates-detail-client";
 
-export default function Page({ params }: { params: { id: string } }) {
-  return <AdminEmailTemplatesDetailClient id={params.id} />;
+type PageParams = { id: string };
+
+export default async function Page({ params }: { params: PageParams | Promise<PageParams> }) {
+  const { id } = await params;
+  return <AdminEmailTemplatesDetailClient id={id} />;
 }

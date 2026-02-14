@@ -3,7 +3,7 @@
 // Email Templates – Tipler (public + admin)
 // =============================================================
 
-import { BoolLike } from '@/integrations/shared';
+import type { BoolLike } from "@/integrations/shared";
 
 /* -------------------- PUBLIC DTO'lar -------------------- */
 
@@ -87,7 +87,7 @@ export interface EmailTemplateAdminListQueryParams {
   is_active?: BoolLike;
   template_key?: string;
   order_by?: string;
-  order_dir?: 'asc' | 'desc';
+  order_dir?: "asc" | "desc";
 }
 
 export interface EmailTemplateAdminCreatePayload {
@@ -119,7 +119,7 @@ export interface EmailTemplateAdminUpdateArgs {
   patch: EmailTemplateAdminUpdatePayload;
 }
 
-export type EmailTemplateAdminOrderBy = 'updated_at' | 'created_at' | 'template_key' | 'locale';
+export type EmailTemplateAdminOrderBy = "updated_at" | "created_at" | "template_key" | "locale";
 
 /* -------------------- UI FORM STATE (Admin Panel) -------------------- */
 /**
@@ -149,10 +149,9 @@ export type EmailTemplateFormValues = {
 /**
  * List query parametrelerini API formatına çevir
  */
-export function toEmailTemplatesQuery(
-  params: EmailTemplateAdminListQueryParams
-): Record<string, unknown> {
+export function toEmailTemplatesQuery(params: EmailTemplateAdminListQueryParams): Record<string, unknown> {
   const result: Record<string, unknown> = {};
+  if (params.q) result.q = params.q;
   if (params.locale) result.locale = params.locale;
   if (params.is_active !== undefined) result.is_active = params.is_active;
   if (params.template_key) result.template_key = params.template_key;
@@ -165,14 +164,15 @@ export function toEmailTemplatesQuery(
  * Create/Update body hazırla
  */
 export function toEmailTemplateWriteBody(
-  payload: EmailTemplateAdminCreatePayload | EmailTemplateAdminUpdatePayload
+  payload: EmailTemplateAdminCreatePayload | EmailTemplateAdminUpdatePayload,
 ): Record<string, unknown> {
   const result: Record<string, unknown> = {};
-  if ('template_key' in payload && payload.template_key) {
+  if ("template_key" in payload && payload.template_key) {
     result.template_key = payload.template_key;
   }
   if (payload.is_active !== undefined) result.is_active = payload.is_active;
   if (payload.locale) result.locale = payload.locale;
+  if ("variables" in payload && payload.variables !== undefined) result.variables = payload.variables;
   if (payload.template_name) result.template_name = payload.template_name;
   if (payload.subject !== undefined) result.subject = payload.subject;
   if (payload.content !== undefined) result.content = payload.content;
@@ -185,17 +185,17 @@ export function toEmailTemplateWriteBody(
 export function normalizeEmailTemplateAdminList(res: unknown): EmailTemplateAdminListItemDto[] {
   if (!Array.isArray(res)) return [];
   return res.map((item: any) => ({
-    id: String(item.id ?? ''),
-    template_key: String(item.template_key ?? ''),
+    id: String(item.id ?? ""),
+    template_key: String(item.template_key ?? ""),
     is_active: Boolean(item.is_active),
-    locale: String(item.locale ?? 'tr'),
-    template_name: String(item.template_name ?? ''),
-    subject: String(item.subject ?? ''),
+    locale: String(item.locale ?? "tr"),
+    template_name: String(item.template_name ?? ""),
+    subject: String(item.subject ?? ""),
     content: item.content ?? null,
     variables: item.variables ?? null,
     detected_variables: Array.isArray(item.detected_variables) ? item.detected_variables : [],
-    created_at: String(item.created_at ?? ''),
-    updated_at: String(item.updated_at ?? ''),
+    created_at: String(item.created_at ?? ""),
+    updated_at: String(item.updated_at ?? ""),
   }));
 }
 
@@ -205,22 +205,22 @@ export function normalizeEmailTemplateAdminList(res: unknown): EmailTemplateAdmi
 export function normalizeEmailTemplateAdminDetail(res: unknown): EmailTemplateAdminDetailDto {
   const item: any = res ?? {};
   return {
-    id: String(item.id ?? ''),
-    template_key: String(item.template_key ?? ''),
+    id: String(item.id ?? ""),
+    template_key: String(item.template_key ?? ""),
     is_active: Boolean(item.is_active),
     variables: item.variables ?? null,
-    created_at: String(item.created_at ?? ''),
-    updated_at: String(item.updated_at ?? ''),
+    created_at: String(item.created_at ?? ""),
+    updated_at: String(item.updated_at ?? ""),
     translations: Array.isArray(item.translations)
       ? item.translations.map((t: any) => ({
-          id: String(t.id ?? ''),
-          locale: String(t.locale ?? 'tr'),
-          template_name: String(t.template_name ?? ''),
-          subject: String(t.subject ?? ''),
-          content: String(t.content ?? ''),
+          id: String(t.id ?? ""),
+          locale: String(t.locale ?? "tr"),
+          template_name: String(t.template_name ?? ""),
+          subject: String(t.subject ?? ""),
+          content: String(t.content ?? ""),
           detected_variables: Array.isArray(t.detected_variables) ? t.detected_variables : [],
-          created_at: String(t.created_at ?? ''),
-          updated_at: String(t.updated_at ?? ''),
+          created_at: String(t.created_at ?? ""),
+          updated_at: String(t.updated_at ?? ""),
         }))
       : [],
   };

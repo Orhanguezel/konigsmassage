@@ -1,7 +1,7 @@
 'use client';
 
 // =============================================================
-// FILE: src/app/(main)/admin/(admin)/contacts/admin-contacts-client.tsx
+// FILE: src/app/(main)/admin/(admin)/contacts/_components/admin-contacts-client.tsx
 // FINAL — Admin Contacts (App Router + shadcn)
 // =============================================================
 
@@ -43,7 +43,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-import { useAdminUiCopy } from '@/app/(main)/admin/_components/common/useAdminUiCopy';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import type { ContactView, ContactStatus } from '@/integrations/shared';
 import {
@@ -67,10 +67,15 @@ type EditState = {
   admin_note: string;
 };
 
+function formatYmd(v: unknown): string {
+  if (!v) return '';
+  if (typeof v === 'string') return v.slice(0, 10);
+  if (v instanceof Date && typeof v.toISOString === 'function') return v.toISOString().slice(0, 10);
+  return '';
+}
+
 export default function AdminContactsClient() {
-  const { copy } = useAdminUiCopy();
-  const page = copy.pages?.contacts ?? {};
-  const common = copy.common;
+  const t = useAdminT('admin.contacts');
 
   const [filters, setFilters] = React.useState<Filters>({
     search: '',
@@ -97,16 +102,19 @@ export default function AdminContactsClient() {
 
   const [rows, setRows] = React.useState<ContactView[]>([]);
   React.useEffect(() => {
-    setRows((listQ.data as ContactView[]) ?? []);
+    const d = listQ.data;
+    setRows(Array.isArray(d) ? (d as ContactView[]) : []);
   }, [listQ.data]);
 
   const [updateContact, updateState] = useUpdateContactAdminMutation();
   const [removeContact, removeState] = useDeleteContactAdminMutation();
 
-  const busy = listQ.isLoading || listQ.isFetching || updateState.isLoading || removeState.isLoading;
+  const listBusy = listQ.isLoading || listQ.isFetching;
+  const busy = listBusy || updateState.isLoading || removeState.isLoading;
 
   const [editOpen, setEditOpen] = React.useState(false);
   const [editState, setEditState] = React.useState<EditState | null>(null);
+  const [selected, setSelected] = React.useState<ContactView | null>(null);
 
   function openEdit(item: ContactView) {
     setEditState({
@@ -115,6 +123,7 @@ export default function AdminContactsClient() {
       is_resolved: !!item.is_resolved,
       admin_note: item.admin_note ?? '',
     });
+    setSelected(item);
     setEditOpen(true);
   }
 
@@ -122,6 +131,7 @@ export default function AdminContactsClient() {
     if (busy) return;
     setEditOpen(false);
     setEditState(null);
+    setSelected(null);
   }
 
   async function onSaveEdit() {
@@ -135,32 +145,62 @@ export default function AdminContactsClient() {
           admin_note: editState.admin_note.trim() || null,
         },
       }).unwrap();
-      toast.success(common?.actions?.save || '');
+      toast.success(t('messages.saved'));
       closeEdit();
       listQ.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || common?.states?.error || '');
+      toast.error(err?.data?.error?.message || err?.message || t('messages.saveError'));
     }
   }
 
   async function onDelete(item: ContactView) {
-    if (!window.confirm(page?.delete_confirm || '')) return;
+    const msg = t('confirmDelete', {
+      name: item.name,
+      email: item.email,
+      subject: item.subject,
+      id: item.id,
+    });
+    if (!window.confirm(msg)) return;
 
     try {
       await removeContact(item.id).unwrap();
-      toast.success(common?.actions?.delete || '');
+      toast.success(t('messages.deleted'));
       listQ.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || common?.states?.error || '');
+      toast.error(err?.data?.error?.message || err?.message || t('messages.deleteError'));
     }
   }
+
+  const statusLabel = React.useCallback(
+    (s: ContactStatus) => {
+      if (s === 'new') return t('status.new');
+      if (s === 'in_progress') return t('status.inProgress');
+      return t('status.closed');
+    },
+    [t],
+  );
+
+  const statusBadge = React.useCallback(
+    (s: ContactStatus) => {
+      if (s === 'new')
+        return (
+          <Badge variant="secondary">{statusLabel(s)}</Badge>
+        );
+      if (s === 'in_progress')
+        return (
+          <Badge>{statusLabel(s)}</Badge>
+        );
+      return <Badge variant="outline">{statusLabel(s)}</Badge>;
+    },
+    [statusLabel],
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-lg font-semibold">{page?.title}</h1>
-          <p className="text-sm text-muted-foreground">{page?.subtitle}</p>
+          <h1 className="text-lg font-semibold">{t('header.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('header.subtitle')}</p>
         </div>
 
         <Button
@@ -171,31 +211,37 @@ export default function AdminContactsClient() {
           disabled={busy}
         >
           <RefreshCcw className="mr-2 size-4" />
-          {common?.actions?.refresh}
+          {t('admin.common.refresh')}
         </Button>
       </div>
 
+      {listQ.error ? (
+        <div className="rounded-lg border bg-card p-3 text-sm text-destructive">
+          {t('messages.loadError')}
+        </div>
+      ) : null}
+
       <Card>
         <CardHeader className="gap-2">
-          <CardTitle className="text-base">{page?.filters_title}</CardTitle>
-          <CardDescription>{page?.filters_desc}</CardDescription>
+          <CardTitle className="text-base">{t('filters.title')}</CardTitle>
+          <CardDescription>{t('filters.description')}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <div className="space-y-2">
-            <Label>{common?.actions?.search}</Label>
+            <Label>{t('admin.common.search')}</Label>
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={filters.search}
                 onChange={(e) => setFilters((p) => ({ ...p, search: e.target.value }))}
-                placeholder={page?.search_ph}
+                placeholder={t('filters.searchPlaceholder')}
                 className="pl-9"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>{page?.status_label}</Label>
+            <Label>{t('filters.statusLabel')}</Label>
             <Select
               value={filters.status || 'all'}
               onValueChange={(v) =>
@@ -203,19 +249,19 @@ export default function AdminContactsClient() {
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder={page?.status_all} />
+                <SelectValue placeholder={t('filters.statusAll')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{page?.status_all}</SelectItem>
-                <SelectItem value="new">{page?.status_new}</SelectItem>
-                <SelectItem value="in_progress">{page?.status_in_progress}</SelectItem>
-                <SelectItem value="closed">{page?.status_closed}</SelectItem>
+                <SelectItem value="all">{t('filters.statusAll')}</SelectItem>
+                <SelectItem value="new">{t('filters.statusNew')}</SelectItem>
+                <SelectItem value="in_progress">{t('filters.statusInProgress')}</SelectItem>
+                <SelectItem value="closed">{t('filters.statusClosed')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>{page?.order_by_label}</Label>
+            <Label>{t('filters.orderByLabel')}</Label>
             <Select
               value={filters.orderBy}
               onValueChange={(v) =>
@@ -226,16 +272,16 @@ export default function AdminContactsClient() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="created_at">{page?.order_by_created}</SelectItem>
-                <SelectItem value="updated_at">{page?.order_by_updated}</SelectItem>
-                <SelectItem value="status">{page?.order_by_status}</SelectItem>
-                <SelectItem value="name">{page?.order_by_name}</SelectItem>
+                <SelectItem value="created_at">{t('filters.orderByCreated')}</SelectItem>
+                <SelectItem value="updated_at">{t('filters.orderByUpdated')}</SelectItem>
+                <SelectItem value="status">{t('filters.orderByStatus')}</SelectItem>
+                <SelectItem value="name">{t('filters.orderByName')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>{page?.order_label}</Label>
+            <Label>{t('filters.orderLabel')}</Label>
             <Select
               value={filters.order}
               onValueChange={(v) => setFilters((p) => ({ ...p, order: v as Filters['order'] }))}
@@ -244,8 +290,8 @@ export default function AdminContactsClient() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="desc">{page?.order_desc}</SelectItem>
-                <SelectItem value="asc">{page?.order_asc}</SelectItem>
+                <SelectItem value="desc">{t('filters.orderDesc')}</SelectItem>
+                <SelectItem value="asc">{t('filters.orderAsc')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -255,33 +301,41 @@ export default function AdminContactsClient() {
               checked={filters.onlyUnresolved}
               onCheckedChange={(v) => setFilters((p) => ({ ...p, onlyUnresolved: v }))}
             />
-            <Label>{page?.only_unresolved}</Label>
+            <Label>{t('filters.onlyUnresolved')}</Label>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="gap-2">
-          <CardTitle className="text-base">{page?.list_title}</CardTitle>
-          <CardDescription>{page?.list_desc}</CardDescription>
+          <CardTitle className="text-base">{t('list.title')}</CardTitle>
+          <CardDescription>{t('list.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{page?.col_name}</TableHead>
-                <TableHead>{page?.col_email}</TableHead>
-                <TableHead>{page?.col_subject}</TableHead>
-                <TableHead>{page?.col_status}</TableHead>
-                <TableHead>{page?.col_created}</TableHead>
-                <TableHead className="text-right">{page?.col_actions}</TableHead>
+                <TableHead>{t('columns.name')}</TableHead>
+                <TableHead>{t('columns.email')}</TableHead>
+                <TableHead>{t('columns.subject')}</TableHead>
+                <TableHead>{t('columns.status')}</TableHead>
+                <TableHead>{t('columns.createdAt')}</TableHead>
+                <TableHead className="text-right">{t('admin.common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.length === 0 && !busy && (
+              {rows.length === 0 && listBusy && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
-                    {common?.states?.empty}
+                    {t('list.loading')}
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {rows.length === 0 && !listBusy && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
+                    {t('list.empty')}
                   </TableCell>
                 </TableRow>
               )}
@@ -292,15 +346,9 @@ export default function AdminContactsClient() {
                   <TableCell>{item.email}</TableCell>
                   <TableCell>{item.subject}</TableCell>
                   <TableCell>
-                    {item.status === 'new' ? (
-                      <Badge variant="secondary">new</Badge>
-                    ) : item.status === 'in_progress' ? (
-                      <Badge>in_progress</Badge>
-                    ) : (
-                      <Badge variant="outline">closed</Badge>
-                    )}
+                    {statusBadge(item.status)}
                   </TableCell>
-                  <TableCell>{typeof item.created_at === 'string' ? item.created_at.slice(0, 10) : ''}</TableCell>
+                  <TableCell>{formatYmd(item.created_at)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -311,7 +359,7 @@ export default function AdminContactsClient() {
                         disabled={busy}
                       >
                         <Pencil className="mr-2 size-4" />
-                        {common?.actions?.edit}
+                        {t('admin.common.edit')}
                       </Button>
                       <Button
                         type="button"
@@ -321,7 +369,7 @@ export default function AdminContactsClient() {
                         disabled={busy}
                       >
                         <Trash2 className="mr-2 size-4" />
-                        {common?.actions?.delete}
+                        {t('admin.common.delete')}
                       </Button>
                     </div>
                   </TableCell>
@@ -335,14 +383,55 @@ export default function AdminContactsClient() {
       <Dialog open={editOpen} onOpenChange={(v) => (v ? null : closeEdit())}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{page?.edit_title}</DialogTitle>
-            <DialogDescription>{page?.edit_desc}</DialogDescription>
+            <DialogTitle>{t('editDialog.title')}</DialogTitle>
+            <DialogDescription>{t('editDialog.description')}</DialogDescription>
           </DialogHeader>
 
           {editState && (
             <div className="grid gap-4">
+              {selected ? (
+                <div className="rounded-lg border bg-card p-3 space-y-2">
+                  <div className="text-xs text-muted-foreground">{t('details.title')}</div>
+                  <div className="grid gap-1 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">{t('details.name')}:</span>{' '}
+                      <span className="font-medium">{selected.name}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">{t('details.email')}:</span>{' '}
+                      <span className="font-medium">{selected.email}</span>
+                    </div>
+                    {selected.phone ? (
+                      <div>
+                        <span className="text-muted-foreground">{t('details.phone')}:</span>{' '}
+                        <span className="font-medium">{selected.phone}</span>
+                      </div>
+                    ) : null}
+                    <div>
+                      <span className="text-muted-foreground">{t('details.subject')}:</span>{' '}
+                      <span className="font-medium">{selected.subject}</span>
+                    </div>
+                    <div className="text-muted-foreground">{t('details.message')}:</div>
+                    <div className="whitespace-pre-wrap break-words rounded-md border bg-background p-2 text-sm">
+                      {selected.message || '-'}
+                    </div>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <span>
+                        {t('details.createdAt')}: <code>{formatYmd(selected.created_at)}</code>
+                      </span>
+                      <span>
+                        {t('details.updatedAt')}: <code>{formatYmd(selected.updated_at)}</code>
+                      </span>
+                      <span>
+                        {t('details.id')}: <code>{selected.id}</code>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="space-y-2">
-                <Label>{page?.status_label}</Label>
+                <Label>{t('editDialog.statusLabel')}</Label>
                 <Select
                   value={editState.status}
                   onValueChange={(v) =>
@@ -353,9 +442,9 @@ export default function AdminContactsClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new">{page?.status_new}</SelectItem>
-                    <SelectItem value="in_progress">{page?.status_in_progress}</SelectItem>
-                    <SelectItem value="closed">{page?.status_closed}</SelectItem>
+                    <SelectItem value="new">{t('filters.statusNew')}</SelectItem>
+                    <SelectItem value="in_progress">{t('filters.statusInProgress')}</SelectItem>
+                    <SelectItem value="closed">{t('filters.statusClosed')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -367,17 +456,17 @@ export default function AdminContactsClient() {
                     setEditState((p) => (p ? { ...p, is_resolved: v } : p))
                   }
                 />
-                <Label>{page?.resolved_label}</Label>
+                <Label>{t('editDialog.resolvedLabel')}</Label>
               </div>
 
               <div className="space-y-2">
-                <Label>{page?.admin_note_label}</Label>
+                <Label>{t('editDialog.adminNoteLabel')}</Label>
                 <Textarea
                   value={editState.admin_note}
                   onChange={(e) =>
                     setEditState((p) => (p ? { ...p, admin_note: e.target.value } : p))
                   }
-                  placeholder={page?.admin_note_ph}
+                  placeholder={t('editDialog.adminNotePlaceholder')}
                   rows={4}
                 />
               </div>
@@ -386,10 +475,10 @@ export default function AdminContactsClient() {
 
           <DialogFooter>
             <Button variant="outline" onClick={closeEdit} disabled={busy}>
-              {common?.actions?.cancel}
+              {t('admin.common.cancel')}
             </Button>
             <Button onClick={onSaveEdit} disabled={busy || !editState}>
-              {common?.actions?.save}
+              {t('admin.common.save')}
             </Button>
           </DialogFooter>
         </DialogContent>

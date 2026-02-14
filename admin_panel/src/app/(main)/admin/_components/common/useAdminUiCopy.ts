@@ -7,7 +7,7 @@
 
 import { useMemo } from 'react';
 
-import { useGetSiteSettingAdminByKeyQuery } from '@/integrations/hooks';
+import { useListSiteSettingsAdminQuery } from '@/integrations/hooks';
 import type { AdminUiCopy } from '@/integrations/shared';
 import { normalizeAdminUiCopy } from '@/integrations/shared';
 
@@ -19,10 +19,16 @@ type UseAdminUiCopyResult = {
 };
 
 export function useAdminUiCopy(): UseAdminUiCopyResult {
-  const q = useGetSiteSettingAdminByKeyQuery('ui_admin');
+  const q = useListSiteSettingsAdminQuery({
+    keys: ['ui_admin'],
+    limit: 1,
+    sort: 'updated_at',
+    order: 'desc',
+  });
 
   const copy = useMemo(() => {
-    const val = (q.data as any)?.value;
+    const row = (q.data ?? []).find((item) => item.key === 'ui_admin');
+    const val = row?.value;
     return normalizeAdminUiCopy(val);
   }, [q.data]);
 

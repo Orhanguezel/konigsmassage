@@ -44,6 +44,9 @@ const toShortLocale = (v: unknown): string =>
     .split('-')[0]
     .trim();
 
+
+    const ALL = '__all__' as const;
+
 export const MenuItemForm: React.FC<MenuItemFormProps> = ({
   values,
   saving,
@@ -122,7 +125,7 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
           disabled={disabled || !!localesLoading}
         >
           {normalizedLocaleOptions.length === 0 ? (
-            <option value="">{t('list.loading')}</option>
+            <option value={ALL}>{t('list.loading')}</option>
           ) : null}
           {normalizedLocaleOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>

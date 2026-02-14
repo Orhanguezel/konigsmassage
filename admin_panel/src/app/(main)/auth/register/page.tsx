@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 
 import { RegisterForm } from '../_components/register-form';
 import { useAdminTranslations } from '@/i18n';
-import { useLocaleShort } from '../../../../i18n/useLocaleShort';
+import { useLocaleShort } from '@/i18n/useLocaleShort';
 
 function RegisterFormFallback() {
   return (
@@ -30,9 +30,9 @@ export default function Register() {
         <div className="flex h-full flex-col items-center justify-center p-12 text-center">
           <div className="space-y-6">
             <div className="mx-auto size-24 relative">
-              <Image 
-                src="/logo/koenig-energetik-icon.svg" 
-                alt="König Energetik" 
+              <Image
+                src="/logo/koenig-energetik-icon.svg"
+                alt="König Energetik"
                 fill
                 className="object-contain"
               />

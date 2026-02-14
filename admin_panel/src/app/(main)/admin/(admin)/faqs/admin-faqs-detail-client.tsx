@@ -13,8 +13,8 @@ import { toast } from 'sonner';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
-import { resolveAdminApiLocale } from '../../../../../i18n/adminLocale';
-import { localeShortClient, localeShortClientOr } from '../../../../../i18n/localeShortClient';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 
 import type { FaqDto, FaqCreatePayload, FaqUpdatePayload } from '@/integrations/shared';
 import {
@@ -213,9 +213,7 @@ export default function AdminFaqsDetailClient({ id }: { id: string }) {
     return (
       <div className="rounded-lg border bg-card p-4">
         <div className="text-sm font-semibold">{t('noLocales.title')}</div>
-        <div className="mt-1 text-sm text-muted-foreground">
-          {t('noLocales.description')}
-        </div>
+        <div className="mt-1 text-sm text-muted-foreground">{t('noLocales.description')}</div>
       </div>
     );
   }

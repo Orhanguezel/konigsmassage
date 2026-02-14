@@ -94,6 +94,8 @@ export const CustomPageHeader: React.FC<CustomPageHeaderProps> = ({
   const moduleOpts = (moduleOptions ?? []).filter((x) => String(x?.value || '').trim().length > 0);
   const disabledModuleSelect = moduleOpts.length === 0;
 
+  const ALL = '__all__' as const;
+
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b p-3">
@@ -145,7 +147,7 @@ export const CustomPageHeader: React.FC<CustomPageHeaderProps> = ({
                   onChange={handleModuleChange}
                   disabled={disabledModuleSelect}
                 >
-                  <option value="">{t('admin.customPage.allModules')}</option>
+                  <option value={ALL}>{t('admin.customPage.allModules')}</option>
                   {moduleOpts.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}

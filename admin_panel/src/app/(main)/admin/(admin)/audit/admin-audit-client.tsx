@@ -403,6 +403,8 @@ export default function AdminAuditClient() {
   const canNextReq = offset + limit < reqTotal;
   const canNextAuth = offset + limit < authTotal;
 
+  const ALL = '__all__' as const;
+
   async function onRefresh() {
     try {
       if (tab === 'requests') await reqQ.refetch();
@@ -612,7 +614,7 @@ export default function AdminAuditClient() {
                       <SelectValue placeholder="Hepsi" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Hepsi</SelectItem>
+                      <SelectItem value={ALL}>Hepsi</SelectItem>
                       {AUDIT_AUTH_EVENTS.map((ev) => (
                         <SelectItem key={ev} value={ev}>
                           {ev}

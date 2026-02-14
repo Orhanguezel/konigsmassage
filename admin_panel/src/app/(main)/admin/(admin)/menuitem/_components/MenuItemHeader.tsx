@@ -44,6 +44,8 @@ const toShortLocale = (v: unknown): string =>
     .split('-')[0]
     .trim();
 
+    const ALL = '__all__' as const;
+
 export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
   filters,
   total,
@@ -121,7 +123,7 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
                   onChange={handleLocaleChange}
                   disabled={localeSelectDisabled}
                 >
-                  <option value="">
+                  <option value={ALL}>
                     {t('header.allLocales')}
                     {effectiveDefaultLocale ? ` (${t('header.defaultLabel')}: ${effectiveDefaultLocale})` : ''}
                   </option>

@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 
 import { useAuthSignupMutation } from '@/integrations/hooks';
 import { useAdminTranslations } from '@/i18n';
-import { useLocaleShort } from '../../../../i18n/useLocaleShort';
+import { useLocaleShort } from '@/i18n/useLocaleShort';
 
 type FormValues = {
   full_name?: string;
@@ -251,7 +251,9 @@ export function RegisterForm() {
         />
 
         <Button className="w-full" type="submit" disabled={isBusy}>
-          {isBusy ? t('admin.auth.register.creatingAccount') : t('admin.auth.register.registerButton')}
+          {isBusy
+            ? t('admin.auth.register.creatingAccount')
+            : t('admin.auth.register.registerButton')}
         </Button>
       </form>
     </Form>

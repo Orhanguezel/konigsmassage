@@ -15,8 +15,8 @@ import { toast } from 'sonner';
 import { ArrowLeft, Save, RefreshCcw } from 'lucide-react';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
-import { resolveAdminApiLocale } from '../../../../../../i18n/adminLocale';
-import { localeShortClient, localeShortClientOr } from '../../../../../../i18n/localeShortClient';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import { Button } from '@/components/ui/button';
@@ -277,7 +277,8 @@ export default function AdminServiceDetailClient({ id }: { id: string }) {
         <div className="space-y-1">
           <h1 className="text-lg font-semibold">{t('admin.services.formHeader.invalidIdTitle')}</h1>
           <p className="text-sm text-muted-foreground">
-            {t('admin.services.formHeader.invalidIdDescription')} <code className="wrap-break-word">{String(id || '-')}</code>
+            {t('admin.services.formHeader.invalidIdDescription')}{' '}
+            <code className="wrap-break-word">{String(id || '-')}</code>
           </p>
         </div>
 
@@ -299,7 +300,8 @@ export default function AdminServiceDetailClient({ id }: { id: string }) {
         <div className="space-y-1">
           <h1 className="text-lg font-semibold">{t('admin.services.formHeader.notFoundTitle')}</h1>
           <p className="text-sm text-muted-foreground">
-            {t('admin.services.formHeader.notFoundDescription')} <code className="wrap-break-word">{String(id)}</code>
+            {t('admin.services.formHeader.notFoundDescription')}{' '}
+            <code className="wrap-break-word">{String(id)}</code>
           </p>
         </div>
 

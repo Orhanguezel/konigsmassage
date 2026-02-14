@@ -2,14 +2,21 @@
 // FILE: src/i18n/locale.ts  (DYNAMIC via META endpoints) - PROVIDER SAFE
 // FIX: avoid "useInsertionEffect must not schedule updates"
 //      by using useSyncExternalStore instead of setState in location listeners
+// FIX: Replace per-component raw fetch() with RTK Query hooks to
+//      deduplicate app-locales / default-locale across all components.
+//      Previously each component instance fired 2 separate fetch() calls,
+//      causing 20+ duplicate requests → 429 rate-limit errors.
 // =============================================================
 'use client';
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
 import { FALLBACK_LOCALE } from '@/i18n/config';
 import { normLocaleTag, normalizeLocales, resolveDefaultLocale } from '@/i18n/localeUtils';
 import { ensureLocationEventsPatched } from '@/i18n/locationEvents';
-import { fetchJsonNoStore, getPublicApiBase, unwrapMaybeData } from '@/i18n/publicMetaApi';
+import {
+  useGetAppLocalesPublicQuery,
+  useGetDefaultLocalePublicQuery,
+} from '@/integrations/rtk/hooks';
 
 type AppLocaleMeta = {
   code?: unknown;
@@ -74,34 +81,20 @@ export function useResolvedLocale(explicitLocale?: string | null): string {
   // ✅ No setState in listeners -> no "useInsertionEffect must not schedule updates"
   const pathname = useSyncExternalStore(subscribePathname, getPathnameSnapshot, () => '/');
 
-  const [appLocalesMeta, setAppLocalesMeta] = useState<AppLocaleMeta[] | null>(null);
-  const [defaultLocaleMeta, setDefaultLocaleMeta] = useState<string | null>(null);
+  // ✅ RTK Query: tüm component'ler aynı cache'i paylaşır, duplicate istek yok
+  const { data: appLocalesData } = useGetAppLocalesPublicQuery();
+  const { data: defaultLocaleData } = useGetDefaultLocalePublicQuery();
 
-  const didFetchRef = useRef(false);
+  const appLocalesMeta = useMemo<AppLocaleMeta[] | null>(() => {
+    if (!appLocalesData || !Array.isArray(appLocalesData)) return null;
+    return appLocalesData.length ? (appLocalesData as AppLocaleMeta[]) : null;
+  }, [appLocalesData]);
 
-  useEffect(() => {
-    if (didFetchRef.current) return;
-    didFetchRef.current = true;
-
-    const base = getPublicApiBase();
-    if (!base) return;
-
-    (async () => {
-      const [appLocalesRaw, defaultLocaleRaw] = await Promise.all([
-        fetchJsonNoStore<any>(`${base}/site_settings/app-locales`),
-        fetchJsonNoStore<any>(`${base}/site_settings/default-locale`),
-      ]);
-
-      const appUnwrapped = unwrapMaybeData<any>(appLocalesRaw);
-      const appArr = Array.isArray(appUnwrapped) ? (appUnwrapped as AppLocaleMeta[]) : [];
-
-      const defUnwrapped = unwrapMaybeData<any>(defaultLocaleRaw);
-      const def = normLocaleTag(defUnwrapped);
-
-      setAppLocalesMeta(appArr.length ? appArr : null);
-      setDefaultLocaleMeta(def || null);
-    })();
-  }, []);
+  const defaultLocaleMeta = useMemo<string | null>(() => {
+    if (defaultLocaleData == null) return null;
+    if (typeof defaultLocaleData === 'string') return normLocaleTag(defaultLocaleData) || null;
+    return null;
+  }, [defaultLocaleData]);
 
   return useMemo(() => {
     // pathname dependency is needed to re-evaluate query/cookie rules on navigation

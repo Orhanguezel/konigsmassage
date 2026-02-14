@@ -74,12 +74,14 @@
         "remove": "Entfernen",
         "clear": "Löschen",
         "reset": "Zurücksetzen",
-        "restore": "Wiederherstellen",
-        "apply": "Anwenden",
-        "locale": "Sprache",
-        "key": "Schlüssel",
-        "value": "Wert",
-        "source": "Quelle",
+	        "restore": "Wiederherstellen",
+	        "apply": "Anwenden",
+	        "locale": "Sprache",
+	        "localePlaceholder": "Sprache auswählen",
+	        "localeOptionsMissing": "Keine Sprachoptionen gefunden.",
+	        "key": "Schlüssel",
+	        "value": "Wert",
+	        "source": "Quelle",
         "exists": "Existiert",
         "doesNotExist": "Existiert nicht",
         "note": "Hinweis",
@@ -378,10 +380,546 @@
           }
         }
       },
-      
-      "customPage": {
-        "title": "Benutzerdefinierte Seiten",
-        "subtitle": "Statische Inhaltsseiten auflisten",
+      "faqs": {
+        "header": {
+          "title": "FAQs",
+          "description": "FAQ-Einträge nach Sprache, Status und Suche verwalten.",
+          "filters": {
+            "searchLabel": "Suche (q)",
+            "searchPlaceholder": "In Frage/Antwort suchen",
+            "slugLabel": "Slug",
+            "slugPlaceholder": "z.B. preise",
+            "localeLabel": "Sprache",
+            "allLocalesOption": "Alle Sprachen",
+            "localesLoading": "Sprachen werden geladen...",
+            "noLocalesError": "Keine aktive Sprachliste. Prüfen Sie app_locales in den Site-Einstellungen.",
+            "statusLabel": "Status",
+            "statusOptions": {
+              "all": "Alle",
+              "active": "Aktiv",
+              "inactive": "Inaktiv"
+            },
+            "sortLabel": "Sortierung",
+            "sortOptions": {
+              "updatedAt": "Aktualisiert am",
+              "createdAt": "Erstellt am",
+              "displayOrder": "Reihenfolge"
+            },
+            "dirLabel": "Richtung",
+            "dirOptions": {
+              "desc": "Absteigend",
+              "asc": "Aufsteigend"
+            }
+          },
+          "summary": {
+            "totalLabel": "Gesamt"
+          },
+          "actions": {
+            "refresh": "Aktualisieren",
+            "create": "Neues FAQ"
+          }
+        },
+        "list": {
+          "title": "Liste",
+          "loadingInline": "Lädt…",
+          "recordCount": "{count} Einträge",
+          "saveOrder": "Reihenfolge speichern",
+          "savingOrder": "Speichert…",
+          "loading": "FAQs werden geladen...",
+          "empty": "Noch keine FAQs.",
+          "reorderHint": "Reihenfolge: hoch/runter verschieben, dann speichern.",
+          "viewNote": "Standardansicht ist Karten. Auf sehr großen Bildschirmen (≥ {bp}px) wird die Tabellenansicht angezeigt.",
+          "deleteConfirm": "Sie sind dabei, diesen FAQ-Eintrag zu löschen.\n\nFrage: {question}\nID: {id}\nSlug: {slug}\n\nMöchten Sie fortfahren?",
+          "status": {
+            "active": "Aktiv",
+            "inactive": "Inaktiv"
+          },
+          "actions": {
+            "edit": "Bearbeiten",
+            "delete": "Löschen",
+            "moveUp": "Nach oben",
+            "moveDown": "Nach unten"
+          },
+          "meta": {
+            "locale": "Sprache",
+            "order": "Reihenfolge",
+            "slug": "Slug",
+            "createdAt": "Erstellt",
+            "updatedAt": "Aktualisiert"
+          },
+          "columns": {
+            "question": "Frage",
+            "slug": "Slug",
+            "order": "Reihenfolge",
+            "status": "Status",
+            "date": "Datum",
+            "actions": "Aktionen"
+          },
+          "placeholders": {
+            "noQuestion": "(keine Frage)",
+            "noSlug": "(kein Slug)"
+          }
+        },
+        "form": {
+          "editorModes": {
+            "form": "Formular",
+            "json": "JSON"
+          },
+          "editorStatus": {
+            "jsonInvalid": "JSON ungültig",
+            "jsonReady": "JSON bereit"
+          },
+          "titles": {
+            "create": "Neues FAQ erstellen",
+            "edit": "FAQ bearbeiten"
+          },
+          "descriptions": {
+            "formMode": "Sprache, Status, Reihenfolge, Frage/Antwort und Slug ausfüllen.",
+            "jsonMode": "Request-Payload als JSON bearbeiten und speichern."
+          },
+          "switchingLocale": "Sprache wird gewechselt...",
+          "loading": "Lädt...",
+          "fields": {
+            "locale": "Sprache",
+            "active": "Aktiv",
+            "displayOrder": "Reihenfolge (display_order)",
+            "question": "Frage",
+            "slug": "Slug",
+            "answer": "Antwort"
+          },
+          "validation": {
+            "requiredFields": "Frage, Antwort und Slug sind erforderlich.",
+            "invalidJson": "JSON ist ungültig. Bitte beheben Sie den Fehler.",
+            "requiredFieldsInJson": "Im JSON sind Frage, Antwort und Slug erforderlich."
+          },
+          "notes": {
+            "title": "Notizen",
+            "body": "Das FAQ-Modul hat keine Bild/SEO-Felder. Dieses Formular verwaltet nur die Backend-FAQ-Felder.",
+            "jsonTip": "Sie können in den JSON-Modus wechseln, um den Payload direkt zu bearbeiten.",
+            "createdAt": "Erstellt",
+            "updatedAt": "Aktualisiert"
+          }
+        },
+        "jsonEditor": {
+          "label": "FAQ JSON (create/update payload)",
+          "help": {
+            "intro": "Dieses JSON entspricht dem Payload für /admin/faqs create/update.",
+            "mainFields": "Hauptfelder:",
+            "localeNote": "Hinweis: Wenn Sie locale im JSON-Modus weglassen, wird die ausgewählte Sprache (aus dem Formular) verwendet."
+          }
+        },
+        "messages": {
+          "orderSaved": "Reihenfolge gespeichert.",
+          "orderSaveError": "Reihenfolge konnte nicht gespeichert werden.",
+          "created": "FAQ erstellt.",
+          "updated": "FAQ aktualisiert.",
+          "deleted": "FAQ gelöscht.",
+          "deleteError": "FAQ konnte nicht gelöscht werden.",
+          "noRecordForLocale": "Kein Eintrag für die ausgewählte Sprache gefunden; Sie können neuen Inhalt für diese Sprache erstellen.",
+          "loadForLocaleError": "Eintrag für die ausgewählte Sprache konnte nicht geladen werden."
+        },
+        "errors": {
+          "invalidLocale": "Ungültige Sprache ausgewählt. Prüfen Sie app_locales und default_locale.",
+          "createdButInvalidId": "Erstellt, aber die Antwort enthält keine gültige UUID id. Prüfen Sie die Backend-Response.",
+          "missingId": "FAQ-Daten konnten nicht geladen werden (id fehlt).",
+          "generic": "Aktion fehlgeschlagen. Bitte erneut versuchen."
+        },
+        "noLocales": {
+          "title": "Sprachliste nicht gefunden",
+          "description": "<code>site_settings.app_locales</code> ist leer oder ungültig. Konfigurieren Sie zuerst die Sprachen in den Site-Einstellungen."
+        },
+        "invalidId": {
+          "title": "Ungültige ID",
+          "description": "Keine UUID:"
+        },
+	        "actions": {
+	          "backToList": "Zurück zur Liste",
+	          "back": "Zurück",
+	          "create": "Erstellen",
+	          "creating": "Wird erstellt...",
+	          "save": "Speichern",
+	          "saving": "Speichert..."
+	        }
+	      },
+	      "contacts": {
+	        "header": {
+	          "title": "Kontaktanfragen",
+	          "subtitle": "Kontaktformular-Nachrichten verwalten."
+	        },
+	        "filters": {
+	          "title": "Filter",
+	          "description": "Suche, Status und Sortierung.",
+	          "searchPlaceholder": "Nach Name, E-Mail oder Betreff suchen...",
+	          "statusLabel": "Status",
+	          "statusAll": "Alle",
+	          "statusNew": "Neu",
+	          "statusInProgress": "In Bearbeitung",
+	          "statusClosed": "Geschlossen",
+	          "orderByLabel": "Sortieren nach",
+	          "orderByCreated": "Erstellt am",
+	          "orderByUpdated": "Aktualisiert am",
+	          "orderByStatus": "Status",
+	          "orderByName": "Name",
+	          "orderLabel": "Reihenfolge",
+	          "orderDesc": "Absteigend",
+	          "orderAsc": "Aufsteigend",
+	          "onlyUnresolved": "Nur ungelöst"
+	        },
+	        "list": {
+	          "title": "Liste",
+	          "description": "Kontakt-Nachrichten ansehen und verwalten.",
+	          "loading": "Kontaktanfragen werden geladen...",
+	          "empty": "Keine Kontaktanfragen gefunden."
+	        },
+	        "columns": {
+	          "name": "Name",
+	          "email": "E-Mail",
+	          "subject": "Betreff",
+	          "status": "Status",
+	          "createdAt": "Erstellt"
+	        },
+	        "status": {
+	          "new": "Neu",
+	          "inProgress": "In Bearbeitung",
+	          "closed": "Geschlossen"
+	        },
+	        "details": {
+	          "title": "Details",
+	          "name": "Name",
+	          "email": "E-Mail",
+	          "phone": "Telefon",
+	          "subject": "Betreff",
+	          "message": "Nachricht",
+	          "createdAt": "Erstellt",
+	          "updatedAt": "Aktualisiert",
+	          "id": "ID"
+	        },
+	        "editDialog": {
+	          "title": "Kontakt bearbeiten",
+	          "description": "Status, Erledigt-Markierung und Admin-Notiz aktualisieren.",
+	          "statusLabel": "Status",
+	          "resolvedLabel": "Erledigt",
+	          "adminNoteLabel": "Admin-Notiz",
+	          "adminNotePlaceholder": "Interne Notiz für das Team..."
+	        },
+	        "messages": {
+	          "saved": "Gespeichert.",
+	          "saveError": "Änderungen konnten nicht gespeichert werden.",
+	          "deleted": "Gelöscht.",
+	          "deleteError": "Nachricht konnte nicht gelöscht werden.",
+	          "loadError": "Kontaktanfragen konnten nicht geladen werden."
+	        },
+		        "confirmDelete": "Sie sind dabei, diese Kontakt-Nachricht zu löschen.\n\nName: {name}\nE-Mail: {email}\nBetreff: {subject}\nID: {id}\n\nMöchten Sie fortfahren?"
+		      },
+		      "reviews": {
+		        "header": {
+		          "title": "Bewertungen & Testimonials",
+		          "description": "Kundenbewertungen und Testimonials verwalten."
+		        },
+		        "actions": {
+		          "create": "Neue Bewertung",
+		          "backToList": "Zurück zur Liste",
+		          "deleting": "Wird gelöscht..."
+		        },
+		        "filters": {
+		          "searchLabel": "Suche",
+		          "searchPlaceholder": "Name, E-Mail, Kommentar...",
+		          "approvedLabel": "Freigabe",
+		          "activeLabel": "Status",
+		          "minRatingLabel": "Min. Bewertung",
+		          "minRatingPlaceholder": "0",
+		          "maxRatingLabel": "Max. Bewertung",
+		          "maxRatingPlaceholder": "5",
+		          "localeLabel": "Sprache",
+		          "options": {
+		            "all": "Alle",
+		            "approved": "Freigegeben",
+		            "unapproved": "Nicht freigegeben",
+		            "active": "Aktiv",
+		            "inactive": "Inaktiv"
+		          }
+		        },
+		        "summary": {
+		          "total": "Gesamt {total} Einträge"
+		        },
+		        "table": {
+		          "columns": {
+		            "nameEmail": "Name & E-Mail",
+		            "rating": "Bewertung",
+		            "comment": "Kommentar",
+		            "approved": "Freigegeben",
+		            "active": "Aktiv",
+		            "locale": "Locale",
+		            "date": "Datum"
+		          },
+		          "empty": "Keine Einträge gefunden.",
+		          "updatedAt": "Aktualisiert"
+		        },
+		        "labels": {
+		          "approved": "Freigegeben",
+		          "unapproved": "Nicht freigegeben",
+		          "active": "Aktiv",
+		          "inactive": "Inaktiv",
+		          "comment": "Kommentar",
+		          "createdAt": "Erstellt",
+		          "updatedAt": "Aktualisiert"
+		        },
+		        "deleteDialog": {
+		          "title": "Bewertung löschen?",
+		          "description": "Die Bewertung von {name} wird gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+		          "fallbackName": "Dieser Eintrag"
+		        },
+		        "messages": {
+		          "activated": "Aktiviert.",
+		          "deactivated": "Deaktiviert.",
+		          "approved": "Freigegeben.",
+		          "approvalRemoved": "Freigabe entfernt.",
+		          "created": "Eintrag erstellt.",
+		          "updated": "Eintrag aktualisiert.",
+		          "deleted": "Eintrag gelöscht.",
+		          "loadError": "Eintrag konnte nicht geladen werden.",
+		          "genericError": "Aktion fehlgeschlagen. Bitte erneut versuchen."
+		        },
+			        "form": {
+			          "titles": {
+			            "create": "Neue Bewertung",
+			            "edit": "Bewertung bearbeiten"
+			          },
+		          "descriptions": {
+		            "create": "Neue Kundenbewertung hinzufügen.",
+		            "edit": "Vorhandene Kundenbewertung bearbeiten."
+		          },
+		          "sections": {
+		            "meta": "Allgemein",
+		            "customer": "Kundeninformationen",
+		            "content": "Bewertungsinhalt",
+		            "extras": "Testimonial-Zusatzfelder",
+		            "extrasDescription": "Optionale Felder für das Testimonial-Layout.",
+		            "adminReply": "Admin-Antwort",
+		            "adminReplyDescription": "Sie können als Admin auf diese Bewertung antworten."
+		          },
+		          "fields": {
+		            "locale": "Sprache",
+		            "displayOrder": "Reihenfolge",
+		            "approved": "Freigabe",
+		            "active": "Aktiv",
+		            "targetType": "Zieltyp",
+		            "targetId": "Ziel-ID",
+		            "name": "Name",
+		            "email": "E-Mail",
+		            "rating": "Bewertung",
+		            "title": "Titel",
+		            "comment": "Kommentar",
+		            "role": "Rolle / Position",
+		            "company": "Unternehmen",
+		            "avatarUrl": "Avatar-URL",
+		            "logoUrl": "Logo-URL",
+		            "profileHref": "Profil-Link",
+		            "adminReply": "Antwort"
+		          },
+		          "placeholders": {
+		            "targetType": "z.B. testimonial, product, service",
+		            "targetId": "UUID oder Kennung",
+		            "name": "z.B. Max Mustermann",
+		            "email": "beispiel@email.com",
+		            "title": "Optionaler Titel",
+		            "comment": "Kundenbewertung...",
+		            "role": "z.B. CEO, Manager",
+		            "company": "Unternehmensname",
+		            "adminReply": "Optionale Admin-Antwort"
+		          },
+		          "validation": {
+		            "targetTypeRequired": "Zieltyp ist erforderlich.",
+		            "targetIdRequired": "Ziel-ID ist erforderlich.",
+		            "nameRequired": "Name ist erforderlich.",
+		            "emailRequired": "E-Mail ist erforderlich.",
+		            "commentRequired": "Kommentar ist erforderlich.",
+		            "ratingRange": "Bewertung muss zwischen 0 und 5 liegen."
+			          }
+			        }
+			      },
+			      "bookings": {
+			        "header": {
+			          "title": "Buchungen",
+			          "description": "Buchungsanfragen filtern, anzeigen und aktualisieren."
+			        },
+			        "summary": {
+			          "total": "Gesamt {total}"
+			        },
+			        "states": {
+			          "loadingInline": "Lädt…",
+			          "loading": "Buchungen werden geladen...",
+			          "empty": "Keine Einträge gefunden.",
+			          "resourcesLoading": "Ressourcen werden geladen..."
+			        },
+			        "filters": {
+			          "searchLabel": "Suche",
+			          "searchPlaceholder": "Name / E-Mail / Telefon",
+			          "statusLabel": "Status",
+			          "statusOptions": {
+			            "all": "Alle",
+			            "new": "Neu",
+			            "confirmed": "Bestätigt",
+			            "rejected": "Abgelehnt",
+			            "completed": "Abgeschlossen",
+			            "cancelled": "Storniert",
+			            "expired": "Abgelaufen"
+			          },
+			          "readLabel": "Gelesen",
+			          "readOptions": {
+			            "all": "Alle",
+			            "unread": "Ungelesen",
+			            "read": "Gelesen"
+			          },
+			          "dateLabel": "Datum",
+			          "resourceIdLabel": "Ressourcen-ID",
+			          "resourceIdPlaceholder": "(optional)",
+			          "serviceIdLabel": "Service-ID",
+			          "serviceIdPlaceholder": "(optional)"
+			        },
+			        "badges": {
+			          "unread": "Ungelesen"
+			        },
+			        "status": {
+			          "new": "Neu",
+			          "confirmed": "Bestätigt",
+			          "rejected": "Abgelehnt",
+			          "completed": "Abgeschlossen",
+			          "cancelled": "Storniert",
+			          "expired": "Abgelaufen"
+			        },
+			        "read": {
+			          "read": "Gelesen",
+			          "unread": "Ungelesen"
+			        },
+			        "list": {
+			          "title": "Buchungsliste",
+			          "description": "Buchungen verwalten und schnelle Aktionen ausführen.",
+			          "views": {
+			            "table": "Tabelle",
+			            "cards": "Karten"
+			          },
+			          "columns": {
+			            "status": "Status",
+			            "customer": "Kunde",
+			            "date": "Datum",
+			            "resource": "Ressource",
+			            "service": "Service"
+			          }
+			        },
+			        "labels": {
+			          "dateTime": "Datum/Zeit",
+			          "resource": "Ressource",
+			          "service": "Service",
+			          "customerMessage": "Kundennachricht",
+			          "selected": "Ausgewählt",
+			          "available": "Verfügbar",
+			          "full": "Belegt",
+			          "inactive": "Inaktiv"
+			        },
+			        "tooltips": {
+			          "acceptDisabled": "Nur „Neu“-Anfragen können akzeptiert werden.",
+			          "rejectDisabled": "Dieser Status kann nicht abgelehnt werden.",
+			          "alreadyRead": "Bereits gelesen",
+			          "decisionAlreadyMade": "Für diese Buchung wurde bereits eine Entscheidung getroffen."
+			        },
+			        "actions": {
+			          "accept": "Akzeptieren",
+			          "accepting": "Akzeptiert...",
+			          "reject": "Ablehnen",
+			          "rejecting": "Lehnt ab...",
+			          "markRead": "Als gelesen markieren",
+			          "backToList": "Zurück zur Liste"
+			        },
+			        "decision": {
+			          "titleAccept": "Buchung akzeptieren",
+			          "titleReject": "Buchung ablehnen",
+			          "actionAccept": "Akzeptieren",
+			          "actionReject": "Ablehnen",
+			          "noteLabel": "Entscheidungsnotiz (optional)",
+			          "notePlaceholder": "Diese Notiz kann dem Kunden im E-Mail-Template angezeigt werden.",
+			          "noteHelp": "Diese Aktion löst im Backend E-Mail-Templates + Benachrichtigungen aus.",
+			          "processing": "Wird verarbeitet..."
+			        },
+			        "confirm": {
+			          "delete": "Sie sind dabei, diese Buchung zu löschen.\n\nKunde: {name}\nDatum: {dateTime}\n\nMöchten Sie fortfahren?",
+			          "reject": "Sie sind dabei, diese Buchungsanfrage abzulehnen. Möchten Sie fortfahren?"
+			        },
+			        "messages": {
+			          "created": "Eintrag erstellt.",
+			          "updated": "Eintrag aktualisiert.",
+			          "deleted": "Buchung gelöscht.",
+			          "deleteError": "Buchung konnte nicht gelöscht werden.",
+			          "markedRead": "Als gelesen markiert.",
+			          "accepted": "Buchung akzeptiert. (E-Mail + Benachrichtigung ausgelöst)",
+			          "rejected": "Buchung abgelehnt. (E-Mail + Benachrichtigung ausgelöst)",
+			          "loadError": "Eintrag konnte nicht geladen werden.",
+			          "genericError": "Aktion fehlgeschlagen. Bitte erneut versuchen."
+			        },
+			        "form": {
+			          "titles": {
+			            "create": "Neue Buchung",
+			            "edit": "Buchung bearbeiten"
+			          },
+			          "description": "Kundendaten, Datum/Zeit, Ressource und Status verwalten.",
+			          "fields": {
+			            "name": "Name",
+			            "email": "E-Mail",
+			            "phone": "Telefon",
+			            "locale": "Locale",
+			            "status": "Status",
+			            "isRead": "Gelesen",
+			            "serviceId": "Service-ID",
+			            "resource": "Ressource",
+			            "date": "Datum",
+			            "time": "Uhrzeit",
+			            "customerMessage": "Kundennachricht",
+			            "adminNote": "Admin-Notiz",
+			            "decisionNote": "Entscheidungsnotiz"
+			          },
+			          "placeholders": {
+			            "serviceId": "(optional)",
+			            "resource": "Ressource auswählen",
+			            "time": "Uhrzeit auswählen",
+			            "select": "Auswählen...",
+			            "optional": "(optional)",
+			            "decisionNote": "(optional) Kann dem Kunden in der Akzeptieren/Ablehnen-E-Mail angezeigt werden."
+			          },
+			          "help": {
+			            "locale": "Bevorzugte Kundensprache. E-Mail-Templates verwenden diese Locale.",
+			            "status": "Für Entscheidung mit Notiz + E-Mail + Benachrichtigung die Akzeptieren/Ablehnen-Aktionen nutzen.",
+			            "date": "Tagesplan wird anhand dieses Datums geladen.",
+			            "pickResourceAndDate": "Ressource + Datum auswählen.",
+			            "slotsLoading": "Slots werden geladen...",
+			            "slotCount": "{count} Slots"
+			          },
+			          "validation": {
+			            "requiredCustomerFields": "Name, E-Mail und Telefon sind erforderlich.",
+			            "resourceRequired": "Ressource ist erforderlich.",
+			            "invalidDate": "Wählen Sie ein gültiges Datum. (YYYY-MM-DD)",
+			            "invalidTime": "Wählen Sie eine gültige Uhrzeit. (HH:mm)"
+			          },
+			          "availability": {
+			            "checking": "Verfügbarkeit wird geprüft...",
+			            "noSlot": "Kein Slot-Datensatz vorhanden (kann über den Plan erstellt werden).",
+			            "available": "Verfügbar ({reserved}/{cap})",
+			            "unavailable": "Belegt / inaktiv ({reserved}/{cap})"
+			          }
+			        },
+			        "plan": {
+			          "title": "Tagesplan",
+			          "description": "Slots kommen aus dem Tagesplan-Endpoint. Nur verfügbare Slots können ausgewählt werden.",
+			          "columns": {
+			            "time": "Uhrzeit",
+			            "status": "Status",
+			            "capacity": "Kapazität"
+			          }
+			        }
+			      },
+			      
+			      "customPage": {
+			        "title": "Benutzerdefinierte Seiten",
+			        "subtitle": "Statische Inhaltsseiten auflisten",
         "newPage": "Neue Seite",
         "allLanguages": "Alle Sprachen",
         "allModules": "Alle Module",
@@ -1233,6 +1771,127 @@
             "admin": "Admin",
             "moderator": "Moderator",
             "user": "Benutzer"
+          }
+        },
+        "emailTemplates": {
+          "common": {
+            "operationFailed": "Vorgang fehlgeschlagen. Bitte versuchen Sie es erneut.",
+            "loading": "Lädt...",
+            "active": "Aktiv",
+            "inactive": "Inaktiv"
+          },
+          "list": {
+            "title": "E-Mail-Vorlagen",
+            "description": "E-Mail-Vorlagen verwalten. Jede Vorlage kann Inhalte in verschiedenen Sprachen enthalten.",
+            "addButton": "Neu hinzufügen",
+            "filters": {
+              "searchLabel": "Suche",
+              "searchPlaceholder": "Template-Key, Name, Betreff...",
+              "statusLabel": "Status",
+              "statusOptions": {
+                "all": "Alle",
+                "active": "Aktiv",
+                "inactive": "Inaktiv"
+              }
+            },
+            "totalRecords": "Insgesamt {count} Einträge",
+            "refreshButton": "Aktualisieren",
+            "fetching": "Lädt...",
+            "loading": "Lädt...",
+            "empty": "Keine Einträge gefunden.",
+            "table": {
+              "headers": {
+                "templateKey": "Template-Key",
+                "nameSubject": "Name & Betreff",
+                "variables": "Variablen",
+                "active": "Aktiv",
+                "locale": "Locale",
+                "date": "Datum",
+                "actions": "Aktionen"
+              },
+              "updatedLabel": "Aktualisiert"
+            },
+            "actions": {
+              "edit": "Bearbeiten",
+              "delete": "Löschen"
+            },
+            "mobile": {
+              "activeLabel": "Aktiv",
+              "variablesLabel": "Variablen",
+              "createdLabel": "Erstellt",
+              "updatedLabel": "Aktualisiert"
+            },
+            "toast": {
+              "activated": "Als aktiv markiert.",
+              "deactivated": "Als inaktiv markiert.",
+              "deleted": "Eintrag gelöscht."
+            },
+            "dialog": {
+              "title": "Möchten Sie wirklich löschen?",
+              "description": "{template} wird gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+              "templateFallback": "Diese Vorlage",
+              "cancel": "Abbrechen",
+              "delete": "Löschen"
+            }
+          },
+          "detail": {
+            "loadError": "Eintrag konnte nicht geladen werden",
+            "backToList": "Zurück zur Liste",
+            "titleCreate": "Neue E-Mail-Vorlage",
+            "titleEdit": "E-Mail-Vorlage bearbeiten",
+            "descriptionCreate": "Erstellen Sie eine neue E-Mail-Vorlage",
+            "descriptionEdit": "Bestehende E-Mail-Vorlage bearbeiten",
+            "sections": {
+              "generalInfo": "Allgemeine Informationen",
+              "templateInfo": "Vorlageninformationen",
+              "content": "E-Mail-Inhalt",
+              "contentDescription": "HTML-Inhalt. Verwenden Sie für Variablen das Format {{variable}}.",
+              "variables": "Variablen",
+              "variablesDescription": "Definieren Sie Variablen im E-Mail-Inhalt (optional)"
+            },
+            "fields": {
+              "statusLabel": "Status",
+              "templateKeyLabel": "Template-Key",
+              "templateKeyPlaceholder": "welcome_email",
+              "templateKeyHelp": "Eindeutiger Schlüssel (nicht änderbar). Beispiel: welcome_email, password_reset",
+              "templateNameLabel": "Vorlagenname",
+              "templateNamePlaceholder": "Willkommens-E-Mail",
+              "subjectLabel": "Betreff",
+              "subjectPlaceholder": "Willkommen {{name}}!",
+              "subjectHelp": "E-Mail-Betreff. Für dynamische Felder {{variable}} verwenden.",
+              "contentLabel": "HTML-Inhalt",
+              "contentPlaceholder": "<html><body><h1>Hallo {{name}}!</h1><p>Willkommen...</p></body></html>",
+              "variablesLabel": "Variablen",
+              "variablesPlaceholder": "name, email, url oder [\"name\", \"email\", \"url\"]",
+              "variablesHelp": "Kommagetrennt (name, email, url) oder als JSON-Array ([\"name\", \"email\"]).",
+              "detectedVariablesLabel": "Im Inhalt erkannte Variablen"
+            },
+            "validation": {
+              "templateKeyRequired": "Template-Key ist erforderlich.",
+              "templateNameRequired": "Vorlagenname ist erforderlich.",
+              "subjectRequired": "Betreff ist erforderlich.",
+              "contentRequired": "Inhalt ist erforderlich."
+            },
+            "actions": {
+              "back": "Zurück",
+              "delete": "Löschen",
+              "deleting": "Wird gelöscht...",
+              "cancel": "Abbrechen",
+              "save": "Speichern",
+              "saving": "Wird gespeichert..."
+            },
+            "toast": {
+              "created": "Vorlage erstellt.",
+              "updated": "Vorlage aktualisiert.",
+              "deleted": "Vorlage gelöscht."
+            },
+            "dialog": {
+              "title": "Möchten Sie wirklich löschen?",
+              "description": "{template} wird gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+              "templateFallback": "Diese Vorlage",
+              "cancel": "Abbrechen",
+              "delete": "Löschen"
+            }
           }
         },
         "userRoles": {
