@@ -25,7 +25,15 @@ export const UI_FALLBACK_EN = {
   ui_home_hero_subtitle: 'We provide the best solutions for your business.',
   ui_home_hero_cta_primary: 'Get Started',
   ui_home_hero_cta_secondary: 'Learn More',
-  // ... diğer UI key-value çiftleri
+  ui_404_title: 'Page Not Found',
+  ui_404_subtitle: "The page you are looking for might have been moved, deleted, or doesn't exist.",
+  ui_404_back_home: 'Back to Homepage',
+  ui_404_redirect_info: 'You will be redirected to the homepage in {seconds} seconds.',
+  ui_500_title: 'Internal Server Error',
+  ui_500_subtitle: 'Something went wrong on our end. Please try again later.',
+  ui_500_try_again: 'Try Again',
+  ui_generic_error: 'An unexpected error occurred.',
+  ui_loading: 'Loading...',
 } as const;
 
 export type UIKey = keyof typeof UI_FALLBACK_EN;

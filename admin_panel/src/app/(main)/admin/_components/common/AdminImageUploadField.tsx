@@ -228,9 +228,26 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
 
     if (!multiple) {
       const file = files[0];
+      console.debug('[AdminImageUpload] file selected:', {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      });
+
+      // SVG dosya için MIME type düzeltmesi
+      // Bazı tarayıcılar SVG'yi doğru MIME ile göndermeyebilir
+      let uploadFile: File = file;
+      if (
+        file.name.toLowerCase().endsWith('.svg') &&
+        file.type !== 'image/svg+xml'
+      ) {
+        console.debug('[AdminImageUpload] fixing SVG MIME type:', file.type, '→ image/svg+xml');
+        uploadFile = new File([file], file.name, { type: 'image/svg+xml' });
+      }
+
       try {
         const res = await createAssetAdmin({
-          file,
+          file: uploadFile,
           bucket,
           folder,
           metadata: meta,
@@ -240,7 +257,14 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
         onChange?.(url);
         toast.success('Görsel yüklendi.');
       } catch (err: any) {
-        toast.error(err?.data?.error?.message || err?.message || 'Görsel yüklenirken hata oluştu.');
+        console.error('[AdminImageUpload] upload failed:', JSON.stringify(err, null, 2), err);
+        const msg =
+          err?.data?.error?.message ||
+          err?.data?.message ||
+          err?.error ||
+          err?.message ||
+          'Görsel yüklenirken hata oluştu.';
+        toast.error(typeof msg === 'string' ? msg : 'Görsel yüklenirken hata oluştu.');
       }
       return;
     }
@@ -249,9 +273,18 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
     let successCount = 0;
 
     for (const file of files) {
+      // SVG dosya için MIME type düzeltmesi
+      let uploadFile: File = file;
+      if (
+        file.name.toLowerCase().endsWith('.svg') &&
+        file.type !== 'image/svg+xml'
+      ) {
+        uploadFile = new File([file], file.name, { type: 'image/svg+xml' });
+      }
+
       try {
         const res = await createAssetAdmin({
-          file,
+          file: uploadFile,
           bucket,
           folder,
           metadata: meta,
@@ -262,8 +295,15 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
           successCount += 1;
         }
       } catch (err: any) {
+        console.error('[AdminImageUpload] bulk upload failed:', JSON.stringify(err, null, 2), err);
+        const emsg =
+          err?.data?.error?.message ||
+          err?.data?.message ||
+          err?.error ||
+          err?.message ||
+          'Bazı görseller yüklenirken hata oluştu.';
         toast.error(
-          err?.data?.error?.message || err?.message || 'Bazı görseller yüklenirken hata oluştu.',
+          typeof emsg === 'string' ? emsg : 'Bazı görseller yüklenirken hata oluştu.',
         );
       }
     }
@@ -519,7 +559,7 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
         <Input
           ref={fileInputRef as any}
           type="file"
-          accept="image/*"
+          accept="image/*,.svg,.ico"
           multiple={!!multiple}
           className="hidden"
           onChange={handleFileChange}

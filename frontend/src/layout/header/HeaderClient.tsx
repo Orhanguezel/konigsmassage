@@ -346,23 +346,25 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
       <header>
         <div
           id="header-sticky"
-          className={`w-full z-99 transition-all duration-300 ${
+          className={`w-full z-99 transition-all duration-300 flex items-center ${
             scrolled
-              ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-md shadow-lg text-slate-800 py-2'
+              ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-md shadow-lg text-slate-800 h-[90px]'
               : !scrolled && overlayDark
-              ? 'absolute top-0 left-0 bg-transparent text-white py-3'
-              : 'absolute top-0 left-0 bg-white/95 backdrop-blur-md shadow-sm text-slate-800 py-3'
+              ? 'absolute top-0 left-0 bg-transparent text-white h-[120px]'
+              : 'absolute top-0 left-0 bg-white/95 backdrop-blur-md shadow-sm text-slate-800 h-[120px]'
           }`}
         >
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between">
               {/* Logo */}
-              <div className="w-auto shrink-0">
+              <div className="w-auto shrink-0 flex items-center">
                 <div className="flex">
                   <Link href={homeHref} aria-label={resolvedBrand.name}>
                     <SiteLogo
+                      variant={!scrolled && overlayDark ? 'light' : 'default'}
                       alt={resolvedBrand.name}
-                      className="max-h-10 lg:max-h-12 w-auto max-w-none"
+                      wrapperClassName="w-64 sm:w-72 md:w-80"
+                      className="w-auto max-w-none"
                     />
                   </Link>
                 </div>
@@ -376,11 +378,7 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
                       <ul className="flex gap-6 xl:gap-8 items-center list-none m-0 p-0">
                         {headerMenuItems.map(renderDesktopMenuItem)}
 
-                        {!headerMenuItems.length && !isMenuLoading && (
-                          <li>
-                            <span className="opacity-70 text-sm ps-2">{menuEmptyLabel}</span>
-                          </li>
-                        )}
+                        {/* menü boşken placeholder gösterme — SEO'da hata mesajı olarak indeksleniyor */}
 
                         {isMenuLoading && (
                           <li>

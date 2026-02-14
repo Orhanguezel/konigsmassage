@@ -198,13 +198,13 @@ VALUES
     'shortName','KÖNIG',
     'website','https://www.koenigsmassage.com',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
       'width',120,
       'height',120,
       'alt','KÖNIG ENERGETIK Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -288,13 +288,13 @@ VALUES
     'shortName','KÖNIG',
     'website','https://www.koenigsmassage.com',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
       'width',120,
       'height',120,
       'alt','KÖNIG ENERGETIK Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -370,13 +370,13 @@ VALUES
     'shortName','KÖNIG',
     'website','https://www.koenigsmassage.com',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
       'width',120,
       'height',120,
       'alt','KÖNIG ENERGETIK Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -453,9 +453,7 @@ VALUES
   'site_logo',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
-    'width',120,
-    'height',120,
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
     'alt','KÖNIG ENERGETIK Logo'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -466,9 +464,7 @@ VALUES
   'site_logo_dark',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
-    'width',120,
-    'height',120,
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043470/site-media/koenig-energetik-secondary.svg',
     'alt','KÖNIG ENERGETIK Logo (Dark)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -479,9 +475,7 @@ VALUES
   'site_logo_light',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
-    'width',120,
-    'height',120,
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043356/site-media/koenig-energetik-horizontal-light.svg',
     'alt','KÖNIG ENERGETIK Logo (Light)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -492,30 +486,8 @@ VALUES
   'site_favicon',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222395/site-media/favicon.png',
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771039304/site-media/koenig-energetik-icon.svg',
     'alt','KÖNIG ENERGETIK Favicon'
-  ) AS CHAR CHARACTER SET utf8mb4),
-  NOW(3),
-  NOW(3)
-),
-(
-  UUID(),
-  'site_apple_touch_icon',
-  '*',
-  CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
-    'alt','KÖNIG ENERGETIK Apple Touch Icon'
-  ) AS CHAR CHARACTER SET utf8mb4),
-  NOW(3),
-  NOW(3)
-),
-(
-  UUID(),
-  'site_app_icon_512',
-  '*',
-  CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768221636/site-media/logo2.png',
-    'alt','KÖNIG ENERGETIK App Icon (512x512)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -538,7 +510,7 @@ VALUES
   'site_appointment_cover',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222471/site-media/about.png',
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771038160/site-media/termin_portrait.jpg',
     'width',1200,
     'height',800,
     'alt','KÖNIG ENERGETIK – Termin-Titelbild'

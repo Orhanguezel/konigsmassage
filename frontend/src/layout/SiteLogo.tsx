@@ -1,9 +1,9 @@
 // =============================================================
 // FILE: src/layout/SiteLogo.tsx
-// konigsmassage – Dynamic Site Logo (GLOBAL '*') [FINAL]
-// - ✅ site_logo / site_logo_dark / site_logo_light from site_settings
-// - ✅ No inline styles
-// - ✅ Bigger logo + NO blur/background badge
+// konigsmassage – Dynamic Site Logo (GLOBAL '*')
+// - site_logo (primary) / site_logo_dark (secondary) / site_logo_light
+// - SVG: plain <img> (no Next.js Image optimization)
+// - Raster: Next.js <Image>
 // =============================================================
 
 'use client';
@@ -20,15 +20,10 @@ export type SiteLogoProps = {
   variant?: Variant;
   overrideSrc?: StaticImageData | string;
   alt?: string;
-  className?: string; // applied to <Image>
+  className?: string;
   priority?: boolean;
-
-  /** optional: add/override wrapper styles */
-  wrapperClassName?: string; // applied to wrapper
+  wrapperClassName?: string;
 };
-
-const DEFAULT_W = 160;
-const DEFAULT_H = 48;
 
 const variantKeyMap: Record<Variant, string> = {
   default: 'site_logo',
@@ -84,6 +79,12 @@ function extractMedia(val: SettingValue | null | undefined): {
   return { url: '' };
 }
 
+function isSvg(src: string | StaticImageData): boolean {
+  if (typeof src !== 'string') return false;
+  const lower = src.toLowerCase().split('?')[0].split('#')[0];
+  return lower.endsWith('.svg') || lower.includes('f_svg') || lower.includes('format=svg');
+}
+
 function cx(...parts: Array<string | undefined | null | false>) {
   return parts.filter(Boolean).join(' ');
 }
@@ -103,57 +104,62 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
     locale: '*',
   });
 
-  const { url, width, height } = useMemo(
+  const { url } = useMemo(
     () => extractMedia((setting?.value as SettingValue) ?? null),
     [setting?.value],
   );
 
-  let finalSrc: StaticImageData | string = '';
-  let finalW = DEFAULT_W;
-  let finalH = DEFAULT_H;
+  const finalSrc: StaticImageData | string = overrideSrc || safeStr(url);
 
-  if (overrideSrc) {
-    if (typeof overrideSrc === 'string') {
-      finalSrc = overrideSrc;
-    } else {
-      finalSrc = overrideSrc;
-      finalW = overrideSrc.width ?? DEFAULT_W;
-      finalH = overrideSrc.height ?? DEFAULT_H;
-    }
-  } else {
-    const u = safeStr(url);
-    finalSrc = u;
-    finalW = width || DEFAULT_W;
-    finalH = height || DEFAULT_H;
-  }
-
-  // Fallback logo yok. URL yoksa render etme.
-  // CLS fix: always reserve space in header even while DB logo loads.
   const frameClass = cx(
     'inline-flex items-center justify-start select-none transition-opacity hover:opacity-90',
-    'w-36 sm:w-44 lg:w-56 h-10 sm:h-11 lg:h-12',
+    'w-40 sm:w-48 max-w-full',
     wrapperClassName,
   );
 
-  return (
-    <span className={frameClass} aria-label={alt}>
-      {finalSrc ? (
-        <Image
-          key={typeof finalSrc === 'string' ? finalSrc : 'settings-logo'}
-          src={finalSrc}
-          alt={alt}
-          width={finalW}
-          height={finalH}
-          className={cx('w-full h-full object-contain', className)}
-          sizes="(max-width: 576px) 140px, (max-width: 992px) 180px, 220px"
-          priority={priority}
-        />
-      ) : (
+  if (!finalSrc) {
+    return (
+      <span className={frameClass} aria-label={alt}>
         <span
-          className="w-full h-full rounded-md bg-sand-100 border border-sand-200 animate-pulse"
+          className="w-full h-10 rounded-md bg-sand-100 border border-sand-200 animate-pulse"
           aria-hidden="true"
         />
-      )}
+      </span>
+    );
+  }
+
+  // SVG → plain <img> (no Next.js optimization needed, preserves viewBox scaling)
+  if (typeof finalSrc === 'string' && isSvg(finalSrc)) {
+    return (
+      <span className={frameClass} aria-label={alt}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={finalSrc}
+          alt={alt}
+          className={cx('w-full h-auto', className)}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
+        />
+      </span>
+    );
+  }
+
+  // Raster → Next.js <Image>
+  const w = typeof finalSrc === 'object' ? (finalSrc.width ?? 500) : 500;
+  const h = typeof finalSrc === 'object' ? (finalSrc.height ?? 80) : 80;
+
+  return (
+    <span className={frameClass} aria-label={alt}>
+      <Image
+        key={typeof finalSrc === 'string' ? finalSrc : 'settings-logo'}
+        src={finalSrc}
+        alt={alt}
+        width={w}
+        height={h}
+        className={cx('w-full h-auto', className)}
+        sizes="(max-width: 576px) 160px, (max-width: 992px) 208px, 256px"
+        priority={priority}
+      />
     </span>
   );
 };

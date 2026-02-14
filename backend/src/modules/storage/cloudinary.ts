@@ -263,9 +263,10 @@ async function uploadLocal(cfg: Cfg, buffer: Buffer, opts: UpOpts): Promise<Uplo
 function pickResourceType(mime?: string): 'auto' | 'image' | 'raw' | 'video' {
   const m = (mime || '').toLowerCase();
   if (m === 'application/pdf') return 'raw';
-  // ICO ve SVG Cloudinary'de resource_type:'image' olarak işlenemez
+  // ICO: Cloudinary image olarak işleyemez → raw (extension public_id'de korunur)
   if (m === 'image/x-icon' || m === 'image/vnd.microsoft.icon') return 'raw';
-  if (m === 'image/svg+xml') return 'raw';
+  // SVG: Cloudinary image olarak destekliyor (fl_sanitize ile güvenli serve)
+  if (m === 'image/svg+xml') return 'image';
   if (m.startsWith('image/')) return 'image';
   if (m.startsWith('video/')) return 'video';
   return 'auto';
@@ -314,10 +315,21 @@ export async function uploadBufferAuto(
   }
 
   const resource_type = pickResourceType(opts.mime); // image/*
+
+  // raw resource_type dosyalarda (ICO vb.) extension public_id'de olmalı
+  // yoksa Cloudinary doğru content-type ile serve edemez
+  let finalPublicId = opts.publicId;
+  if (resource_type === 'raw' && finalPublicId && opts.mime) {
+    const ext = guessExt(opts.mime);
+    if (ext && !finalPublicId.endsWith(ext)) {
+      finalPublicId = finalPublicId + ext;
+    }
+  }
+
   console.debug?.('[storage] uploadBufferAuto CLOUDINARY start', {
     cloud: cfg.cloudName,
     folder,
-    publicId: opts.publicId,
+    publicId: finalPublicId,
     mime: opts.mime,
     bytes: buffer.length,
     mode: canSigned ? 'signed' : 'unsigned',
@@ -329,7 +341,7 @@ export async function uploadBufferAuto(
     const rawResult = await new Promise<unknown>((resolve, reject) => {
       const params: Record<string, any> = {
         folder,
-        public_id: opts.publicId,
+        public_id: finalPublicId,
         resource_type,
         overwrite: true,
       };

@@ -298,8 +298,6 @@ export default function Layout({
       'site_logo_dark',
       'site_logo_light',
       'site_favicon',
-      'site_apple_touch_icon',
-      'site_app_icon_512',
       'site_og_default_image',
 
       // fallback for locale keys

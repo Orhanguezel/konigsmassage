@@ -1,18 +1,13 @@
 // =============================================================
 // FILE: src/components/admin/site-settings/tabs/BrandMediaTab.tsx
 // guezelwebdesign – Brand / Media Settings Tab (GLOBAL '*')
-// - Flicker fix korunur (refetch loop yok)
-// - Responsive: cards/grid (taşma yok)
-// - Duplicate preview yok; sadece AdminImageUploadField preview kullanılır
-// - Logo / Icon / OG image için uygun aspect + object-fit
 // =============================================================
 
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { Search } from 'lucide-react';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import {
@@ -27,8 +22,6 @@ import { AdminImageUploadField } from '@/app/(main)/admin/_components/common/Adm
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 /* ----------------------------- constants ----------------------------- */
 
@@ -39,8 +32,6 @@ export const SITE_MEDIA_KEYS = [
   'site_logo_dark',
   'site_logo_light',
   'site_favicon',
-  'site_apple_touch_icon',
-  'site_app_icon_512',
   'site_og_default_image',
   'site_appointment_cover',
 ] as const;
@@ -51,9 +42,15 @@ function isMediaKey(k: string): k is MediaKey {
   return (SITE_MEDIA_KEYS as readonly string[]).includes(k);
 }
 
-/**
- * Her key için preview aspect & fit ayarı
- */
+const MEDIA_LABELS: Record<MediaKey, string> = {
+  site_logo: 'Primary Logo',
+  site_logo_dark: 'Secondary Logo (Footer)',
+  site_logo_light: 'Light Logo (Header Dark)',
+  site_favicon: 'Favicon',
+  site_og_default_image: 'OG Image',
+  site_appointment_cover: 'Termin Cover',
+};
+
 const previewConfig: Record<
   MediaKey,
   {
@@ -65,8 +62,6 @@ const previewConfig: Record<
   site_logo_dark: { aspect: '4x3', fit: 'contain' },
   site_logo_light: { aspect: '4x3', fit: 'contain' },
   site_favicon: { aspect: '1x1', fit: 'contain' },
-  site_apple_touch_icon: { aspect: '1x1', fit: 'contain' },
-  site_app_icon_512: { aspect: '1x1', fit: 'contain' },
   site_og_default_image: { aspect: '16x9', fit: 'cover' },
   site_appointment_cover: { aspect: '16x9', fit: 'cover' },
 };
@@ -127,18 +122,6 @@ function toMediaValue(url: string): SettingValue {
   return { url: u };
 }
 
-async function copyToClipboard(text: string, successMsg: string, errorMsg: string) {
-  const t = safeStr(text);
-  if (!t) return;
-
-  try {
-    await navigator.clipboard.writeText(t);
-    toast.success(successMsg);
-  } catch {
-    toast.error(errorMsg);
-  }
-}
-
 /**
  * Normalize image URL - if relative, try to make it absolute
  * Returns empty string if URL is invalid
@@ -190,28 +173,16 @@ function normalizeImageUrl(rawUrl: string): string {
 /* ----------------------------- component ----------------------------- */
 
 export const BrandMediaTab: React.FC = () => {
-  const [search, setSearch] = useState('');
-
-  // Use default locale for translation (since this is global tab)
   const t = useAdminT();
-  const labelForKey = useCallback(
-    (key: MediaKey) =>
-      t(`admin.siteSettings.brandMedia.labels.${key}`, undefined, key),
-    [t],
-  );
 
-  const listArgs = useMemo(() => {
-    const q = search.trim() || undefined;
-    return {
-      locale: GLOBAL_LOCALE,
-      q,
-      keys: [...SITE_MEDIA_KEYS],
-      sort: 'key' as const,
-      order: 'asc' as const,
-      limit: 200,
-      offset: 0,
-    };
-  }, [search]);
+  const listArgs = useMemo(() => ({
+    locale: GLOBAL_LOCALE,
+    keys: [...SITE_MEDIA_KEYS],
+    sort: 'key' as const,
+    order: 'asc' as const,
+    limit: 200,
+    offset: 0,
+  }), []);
 
   const qGlobal = useListSiteSettingsAdminQuery(listArgs, {
     refetchOnMountOrArgChange: true,
@@ -229,19 +200,10 @@ export const BrandMediaTab: React.FC = () => {
 
   const rows = useMemo(() => {
     const all = Array.isArray(qGlobal.data) ? qGlobal.data : [];
-    const media = all.filter(
+    return all.filter(
       (r: any) => r && isMediaKey(String(r.key || '')) && String(r.locale ?? '') === GLOBAL_LOCALE,
     );
-
-    const s = search.trim().toLowerCase();
-    if (!s || s.length < 2) return media;
-
-    return media.filter((r: any) =>
-      String(r?.key || '')
-        .toLowerCase()
-        .includes(s),
-    );
-  }, [qGlobal.data, search]);
+  }, [qGlobal.data]);
 
   const byKey = useMemo(() => {
     const map = new Map<MediaKey, SiteSetting | null>();
@@ -263,17 +225,17 @@ export const BrandMediaTab: React.FC = () => {
 
       try {
         await updateSetting({ key, locale: GLOBAL_LOCALE, value: toMediaValue(u) }).unwrap();
-        toast.success(t('admin.siteSettings.brandMedia.updated', { label: labelForKey(key) }));
+        toast.success(t('admin.siteSettings.brandMedia.updated', { label: MEDIA_LABELS[key] }));
         await refetchAll();
       } catch (err: any) {
         toast.error(
           err?.data?.error?.message ||
             err?.message ||
-            t('admin.siteSettings.brandMedia.updateError', { label: labelForKey(key) }),
+            t('admin.siteSettings.brandMedia.updateError', { label: MEDIA_LABELS[key] }),
         );
       }
     },
-    [updateSetting, refetchAll, t, labelForKey],
+    [updateSetting, refetchAll, t],
   );
 
   const deleteRow = useCallback(
@@ -295,15 +257,14 @@ export const BrandMediaTab: React.FC = () => {
   return (
     <Card>
       <CardHeader className="gap-2">
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex items-start justify-between gap-2">
           <div className="space-y-1">
             <CardTitle className="text-base">{t('admin.siteSettings.brandMedia.title')}</CardTitle>
             <CardDescription>
               {t('admin.siteSettings.brandMedia.description')}
             </CardDescription>
           </div>
-
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
             <Badge variant="secondary">{t('admin.siteSettings.brandMedia.badge')}</Badge>
             <Button
               type="button"
@@ -318,30 +279,12 @@ export const BrandMediaTab: React.FC = () => {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="brand-search">{t('admin.siteSettings.filters.search')}</Label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id="brand-search"
-              type="text"
-              placeholder={t('admin.siteSettings.brandMedia.searchPlaceholder')}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              disabled={busy}
-              className="pl-9"
-            />
-          </div>
-        </div>
-
+      <CardContent className="space-y-4">
         {busy && (
-          <div>
-            <Badge variant="secondary">{t('admin.siteSettings.messages.loading')}</Badge>
-          </div>
+          <Badge variant="secondary">{t('admin.siteSettings.messages.loading')}</Badge>
         )}
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {SITE_MEDIA_KEYS.map((k) => {
             const row = byKey.get(k) ?? null;
             const hasRow = Boolean(row);
@@ -352,27 +295,19 @@ export const BrandMediaTab: React.FC = () => {
             const cfg = previewConfig[k];
 
             return (
-              <Card key={`media_${k}`}>
-                <CardHeader className="gap-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1 flex-1">
-                      <CardTitle className="text-sm">{t(`admin.siteSettings.brandMedia.labels.${k}`)}</CardTitle>
-                      <CardDescription className="text-xs">
-                        <code className="font-mono">{k}</code>
-                        <span className="mx-1">•</span>
-                        <span>locale: *</span>
-                      </CardDescription>
-                    </div>
-
+              <Card key={`media_${k}`} className="overflow-hidden">
+                <CardHeader className="p-3 pb-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="text-sm">{MEDIA_LABELS[k]}</CardTitle>
                     <div className="flex gap-1">
-                      <Button asChild variant="outline" size="sm">
+                      <Button asChild variant="outline" size="sm" className="h-7 px-2 text-xs">
                         <Link href={getEditHref(k, GLOBAL_LOCALE)}>{t('admin.siteSettings.actions.edit')}</Link>
                       </Button>
-
                       <Button
                         type="button"
                         variant="destructive"
                         size="sm"
+                        className="h-7 px-2 text-xs"
                         disabled={busy || !hasRow}
                         onClick={() => void deleteRow(k)}
                       >
@@ -382,14 +317,9 @@ export const BrandMediaTab: React.FC = () => {
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
+                <CardContent className="p-3 pt-0">
                   <AdminImageUploadField
                     label=""
-                    helperText={
-                      <span className="text-xs text-muted-foreground">
-                        {t('admin.siteSettings.brandMedia.uploadHelp')}
-                      </span>
-                    }
                     bucket="public"
                     folder="site-media"
                     metadata={{ key: k, scope: 'site_settings', locale: GLOBAL_LOCALE }}
@@ -400,65 +330,11 @@ export const BrandMediaTab: React.FC = () => {
                     previewAspect={cfg.aspect}
                     previewObjectFit={cfg.fit}
                   />
-
-                  {rawUrl && (
-                    <div className="space-y-2">
-                      <div className="rounded-md border bg-muted/50 p-3">
-                        <div className="mb-2 flex items-center justify-between">
-                          <span className="text-xs font-medium text-muted-foreground">
-                            {t('admin.common.savedUrl')}
-                          </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => void copyToClipboard(rawUrl, t('admin.common.copySuccess'), t('admin.common.copyFailed'))}
-                            disabled={busy}
-                          >
-                            {t('admin.siteSettings.actions.copy')}
-                          </Button>
-                        </div>
-                        <code className="block wrap-break-word text-xs font-mono leading-relaxed">
-                          {rawUrl}
-                        </code>
-                      </div>
-
-                      {/* Manual preview for debugging */}
-                      <div className="rounded-md border bg-muted/50 p-3">
-                        <div className="mb-2 text-xs font-medium text-muted-foreground">
-                          {t('admin.common.previewColon')}
-                        </div>
-                        <div className="relative aspect-video w-full overflow-hidden rounded border bg-background">
-                          <img
-                            src={rawUrl}
-                            alt={t(`admin.siteSettings.brandMedia.labels.${k}`)}
-                            className="h-full w-full object-contain"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const parent = target.parentElement;
-                              if (parent && !parent.querySelector('.error-message')) {
-                                const errorDiv = document.createElement('div');
-                                errorDiv.className =
-                                  'error-message flex h-full items-center justify-center text-xs text-muted-foreground';
-                                errorDiv.textContent = t('admin.common.imageLoadFailed');
-                                parent.appendChild(errorDiv);
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             );
           })}
         </div>
-
-        <p className="text-xs text-muted-foreground">
-          {t('admin.siteSettings.brandMedia.note')}
-        </p>
       </CardContent>
     </Card>
   );

@@ -340,13 +340,7 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
                 <ul className="flex flex-col">
                   {headerMenuItems.map((it) => renderMobileMenuItem(it, 0))}
 
-                  {!headerMenuItems.length && !isMenuLoading && (
-                    <li>
-                      <span className="text-slate-400 text-sm py-2 block">
-                        {ui('menu_empty', '(Menü tanımlı değil)')}
-                      </span>
-                    </li>
-                  )}
+                  {/* menü boşken placeholder gösterme — SEO'da hata mesajı olarak indeksleniyor */}
 
                   {isMenuLoading && (
                     <li>

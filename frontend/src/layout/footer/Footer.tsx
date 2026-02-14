@@ -153,7 +153,7 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
             href={rawUrl}
             target={external ? '_blank' : undefined}
             rel={external ? 'noopener noreferrer' : undefined}
-            className="text-text-secondary hover:text-brand-primary transition-colors duration-300 text-base"
+            className="text-text-secondary hover:text-brand-primary transition-colors duration-300 text-base wrap-break-word"
           >
             {item.title || rawUrl}
           </a>
@@ -167,7 +167,7 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
       <li key={item.id} className="mb-2.5">
         <Link
           href={href}
-          className="text-text-secondary hover:text-brand-primary transition-colors duration-300 text-base"
+          className="text-text-secondary hover:text-brand-primary transition-colors duration-300 text-base wrap-break-word"
         >
           {item.title || rawUrl}
         </Link>
@@ -212,7 +212,7 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
             {/* 2. kolon – Services (footer__col-2) */}
             {renderSectionColumn(
               section2,
-              'col-span-1 md:col-span-2 lg:col-span-1',
+              'col-span-1',
               'footer__col-2',
             )}
 
@@ -224,11 +224,11 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
               <div className="mb-12">
                 <div className="mb-6">
                   <Link href={homeHref} aria-label={brandName || 'Home'}>
-                    <SiteLogo alt={brandName || 'Logo'} priority={false} />
+                    <SiteLogo variant="dark" alt={brandName || 'Logo'} priority={false} wrapperClassName="w-48 sm:w-56 max-w-full" />
                   </Link>
                 </div>
 
-                <div className="flex flex-col gap-3 mb-8 text-text-secondary">
+                <div className="flex flex-col gap-3 mb-8 text-text-secondary wrap-break-word overflow-hidden">
                   {addrLines.map((ln, i) => (
                     <span key={`addr-${i}`} className="block">
                       {ln}
@@ -248,7 +248,7 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
                   )}
                 </div>
 
-                <div>
+                <div className="max-w-full overflow-hidden">
                   <SocialLinks socials={socials} size="md" />
                 </div>
               </div>

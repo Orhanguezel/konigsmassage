@@ -31,30 +31,25 @@ export const SITE_MEDIA_KEYS = [
   'site_logo_dark',
   'site_logo_light',
   'site_favicon',
-  'site_apple_touch_icon',
-  'site_app_icon_512',
   'site_og_default_image',
+  'site_appointment_cover',
 ] as const;
 
 type MediaKey = (typeof SITE_MEDIA_KEYS)[number];
 
 const labelMap: Record<MediaKey, string> = {
-  site_logo: 'Logo',
-  site_logo_dark: 'Logo (Dark)',
-  site_logo_light: 'Logo (Light)',
+  site_logo: 'Primary Logo',
+  site_logo_dark: 'Secondary Logo (Footer)',
+  site_logo_light: 'Light Logo (Header Dark)',
   site_favicon: 'Favicon',
-  site_apple_touch_icon: 'Apple Touch Icon',
-  site_app_icon_512: 'App Icon 512x512',
   site_og_default_image: 'OG Default Image',
+  site_appointment_cover: 'Termin Cover',
 };
 
 function isMediaKey(k: string): k is MediaKey {
   return (SITE_MEDIA_KEYS as readonly string[]).includes(k);
 }
 
-/**
- * Her key için preview aspect & fit ayarı
- */
 const previewConfig: Record<
   MediaKey,
   {
@@ -66,9 +61,8 @@ const previewConfig: Record<
   site_logo_dark: { aspect: '4x3', fit: 'contain' },
   site_logo_light: { aspect: '4x3', fit: 'contain' },
   site_favicon: { aspect: '1x1', fit: 'contain' },
-  site_apple_touch_icon: { aspect: '1x1', fit: 'contain' },
-  site_app_icon_512: { aspect: '1x1', fit: 'contain' },
   site_og_default_image: { aspect: '16x9', fit: 'cover' },
+  site_appointment_cover: { aspect: '16x9', fit: 'cover' },
 };
 
 /* ----------------------------- helpers ----------------------------- */

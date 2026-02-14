@@ -293,18 +293,43 @@ export const adminCreateAsset: RouteHandler = async (req, reply) => {
     if (isDup(err)) {
       const existing = await getByBucketPath(bucket, path);
       if (existing) {
+        // Yeni upload başarılı olduysa mevcut kaydı güncelle
+        // (resource_type veya URL değişmiş olabilir, ör. raw→image geçişi)
+        const updateSets: Record<string, unknown> = {
+          url: up.secure_url || existing.url,
+          provider_public_id: up.public_id ?? existing.provider_public_id,
+          provider_resource_type: (up.resource_type || existing.provider_resource_type) as string,
+          provider_format: up.format ?? existing.provider_format,
+          provider_version: typeof up.version === "number" ? up.version : existing.provider_version,
+          mime: mp.mimetype || existing.mime,
+          size: typeof up.bytes === "number" ? up.bytes : existing.size,
+          updated_at: dsql`CURRENT_TIMESTAMP(3)`,
+        };
+        if (typeof up.width === "number") updateSets.width = up.width;
+        if (typeof up.height === "number") updateSets.height = up.height;
+
+        try {
+          await repoUpdateById(existing.id, updateSets);
+        } catch {
+          // Güncelleme başarısız olsa bile mevcut kaydı dön
+        }
+
+        const fresh = await getById(existing.id);
+        const row = fresh ?? existing;
+
         req.log.warn(
           {
             ...fileLog,
-            rec_id: existing.id,
+            rec_id: row.id,
+            updated_url: up.secure_url,
           },
-          "storage upload: duplicate key, returning existing row",
+          "storage upload: duplicate key, updated existing row",
         );
         return reply.code(200).send({
-          ...existing,
-          url: publicUrlOf(existing.bucket, existing.path, existing.url),
-          created_at: existing.created_at,
-          updated_at: existing.updated_at,
+          ...row,
+          url: publicUrlOf(row.bucket, row.path, up.secure_url || row.url),
+          created_at: row.created_at,
+          updated_at: row.updated_at,
         });
       }
     }
@@ -636,19 +661,39 @@ export const adminBulkCreateAssets: RouteHandler = async (req, reply) => {
       if (isDup(err)) {
         const existing = await getByBucketPath(bucket, path);
         if (existing) {
+          // Mevcut kaydı yeni upload sonucuyla güncelle
+          try {
+            await repoUpdateById(existing.id, {
+              url: up.secure_url || existing.url,
+              provider_public_id: up.public_id ?? existing.provider_public_id,
+              provider_resource_type: (up.resource_type || existing.provider_resource_type) as string,
+              provider_format: up.format ?? existing.provider_format,
+              provider_version: typeof up.version === "number" ? up.version : existing.provider_version,
+              mime: part.mimetype || existing.mime,
+              size: typeof up.bytes === "number" ? up.bytes : existing.size,
+              updated_at: dsql`CURRENT_TIMESTAMP(3)`,
+            });
+          } catch {
+            // Güncelleme başarısız olsa bile devam
+          }
+
+          const fresh = await getById(existing.id);
+          const row = fresh ?? existing;
+
           req.log.warn(
             {
               ...fileLog,
-              rec_id: existing.id,
+              rec_id: row.id,
+              updated_url: up.secure_url,
             },
-            "storage bulk upload: duplicate key, returning existing row",
+            "storage bulk upload: duplicate key, updated existing row",
           );
           out.push({
-            ...existing,
+            ...row,
             url: publicUrlOf(
-              existing.bucket,
-              existing.path,
-              existing.url,
+              row.bucket,
+              row.path,
+              up.secure_url || row.url,
             ),
           });
           continue;

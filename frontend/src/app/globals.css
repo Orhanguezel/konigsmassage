@@ -1,46 +1,46 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Primary - Rose Palette */
-  --color-rose-50: #FFF5F3;
-  --color-rose-100: #FFE8E3;
-  --color-rose-200: #FBD5CD;
-  --color-rose-300: #F4BDB3;
-  --color-rose-400: #E8A598;
-  --color-rose-500: #D88D7E;
-  --color-rose-600: #C77665;
-  --color-rose-700: #A6604F;
-  --color-rose-800: #7F4A3B;
-  --color-rose-900: #5E352A;
+  --color-rose-50: #fff5f3;
+  --color-rose-100: #ffe8e3;
+  --color-rose-200: #fbd5cd;
+  --color-rose-300: #f4bdb3;
+  --color-rose-400: #e8a598;
+  --color-rose-500: #d88d7e;
+  --color-rose-600: #c77665;
+  --color-rose-700: #a6604f;
+  --color-rose-800: #7f4a3b;
+  --color-rose-900: #5e352a;
 
   /* Neutral - Sand Palette */
-  --color-sand-50: #FDFCFB;
-  --color-sand-100: #F9F7F4;
-  --color-sand-200: #F0EBE6;
-  --color-sand-300: #E3DDD5;
-  --color-sand-400: #C9BFB3;
-  --color-sand-600: #7B6F63;
-  --color-sand-800: #4A4139;
-  --color-sand-900: #2D2520;
+  --color-sand-50: #fdfcfb;
+  --color-sand-100: #f9f7f4;
+  --color-sand-200: #f0ebe6;
+  --color-sand-300: #e3ddd5;
+  --color-sand-400: #c9bfb3;
+  --color-sand-600: #7b6f63;
+  --color-sand-800: #4a4139;
+  --color-sand-900: #2d2520;
 
   /* Accent Colors */
-  --color-gold-300: #F3D9A8;
-  --color-gold-400: #E8C57A;
-  --color-lavender-300: #D9C9E8;
-  
+  --color-gold-300: #f3d9a8;
+  --color-gold-400: #e8c57a;
+  --color-lavender-300: #d9c9e8;
+
   /* Dark Colors */
-  --color-black: #0A0806;
-  --color-charcoal: #1A1512;
+  --color-black: #0a0806;
+  --color-charcoal: #1a1512;
 
   /* Semantic Tokens */
   --color-bg-primary: var(--color-sand-50);
-  --color-bg-secondary: #FFFFFF;
+  --color-bg-secondary: #ffffff;
   --color-bg-dark: var(--color-charcoal);
   --color-bg-accent: var(--color-rose-50);
 
   --color-text-primary: var(--color-sand-900);
   --color-text-secondary: var(--color-sand-800); /* Daha koyu, daha iyi kontrast */
-  --color-text-muted: var(--color-sand-600);    /* WCAG AA ≥ 4.5:1 kontrast oranı */
+  --color-text-muted: var(--color-sand-600); /* WCAG AA ≥ 4.5:1 kontrast oranı */
   --color-text-on-dark: var(--color-sand-50);
 
   /* Accessibility: ensure sufficient contrast with white text */
@@ -60,8 +60,8 @@
   --color-border-medium: var(--color-sand-300);
 
   /* Typography */
-  --font-sans: "Inter", sans-serif;
-  --font-serif: "Playfair Display", serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
   /* Add script font if you bundle it, e.g. --font-script: "Dancing Script", cursive; */
 }
 
@@ -79,13 +79,29 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-serif);
     color: var(--color-text-primary);
   }
-  p, .prose, .prose p, .prose li {
+  p,
+  .prose,
+  .prose p,
+  .prose li {
     color: var(--color-text-secondary);
   }
   main li {
@@ -103,7 +119,7 @@
   .shadow-glow {
     box-shadow: var(--shadow-glow);
   }
-  
+
   /* Utility for the script font if added later */
   .font-script {
     font-family: cursive; /* Placeholder */

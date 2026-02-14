@@ -31,7 +31,7 @@ const AboutSection: React.FC = () => {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_about', locale as any);
 
-  const { data, isLoading, isError } = useListCustomPagesPublicQuery({
+  const { data, isLoading } = useListCustomPagesPublicQuery({
     module_key: 'about',
     locale,
     limit: 10,
@@ -129,16 +129,6 @@ const AboutSection: React.FC = () => {
     return 'Content will be published here soon.';
   }, [ui, locale]);
 
-  const errorText = useMemo(() => {
-    const key = 'ui_about_error';
-    const v = safeStr(ui(key, ''));
-    if (isValidUiText(v, key)) return v;
-
-    if (locale === 'de') return 'Inhalt konnte nicht geladen werden.';
-    if (locale === 'tr') return 'İçerik yüklenemedi.';
-    return 'Failed to load content.';
-  }, [ui, locale]);
-
   return (
     <div className="bg-bg-primary relative py-20 lg:py-32">
       <div className="container mx-auto px-4">
@@ -203,12 +193,7 @@ const AboutSection: React.FC = () => {
                 <p className="text-text-muted mb-8">{emptyText}</p>
               )}
 
-              {/* Error */}
-              {!isLoading && isError ? (
-                <div className="bg-rose-50 text-rose-800 p-4 rounded-md mb-8">
-                  {errorText}
-                </div>
-              ) : null}
+              {/* Hata durumunda görünür metin yok — Google indekslememeli */}
 
               {/* CTA */}
               <div className="mt-4">
