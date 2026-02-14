@@ -19,6 +19,7 @@
   --color-sand-200: #F0EBE6;
   --color-sand-300: #E3DDD5;
   --color-sand-400: #C9BFB3;
+  --color-sand-600: #7B6F63;
   --color-sand-800: #4A4139;
   --color-sand-900: #2D2520;
 
@@ -39,7 +40,7 @@
 
   --color-text-primary: var(--color-sand-900);
   --color-text-secondary: var(--color-sand-800); /* Daha koyu, daha iyi kontrast */
-  --color-text-muted: var(--color-sand-400);    /* Daha belirgin, daha iyi okunabilirlik */
+  --color-text-muted: var(--color-sand-600);    /* WCAG AA ≥ 4.5:1 kontrast oranı */
   --color-text-on-dark: var(--color-sand-50);
 
   /* Accessibility: ensure sufficient contrast with white text */

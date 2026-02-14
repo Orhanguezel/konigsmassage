@@ -27,18 +27,18 @@ import { buildMetadataFromSeo, fetchSeoObject } from '@/seo/server';
 // import ClientLayout from './ClientLayout';
 
 // Configure fonts
-const inter = Inter({ 
-  subsets: ['latin'], 
+const inter = Inter({
+  subsets: ['latin'],
   variable: '--font-sans',
-  display: 'swap',
+  display: 'optional',
   weight: ['400', '600', '700'],
   fallback: ['system-ui', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
 });
 
-const playfair = Playfair_Display({ 
-  subsets: ['latin'], 
+const playfair = Playfair_Display({
+  subsets: ['latin'],
   variable: '--font-serif',
-  display: 'swap',
+  display: 'optional',
   weight: ['400', '600', '700'],
   fallback: ['Georgia', 'Times New Roman', 'serif'],
 });

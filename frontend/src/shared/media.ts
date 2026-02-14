@@ -10,10 +10,10 @@ export function toCdnSrc(
 ): string {
   const s = (url || "").trim();
   if (!s) return "";
-  if (s.startsWith("https://res.cloudinary.com/")) {
-    const sep = s.includes("?") ? "&" : "?";
+  if (s.startsWith("https://res.cloudinary.com/") && s.includes("/upload/")) {
     const c = mode === "fill" ? "c_fill" : "c_fit";
-    return `${s}${sep}f_auto,q_auto:eco,w=${w},h=${h},${c}`;
+    const transforms = `f_auto,q_auto:eco,w_${w},h_${h},${c}`;
+    return s.replace("/upload/", `/upload/${transforms}/`);
   }
   return s;
 }
@@ -26,9 +26,9 @@ export function toAvatarSrc(
   const base =
     (typeof img === "string" ? img : img?.webp || img?.url || img?.thumbnail || "")?.trim() || "";
   if (!base) return "";
-  if (base.startsWith("https://res.cloudinary.com/")) {
-    const sep = base.includes("?") ? "&" : "?";
-    return `${base}${sep}f_auto,q_auto:eco,w=${w},h=${h},c_fill,g_face`;
+  if (base.startsWith("https://res.cloudinary.com/") && base.includes("/upload/")) {
+    const transforms = `f_auto,q_auto:eco,w_${w},h_${h},c_fill,g_face`;
+    return base.replace("/upload/", `/upload/${transforms}/`);
   }
   return base;
 }
