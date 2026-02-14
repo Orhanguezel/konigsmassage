@@ -4,7 +4,7 @@
 // Route: /admin/availability/:id  (id: "new" | UUID)
 // =============================================================
 
-import AdminAvailabilityDetailClient from '../admin-availability-detail-client';
+import AdminAvailabilityDetailClient from '../_components/admin-availability-detail-client';
 
 type Params = { id: string };
 

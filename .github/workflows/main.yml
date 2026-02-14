@@ -82,9 +82,36 @@ jobs:
           done
 
       # ----------------------------
-      # PM2 reload (backend + frontend) + bind check
+      # Admin Panel (Next.js) — Bun only
       # ----------------------------
-      - name: Reload PM2 (backend + frontend)
+      - name: Build admin_panel (bun)
+        working-directory: admin_panel
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: |
+          bun install --frozen-lockfile || bun install
+          bun run build
+
+      - name: Deploy admin_panel to VPS (rsync with retry)
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          SSH_OPTS="-o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key"
+          for i in 1 2 3; do
+            rsync -avz --delete \
+              --exclude=node_modules --exclude=.git --exclude=.env --exclude=.DS_Store \
+              -e "ssh $SSH_OPTS" \
+              admin_panel/ "${VPS_USER}@${VPS_HOST}:/var/www/konigsmassage/admin_panel" \
+              && break
+            echo "⚠ Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+
+      # ----------------------------
+      # PM2 reload (backend + frontend + admin_panel) + bind check
+      # ----------------------------
+      - name: Reload PM2 (backend + frontend + admin_panel)
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -101,6 +128,9 @@ jobs:
             cd /var/www/konigsmassage/frontend
             pm2 reload konigsmassage-frontend || pm2 start ecosystem.config.cjs --only konigsmassage-frontend
 
+            cd /var/www/konigsmassage/admin_panel
+            pm2 reload konigsmassage-admin-panel || pm2 start ecosystem.config.cjs --only konigsmassage-admin-panel
+
             pm2 save
 
-            ss -ltnp | grep -E "127\.0\.0\.1:3055|:3055" || true
+            ss -ltnp | grep -E "127\.0\.0\.1:(3055|3056)|:(3055|3056)" || true

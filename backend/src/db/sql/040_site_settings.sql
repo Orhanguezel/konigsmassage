@@ -532,6 +532,19 @@ VALUES
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
+),
+(
+  UUID(),
+  'site_appointment_cover',
+  '*',
+  CAST(JSON_OBJECT(
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222471/site-media/about.png',
+    'width',1200,
+    'height',800,
+    'alt','KÖNIG ENERGETIK – Termin-Titelbild'
+  ) AS CHAR CHARACTER SET utf8mb4),
+  NOW(3),
+  NOW(3)
 )
 ON DUPLICATE KEY UPDATE
   `value`      = VALUES(`value`),
