@@ -20,6 +20,7 @@ import type {
 import { metahubTags } from './tags';
 import { tokenStore } from '@/integrations/core/token';
 import { BASE_URL as CONFIG_BASE_URL } from '@/integrations/rtk/constants';
+import { acquireSlot, releaseSlot } from '@/integrations/rtk/requestThrottle';
 
 /** ---------- Base URL resolve ---------- */
 function trimSlash(x: string) {
@@ -180,6 +181,16 @@ const rawBaseQuery: RBQ = fetchBaseQuery({
   validateStatus: (res) => res.ok,
 }) as RBQ;
 
+/** ---------- Throttled wrapper — 429 koruması ---------- */
+const throttledBaseQuery: RBQ = async (args, api, extra) => {
+  await acquireSlot();
+  try {
+    return (await Promise.resolve(rawBaseQuery(args, api, extra))) as any;
+  } finally {
+    releaseSlot();
+  }
+};
+
 /** ---------- 401 → refresh → retry ---------- */
 type RawResult = Awaited<ReturnType<typeof rawBaseQuery>>;
 
@@ -230,7 +241,7 @@ let refreshInFlight: Promise<RawResult> | null = null;
 
 async function runRefresh(api: any, extra: any): Promise<RawResult> {
   const r = await Promise.resolve(
-    rawBaseQuery(
+    throttledBaseQuery(
       {
         url: '/auth/token/refresh',
         method: 'POST',
@@ -257,7 +268,7 @@ const baseQueryWithReauth: RBQ = async (args, api, extra) => {
     req = ensureJson(req);
   }
 
-  let result: RawResult = (await Promise.resolve(rawBaseQuery(req, api, extra))) as RawResult;
+  let result: RawResult = (await Promise.resolve(throttledBaseQuery(req, api, extra))) as RawResult;
 
   if (result.error?.status === 401 && !AUTH_SKIP_REAUTH.has(cleanPath)) {
     if (!refreshInFlight) {
@@ -289,7 +300,7 @@ const baseQueryWithReauth: RBQ = async (args, api, extra) => {
         retry = ensureJson(retry);
       }
 
-      result = (await Promise.resolve(rawBaseQuery(retry, api, extra))) as RawResult;
+      result = (await Promise.resolve(throttledBaseQuery(retry, api, extra))) as RawResult;
     } else {
       tokenStore.set(null);
     }

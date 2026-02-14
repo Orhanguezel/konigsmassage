@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FALLBACK_LOCALE } from '@/i18n/config';
 import { normLocaleTag, normalizeLocales } from '@/i18n/localeUtils';
 import { useGetAppLocalesPublicQuery } from '@/integrations/rtk/hooks';
@@ -26,12 +26,18 @@ function computeLocales(meta: AppLocaleMeta[] | null | undefined): string[] {
 export function useActiveLocales() {
   const { data: appLocalesData, isLoading } = useGetAppLocalesPublicQuery();
 
+  // Hydration koruması: ilk client render'ı server ile eşleşmeli.
+  // RTK Query server'da veri döndüremez ama client'ta hızlıca çözümler,
+  // bu da <option> listesinde mismatch yaratır.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const locales = useMemo<string[]>(() => {
-    if (!appLocalesData || !Array.isArray(appLocalesData)) {
+    if (!mounted || !appLocalesData || !Array.isArray(appLocalesData)) {
       return computeLocales(null);
     }
     return computeLocales(appLocalesData as AppLocaleMeta[]);
-  }, [appLocalesData]);
+  }, [appLocalesData, mounted]);
 
-  return { locales, isLoading };
+  return { locales, isLoading: isLoading || !mounted };
 }
