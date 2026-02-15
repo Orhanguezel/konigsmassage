@@ -291,6 +291,24 @@ export const AppointmentPageContent: React.FC = () => {
       };
 
       await createBooking(payload).unwrap();
+
+      // 🎯 GA4 Conversion Event Push (SPA)
+      if (typeof window !== 'undefined') {
+        const servicePrice = serviceFromSlug?.price_numeric || 0;
+
+        (window as any).dataLayer = (window as any).dataLayer || [];
+        (window as any).dataLayer.push({
+          event: 'booking_completed',
+          booking_service: payload.service_id || 'unknown',
+          booking_service_name: lockedServiceTitle || 'N/A',
+          booking_date: payload.appointment_date, // "YYYY-MM-DD"
+          booking_time: payload.appointment_time, // "HH:mm"
+          booking_locale: locale,
+          value: servicePrice, // Gerçek fiyat (numeric)
+          currency: 'EUR',
+        });
+      }
+
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {

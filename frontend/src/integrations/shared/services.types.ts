@@ -79,6 +79,7 @@ export interface ApiServiceBase {
   description: string | null;
   material: string | null;
   price: string | null;
+  price_numeric: number | null;
   includes: string | null;
   warranty: string | null;
   image_alt: string | null;
@@ -130,6 +131,7 @@ export interface ServiceDto {
   description: string | null;
   material: string | null;
   price: string | null;
+  price_numeric: number | null;
   includes: string | null;
   warranty: string | null;
   image_alt: string | null;
@@ -419,6 +421,7 @@ export const normalizeService = (
   description: row.description,
   material: row.material,
   price: row.price,
+  price_numeric: row.price_numeric,
   includes: row.includes,
   warranty: row.warranty,
   image_alt: row.image_alt,

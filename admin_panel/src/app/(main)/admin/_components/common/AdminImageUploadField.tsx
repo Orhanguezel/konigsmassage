@@ -12,11 +12,11 @@
 // - Cloudinary raw/upload uzantısız => svg sayılmaz
 // =============================================================
 
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Copy, Image as ImageIcon, Library, Upload, Star, Trash2 } from 'lucide-react';
+import { Copy, Image as ImageIcon, Library, Upload, Star, Trash2, X } from 'lucide-react';
 
-import { useCreateAssetAdminMutation } from '@/integrations/hooks';
+import { useCreateAssetAdminMutation, useListAssetsAdminQuery } from '@/integrations/hooks';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export type AdminImageUploadFieldProps = {
   label?: string;
@@ -208,6 +216,16 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [createAssetAdmin, { isLoading: isUploading }] = useCreateAssetAdminMutation();
 
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'upload' | 'library'>('upload');
+
+  // Fetch library assets (show all folders, not filtered)
+  const { data: assetsData, isLoading: isLoadingAssets } = useListAssetsAdminQuery(
+    { bucket, limit: 50, sort: 'created_at', order: 'desc' },
+    { skip: !isModalOpen || activeTab !== 'library' }
+  );
+
   const meta = useMemo(() => toMeta(metadata), [metadata]);
   const gallery = useMemo(
     () => (Array.isArray(values) ? values.map(norm).filter(Boolean) : []),
@@ -218,7 +236,26 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
 
   const handlePickClick = () => {
     if (busy) return;
+    setActiveTab('upload');
+    setIsModalOpen(true);
+  };
+
+  const handleDirectFileSelect = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleSelectFromLibrary = (url: string) => {
+    if (!url) return;
+
+    if (multiple && onChangeMultiple) {
+      onChangeMultiple(uniqAppend(gallery, [url]));
+      toast.success('Görsel eklendi.');
+    } else if (onChange) {
+      onChange(url);
+      toast.success('Görsel seçildi.');
+    }
+
+    setIsModalOpen(false);
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -256,6 +293,7 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
         if (!url) throw new Error("Görsel URL'i alınamadı.");
         onChange?.(url);
         toast.success('Görsel yüklendi.');
+        setIsModalOpen(false);
       } catch (err: any) {
         console.error('[AdminImageUpload] upload failed:', JSON.stringify(err, null, 2), err);
         const msg =
@@ -315,6 +353,7 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
         onChange?.(uploadedUrls[0]);
       }
       toast.success(successCount === 1 ? 'Görsel yüklendi.' : `${successCount} görsel yüklendi.`);
+      setIsModalOpen(false);
     }
   };
 
@@ -571,18 +610,115 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
             <Upload className="mr-2 size-4" />
             {multiple ? 'Görseller Yükle' : 'Görsel Yükle'}
           </Button>
-
-          {openLibraryHref || onOpenLibraryClick ? (
-            <Button asChild variant="ghost" size="sm" disabled={busy && !onOpenLibraryClick}>
-              <a href={openLibraryHref || '#'} onClick={handleOpenLibrary}>
-                <Library className="mr-2 size-4" />
-                Kütüphaneyi aç
-              </a>
-            </Button>
-          ) : null}
         </div>
 
         {!multiple ? <SinglePreview /> : <MultiPreview />}
+
+        {/* Upload/Library Modal */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{multiple ? 'Görseller Yükle' : 'Görsel Yükle'}</DialogTitle>
+              <DialogDescription>
+                Bilgisayarınızdan yükleyin veya kütüphaneden seçin.
+              </DialogDescription>
+            </DialogHeader>
+
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'upload' | 'library')}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="upload">
+                  <Upload className="mr-2 size-4" />
+                  Yükle
+                </TabsTrigger>
+                <TabsTrigger value="library">
+                  <Library className="mr-2 size-4" />
+                  Kütüphane
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Upload Tab */}
+              <TabsContent value="upload" className="space-y-4">
+                <div className="rounded-lg border bg-muted/20 p-6 text-center">
+                  <div className="mx-auto flex max-w-md flex-col items-center gap-4">
+                    <div className="rounded-full bg-primary/10 p-3">
+                      <Upload className="size-8 text-primary" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="font-semibold">Görsel seçin</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {multiple
+                          ? 'Birden fazla görsel yükleyebilirsiniz.'
+                          : 'Tek bir görsel yükleyebilirsiniz.'}
+                      </p>
+                    </div>
+                    <Button type="button" onClick={handleDirectFileSelect} disabled={busy} size="lg">
+                      <Upload className="mr-2 size-4" />
+                      Dosya Seç
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Library Tab */}
+              <TabsContent value="library" className="space-y-4">
+                {isLoadingAssets ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="text-sm text-muted-foreground">Yükleniyor...</div>
+                  </div>
+                ) : !assetsData?.items?.length ? (
+                  <div className="rounded-lg border bg-muted/20 p-6 text-center">
+                    <div className="mx-auto flex max-w-md flex-col items-center gap-4">
+                      <div className="rounded-full bg-muted p-3">
+                        <ImageIcon className="size-8 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Kütüphane boş</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Henüz yüklenmiş görsel yok. "Yükle" sekmesinden görsel yükleyebilirsiniz.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                    {assetsData.items.map((asset) => {
+                      const url = asset.url || '';
+                      const isSelected = multiple
+                        ? gallery.includes(url)
+                        : value === url;
+
+                      return (
+                        <button
+                          key={asset.id}
+                          type="button"
+                          onClick={() => handleSelectFromLibrary(url)}
+                          disabled={busy}
+                          className={cn(
+                            'group relative overflow-hidden rounded-lg border transition-all hover:border-primary',
+                            isSelected && 'border-primary ring-2 ring-primary/20'
+                          )}
+                        >
+                          <AspectRatio ratio={1}>
+                            <img
+                              src={url}
+                              alt={asset.name || 'Asset'}
+                              className="size-full object-cover transition-transform group-hover:scale-105"
+                            />
+                          </AspectRatio>
+                          {isSelected && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-primary/20">
+                              <Badge>Seçildi</Badge>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );

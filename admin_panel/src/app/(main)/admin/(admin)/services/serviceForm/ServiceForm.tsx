@@ -225,6 +225,7 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({
       image_alt: toNull(values.image_alt),
       material: toNull(values.material),
       price: toNull(values.price),
+      price_numeric: values.price_numeric ? Number(values.price_numeric) : null,
       includes: toNull(values.includes),
       warranty: toNull(values.warranty),
 
@@ -416,6 +417,23 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({
                         disabled={disabled}
                       />
                     </div>
+                  </div>
+
+                  {/* Price Numeric (for GA4 tracking) */}
+                  <div className="space-y-2">
+                    <Label>{t('admin.services.form.priceNumericLabel')}</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="80.00"
+                      value={values.price_numeric ?? ''}
+                      onChange={(e) => setValues((p) => ({ ...p, price_numeric: e.target.value }))}
+                      disabled={disabled}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      {t('admin.services.form.priceNumericHelp')}
+                    </p>
                   </div>
 
                   <div className="space-y-2">

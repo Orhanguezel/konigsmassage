@@ -61,6 +61,7 @@ export type ServiceMerged = {
   description: string | null;
   material: string | null;
   price: string | null;
+  price_numeric: number | null;
   includes: string | null;
   warranty: string | null;
   image_alt: string | null;
@@ -153,6 +154,7 @@ function baseSelect(iReq: any, iDef: any) {
     description: sql<string>`COALESCE(${iReq.description}, ${iDef.description})`.as('description'),
     material: sql<string>`COALESCE(${iReq.material}, ${iDef.material})`.as('material'),
     price: sql<string>`COALESCE(${iReq.price}, ${iDef.price})`.as('price'),
+    price_numeric: sql<number>`COALESCE(${iReq.price_numeric}, ${iDef.price_numeric})`.as('price_numeric'),
     includes: sql<string>`COALESCE(${iReq.includes}, ${iDef.includes})`.as('includes'),
     warranty: sql<string>`COALESCE(${iReq.warranty}, ${iDef.warranty})`.as('warranty'),
     image_alt: sql<string>`COALESCE(${iReq.image_alt}, ${iDef.image_alt})`.as('image_alt'),
@@ -344,6 +346,7 @@ export async function upsertServiceI18n(
     description: typeof data.description === 'string' ? data.description : null,
     material: typeof data.material === 'string' ? data.material : null,
     price: typeof data.price === 'string' ? data.price : null,
+    price_numeric: typeof data.price_numeric === 'number' ? data.price_numeric : null,
     includes: typeof data.includes === 'string' ? data.includes : null,
     warranty: typeof data.warranty === 'string' ? data.warranty : null,
     image_alt: typeof data.image_alt === 'string' ? data.image_alt : null,
@@ -371,6 +374,7 @@ export async function upsertServiceI18n(
     'description',
     'material',
     'price',
+    'price_numeric',
     'includes',
     'warranty',
     'image_alt',

@@ -1,7 +1,6 @@
 -- =============================================================
 -- 201_storage_assets_i18n.sql  (storage_assets_i18n)
 --  - TR + EN + DE
---  - DE: TR kopyası (Almanca özel çeviri gelene kadar)
 --  - SAFE re-runnable: ON DUPLICATE KEY UPDATE + NOT EXISTS copy
 -- =============================================================
 
@@ -35,62 +34,7 @@ CREATE TABLE IF NOT EXISTS `storage_assets_i18n` (
 INSERT INTO storage_assets_i18n
 (id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
 VALUES
-(UUID(), @ASSET_HERO_ID, 'tr', 'Hero', 'Hero', 'Öne çıkan görsel', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_REF1_ID, 'tr', 'Ref1', 'Ref1', 'Öne çıkan görsel', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_REF2_ID, 'tr', 'Ref2', 'Ref2', 'Öne çıkan görsel', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_G1A_ID, 'tr', 'Galeri1A', 'Galeri 1A', 'Galeri görseli', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_G1B_ID, 'tr', 'Galeri1B', 'Galeri 1B', 'Galeri görseli', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_G2A_ID, 'tr', 'Galeri2A', 'Galeri 2A', 'Galeri görseli', NULL, NOW(3), NOW(3))
+(UUID(), @ASSET_DEMO_ID, 'tr', 'Demo Masaj Görseli', 'Profesyonel masaj görüntüsü', 'Örnek görsel', 'Demo amaçlı masaj görseli', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   title=VALUES(title),
   alt=VALUES(alt),
@@ -104,62 +48,7 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO storage_assets_i18n
 (id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
 VALUES
-(UUID(), @ASSET_HERO_ID, 'en', 'Hero', 'Hero', 'Featured image', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_REF1_ID, 'en', 'Ref1', 'Ref1', 'Featured image', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_REF2_ID, 'en', 'Ref2', 'Ref2', 'Featured image', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_G1A_ID, 'en', 'Gallery1A', 'Gallery 1A', 'Gallery image', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_G1B_ID, 'en', 'Gallery1B', 'Gallery 1B', 'Gallery image', NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
-  title=VALUES(title),
-  alt=VALUES(alt),
-  caption=VALUES(caption),
-  description=VALUES(description),
-  updated_at=VALUES(updated_at);
-
-INSERT INTO storage_assets_i18n
-(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-VALUES
-(UUID(), @ASSET_G2A_ID, 'en', 'Gallery2A', 'Gallery 2A', 'Gallery image', NULL, NOW(3), NOW(3))
+(UUID(), @ASSET_DEMO_ID, 'en', 'Demo Massage Image', 'Professional massage image', 'Sample image', 'Demo massage image', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   title=VALUES(title),
   alt=VALUES(alt),
@@ -168,17 +57,15 @@ ON DUPLICATE KEY UPDATE
   updated_at=VALUES(updated_at);
 
 -- -------------------------------------------------------------
--- TR → DE otomatik kopya (Almanca özel çeviri gelene kadar)
---  - Sadece DE kaydı yoksa ekler
---  - Var olan DE'leri ezmez (bilerek)
+-- DE
 -- -------------------------------------------------------------
-INSERT INTO storage_assets_i18n (id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
-SELECT UUID(), s.asset_id, 'de', s.title, s.alt, s.caption, s.description, NOW(3), NOW(3)
-FROM storage_assets_i18n s
-WHERE s.locale='tr'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM storage_assets_i18n t
-    WHERE t.asset_id = s.asset_id
-      AND t.locale = 'de'
-  );
+INSERT INTO storage_assets_i18n
+(id, asset_id, locale, title, alt, caption, description, created_at, updated_at)
+VALUES
+(UUID(), @ASSET_DEMO_ID, 'de', 'Demo Massage Bild', 'Professionelles Massagebild', 'Beispielbild', 'Demo-Massagebild', NOW(3), NOW(3))
+ON DUPLICATE KEY UPDATE
+  title=VALUES(title),
+  alt=VALUES(alt),
+  caption=VALUES(caption),
+  description=VALUES(description),
+  updated_at=VALUES(updated_at);

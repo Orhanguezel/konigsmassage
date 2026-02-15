@@ -43,114 +43,25 @@ CREATE TABLE IF NOT EXISTS `storage_assets` (
 
 /* ================= SEED: ASSETS (deterministik anahtar: bucket+path) ================= */
 
--- Ortak demo URL (Unsplash)
-SET @DEMO_IMG_URL := 'https://images.unsplash.com/photo-1581090700227-1e37b190418e?auto=format&fit=crop&w=1200&h=600&q=80';
+-- Ortak demo URL (Unsplash - masaj görseli)
+SET @DEMO_IMG_URL := 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&h=800&q=80';
 
--- hero
-SET @ASSET_HERO_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='references/hero.jpg' LIMIT 1);
-SET @ASSET_HERO_ID := COALESCE(@ASSET_HERO_ID, UUID());
+-- Örnek görsel (uploads klasöründe)
+SET @ASSET_DEMO_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='uploads/demo-massage.jpg' LIMIT 1);
+SET @ASSET_DEMO_ID := COALESCE(@ASSET_DEMO_ID, UUID());
 INSERT INTO storage_assets
 (id, user_id, `name`, bucket, `path`, folder, mime, size, width, height, url, hash,
  provider, provider_public_id, provider_resource_type, provider_format, provider_version, etag, metadata, created_at, updated_at)
 VALUES
-(@ASSET_HERO_ID, NULL, 'hero.jpg', 'public', 'references/hero.jpg', 'references',
- 'image/jpeg', 245120, NULL, NULL,
+(@ASSET_DEMO_ID, NULL, 'demo-massage.jpg', 'public', 'uploads/demo-massage.jpg', 'uploads',
+ 'image/jpeg', 245120, 1200, 800,
  @DEMO_IMG_URL, NULL,
  'cloudinary', NULL, 'image', 'jpg', 1, NULL, NULL, NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
  mime=VALUES(mime),
  size=VALUES(size),
  url=VALUES(url),
+ width=VALUES(width),
+ height=VALUES(height),
  provider_format=VALUES(provider_format),
  updated_at=VALUES(updated_at);
-
--- ref1
-SET @ASSET_REF1_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='references/ref1.jpg' LIMIT 1);
-SET @ASSET_REF1_ID := COALESCE(@ASSET_REF1_ID, UUID());
-INSERT INTO storage_assets
-(id, user_id, `name`, bucket, `path`, folder, mime, size, width, height, url, hash,
- provider, provider_public_id, provider_resource_type, provider_format, provider_version, etag, metadata, created_at, updated_at)
-VALUES
-(@ASSET_REF1_ID, NULL, 'ref1.jpg', 'public', 'references/ref1.jpg', 'references',
- 'image/jpeg', 180300, NULL, NULL,
- @DEMO_IMG_URL, NULL,
- 'cloudinary', NULL, 'image', 'jpg', 1, NULL, NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
- mime=VALUES(mime),
- size=VALUES(size),
- url=VALUES(url),
- provider_format=VALUES(provider_format),
- updated_at=VALUES(updated_at);
-
--- ref2
-SET @ASSET_REF2_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='references/ref2.jpg' LIMIT 1);
-SET @ASSET_REF2_ID := COALESCE(@ASSET_REF2_ID, UUID());
-INSERT INTO storage_assets
-(id, user_id, `name`, bucket, `path`, folder, mime, size, width, height, url, hash,
- provider, provider_public_id, provider_resource_type, provider_format, provider_version, etag, metadata, created_at, updated_at)
-VALUES
-(@ASSET_REF2_ID, NULL, 'ref2.jpg', 'public', 'references/ref2.jpg', 'references',
- 'image/jpeg', 171550, NULL, NULL,
- @DEMO_IMG_URL, NULL,
- 'cloudinary', NULL, 'image', 'jpg', 1, NULL, NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
- mime=VALUES(mime),
- size=VALUES(size),
- url=VALUES(url),
- provider_format=VALUES(provider_format),
- updated_at=VALUES(updated_at);
-
--- gallery 1A
-SET @ASSET_G1A_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='references/g1a.jpg' LIMIT 1);
-SET @ASSET_G1A_ID := COALESCE(@ASSET_G1A_ID, UUID());
-INSERT INTO storage_assets
-(id, user_id, `name`, bucket, `path`, folder, mime, size, width, height, url, hash,
- provider, provider_public_id, provider_resource_type, provider_format, provider_version, etag, metadata, created_at, updated_at)
-VALUES
-(@ASSET_G1A_ID, NULL, 'g1a.jpg', 'public', 'references/g1a.jpg', 'references',
- 'image/jpeg', 200000, NULL, NULL,
- @DEMO_IMG_URL, NULL,
- 'cloudinary', NULL, 'image', 'jpg', 1, NULL, NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
- mime=VALUES(mime),
- size=VALUES(size),
- url=VALUES(url),
- provider_format=VALUES(provider_format),
- updated_at=VALUES(updated_at);
-
--- gallery 1B
-SET @ASSET_G1B_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='references/g1b.jpg' LIMIT 1);
-SET @ASSET_G1B_ID := COALESCE(@ASSET_G1B_ID, UUID());
-INSERT INTO storage_assets
-(id, user_id, `name`, bucket, `path`, folder, mime, size, width, height, url, hash,
- provider, provider_public_id, provider_resource_type, provider_format, provider_version, etag, metadata, created_at, updated_at)
-VALUES
-(@ASSET_G1B_ID, NULL, 'g1b.jpg', 'public', 'references/g1b.jpg', 'references',
- 'image/jpeg', 210000, NULL, NULL,
- @DEMO_IMG_URL, NULL,
- 'cloudinary', NULL, 'image', 'jpg', 1, NULL, NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
- mime=VALUES(mime),
- size=VALUES(size),
- url=VALUES(url),
- provider_format=VALUES(provider_format),
- updated_at=VALUES(updated_at);
-
--- gallery 2A
-SET @ASSET_G2A_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='references/g2a.jpg' LIMIT 1);
-SET @ASSET_G2A_ID := COALESCE(@ASSET_G2A_ID, UUID());
-INSERT INTO storage_assets
-(id, user_id, `name`, bucket, `path`, folder, mime, size, width, height, url, hash,
- provider, provider_public_id, provider_resource_type, provider_format, provider_version, etag, metadata, created_at, updated_at)
-VALUES
-(@ASSET_G2A_ID, NULL, 'g2a.jpg', 'public', 'references/g2a.jpg', 'references',
- 'image/jpeg', 205000, NULL, NULL,
- @DEMO_IMG_URL, NULL,
- 'cloudinary', NULL, 'image', 'jpg', 1, NULL, NULL, NOW(3), NOW(3))
-ON DUPLICATE KEY UPDATE
- mime=VALUES(mime),
- size=VALUES(size),
- url=VALUES(url),
- provider_format=VALUES(provider_format),
- updated_at=VALUES(updated_at);
-

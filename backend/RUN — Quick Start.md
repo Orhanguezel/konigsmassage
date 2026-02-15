@@ -30,6 +30,7 @@ git push origin main
 
 
 
+
 -- 1. Yeni veritabanını oluştur (örnek: konigsmassage)
 CREATE DATABASE `konigsmassage` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

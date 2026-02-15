@@ -2430,6 +2430,8 @@
         "descriptionLabel": "Description (Rich Content)",
         "materialLabel": "Material / Content",
         "priceLabel": "Price",
+        "priceNumericLabel": "Price (Numeric)",
+        "priceNumericHelp": "Enter numeric price for Google Analytics conversion tracking (e.g., 80.00 for 80 EUR)",
         "includesLabel": "Includes",
         "warrantyLabel": "Warranty / Conditions",
         "tagsLabel": "Tags",

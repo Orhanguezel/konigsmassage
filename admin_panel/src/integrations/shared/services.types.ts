@@ -78,7 +78,22 @@ export interface ApiServiceBase {
   name: string | null;
   summary: string | null;
   content: string | null; // json-string OR html string
+  description: string | null;
   image_alt: string | null;
+
+  // Service-specific fields (from services_i18n)
+  material: string | null;
+  price: string | null;
+  price_numeric: number | null;
+  includes: string | null;
+  warranty: string | null;
+  tags: string | null;
+  area: string | null;
+  duration: string | null;
+  maintenance: string | null;
+  season: string | null;
+  thickness: string | null;
+  equipment: string | null;
 
   // SEO
   meta_title: string | null;
@@ -118,6 +133,7 @@ export interface ServiceDto {
 
   // Service-specific fields (optional, may not be in all responses)
   price?: string | number | null;
+  price_numeric?: number | null;
   material?: string | null;
   includes?: string | null;
   warranty?: string | null;
@@ -126,6 +142,7 @@ export interface ServiceDto {
   duration?: string | null;
   maintenance?: string | null;
   season?: string | null;
+  thickness?: string | null;
   equipment?: string | null;
 
   meta_title: string | null;
@@ -293,6 +310,7 @@ export type ServiceFormValues = {
 
   // Service-specific form fields (optional)
   price?: string;
+  price_numeric?: string;
   material?: string;
   includes?: string;
   warranty?: string;
@@ -358,7 +376,22 @@ export const normalizeService = (row: ApiServiceBase): ServiceDto => ({
   name: row.name,
   summary: row.summary,
   content: row.content,
+  description: row.description,
   image_alt: row.image_alt,
+
+  // Service-specific fields
+  material: row.material,
+  price: row.price,
+  price_numeric: row.price_numeric,
+  includes: row.includes,
+  warranty: row.warranty,
+  tags: row.tags,
+  area: row.area,
+  duration: row.duration,
+  maintenance: row.maintenance,
+  season: row.season,
+  thickness: row.thickness,
+  equipment: row.equipment,
 
   meta_title: row.meta_title,
   meta_description: row.meta_description,

@@ -189,6 +189,7 @@ export default function AdminServiceDetailClient({ id }: { id: string }) {
         description: values.description || undefined,
         material: values.material || undefined,
         price: values.price || undefined,
+        price_numeric: values.price_numeric ? Number(values.price_numeric) : undefined,
         includes: values.includes || undefined,
         warranty: values.warranty || undefined,
         image_alt: values.image_alt || undefined,
