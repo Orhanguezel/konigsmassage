@@ -5,9 +5,7 @@
 // - Uses normLocaleTag
 // =============================================================
 
-import { normLocaleTag } from '@/i18n/localeUtils';
-
-const safeStr = (v: unknown) => String(v ?? '').trim();
+import { normLocaleTag, safeStr } from '@/integrations/shared';
 
 export function localeShortClient(v: unknown): string {
   const raw = safeStr(v);

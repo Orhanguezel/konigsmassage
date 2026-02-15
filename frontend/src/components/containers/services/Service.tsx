@@ -8,54 +8,18 @@ import Link from 'next/link';
 import { useListServicesPublicQuery } from '@/integrations/rtk/hooks';
 
 // Helpers
-import { excerpt } from '@/shared/text';
-import { toCdnSrc } from '@/shared/media';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
 
-// Icons
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 import {
-  IconActivity,
-  IconArrowRight,
-  IconHeart,
-  IconMoon,
-  IconSmile,
-  IconSun,
-  IconZap,
-} from '@/components/ui/icons';
+  safeStr,
+  SERVICE_FALLBACK_IMG,excerpt,toCdnSrc,
+  type ServiceCardVM,
+} from '@/integrations/shared';
 
-const FALLBACK_IMG = 'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748870864/uploads/anastasia/service-images/50-1748870861414-723178027.webp';
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
-
-function ServiceIcon({ label, size = 40 }: { label: string; size?: number }) {
-  const t = (label || '').toLowerCase();
-  
-  if (/sport|sports|spor|athlet|athletik|deep\s*tissue|tiefen|tiefengewebe/.test(t))
-    return <IconActivity size={size} />;
-  if (/relax|relaxing|entspann|calm|ruhe|anti\s*stress|stress|stres/.test(t))
-    return <IconMoon size={size} />;
-  if (/thai|thaimassage|shiatsu|reflex|reflexzonen|fuß|fuss|foot|ayak/.test(t))
-    return <IconZap size={size} />;
-  if (/aroma|aromatherapy|aroma\s*therap|öl|oel|oil/.test(t)) return <IconHeart size={size} />;
-  if (/hot\s*stone|stone|taş|tas|stein/.test(t)) return <IconSun size={size} />;
-  if (/face|gesicht|yüz|yuz|beauty|kosmetik|cosmetic/.test(t)) return <IconSmile size={size} />;
-
-  return <IconHeart size={size} />;
-}
-
-type ServiceCardVM = {
-  id: string;
-  title: string;
-  summary: string;
-  slug: string;
-  src: string;
-};
+// Components
+import { ServiceIcon } from '@/components/common/ServiceIcon';
+import { IconArrowRight } from '@/components/ui/icons';
 
 const Service: React.FC = () => {
   const locale = useLocaleShort();
@@ -82,7 +46,7 @@ const Service: React.FC = () => {
         ? excerpt(rawSummary, 150)
         : ui('ui_services_placeholder_summary', 'Description coming soon.');
 
-      let src = FALLBACK_IMG;
+      let src = SERVICE_FALLBACK_IMG;
       if (imgBase) {
         src = toCdnSrc(imgBase, 640, 420, 'fill') || imgBase;
       }
@@ -102,7 +66,7 @@ const Service: React.FC = () => {
         title: ui('ui_services_placeholder_title', 'Service'),
         summary: ui('ui_services_placeholder_summary', 'Coming soon.'),
         slug: '',
-        src: FALLBACK_IMG,
+        src: SERVICE_FALLBACK_IMG,
       }));
     }
 

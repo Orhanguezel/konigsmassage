@@ -15,7 +15,7 @@ import type {
 import { normalizeService, mapApiCustomPageToDto } from '@/integrations/shared';
 import { getDefaultLocale } from '@/i18n/server';
 import { getServerApiBase } from '@/i18n/apiBase.server';
-import { normLocaleShort } from '@/seo/helpers';
+import { normLocaleShort } from '@/integrations/shared';
 
 const API = getServerApiBase();
 

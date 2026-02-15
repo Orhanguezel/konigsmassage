@@ -39,12 +39,18 @@ function isValidGa4Id(v: unknown) {
   return !!s && s.startsWith('G-');
 }
 
+function isValidFbPixelId(v: unknown) {
+  const s = String(v ?? '').trim();
+  return !!s && /^\d+$/.test(s);
+}
+
 export default function AnalyticsScripts() {
-  const { gtmId, ga4Id, isLoading } = useAnalyticsSettings();
+  const { gtmId, ga4Id, facebookPixelId, isLoading } = useAnalyticsSettings();
   const isProd = isProdEnv();
 
   const hasGtm = useMemo(() => isValidGtmId(gtmId), [gtmId]);
   const hasGa = useMemo(() => isValidGa4Id(ga4Id), [ga4Id]);
+  const hasFbPixel = useMemo(() => isValidFbPixelId(facebookPixelId), [facebookPixelId]);
 
   // GTM noscript (Document kullanılmıyorsa pratik)
   useEffect(() => {
@@ -72,7 +78,7 @@ export default function AnalyticsScripts() {
   // DB'den henüz gelmediyse: hiçbir şey basma (flicker/yanlış init olmasın)
   if (isLoading) return null;
 
-  if (!hasGtm && !hasGa) return null;
+  if (!hasGtm && !hasGa && !hasFbPixel) return null;
 
   return (
     <>
@@ -182,6 +188,46 @@ export default function AnalyticsScripts() {
           ) : null}
         </>
       )}
+
+      {/* 4) Facebook Pixel */}
+      {hasFbPixel ? (
+        <Script id="fb-pixel" strategy="afterInteractive">
+          {`
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+
+            fbq('consent', 'revoke');
+            fbq('init', '${String(facebookPixelId)}');
+
+            // Listen for consent updates
+            if (window.__analyticsConsentGranted) {
+              fbq('consent', 'grant');
+              fbq('track', 'PageView');
+            }
+
+            // Queue consent updates
+            var originalSetConsent = window.__setAnalyticsConsent;
+            window.__setAnalyticsConsent = function(next) {
+              if (originalSetConsent) originalSetConsent(next);
+              try {
+                var granted = (typeof next === 'boolean') ? next : (next && next.analytics_storage === 'granted');
+                if (granted) {
+                  fbq('consent', 'grant');
+                  fbq('track', 'PageView');
+                } else {
+                  fbq('consent', 'revoke');
+                }
+              } catch (e) {}
+            };
+          `}
+        </Script>
+      ) : null}
     </>
   );
 }

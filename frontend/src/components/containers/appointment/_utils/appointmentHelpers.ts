@@ -4,25 +4,12 @@
 // =============================================================
 
 import type { ResourcePublicItemDto, ResourceSlotDto } from '@/integrations/shared';
+import { safeStr, isValidEmail, isValidYmd, isValidHm } from '@/integrations/shared';
 
-export const safeStr = (v: unknown) => (v == null ? '' : String(v).trim());
-
-export function isValidEmail(v: string): boolean {
-  const s = v.trim();
-  if (!s) return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
-}
+export { safeStr, isValidEmail, isValidYmd, isValidHm };
 
 export function normalizePhone(v: string): string {
   return v.replace(/\s+/g, ' ').trim();
-}
-
-export function isValidYmd(v: string): boolean {
-  return /^\d{4}-\d{2}-\d{2}$/.test(v);
-}
-
-export function isValidHm(v: string): boolean {
-  return /^\d{2}:\d{2}$/.test(v);
 }
 
 export function toBool01(v: unknown): boolean {

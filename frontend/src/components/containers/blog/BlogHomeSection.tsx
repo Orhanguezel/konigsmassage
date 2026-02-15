@@ -13,37 +13,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
+import { safeStr, toCdnSrc,excerpt, formatDate} from '@/integrations/shared';
 
-import { toCdnSrc } from '@/shared/media';
-import { excerpt } from '@/shared/text';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
-
-function formatDate(locale: string, isoLike: unknown): string {
-  const s = safeStr(isoLike);
-  if (!s) return '';
-  const d = new Date(s);
-  if (Number.isNaN(d.getTime())) return '';
-  try {
-    return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: '2-digit' }).format(d);
-  } catch {
-    return d.toLocaleDateString();
-  }
-}
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 const CARD_W = 900;
 const CARD_H = 560;
 
-export default function BlogHomeSection() {
-  const locale = useLocaleShort();
+export default function BlogHomeSection({ locale: explicitLocale }: { locale?: string }) {
+  const locale = useLocaleShort(explicitLocale);
   const { ui } = useUiSection('ui_blog', locale as any);
 
   const { data, isLoading } = useListCustomPagesPublicQuery({

@@ -8,7 +8,7 @@
 
 import { useMemo } from 'react';
 import { useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
+import { useLocaleShort } from '@/i18n';
 
 function coerceId(v: unknown): string {
   return String(v ?? '').trim();
@@ -42,7 +42,29 @@ export function useAnalyticsSettings() {
     return db || env;
   }, [gtm]);
 
-  const isLoading = gaLoading || gtmLoading || gaFetching || gtmFetching;
+  const {
+    data: fbPixel,
+    isLoading: fbPixelLoading,
+    isFetching: fbPixelFetching,
+  } = useGetSiteSettingByKeyQuery({ key: 'facebook_pixel_id', locale } as any);
 
-  return { locale, ga4Id, gtmId, isLoading };
+  const {
+    data: gscVerification,
+    isLoading: gscLoading,
+    isFetching: gscFetching,
+  } = useGetSiteSettingByKeyQuery({ key: 'google_site_verification', locale } as any);
+
+  const facebookPixelId = useMemo(() => {
+    const db = coerceId((fbPixel as any)?.value);
+    const env = coerceId(process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID);
+    return db || env;
+  }, [fbPixel]);
+
+  const googleSiteVerification = useMemo(() => {
+    return coerceId((gscVerification as any)?.value);
+  }, [gscVerification]);
+
+  const isLoading = gaLoading || gtmLoading || gaFetching || gtmFetching || fbPixelLoading || fbPixelFetching || gscLoading || gscFetching;
+
+  return { locale, ga4Id, gtmId, facebookPixelId, googleSiteVerification, isLoading };
 }

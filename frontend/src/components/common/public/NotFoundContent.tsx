@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Home, ArrowLeft, Timer } from 'lucide-react';
+import { useUiSection } from '@/i18n';
 
 type Props = {
   locale: string;
-  ui: (key: string, fb: string) => string;
   homePath: string;
 };
 
-export function NotFoundContent({ locale, ui, homePath }: Props) {
+export function NotFoundContent({ locale, homePath }: Props) {
+  const { ui } = useUiSection('ui_errors', locale);
   const router = useRouter();
   const [countdown, setCountdown] = useState(15);
 
@@ -45,55 +45,30 @@ export function NotFoundContent({ locale, ui, homePath }: Props) {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[75vh] px-4 text-center overflow-hidden">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl w-full z-10"
-      >
+      <div className="max-w-2xl w-full z-10 animate-fade-in">
         <div className="relative mb-6 overflow-hidden max-w-full">
-          <motion.h1 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.8 }}
-            className="text-8xl sm:text-9xl md:text-[14rem] font-serif font-bold text-rose-100/40 select-none leading-none"
-          >
+          <h1 className="text-8xl sm:text-9xl md:text-[14rem] font-serif font-bold text-rose-100/40 select-none leading-none animate-slide-up">
             404
-          </motion.h1>
+          </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <motion.h2 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-4xl md:text-6xl font-serif font-bold text-text-primary px-4"
-            >
+            <h2 className="text-4xl md:text-6xl font-serif font-bold text-text-primary px-4 animate-fade-in-delay-300">
               {ui('ui_404_title', 'Page Not Found')}
-            </motion.h2>
+            </h2>
           </div>
         </div>
 
-        <motion.div
-           initial={{ opacity: 0 }}
-           animate={{ opacity: 1 }}
-           transition={{ delay: 0.4 }}
-           className="space-y-4 mb-10"
-        >
+        <div className="space-y-4 mb-10 animate-fade-in-delay-400">
           <p className="text-xl md:text-2xl text-text-secondary font-medium">
             {getNoPageText()}
           </p>
-          
+
           <div className="flex items-center justify-center gap-2 text-rose-600 font-medium bg-rose-50 w-fit mx-auto px-4 py-2 rounded-full border border-rose-100">
             <Timer className="w-5 h-5 animate-pulse" />
             <span>{getRedirectText()}</span>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-delay-600">
           <button
             onClick={() => router.push(homePath)}
             className="flex items-center gap-2 px-10 py-4 bg-brand-primary text-white rounded-full font-bold shadow-medium hover:bg-brand-hover transition-all transform hover:-translate-y-1 active:scale-95"
@@ -101,37 +76,88 @@ export function NotFoundContent({ locale, ui, homePath }: Props) {
             <Home className="w-5 h-5" />
             {ui('ui_404_back_home', 'Back to Homepage')}
           </button>
-          
-          <button 
+
+          <button
             onClick={() => window.history.back()}
             className="flex items-center gap-2 px-10 py-4 border-2 border-border-medium text-text-primary rounded-full font-bold hover:border-brand-primary hover:bg-white transition-all whitespace-nowrap active:scale-95"
           >
             <ArrowLeft className="w-5 h-5" />
             {locale === 'tr' ? 'Geri Dön' : (locale === 'de' ? 'Zurück' : 'Go Back')}
           </button>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.1, 0.2, 0.1],
-          x: [0, 50, 0],
-          y: [0, -50, 0]
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-200/20 rounded-full blur-[120px] -z-10" 
-      />
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.3, 1],
-          opacity: [0.1, 0.2, 0.1],
-          x: [0, -30, 0],
-          y: [0, 40, 0]
-        }}
-        transition={{ duration: 12, repeat: Infinity, ease: "linear", delay: 2 }}
-        className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gold-200/10 rounded-full blur-[140px] -z-10" 
-      />
+      {/* Decorative animated backgrounds */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-200/20 rounded-full blur-[120px] -z-10 animate-float" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gold-200/10 rounded-full blur-[140px] -z-10 animate-float-delayed" />
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes float {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.1;
+          }
+          50% {
+            transform: translate(50px, -50px) scale(1.2);
+            opacity: 0.2;
+          }
+        }
+
+        @keyframes float-delayed {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.1;
+          }
+          50% {
+            transform: translate(-30px, 40px) scale(1.3);
+            opacity: 0.2;
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out;
+        }
+
+        .animate-fade-in-delay-300 {
+          animation: fade-in 0.8s ease-out 0.3s both;
+        }
+
+        .animate-fade-in-delay-400 {
+          animation: fade-in 0.6s ease-out 0.4s both;
+        }
+
+        .animate-fade-in-delay-600 {
+          animation: fade-in 0.6s ease-out 0.6s both;
+        }
+
+        .animate-slide-up {
+          animation: slide-up 0.8s ease-out 0.1s both;
+        }
+
+        .animate-float {
+          animation: float 15s linear infinite;
+        }
+
+        .animate-float-delayed {
+          animation: float-delayed 12s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }

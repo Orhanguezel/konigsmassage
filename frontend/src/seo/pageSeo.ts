@@ -7,7 +7,7 @@ import {
   asObj,
   normLocaleShort,
   normPath,
-} from '@/seo/helpers';
+} from '@/integrations/shared';
 
 const DEFAULT_LOCALE = (process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'de').trim().toLowerCase();
 

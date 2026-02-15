@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import type React from 'react';
 
-import { buildMetadataFromSeo, fetchSeoObject, normPath } from '@/seo/server';
-import { fetchUiSectionObject, readUiText } from '@/seo/server';
+import { normPath } from '@/integrations/shared';
+import { buildMetadataFromSeo, fetchSeoObject, fetchUiSectionObject, readUiText } from '@/seo/server';
 
 export async function generateMetadata({
   params,

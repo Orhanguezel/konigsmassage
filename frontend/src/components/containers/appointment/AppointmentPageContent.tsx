@@ -1,8 +1,6 @@
 // =============================================================
 // FILE: src/components/containers/appointment/AppointmentPageContent.tsx
 // FINAL — Public Appointment PAGE content
-// - Replaced Legacy Classes with Standard Tailwind v4
-// - Dark theme support
 // =============================================================
 
 'use client';
@@ -25,14 +23,13 @@ import type {
   BookingPublicCreatePayload,
   ResourceSlotDto,
   ResourceWorkingHourDto,
-  ResourcePublicItemDto,
+  ResourcePublicItemDto
 } from '@/integrations/shared';
+import { normalizeHm, toCdnSrc } from '@/integrations/shared';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
-import { localizePath } from '@/i18n/url';
-import { toCdnSrc } from '@/shared/media';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { isValidUiText } from '@/integrations/shared';
+import { localizePath } from '@/integrations/shared';
 
 import {
   safeStr,
@@ -73,16 +70,7 @@ const DEFAULT_STATE: FormState = {
   customer_message: '',
 };
 
-function normalizeHm(v: unknown): string {
-  const s = safeStr(v);
-  if (!s) return '';
-  if (s.includes('T') && s.includes(':')) {
-    const part = (s.split('T')[1] ?? '').slice(0, 5);
-    return isValidHm(part) ? part : '';
-  }
-  const hm = s.slice(0, 5);
-  return isValidHm(hm) ? hm : '';
-}
+
 
 export const AppointmentPageContent: React.FC = () => {
   const locale = useLocaleShort();

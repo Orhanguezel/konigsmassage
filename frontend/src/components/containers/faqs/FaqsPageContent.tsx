@@ -14,8 +14,7 @@ import type { FaqDto } from '@/integrations/shared';
 import { normalizeFaq, safeStr } from '@/integrations/shared';
 
 // i18n
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
+import { useLocaleShort, useUiSection } from '@/i18n';
 
 const FaqsPageContent: React.FC = () => {
   const uid = useId();

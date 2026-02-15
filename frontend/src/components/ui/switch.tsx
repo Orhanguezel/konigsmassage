@@ -4,7 +4,7 @@
 
 import * as React from "react";
 import * as SwitchPrimitives from "@radix-ui/react-switch";
-import { cn } from "@/utils/utils";
+import { cn } from "@/integrations/shared";
 
 type RootProps = React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>;
 

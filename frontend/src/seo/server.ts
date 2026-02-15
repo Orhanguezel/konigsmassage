@@ -1,13 +1,6 @@
-// =============================================================
-// FILE: src/seo/server.ts
-// Server-only barrel exports — import from "@/seo/server" in server components.
-// =============================================================
-
-import 'server-only';
-
-export * from './helpers';
+// ── SEO server barrel (server-only) ──
 export * from './alternates';
-export * from './serverMetadata';
 export * from './serverBase';
+export * from './serverMetadata';
 export * from './serverPageData';
 export * from './serverUi';

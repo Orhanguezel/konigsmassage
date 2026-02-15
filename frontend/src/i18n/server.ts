@@ -7,19 +7,17 @@ import { cache } from 'react';
 import { headers, cookies } from 'next/headers';
 
 import {
+  FALLBACK_LOCALE,
   normLocaleTag,
   normalizeLocales,
   resolveDefaultLocale,
   pickFromAcceptLanguage,
   pickFromCookie,
-} from '@/i18n/localeUtils';
+} from '@/integrations/shared';
 
-import { getServerApiBase } from '@/i18n/apiBase.server';
+import { getServerApiBase } from './apiBase.server';
 
 const API = getServerApiBase();
-
-// Hard fallback only if DB/API not reachable or empty
-export const DEFAULT_LOCALE_FALLBACK = 'de';
 
 export type JsonLike = null | boolean | number | string | JsonLike[] | { [k: string]: JsonLike };
 
@@ -55,7 +53,7 @@ async function fetchJson<T>(path: string, opts?: { revalidate?: number }): Promi
 }
 
 function computeActiveLocales(meta: AppLocaleMeta[] | null | undefined): string[] {
-  const def = DEFAULT_LOCALE_FALLBACK;
+  const def = FALLBACK_LOCALE;
   const out = normalizeLocales(meta);
   return out.length ? out : [def];
 }
@@ -64,7 +62,7 @@ function computeActiveLocales(meta: AppLocaleMeta[] | null | undefined): string[
  * DB: /site_settings/app-locales => active locales
  */
 export async function fetchActiveLocales(): Promise<string[]> {
-  const def = DEFAULT_LOCALE_FALLBACK;
+  const def = FALLBACK_LOCALE;
   if (!API) return [def];
 
   const meta = await fetchJson<AppLocaleMeta[]>('/site_settings/app-locales', { revalidate: 600 });
@@ -81,7 +79,7 @@ export async function fetchActiveLocales(): Promise<string[]> {
  *  4) fallback "de"
  */
 export const getDefaultLocale = cache(async (): Promise<string> => {
-  const def = DEFAULT_LOCALE_FALLBACK;
+  const def = FALLBACK_LOCALE;
   if (!API) return def;
 
   const [meta, defaultMeta] = await Promise.all([
@@ -130,7 +128,7 @@ export async function fetchSetting(
   const l = normLocaleTag(locale);
   if (!k) return null;
 
-  const loc = l || DEFAULT_LOCALE_FALLBACK;
+  const loc = l || FALLBACK_LOCALE;
 
   // Preferred public route: GET /site_settings/:key?locale=de
   const row =

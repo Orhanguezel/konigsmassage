@@ -6,9 +6,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { FALLBACK_LOCALE } from '@/i18n/config';
-import { normLocaleTag, normalizeLocales } from '@/i18n/localeUtils';
 import { useGetAppLocalesPublicQuery } from '@/integrations/rtk/hooks';
+import { FALLBACK_LOCALE, normLocaleTag, normalizeLocales } from '@/integrations/shared';
 
 type AppLocaleMeta = {
   code?: unknown;

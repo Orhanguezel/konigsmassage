@@ -14,7 +14,7 @@ import {
   normalizeLocalhostOrigin,
   stripTrailingSlash,
   uniq,
-} from '@/seo/helpers';
+} from '@/integrations/shared';
 
 const firstHeader = (v: unknown): string => String(v || '').split(',')[0].trim();
 

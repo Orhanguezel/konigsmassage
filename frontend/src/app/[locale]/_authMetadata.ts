@@ -2,8 +2,8 @@ import 'server-only';
 
 import type { Metadata } from 'next';
 
-import { absUrlJoin, buildMetadataFromSeo, fetchSeoObject, normPath } from '@/seo/server';
-import { fetchUiSectionObject, readUiText } from '@/seo/server';
+import { normPath, absUrlJoin } from '@/integrations/shared';
+import { buildMetadataFromSeo, fetchSeoObject, fetchUiSectionObject, readUiText } from '@/seo/server';
 
 type AuthKind = 'login' | 'register' | 'logout';
 

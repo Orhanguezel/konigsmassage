@@ -6,7 +6,7 @@
 import Link from "next/link";
 import { usePathname as useNextPathname, useSearchParams } from "next/navigation";
 
-import { normLocaleTag } from "@/i18n/localeUtils";
+import { normLocaleTag } from "@/integrations/shared";
 
 export { Link };
 

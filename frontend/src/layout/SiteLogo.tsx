@@ -13,6 +13,7 @@ import Image, { type StaticImageData } from 'next/image';
 
 import { useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
 import type { SettingValue } from '@/integrations/shared';
+import { safeStr } from '@/integrations/shared';
 
 type Variant = 'default' | 'dark' | 'light';
 
@@ -30,8 +31,6 @@ const variantKeyMap: Record<Variant, string> = {
   dark: 'site_logo_dark',
   light: 'site_logo_light',
 };
-
-const safeStr = (v: unknown) => (v === null || v === undefined ? '' : String(v).trim());
 
 function extractMedia(val: SettingValue | null | undefined): {
   url: string;

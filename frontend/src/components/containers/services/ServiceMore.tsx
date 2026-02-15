@@ -5,25 +5,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useListServicesPublicQuery } from '@/integrations/rtk/hooks';
-import type { ServiceDto } from '@/integrations/shared';
+import {toCdnSrc, excerpt, type ServiceDto, safeStr, SERVICE_FALLBACK_IMG } from '@/integrations/shared';
 
-import { useUiSection } from '@/i18n/uiDb';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { localizePath } from '@/i18n/url';
+import { useUiSection, useLocaleShort } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
-import { toCdnSrc } from '@/shared/media';
-import { excerpt } from '@/shared/text';
 
 import { IconArrowRight } from '@/components/ui/icons';
-
-const FALLBACK_IMG =
-  'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748870864/uploads/anastasia/service-images/50-1748870861414-723178027.webp';
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
 
 function cryptoRandomId(): string {
   try {
@@ -84,7 +72,7 @@ const ServiceMore: React.FC<ServiceMoreProps> = ({ currentSlug }) => {
               safeStr(s?.featured_image_url) || safeStr(s?.image_url) || safeStr(s?.featured_image);
 
             let src = (imgBase && (toCdnSrc(imgBase, 640, 420, 'fill') || imgBase)) || '';
-            if (!src) src = FALLBACK_IMG;
+            if (!src) src = SERVICE_FALLBACK_IMG;
 
             const title =
               safeStr(s?.name || s?.title) || ui('ui_services_placeholder_title', 'Service');

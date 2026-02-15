@@ -4,69 +4,6 @@
  */
 
 export interface paths {
-    "/v1/tenants/self": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Aktif tenant bilgisini getir */
-        get: {
-            parameters: {
-                query?: never;
-                header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
-                    "Accept-Language"?: components["parameters"]["AcceptLanguage"];
-                    /** @description ETag ile koşullu istek. */
-                    "If-None-Match"?: components["parameters"]["IfNoneMatch"];
-                    /** @description Last-Modified ile koşullu istek. */
-                    "If-Modified-Since"?: components["parameters"]["IfModifiedSince"];
-                };
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        ETag: components["headers"]["ETag"];
-                        "Last-Modified": components["headers"]["Last-Modified"];
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["TenantSelf"];
-                    };
-                };
-                /** @description Not Modified */
-                304: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                "4XX": {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Error"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/locales": {
         parameters: {
             query?: never;
@@ -78,10 +15,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: never;
-                header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                };
+                header?: never;
                 path?: never;
                 cookie?: never;
             };
@@ -127,9 +61,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                     /** @description ETag ile koşullu istek. */
                     "If-None-Match"?: components["parameters"]["IfNoneMatch"];
@@ -190,9 +122,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -250,9 +180,7 @@ export interface paths {
                     type?: components["parameters"]["Type"];
                 };
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -301,9 +229,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path: {
@@ -369,9 +295,7 @@ export interface paths {
                     limit?: components["parameters"]["Limit"];
                 };
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -419,9 +343,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -478,9 +400,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -534,9 +454,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -583,9 +501,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -647,9 +563,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -690,9 +604,7 @@ export interface paths {
             parameters: {
                 query?: never;
                 header: {
-                    /** @description Aktif tenant slug'ı. */
-                    "X-Tenant": components["parameters"]["XTenant"];
-                    /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+                    /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
                     "Accept-Language"?: components["parameters"]["AcceptLanguage"];
                 };
                 path?: never;
@@ -737,17 +649,6 @@ export interface components {
                 /** Format: uuid */
                 traceId?: string;
             };
-        };
-        TenantSelf: {
-            id: string;
-            slug: string;
-            /** @example de */
-            defaultLocale: string;
-            locales?: string[];
-            domainMap?: {
-                domain?: string;
-                locale?: string;
-            }[];
         };
         /** @description BE tarafında özgür şema; FE mapping yapacak. */
         ThemeTokens: {
@@ -842,9 +743,7 @@ export interface components {
     };
     responses: never;
     parameters: {
-        /** @description Aktif tenant slug'ı. */
-        XTenant: string;
-        /** @description İçerik dili (ör. de, tr, en). Yoksa tenant defaultLocale. */
+        /** @description İçerik dili (ör. de, tr, en). Yoksa defaultLocale. */
         AcceptLanguage: string;
         /** @description ETag ile koşullu istek. */
         IfNoneMatch: string;

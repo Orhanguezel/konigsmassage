@@ -2,7 +2,6 @@
 // FILE: src/modules/auth/admin.controller.ts
 // =============================================================
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { z } from "zod";
 import { randomUUID } from "crypto";
 import { db } from "@/db/client";
 import { users, refresh_tokens } from "@/modules/auth/schema";
@@ -17,52 +16,22 @@ import {
 } from "@/modules/notifications/schema";
 import { sendPasswordChangedMail } from "@/modules/mail/service";
 
+import {
+  adminUserListQuery,
+  adminUpdateUserBody,
+  adminSetActiveBody,
+  adminSetRolesBody,
+  adminSetPasswordBody,
+} from "./validation";
+import { toBool } from "@/modules/_shared";
+
 type UserRow = typeof users.$inferSelect;
-
-const toBool = (v: unknown): boolean =>
-  typeof v === "boolean" ? v : Number(v) === 1;
-const toNum = (v: unknown): number =>
-  typeof v === "number" ? v : Number(v ?? 0);
-
-/** Zod şemaları */
-const listQuery = z.object({
-  q: z.string().optional(),
-  role: z.enum(["admin", "moderator", "user"]).optional(),
-  is_active: z.coerce.boolean().optional(),
-  limit: z.coerce.number().int().min(1).max(200).default(50),
-  offset: z.coerce.number().int().min(0).max(1_000_000).default(0),
-  sort: z.enum(["created_at", "email", "last_login_at"]).optional(),
-  order: z.enum(["asc", "desc"]).optional(),
-});
-
-const updateUserBody = z
-  .object({
-    full_name: z.string().trim().min(2).max(100).optional(),
-    phone: z.string().trim().min(6).max(50).optional(),
-    email: z.string().email().optional(),
-    is_active: z
-      .union([z.boolean(), z.number().int().min(0).max(1)])
-      .optional(),
-  })
-  .strict();
-
-const setActiveBody = z.object({
-  is_active: z.union([z.boolean(), z.number().int().min(0).max(1)]),
-});
-
-const setRolesBody = z.object({
-  roles: z.array(z.enum(["admin", "moderator", "user"])).default([]),
-});
-
-const setPasswordBody = z.object({
-  password: z.string().min(8).max(200),
-});
 
 export function makeAdminController(_app: FastifyInstance) {
   return {
     /** GET /admin/users */
     list: async (req: FastifyRequest, reply: FastifyReply) => {
-      const q = listQuery.parse(req.query ?? {});
+      const q = adminUserListQuery.parse(req.query ?? {});
 
       const conds: any[] = [];
       if (q.q) conds.push(like(users.email, `%${q.q}%`));
@@ -148,7 +117,7 @@ export function makeAdminController(_app: FastifyInstance) {
     /** PATCH /admin/users/:id */
     update: async (req: FastifyRequest, reply: FastifyReply) => {
       const id = String((req.params as Record<string, string>).id);
-      const body = updateUserBody.parse(req.body ?? {});
+      const body = adminUpdateUserBody.parse(req.body ?? {});
 
       const existing = (
         await db.select().from(users).where(eq(users.id, id)).limit(1)
@@ -198,7 +167,7 @@ export function makeAdminController(_app: FastifyInstance) {
     /** POST /admin/users/:id/active  { is_active } */
     setActive: async (req: FastifyRequest, reply: FastifyReply) => {
       const id = String((req.params as Record<string, string>).id);
-      const { is_active } = setActiveBody.parse(req.body ?? {});
+      const { is_active } = adminSetActiveBody.parse(req.body ?? {});
       const u = (
         await db.select().from(users).where(eq(users.id, id)).limit(1)
       )[0];
@@ -222,7 +191,7 @@ export function makeAdminController(_app: FastifyInstance) {
     /** POST /admin/users/:id/roles  { roles: string[] }  (tam set) */
     setRoles: async (req: FastifyRequest, reply: FastifyReply) => {
       const id = String((req.params as Record<string, string>).id);
-      const { roles } = setRolesBody.parse(req.body ?? {});
+      const { roles } = adminSetRolesBody.parse(req.body ?? {});
       const u = (
         await db.select().from(users).where(eq(users.id, id)).limit(1)
       )[0];
@@ -251,7 +220,7 @@ export function makeAdminController(_app: FastifyInstance) {
     /** POST /admin/users/:id/password  { password } */
     setPassword: async (req: FastifyRequest, reply: FastifyReply) => {
       const id = String((req.params as Record<string, string>).id);
-      const { password } = setPasswordBody.parse(req.body ?? {});
+      const { password } = adminSetPasswordBody.parse(req.body ?? {});
 
       const u = (
         await db.select().from(users).where(eq(users.id, id)).limit(1)

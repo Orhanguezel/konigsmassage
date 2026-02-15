@@ -12,8 +12,8 @@ function getRequestConfig<R = { locale: string; messages: Record<string, unknown
 }
 /* ------------------------------------------------------------------- */
 
-import { normLocaleTag } from "@/i18n/localeUtils";
-import { getServerI18nContext } from "@/i18n/server";
+import { getServerI18nContext } from "./server";
+import { normLocaleTag, undot, mergeDeep } from "@/integrations/shared";
 
 /**
  * Namespace listesi (UI textleri)
@@ -31,39 +31,6 @@ const NAMESPACES = [
   "search",
   "comments","legal","notFound","tagPage","categories","tagLabels",
 ] as const;
-
-// "a.b.c": "val" -> {a:{b:{c:"val"}}}
-function undot(flat: Record<string, unknown>) {
-  const out: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(flat)) {
-    if (!key.includes(".")) { out[key] = value; continue; }
-    const parts = key.split(".");
-    let cur: Record<string, unknown> = out;
-    for (let i = 0; i < parts.length; i++) {
-      const p = parts[i]!;
-      if (i === parts.length - 1) cur[p] = value;
-      else {
-        cur[p] = (cur[p] as Record<string, unknown>) ?? {};
-        cur = cur[p] as Record<string, unknown>;
-      }
-    }
-  }
-  return out;
-}
-
-// Basit derin merge
-function mergeDeep<T extends Record<string, unknown>>(target: T, src: T): T {
-  for (const [k, v] of Object.entries(src)) {
-    if (v && typeof v === "object" && !Array.isArray(v)) {
-      // @ts-expect-error generic assign
-      target[k] = mergeDeep((target[k] as T) ?? ({} as T), v as T);
-    } else {
-      // @ts-expect-error generic assign
-      target[k] = v;
-    }
-  }
-  return target;
-}
 
 /** Sadece İSTENEN locale’den dener; dosya yoksa BOŞ döner. */
 async function loadNamespace(locale: string, ns: string): Promise<Record<string, unknown>> {

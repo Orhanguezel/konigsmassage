@@ -45,6 +45,17 @@ export * from './chat.types';
 export * from './profiles';
 export * from './auth.types';
 export * from './health.types';
+export * from './legal';
+export * from './services';
+export * from './utils';
+export * from './text';
+export * from './validation';
+export * from './media';
+
+export * from './local';
+export * from './seoSchema';
+export * from './errors';
+export * from './localeDisplay';
 
 // =============================================================
 // END FILE

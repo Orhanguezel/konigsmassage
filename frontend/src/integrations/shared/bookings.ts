@@ -2,6 +2,10 @@
 // FILE: src/integrations/types/bookings.types.ts
 // =============================================================
 
+import { safeStr } from './common';
+import { isValidHm } from './validation';
+
+
 export type BookingStatus =
   | 'new'
   | 'confirmed'
@@ -308,4 +312,16 @@ export interface BookingAdminUpdatePayload {
 
   admin_note?: string | null;
   decision_note?: string | null;
+}
+
+
+export function normalizeHm(v: unknown): string {
+  const s = safeStr(v);
+  if (!s) return '';
+  if (s.includes('T') && s.includes(':')) {
+    const part = (s.split('T')[1] ?? '').slice(0, 5);
+    return isValidHm(part) ? part : '';
+  }
+  const hm = s.slice(0, 5);
+  return isValidHm(hm) ? hm : '';
 }

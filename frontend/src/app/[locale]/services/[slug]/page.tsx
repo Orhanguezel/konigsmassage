@@ -9,13 +9,11 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Banner from '@/layout/banner/Breadcrum';
 import ServiceDetail from '@/components/containers/services/ServiceDetail';
-import { safeStr, titleFromSlug } from '@/integrations/shared';
-import { buildMetadataFromSeo, fetchSeoObject, absUrlJoin, normPath } from '@/seo/server';
-import { fetchServicePublicBySlug } from '@/seo/server';
-import { excerpt } from '@/shared/text';
+import { safeStr, titleFromSlug, excerpt, normPath, absUrlJoin } from '@/integrations/shared';
+import { buildMetadataFromSeo, fetchSeoObject, fetchServicePublicBySlug } from '@/seo/server';
 
 type PageProps = {
-  params: Promise<{ locale: string; slug: string }> | { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

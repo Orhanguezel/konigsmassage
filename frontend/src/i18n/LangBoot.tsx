@@ -7,9 +7,10 @@ import { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 
 import HtmlLangSync from './HtmlLangSync';
-import { KNOWN_RTL } from './config';
-import { FALLBACK_LOCALE } from '@/i18n/config';
-import { normLocaleTag, normalizeLocales, resolveDefaultLocale } from '@/i18n/localeUtils';
+import {
+  KNOWN_RTL, FALLBACK_LOCALE,
+  normLocaleTag, normalizeLocales, resolveDefaultLocale,
+} from '@/integrations/shared';
 import {
   useGetAppLocalesPublicQuery,
   useGetDefaultLocalePublicQuery,

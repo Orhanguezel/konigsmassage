@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import React, { Suspense } from 'react';
 import { Inter, Playfair_Display } from 'next/font/google';
 
-import HomePage from './[locale]/page';
+import HomeContent from '@/components/containers/home/HomeContent';
 import { Providers } from './providers';
 import ClientLayout from './ClientLayout';
 import { getDefaultLocale } from '@/i18n/server';
@@ -35,7 +35,7 @@ export default async function RootPage() {
        <Providers>
          <Suspense fallback={null}>
            <ClientLayout locale={locale}>
-             <HomePage />
+             <HomeContent locale={locale} />
            </ClientLayout>
          </Suspense>
        </Providers>

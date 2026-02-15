@@ -8,8 +8,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
+import { useLocaleShort, useUiSection } from '@/i18n';
 
 const ServiceCta = () => {
   const locale = useLocaleShort();

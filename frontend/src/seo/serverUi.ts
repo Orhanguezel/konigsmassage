@@ -6,15 +6,8 @@ import 'server-only';
 
 import { cache } from 'react';
 
-import {
-  fetchSetting,
-  getDefaultLocale,
-  DEFAULT_LOCALE_FALLBACK,
-  type JsonLike,
-} from '@/i18n/server';
-import { isValidUiText } from '@/i18n/uiText';
-import { safeStr } from '@/integrations/shared';
-import { normLocaleShort } from '@/seo/helpers';
+import { fetchSetting, getDefaultLocale, type JsonLike } from '@/i18n/server';
+import { FALLBACK_LOCALE, isValidUiText, safeStr, normLocaleShort } from '@/integrations/shared';
 
 function parseUiObject(v: JsonLike): Record<string, unknown> {
   if (v && typeof v === 'object' && !Array.isArray(v)) return v as Record<string, unknown>;
@@ -41,7 +34,7 @@ export const fetchUiSectionObject = cache(
     const defaultLocale = await getDefaultLocale();
     const loc = normLocaleShort(locale, defaultLocale);
 
-    const tryLocales = [loc, '*', defaultLocale, DEFAULT_LOCALE_FALLBACK].filter(Boolean);
+    const tryLocales = [loc, '*', defaultLocale, FALLBACK_LOCALE].filter(Boolean);
     for (const l of tryLocales) {
       const row = await fetchSetting(k, l, { revalidate: 600 });
       if (row?.value == null) continue;

@@ -4,9 +4,8 @@ import React, { useMemo } from 'react';
 import Banner from '@/layout/banner/Breadcrum';
 import TermsPageContent from '@/components/containers/legal/TermsPageContent';
 import { LayoutSeoBridge } from '@/seo';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { isValidUiText } from '@/integrations/shared';
 import { safeStr } from '@/integrations/shared';
 
 export default function TermsPage() {

@@ -17,7 +17,7 @@ import { useAuthStore } from "@/features/auth/auth.store";
 import { useProfile } from "@/features/profiles/profiles.action";
 import { useLocaleShort } from "@/i18n/useLocaleShort";
 import { useUiSection } from "@/i18n/uiDb";
-import { useGetSiteSettingByKeyQuery } from "@/integrations/rtk/public/site_settings.endpoints";
+import { useGetSiteSettingByKeyQuery } from "@/integrations/rtk/hooks";
 
 /* ─── Theme tokens (globals.css @theme ile senkron) ────────── */
 const C = {
@@ -374,17 +374,22 @@ export default function SupportBotWidget() {
           overflow: "hidden",
           cursor: "pointer",
           transition: "transform 0.2s, box-shadow 0.2s",
+          position: "fixed",
         }}
       >
         {open ? (
           <X size={22} />
         ) : (
-          <Image
+
+          <img
             src="/support_ai.png"
             alt="AI Support"
-            width={btnSize - 8}
-            height={btnSize - 8}
-            style={{ objectFit: "contain" }}
+            style={{
+              width: btnSize - 16,
+              height: btnSize - 16,
+              objectFit: "contain",
+              display: "block",
+            }}
           />
         )}
       </button>
@@ -421,6 +426,7 @@ export default function SupportBotWidget() {
                     width={24}
                     height={24}
                     style={{ borderRadius: "50%", background: "rgba(255,255,255,0.2)", padding: 2 }}
+                    unoptimized
                   />
                 )}
                 <strong style={{ fontFamily: "var(--font-serif, 'Playfair Display', serif)", fontSize: 15 }}>
@@ -639,7 +645,7 @@ export default function SupportBotWidget() {
                             title={isAi ? "AI" : "User"}
                           >
                             {isAi ? (
-                              <Image src="/support_ai.png" alt="AI" width={22} height={22} style={{ objectFit: "contain" }} />
+                              <Image src="/support_ai.png" alt="AI" width={22} height={22} style={{ objectFit: "contain" }} unoptimized />
                             ) : (
                               <span style={{ fontSize: 11, fontWeight: 700, color: C.sand600 }}>U</span>
                             )}

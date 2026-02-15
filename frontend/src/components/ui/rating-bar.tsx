@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils/utils'
+import { cn } from '@/integrations/shared'
 import { Progress } from '@/components/ui/progress'
 
 interface RatingBarProps {

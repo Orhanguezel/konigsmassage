@@ -9,8 +9,7 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 
 // i18n + UI (STANDARD)
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
+import { useLocaleShort, useUiSection } from '@/i18n';
 
 export type ConsentState = {
   necessary: true;

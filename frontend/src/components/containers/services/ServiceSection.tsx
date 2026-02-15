@@ -4,64 +4,24 @@ import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useListServicesPublicQuery } from '@/integrations/rtk/hooks';
-import { excerpt } from '@/shared/text';
-import { toCdnSrc } from '@/shared/media';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
+
 import {
-  IconActivity,
-  IconArrowRight,
-  IconHeart,
-  IconMoon,
-  IconSmile,
-  IconSun,
-  IconZap,
-} from '@/components/ui/icons';
+  safeStr,
+  SERVICE_FALLBACK_IMG,excerpt,toCdnSrc, isValidImageSrc,
+  type ServiceCardVM,
+} from '@/integrations/shared';
+
+import { ServiceIcon } from '@/components/common/ServiceIcon';
+import { IconArrowRight } from '@/components/ui/icons';
 
 const SHOW_COUNT = 3;
-const FALLBACK_IMG = 'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748870864/uploads/anastasia/service-images/50-1748870861414-723178027.webp';
 
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
 
-function isValidImageSrc(src: string): boolean {
-  const s = safeStr(src);
-  if (!s) return false;
-  if (s.startsWith('http://') || s.startsWith('https://')) return true;
-  if (s.startsWith('/')) return true;
-  return false;
-}
 
-function ServiceIcon({ label, size = 40 }: { label: string; size?: number }) {
-  const t = (label || '').toLowerCase();
-  
-  if (/sport|sports|spor|athlet|athletik|deep\s*tissue|tiefen|tiefengewebe/.test(t))
-    return <IconActivity size={size} />;
-  if (/relax|relaxing|entspann|calm|ruhe|anti\s*stress|stress|stres/.test(t))
-    return <IconMoon size={size} />;
-  if (/thai|thaimassage|shiatsu|reflex|reflexzonen|fuß|fuss|foot|ayak/.test(t))
-    return <IconZap size={size} />;
-  if (/aroma|aromatherapy|aroma\s*therap|öl|oel|oil/.test(t)) return <IconHeart size={size} />;
-  if (/hot\s*stone|stone|taş|tas|stein/.test(t)) return <IconSun size={size} />;
-  if (/face|gesicht|yüz|yuz|beauty|kosmetik|cosmetic/.test(t)) return <IconSmile size={size} />;
-
-  return <IconHeart size={size} />;
-}
-
-type ServiceCardVM = {
-  id: string;
-  title: string;
-  summary: string;
-  slug: string;
-  src: string;
-};
-
-const ServiceSection: React.FC = () => {
-  const locale = useLocaleShort();
+const ServiceSection: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
+  const locale = useLocaleShort(explicitLocale);
   const { ui } = useUiSection('ui_services', locale as any);
 
   const { data, isLoading } = useListServicesPublicQuery({
@@ -84,7 +44,7 @@ const ServiceSection: React.FC = () => {
         title: ui('ui_services_placeholder_title', 'Massage Service'),
         summary: ui('ui_services_placeholder_summary', 'Coming soon.'),
         slug: '',
-        src: FALLBACK_IMG,
+        src: SERVICE_FALLBACK_IMG,
       }));
     }
 
@@ -98,7 +58,7 @@ const ServiceSection: React.FC = () => {
       if (imgBase) {
         srcCandidate = toCdnSrc(imgBase, 640, 420, 'fill') || imgBase;
       }
-      const finalSrc = isValidImageSrc(srcCandidate) ? srcCandidate : FALLBACK_IMG;
+      const finalSrc = isValidImageSrc(srcCandidate) ? srcCandidate : SERVICE_FALLBACK_IMG;
 
       return {
         id: safeStr(s?.id) || `s-${idx}`,
@@ -113,7 +73,7 @@ const ServiceSection: React.FC = () => {
   return (
     <section className="bg-bg-primary relative py-20 lg:py-32">
         {/* Decor */}
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-sand-200 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-sand-200 to-transparent" />
 
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center" data-aos="fade-up">

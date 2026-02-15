@@ -12,15 +12,10 @@ import 'server-only';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 
-import {
-  fetchSetting,
-  fetchActiveLocales,
-  getDefaultLocale,
-  type JsonLike,
-  DEFAULT_LOCALE_FALLBACK,
-} from '@/i18n/server';
+import { fetchSetting, fetchActiveLocales, getDefaultLocale, type JsonLike } from '@/i18n/server';
 
 import {
+  FALLBACK_LOCALE,
   absUrlJoin,
   asBool,
   asObj,
@@ -32,7 +27,7 @@ import {
   normalizeLocalhostOrigin,
   stripTrailingSlash,
   uniq,
-} from '@/seo/helpers';
+} from '@/integrations/shared';
 
 /**
  * ✅ Server runtime base URL (proxy-safe).
@@ -75,12 +70,12 @@ async function getRuntimeBaseUrl(): Promise<string> {
  */
 function toOgLocale(l: string): string {
   const raw = String(l || '').trim();
-  if (!raw) return `${DEFAULT_LOCALE_FALLBACK}_${DEFAULT_LOCALE_FALLBACK.toUpperCase()}`;
+  if (!raw) return `${FALLBACK_LOCALE}_${FALLBACK_LOCALE.toUpperCase()}`;
 
   const normalized = raw.replace('_', '-').toLowerCase();
   const [langRaw, regionRaw] = normalized.split('-');
 
-  const lang = (langRaw || DEFAULT_LOCALE_FALLBACK).toLowerCase().slice(0, 2);
+  const lang = (langRaw || FALLBACK_LOCALE).toLowerCase().slice(0, 2);
   const region = (regionRaw || '').toUpperCase();
 
   return `${lang}_${region || lang.toUpperCase()}`;
@@ -95,8 +90,8 @@ function toOgLocale(l: string): string {
 
 async function resolveActiveLocales(provided?: string[]) {
   const list = provided && provided.length ? provided : await fetchActiveLocales();
-  const normalized = uniq(list.map((l) => normLocaleShort(l, DEFAULT_LOCALE_FALLBACK))).filter(Boolean);
-  if (!normalized.length) normalized.push(DEFAULT_LOCALE_FALLBACK);
+  const normalized = uniq(list.map((l) => normLocaleShort(l, FALLBACK_LOCALE))).filter(Boolean);
+  if (!normalized.length) normalized.push(FALLBACK_LOCALE);
   return normalized;
 }
 
@@ -113,17 +108,17 @@ function buildSeoLocaleTryOrder(args: {
   defaultLocale: string;
   activeLocales: string[];
 }): string[] {
-  const req = normLocaleShort(args.requestedLocale, DEFAULT_LOCALE_FALLBACK);
-  const def = normLocaleShort(args.defaultLocale, DEFAULT_LOCALE_FALLBACK);
+  const req = normLocaleShort(args.requestedLocale, FALLBACK_LOCALE);
+  const def = normLocaleShort(args.defaultLocale, FALLBACK_LOCALE);
 
   const act = uniq((args.activeLocales || []).map((l) => normLocaleShort(l, def))).filter(Boolean);
 
   // requested -> '*' -> default -> others -> fallback
-  return uniq([req, '*', def, ...act, DEFAULT_LOCALE_FALLBACK].filter(Boolean));
+  return uniq([req, '*', def, ...act, FALLBACK_LOCALE].filter(Boolean));
 }
 
 async function fetchSeoRowWithFallback(locale: string, providedActiveLocales?: string[]) {
-  const loc = normLocaleShort(locale, DEFAULT_LOCALE_FALLBACK);
+  const loc = normLocaleShort(locale, FALLBACK_LOCALE);
 
   // key priority: seo -> site_seo
   const tryKeys = ['seo', 'site_seo'] as const;
@@ -174,7 +169,7 @@ export async function buildMetadataFromSeo(
 
   const active = await resolveActiveLocales(args.activeLocales);
   const defaultLocale = await getDefaultLocale();
-  const locale = normLocaleShort(args.locale, DEFAULT_LOCALE_FALLBACK);
+  const locale = normLocaleShort(args.locale, FALLBACK_LOCALE);
 
   // Defaults (DB-driven)
   const siteName = asStr(seo.site_name) || 'KÖNIG ENERGETIK';
@@ -231,7 +226,7 @@ export async function buildMetadataFromSeo(
 
   const ogLocale = toOgLocale(locale);
   const ogAltLocales = active
-    .filter((l) => normLocaleShort(l, DEFAULT_LOCALE_FALLBACK) !== normLocaleShort(locale, DEFAULT_LOCALE_FALLBACK))
+    .filter((l) => normLocaleShort(l, FALLBACK_LOCALE) !== normLocaleShort(locale, FALLBACK_LOCALE))
     .map((l) => toOgLocale(l));
 
   const metadata: Metadata = {

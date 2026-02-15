@@ -315,7 +315,7 @@ export interface ServiceImageUpdatePayload {
  * UI FORM TYPES
  * ------------------------------------------------------------------ */
 
-import type { AdminLocaleOption } from '@/components/common/AdminLocaleSelect';
+export type AdminLocaleOption = { value: string; label: string };
 
 export type ServiceFormValues = {
   id?: string;

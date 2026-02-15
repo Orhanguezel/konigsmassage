@@ -1,5 +1,5 @@
 // =============================================================
-// FILE: src/seo/seoSchema.ts
+// FILE: src/integrations/shared/seoSchema.ts
 // konigsmassage – SEO Schema (STRICT) + DB-backed Defaults
 // SINGLE SOURCE OF TRUTH: open_graph.images[]
 // =============================================================

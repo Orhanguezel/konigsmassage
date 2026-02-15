@@ -11,9 +11,8 @@ import { SiteLogo } from '@/layout/SiteLogo';
 import { useListMenuItemsQuery, useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
 import type { PublicMenuItemDto } from '@/integrations/shared';
 
-import { localizePath } from '@/i18n/url';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
+import { localizePath } from '@/integrations/shared';
+import { useLocaleShort, useUiSection } from '@/i18n';
 
 type SimpleBrand = {
   name: string;

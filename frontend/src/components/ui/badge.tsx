@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cva } from "class-variance-authority";
-import { cn } from "@/utils/utils";
+import { cn } from "@/integrations/shared";
 
 export const badgeVariants = cva(
   // Bootstrap base

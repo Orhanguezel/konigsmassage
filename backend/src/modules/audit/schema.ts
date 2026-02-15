@@ -6,7 +6,7 @@
 
 import { mysqlTable, varchar, bigint, int, datetime, index } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
-import { longtext } from './_longtext';
+import { longtext } from '@/modules/_shared';
 
 export const auditRequestLogs = mysqlTable(
   'audit_request_logs',
@@ -36,12 +36,12 @@ export const auditRequestLogs = mysqlTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP(3)`),
   },
-  (t) => ({
-    idx_created: index('audit_request_logs_created_idx').on(t.created_at),
-    idx_user: index('audit_request_logs_user_idx').on(t.user_id),
-    idx_path: index('audit_request_logs_path_idx').on(t.path),
-    idx_ip: index('audit_request_logs_ip_idx').on(t.ip),
-  }),
+  (t) => [
+    index('audit_request_logs_created_idx').on(t.created_at),
+    index('audit_request_logs_user_idx').on(t.user_id),
+    index('audit_request_logs_path_idx').on(t.path),
+    index('audit_request_logs_ip_idx').on(t.ip),
+  ],
 );
 
 export const auditAuthEvents = mysqlTable(
@@ -63,12 +63,12 @@ export const auditAuthEvents = mysqlTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP(3)`),
   },
-  (t) => ({
-    idx_created: index('audit_auth_events_created_idx').on(t.created_at),
-    idx_event: index('audit_auth_events_event_idx').on(t.event),
-    idx_user: index('audit_auth_events_user_idx').on(t.user_id),
-    idx_ip: index('audit_auth_events_ip_idx').on(t.ip),
-  }),
+  (t) => [
+    index('audit_auth_events_created_idx').on(t.created_at),
+    index('audit_auth_events_event_idx').on(t.event),
+    index('audit_auth_events_user_idx').on(t.user_id),
+    index('audit_auth_events_ip_idx').on(t.ip),
+  ],
 );
 
 export type AuditRequestLogRow = typeof auditRequestLogs.$inferSelect;

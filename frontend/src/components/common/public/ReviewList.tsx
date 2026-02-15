@@ -17,8 +17,7 @@ import {
 } from '@/integrations/rtk/hooks';
 import type { ReviewDto } from '@/integrations/shared';
 
-import { useResolvedLocale } from '@/i18n/locale';
-import { useUiSection } from '@/i18n/uiDb';
+import { useResolvedLocale, useUiSection } from '@/i18n';
 
 type ReviewListProps = {
   targetType: string;

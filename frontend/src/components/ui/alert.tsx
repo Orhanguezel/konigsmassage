@@ -1,7 +1,7 @@
 // src/components/ui/alert.tsx
 
 import * as React from "react";
-import { cn } from "@/utils/utils";
+import { cn } from "@/integrations/shared";
 
 export type AlertVariant = "default" | "destructive";
 

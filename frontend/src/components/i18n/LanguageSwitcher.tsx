@@ -6,9 +6,8 @@
 import React, { useMemo } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-import { useActiveLocales } from '@/i18n/activeLocales';
-import { switchLocale } from '@/i18n/switchLocale';
-import { normLocaleTag } from '@/i18n/localeUtils';
+import { useActiveLocales, switchLocale } from '@/i18n';
+import { normLocaleTag } from '@/integrations/shared';
 
 function firstPathSeg(asPath?: string): string {
   const p = String(asPath || '/').trim();

@@ -11,8 +11,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
+import { useLocaleShort } from '@/i18n';
 import { useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
+import { safeStr, safeJson } from '@/integrations/shared';
 import {
   IconCopy,
   IconFacebook,
@@ -63,24 +64,6 @@ export type SocialShareProps = {
    */
   showCompanySocials?: boolean;
 };
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
-
-function tryParseJson<T>(v: unknown): T | null {
-  try {
-    if (v == null) return null;
-    if (typeof v === 'object') return v as T;
-    const s = safeStr(v);
-    if (!s) return null;
-    return JSON.parse(s) as T;
-  } catch {
-    return null;
-  }
-}
 
 function stripTrailingSlash(u: string) {
   return safeStr(u).replace(/\/+$/, '');
@@ -142,8 +125,8 @@ export default function SocialShare(props: SocialShareProps) {
 
   const companySocials = useMemo<Socials>(() => {
     if (!props.showCompanySocials) return {};
-    const primary = tryParseJson<Socials>((socialsTrg as any)?.value ?? socialsTrg);
-    const fallback = tryParseJson<Socials>((socialsEn as any)?.value ?? socialsEn);
+    const primary = safeJson<Socials | null>((socialsTrg as any)?.value ?? socialsTrg, null);
+    const fallback = safeJson<Socials | null>((socialsEn as any)?.value ?? socialsEn, null);
     const pick = primary && Object.values(primary).some(Boolean) ? primary : fallback;
     return (pick ?? {}) as Socials;
   }, [props.showCompanySocials, socialsTrg, socialsEn]);

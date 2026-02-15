@@ -32,3 +32,10 @@ export function toAvatarSrc(
   }
   return base;
 }
+
+/** URL'nin geçerli bir resim src'si olup olmadığını kontrol eder */
+export function isValidImageSrc(src: string): boolean {
+  if (!src || typeof src !== 'string') return false;
+  const s = src.trim();
+  return s.startsWith('http://') || s.startsWith('https://') || s.startsWith('/');
+}

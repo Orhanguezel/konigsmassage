@@ -1,10 +1,6 @@
 // =============================================================
 // FILE: src/components/containers/about/AboutSection.tsx
 // Public About – Custom Pages (module_key="about") + UI i18n
-// FINAL (no extra cards / no bullets / no third page)
-// - ✅ Uses typed CustomPageDto (no `as any` casts)
-// - ✅ Prefers featured page
-// - ✅ Updated to Semantic Tailwind v4 Tokens
 // =============================================================
 
 'use client';
@@ -14,21 +10,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
-import type { CustomPageDto } from '@/integrations/shared';
-import { downgradeH1ToH2, safeStr, isRemoteUrl } from '@/integrations/shared';
+import { downgradeH1ToH2, safeStr, isRemoteUrl, excerpt, toCdnSrc } from '@/integrations/shared';
 
-import { excerpt } from '@/shared/text';
-import { toCdnSrc } from '@/shared/media';
-
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { isValidUiText } from '@/integrations/shared';
+import { localizePath } from '@/integrations/shared';
 
 const SUMMARY_LEN = 260;
 
-const AboutSection: React.FC = () => {
-  const locale = useLocaleShort();
+const AboutSection: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
+  const locale = useLocaleShort(explicitLocale);
   const { ui } = useUiSection('ui_about', locale as any);
 
   const { data, isLoading } = useListCustomPagesPublicQuery({

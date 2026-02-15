@@ -11,14 +11,12 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import { SiteLogo } from '@/layout/SiteLogo';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { switchLocale } from '@/i18n/switchLocale';
-import { normLocaleTag } from '@/i18n/localeUtils';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, switchLocale, useActiveLocales } from '@/i18n';
+import { normLocaleTag } from '@/integrations/shared';
+import { localizePath } from '@/integrations/shared';
 import SocialLinks from '@/components/common/public/SocialLinks';
 
-import { getLanguageLabel, type SupportedLocale } from '@/types/common';
-import { useActiveLocales } from '@/i18n/activeLocales';
+import { getLanguageLabel, type SupportedLocale } from '@/integrations/shared';
 
 import {
   IconGlobe,
@@ -31,7 +29,7 @@ import {
 
 import { useListMenuItemsQuery, useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
 import type { PublicMenuItemDto } from '@/integrations/shared';
-import { useUiSection } from '@/i18n/uiDb';
+import { useUiSection } from '@/i18n';
 
 export type SimpleBrand = {
   name: string;

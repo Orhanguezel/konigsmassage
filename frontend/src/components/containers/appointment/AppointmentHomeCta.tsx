@@ -3,12 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
-export default function AppointmentHomeCta() {
-  const locale = useLocaleShort();
+export default function AppointmentHomeCta({ locale: explicitLocale }: { locale?: string }) {
+  const locale = useLocaleShort(explicitLocale);
   const { ui } = useUiSection('ui_appointment', locale as any);
 
   const title = ui('ui_appointment_home_cta_title', ui('ui_appointment_title', 'Randevu Al'));

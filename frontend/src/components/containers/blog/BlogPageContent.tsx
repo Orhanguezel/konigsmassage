@@ -15,22 +15,15 @@ import Link from 'next/link';
 
 // RTK
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
+import { safeStr, toCdnSrc, excerpt} from '@/integrations/shared';
 
-// Helpers
-import { toCdnSrc } from '@/shared/media';
-import { excerpt } from '@/shared/text';
 
 // i18n
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 const CARD_W = 720;
 const CARD_H = 480;
-
-function safeStr(val: unknown) {
-  return typeof val === 'string' ? val.trim() : '';
-}
 
 const BlogPageContent: React.FC = () => {
   const locale = useLocaleShort();

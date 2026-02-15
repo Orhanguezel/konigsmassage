@@ -20,7 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const favicon = await fetchSetting('site_favicon', '*');
   const faviconUrl = extractUrl(favicon?.value) || '/favicon.svg';
 
-  return {
+  const gscVerification = await fetchSetting('google_site_verification', '*');
+  const gscCode = String(gscVerification?.value || '').trim();
+
+  const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://koenigsmassage.com'),
     icons: {
       icon: faviconUrl,
@@ -28,6 +31,14 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: faviconUrl,
     },
   };
+
+  if (gscCode) {
+    metadata.verification = {
+      google: gscCode,
+    };
+  }
+
+  return metadata;
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

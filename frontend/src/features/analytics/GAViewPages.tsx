@@ -14,6 +14,7 @@ declare global {
   interface Window {
     dataLayer?: any[];
     gtag?: (...args: any[]) => void;
+    fbq?: (...args: any[]) => void;
     __analyticsConsentGranted?: boolean;
   }
 }
@@ -28,15 +29,21 @@ function isValidGa4Id(v: unknown) {
   return !!s && s.startsWith('G-');
 }
 
+function isValidFbPixelId(v: unknown) {
+  const s = String(v ?? '').trim();
+  return !!s && /^\d+$/.test(s);
+}
+
 export default function GAViewPages() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { locale, ga4Id, gtmId } = useAnalyticsSettings();
-  
+  const { locale, ga4Id, gtmId, facebookPixelId } = useAnalyticsSettings();
+
   const hasGtm = useMemo(() => isValidGtmId(gtmId), [gtmId]);
   const hasGa = useMemo(() => isValidGa4Id(ga4Id), [ga4Id]);
+  const hasFbPixel = useMemo(() => isValidFbPixelId(facebookPixelId), [facebookPixelId]);
 
-  const hasAnyAnalytics = hasGtm || hasGa;
+  const hasAnyAnalytics = hasGtm || hasGa || hasFbPixel;
 
   const lastAbsUrlRef = useRef<string>('');
 
@@ -77,6 +84,11 @@ export default function GAViewPages() {
         else if (hasGa && typeof window.gtag === 'function') {
            window.gtag('event', 'page_view', payload);
         }
+
+        // 3) Facebook Pixel
+        if (hasFbPixel && typeof window.fbq === 'function') {
+          window.fbq('track', 'PageView');
+        }
       } catch (e) {
           // ignore
       }
@@ -85,7 +97,7 @@ export default function GAViewPages() {
     send(nextUrl);
 
     // No routeChangeComplete in App Router. The effect itself runs on change.
-  }, [pathname, searchParams, hasAnyAnalytics, hasGtm, hasGa, locale]);
+  }, [pathname, searchParams, hasAnyAnalytics, hasGtm, hasGa, hasFbPixel, locale]);
 
   return null;
 }

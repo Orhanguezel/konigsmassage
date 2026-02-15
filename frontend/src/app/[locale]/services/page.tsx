@@ -5,11 +5,9 @@ import Banner from '@/layout/banner/Breadcrum';
 import Service from '@/components/containers/services/Service';
 import ServiceMore from '@/components/containers/services/ServiceMore';
 import { LayoutSeoBridge } from '@/seo';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
-import { toCdnSrc } from '@/shared/media';
-import { safeStr } from '@/integrations/shared';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { isValidUiText } from '@/integrations/shared';
+import { safeStr, toCdnSrc } from '@/integrations/shared';
 
 export default function ServicesPage() {
   const locale = useLocaleShort();

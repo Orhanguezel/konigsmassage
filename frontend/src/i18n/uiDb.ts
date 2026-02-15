@@ -5,10 +5,9 @@
 
 import { useMemo } from 'react';
 import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
-import { useResolvedLocale } from '@/i18n/locale';
-import { UI_FALLBACK_EN } from './ui';
+import { useResolvedLocale,UI_FALLBACK_EN } from '@/i18n';
 import type { SiteSettingRow } from '@/integrations/shared';
-import type { TranslatedLabel } from '@/types/common';
+import type { TranslatedLabel } from '@/integrations/shared';
 
 /**
  * DB tarafında kullanacağın section key'leri (site_settings.key)

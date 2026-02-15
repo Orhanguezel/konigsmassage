@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
 
 import { fetchSetting } from '@/i18n/server';
-import { normalizeLocalhostOrigin, stripTrailingSlash } from '@/seo/helpers';
+import { normalizeLocalhostOrigin, stripTrailingSlash } from '@/integrations/shared';
 
 async function getBaseUrl(): Promise<string> {
   const env = stripTrailingSlash(String(process.env.NEXT_PUBLIC_SITE_URL || '').trim());

@@ -18,7 +18,7 @@ import type {
   FetchBaseQueryMeta,
 } from '@reduxjs/toolkit/query';
 import { metahubTags } from './tags';
-import { tokenStore } from '@/integrations/core/token';
+import { tokenStore } from '@/integrations/rtk/token';
 import { BASE_URL as CONFIG_BASE_URL } from '@/integrations/rtk/constants';
 import { acquireSlot, releaseSlot } from '@/integrations/rtk/requestThrottle';
 

@@ -4,17 +4,10 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 
 import { useListServicesPublicQuery } from '@/integrations/rtk/hooks';
-import type { ServiceDto } from '@/integrations/shared';
+import { type ServiceDto, safeStr } from '@/integrations/shared';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 export type OtherServicesSidebarProps = {
   currentSlug?: string;

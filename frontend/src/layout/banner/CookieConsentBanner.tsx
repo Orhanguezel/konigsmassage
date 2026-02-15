@@ -13,9 +13,8 @@ import Link from 'next/link';
 import CookieSettingsModal, { type ConsentState } from './CookieSettingsModal';
 
 // i18n + UI (STANDARD)
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 // DB
 import { useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';

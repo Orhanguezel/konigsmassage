@@ -4,8 +4,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useResolvedLocale } from '@/i18n/locale';
-import { normLocaleTag } from '@/i18n/localeUtils';
+import { useResolvedLocale } from '@/i18n';
+import { normLocaleTag } from '@/integrations/shared';
 
 export function useLocaleShort(explicitLocale?: string | null): string {
   const resolved = useResolvedLocale(explicitLocale);

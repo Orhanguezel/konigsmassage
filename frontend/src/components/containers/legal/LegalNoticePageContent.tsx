@@ -2,72 +2,20 @@
 
 import React, { useMemo } from 'react';
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
-import type { CustomPageDto } from '@/integrations/shared';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-
-const downgradeH1ToH2 = (rawHtml: string) =>
-  String(rawHtml || '')
-    .replace(/<h1(\s|>)/gi, '<h2$1')
-    .replace(/<\/h1>/gi, '</h2>');
-
-function safeJson<T>(v: any, fallback: T): T {
-  if (v == null) return fallback;
-  if (typeof v === 'object') return v as T;
-  if (typeof v !== 'string') return fallback;
-  const s = v.trim();
-  if (!s) return fallback;
-  try {
-    return JSON.parse(s) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function extractHtmlFromPage(page: any): string {
-  if (!page) return '';
-  const ch = String(page?.content_html ?? '').trim();
-  if (ch) return ch;
-  const c = page?.content ?? page?.content_json ?? page?.contentJson;
-  if (!c) return '';
-  if (typeof c === 'object') {
-    const html = (c as any)?.html;
-    return typeof html === 'string' ? html.trim() : '';
-  }
-  if (typeof c === 'string') {
-    const s = c.trim();
-    if (!s) return '';
-    if (s.startsWith('{') || s.startsWith('[')) {
-      const obj = safeJson<any>(s, null);
-      const html = obj?.html;
-      if (typeof html === 'string' && html.trim()) return html.trim();
-    }
-    return s;
-  }
-  return '';
-}
-
-function pickFirstPublished(items: any): CustomPageDto | null {
-  const arr: CustomPageDto[] = Array.isArray(items) ? (items as any) : [];
-  const published = arr.filter((p) => !!p?.is_published);
-  return published[0] ?? null;
-}
-
-const THEME_COLORS = {
-  textDark: '#292524',
-  textMedium: '#57534e',
-  primary: '#881337',
-  bgWhite: '#ffffff',
-  bgSand: '#fafaf9',
-  border: '#e7e5e4',
-};
+import {
+  pickFirstPublished,
+  CMS_FALLBACK_CSS,
+  downgradeH1ToH2,
+  extractHtmlFromAny,
+} from '@/integrations/shared';
+import { useLocaleShort, useUiSection } from '@/i18n';
 
 const LegalNoticePageContent: React.FC = () => {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_legal_notice', locale as any);
 
   const { data, isLoading, isError } = useListCustomPagesPublicQuery({
-    module_key: 'legal_notice',
+    module_key: 'imprint',
     locale,
     limit: 10,
     sort: 'created_at',
@@ -79,55 +27,17 @@ const LegalNoticePageContent: React.FC = () => {
   const title = useMemo(() => {
     const t = String((page as any)?.title ?? '').trim();
     return (
-      t || String(ui('ui_legal_fallback_title', 'Legal Notice') || '').trim() || 'Legal Notice'
+      t ||
+      String(ui('ui_legal_notice_fallback_title', 'Legal Notice') || '').trim() ||
+      'Legal Notice'
     );
   }, [page, ui]);
 
   const html = useMemo(() => {
-    const raw = extractHtmlFromPage(page);
+    const raw = extractHtmlFromAny(page);
     const safe = raw ? downgradeH1ToH2(raw) : '';
     return safe;
   }, [page]);
-
-  const cmsFallbackCss = useMemo(
-    () => `
-      .cms-html { color: ${THEME_COLORS.textMedium}; font-family: sans-serif; }
-      
-      .cms-html h1, .cms-html h2, .cms-html h3, .cms-html h4 {
-        color: ${THEME_COLORS.primary};
-        font-family: serif;
-        font-weight: 700;
-      }
-      .cms-html h1 { font-size: 2.25rem; line-height: 2.5rem; margin: 0 0 1rem; }
-      .cms-html h2 { font-size: 1.875rem; line-height: 2.25rem; margin: 2rem 0 1rem; }
-      .cms-html h3 { font-size: 1.5rem; line-height: 2rem; margin: 1.5rem 0 0.75rem; }
-      .cms-html h4 { font-size: 1.25rem; line-height: 1.75rem; margin: 1.5rem 0 0.5rem; }
-
-      .cms-html p { margin: 0 0 1rem; line-height: 1.8; color: ${THEME_COLORS.textMedium}; }
-      .cms-html strong { color: ${THEME_COLORS.textDark}; font-weight: 700; }
-      
-      .cms-html ul { margin: 1rem 0; padding-left: 1.5rem; list-style-type: disc; }
-      .cms-html ol { margin: 1rem 0; padding-left: 1.5rem; list-style-type: decimal; }
-      .cms-html li { margin: 0.5rem 0; color: ${THEME_COLORS.textMedium}; }
-
-      .cms-html .container { max-width: 100%; }
-      .cms-html .text-3xl { font-size: 1.875rem; }
-      .cms-html .text-xl { font-size: 1.25rem; }
-      .cms-html .font-semibold { font-weight: 600; }
-      
-      .cms-html .text-slate-900 { color: ${THEME_COLORS.textDark} !important; }
-      .cms-html .text-slate-700 { color: ${THEME_COLORS.textMedium} !important; }
-      
-      .cms-html .bg-white { background: ${THEME_COLORS.bgWhite} !important; }
-      .cms-html .bg-gray-50 { background: ${THEME_COLORS.bgSand} !important; }
-      
-      .cms-html .border { border: 1px solid ${THEME_COLORS.border}; }
-      
-      .cms-html a { color: ${THEME_COLORS.primary}; text-decoration: underline; }
-      .cms-html a:hover { color: ${THEME_COLORS.textDark}; }
-    `,
-    [],
-  );
 
   return (
     <section className="bg-bg-primary relative min-h-[60vh] py-20 lg:py-32">
@@ -152,14 +62,14 @@ const LegalNoticePageContent: React.FC = () => {
               className="bg-sand-50 border border-sand-200 text-brand-dark px-6 py-4 rounded-xl"
               role="alert"
             >
-              {ui('ui_legal_empty', 'Content not found.')}
+              {ui('ui_legal_notice_empty', 'Content not found.')}
             </div>
           </div>
         )}
 
         {!!page && !isLoading && (
           <div className="max-w-4xl mx-auto">
-            <style>{cmsFallbackCss}</style>
+            <style>{CMS_FALLBACK_CSS}</style>
 
             <div className="mb-12 text-center">
               <h1 className="text-4xl md:text-5xl font-serif font-bold text-brand-dark mb-4">
@@ -178,7 +88,7 @@ const LegalNoticePageContent: React.FC = () => {
                 className="bg-sand-50 border border-sand-200 text-brand-dark px-6 py-4 rounded-xl"
                 role="alert"
               >
-                {ui('ui_legal_empty_text', 'Content coming soon.')}
+                {ui('ui_legal_notice_empty_text', 'Content coming soon.')}
               </div>
             )}
           </div>

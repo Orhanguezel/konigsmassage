@@ -23,9 +23,8 @@ import {
 
 import type { FooterSectionDto, PublicMenuItemDto } from '@/integrations/shared';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { localizePath } from '@/i18n/url';
-import { useUiSection } from '@/i18n/uiDb';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 const isExternalHref = (href: string) =>
   /^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href) || /^#/i.test(href);

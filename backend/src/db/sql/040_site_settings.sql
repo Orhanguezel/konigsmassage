@@ -168,11 +168,11 @@ VALUES
   'tr',
   CAST(JSON_OBJECT(
     'instagram','https://instagram.com/koenigsmassage',
-    'facebook','',
-    'youtube','',
-    'linkedin','',
-    'x','',
-    'tiktok',''
+    'facebook','https://facebook.com/koenigsmassage',
+    'youtube','https://youtube.com/@koenigsmassage',
+    'linkedin','https://linkedin.com/company/koenigsmassage',
+    'x','https://x.com/koenigsmassage',
+    'tiktok','https://tiktok.com/@koenigsmassage'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -258,11 +258,11 @@ VALUES
   'en',
   CAST(JSON_OBJECT(
     'instagram','https://instagram.com/koenigsmassage',
-    'facebook','',
-    'youtube','',
-    'linkedin','',
-    'x','',
-    'tiktok',''
+    'facebook','https://facebook.com/koenigsmassage',
+    'youtube','https://youtube.com/@koenigsmassage',
+    'linkedin','https://linkedin.com/company/koenigsmassage',
+    'x','https://x.com/koenigsmassage',
+    'tiktok','https://tiktok.com/@koenigsmassage'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -340,11 +340,11 @@ VALUES
   'de',
   CAST(JSON_OBJECT(
     'instagram','https://instagram.com/koenigsmassage',
-    'facebook','',
-    'youtube','',
-    'linkedin','',
-    'x','',
-    'tiktok',''
+    'facebook','https://facebook.com/koenigsmassage',
+    'youtube','https://youtube.com/@koenigsmassage',
+    'linkedin','https://linkedin.com/company/koenigsmassage',
+    'x','https://x.com/koenigsmassage',
+    'tiktok','https://tiktok.com/@koenigsmassage'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -433,12 +433,14 @@ ON DUPLICATE KEY UPDATE
   `updated_at` = VALUES(`updated_at`);
 
 -- =============================================================
--- GLOBAL: GTM + GA4 (locale='*')  (optional; placeholders)
+-- GLOBAL: Analytics & Tracking (locale='*')  (optional; placeholders)
 -- =============================================================
 INSERT INTO `site_settings` (`id`, `key`, `locale`, `value`, `created_at`, `updated_at`)
 VALUES
 (UUID(), 'gtm_container_id', '*', '', NOW(3), NOW(3)),
-(UUID(), 'ga4_measurement_id', '*', '', NOW(3), NOW(3))
+(UUID(), 'ga4_measurement_id', '*', '', NOW(3), NOW(3)),
+(UUID(), 'facebook_pixel_id', '*', '', NOW(3), NOW(3)),
+(UUID(), 'google_site_verification', '*', '', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `value`      = VALUES(`value`),
   `updated_at` = VALUES(`updated_at`);

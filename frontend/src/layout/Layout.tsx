@@ -29,19 +29,20 @@ import { SiteIconsHead } from '@/seo';
 
 import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
 import type { SettingValue, SiteSettingRow } from '@/integrations/shared';
+import { safeStr, asObj, siteUrlBase, absoluteUrl } from '@/integrations/shared';
 
-import { asObj, buildCanonical, siteUrlBase, absoluteUrl } from '@/seo';
+import { buildCanonical } from '@/seo';
 import { buildMeta, filterClientHeadSpecs, type MetaInput } from '@/seo';
 
 // ✅ i18n
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { FALLBACK_LOCALE } from '@/i18n/config';
+import { useLocaleShort } from '@/i18n';
+import { FALLBACK_LOCALE } from '@/integrations/shared';
 
 // ✅ JSON-LD
 import { JsonLd, graph, org, website, sameAsFromSocials } from '@/seo';
 
 // ✅ SEO SCHEMA HELPERS (DB-backed)
-import { parseSeoFromSettings } from '@/seo';
+import { parseSeoFromSettings } from '@/integrations/shared';
 
 // ✅ Store-based page overrides (LayoutSeoBridge)
 import { getLayoutSeoSnapshot, subscribeLayoutSeo, type LayoutSeoOverrides } from '@/seo';
@@ -80,7 +81,6 @@ type LayoutProps = {
 
 const FALLBACK_FAVICON = '/favicon.svg';
 
-const safeStr = (v: unknown) => (v === null || v === undefined ? '' : String(v).trim());
 function cleanString(v: unknown): string {
   if (typeof v === 'string') return v.trim();
   if (v == null) return '';

@@ -3,38 +3,37 @@ import { headers } from 'next/headers';
 
 import { fetchActiveLocales, fetchSetting, getDefaultLocale } from '@/i18n/server';
 import { getServerApiBase } from '@/i18n/apiBase.server';
-import { normalizeLocalhostOrigin, stripTrailingSlash } from '@/seo/helpers';
-import { absUrlJoin, localizedPath, normLocaleShort, normPath, uniq } from '@/seo/helpers';
+import { normalizeLocalhostOrigin, stripTrailingSlash } from '@/integrations/shared';
+import { absUrlJoin, localizedPath, normLocaleShort, normPath, uniq } from '@/integrations/shared';
+import { normalizeArrayResponse, safeStr } from '@/integrations/shared';
 
 export const revalidate = 3600;
 
 const API = getServerApiBase();
 
-type AnyObj = Record<string, any>;
+type SlugEntry = { id: string; slug: string; updated_at?: string };
+
+// ── Base URL ──
 
 async function getBaseUrl(): Promise<string> {
-  const env = stripTrailingSlash(String(process.env.NEXT_PUBLIC_SITE_URL || '').trim());
+  const env = stripTrailingSlash(safeStr(process.env.NEXT_PUBLIC_SITE_URL));
   if (env) return normalizeLocalhostOrigin(env);
 
   const publicBase = await fetchSetting('public_base_url', '*', { revalidate: 600 });
-  const fromDb = stripTrailingSlash(String(publicBase?.value || '').trim());
+  const fromDb = stripTrailingSlash(safeStr((publicBase as any)?.value));
   if (fromDb && /^https?:\/\//i.test(fromDb)) return normalizeLocalhostOrigin(fromDb);
 
   const h = await headers();
-
-  const xfProto = String(h.get('x-forwarded-proto') || '')
-    .split(',')[0]
-    ?.trim();
-  const xfHost = String(h.get('x-forwarded-host') || '')
-    .split(',')[0]
-    ?.trim();
-
-  const host = xfHost || String(h.get('host') || '').trim();
-  const proto = (xfProto || 'https').trim();
+  const xfProto = safeStr(h.get('x-forwarded-proto')).split(',')[0]?.trim();
+  const xfHost = safeStr(h.get('x-forwarded-host')).split(',')[0]?.trim();
+  const host = xfHost || safeStr(h.get('host'));
+  const proto = xfProto || 'https';
   if (host) return normalizeLocalhostOrigin(stripTrailingSlash(`${proto}://${host}`));
 
   return 'http://localhost:3000';
 }
+
+// ── API Helpers ──
 
 function apiUrl(path: string): string {
   const base = API.replace(/\/+$/, '');
@@ -53,62 +52,32 @@ async function fetchApiJson<T>(path: string): Promise<T | null> {
   }
 }
 
-function toList(raw: unknown): AnyObj[] {
-  if (Array.isArray(raw)) return raw as AnyObj[];
-  const anyRaw = raw as any;
-  if (anyRaw && Array.isArray(anyRaw.items)) return anyRaw.items as AnyObj[];
-  return [];
-}
-
-async function fetchServicesByLocale(args: {
-  locale: string;
-  defaultLocale: string;
-}): Promise<Array<{ id: string; slug: string; updated_at?: string }>> {
+async function fetchSlugsByLocale(
+  endpoint: string,
+  locale: string,
+  defaultLocale: string,
+  extraParams?: Record<string, string>,
+): Promise<SlugEntry[]> {
   const qs = new URLSearchParams({
-    locale: args.locale,
-    default_locale: args.defaultLocale,
+    locale,
+    default_locale: defaultLocale,
     limit: '500',
     sort: 'updated_at',
     orderDir: 'desc',
+    ...extraParams,
   });
 
-  const raw = await fetchApiJson<any>(`/services?${qs.toString()}`);
-  const list = toList(raw);
-
-  return list
+  const raw = await fetchApiJson<unknown>(`/${endpoint}?${qs.toString()}`);
+  return normalizeArrayResponse<Record<string, any>>(raw)
     .map((x) => ({
-      id: String(x?.id || '').trim(),
-      slug: String(x?.slug || '').trim(),
+      id: safeStr(x?.id),
+      slug: safeStr(x?.slug),
       updated_at: typeof x?.updated_at === 'string' ? x.updated_at : undefined,
     }))
     .filter((x) => x.id && x.slug);
 }
 
-async function fetchBlogPagesByLocale(args: {
-  locale: string;
-  defaultLocale: string;
-}): Promise<Array<{ id: string; slug: string; updated_at?: string }>> {
-  const qs = new URLSearchParams({
-    module_key: 'blog',
-    locale: args.locale,
-    default_locale: args.defaultLocale,
-    limit: '500',
-    sort: 'updated_at',
-    orderDir: 'desc',
-    is_published: '1',
-  });
-
-  const raw = await fetchApiJson<any>(`/custom_pages?${qs.toString()}`);
-  const list = toList(raw);
-
-  return list
-    .map((x) => ({
-      id: String(x?.id || '').trim(),
-      slug: String(x?.slug || '').trim(),
-      updated_at: typeof x?.updated_at === 'string' ? x.updated_at : undefined,
-    }))
-    .filter((x) => x.id && x.slug);
-}
+// ── URL Builders ──
 
 function localizedAbsUrl(baseUrl: string, locale: string, pathname: string, defaultLocale: string): string {
   const loc = normLocaleShort(locale, defaultLocale);
@@ -125,54 +94,57 @@ function buildAlternates(baseUrl: string, locales: string[], pathname: string, d
   return { languages };
 }
 
+// ── Sitemap ──
+
+const STATIC_PATHS = [
+  '/',
+  '/about',
+  '/services',
+  '/blog',
+  '/contact',
+  '/appointment',
+  '/faqs',
+  '/terms',
+  '/privacy-policy',
+  '/privacy-notice',
+  '/legal-notice',
+  '/cookie-policy',
+  '/kvkk',
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = await getBaseUrl();
   const activeLocales = uniq((await fetchActiveLocales()).map((l) => normLocaleShort(l)));
   const defaultLocale = normLocaleShort(await getDefaultLocale());
 
-  const staticPaths = [
-    '/',
-    '/about',
-    '/services',
-    '/blog',
-    '/appointment',
-    '/faqs',
-    '/terms',
-    '/privacy-policy',
-    '/privacy-notice',
-    '/legal-notice',
-    '/cookie-policy',
-    '/kvkk',
-  ];
+  // Dynamic slugs — parallel fetch
+  const [servicesByLocale, blogByLocale] = await Promise.all([
+    Promise.all(
+      activeLocales.map(async (l) => [l, await fetchSlugsByLocale('services', l, defaultLocale)] as const),
+    ),
+    Promise.all(
+      activeLocales.map(
+        async (l) =>
+          [l, await fetchSlugsByLocale('custom_pages', l, defaultLocale, { module_key: 'blog', is_published: '1' })] as const,
+      ),
+    ),
+  ]);
 
-  // --------- Dynamic slugs (id -> per-locale slug map) ---------
-  const servicesByLocale = await Promise.all(
-    activeLocales.map(async (l) => [l, await fetchServicesByLocale({ locale: l, defaultLocale })] as const),
-  );
-
-  const serviceSlugById: Record<string, Record<string, { slug: string; updated_at?: string }>> = {};
-  for (const [loc, list] of servicesByLocale) {
-    for (const it of list) {
-      serviceSlugById[it.id] = serviceSlugById[it.id] || {};
-      serviceSlugById[it.id]![loc] = { slug: it.slug, updated_at: it.updated_at };
+  function buildSlugMap(byLocale: (readonly [string, SlugEntry[]])[]) {
+    const map: Record<string, Record<string, SlugEntry>> = {};
+    for (const [loc, list] of byLocale) {
+      for (const it of list) {
+        map[it.id] = map[it.id] || {};
+        map[it.id]![loc] = it;
+      }
     }
-  }
-
-  const blogByLocale = await Promise.all(
-    activeLocales.map(async (l) => [l, await fetchBlogPagesByLocale({ locale: l, defaultLocale })] as const),
-  );
-
-  const blogSlugById: Record<string, Record<string, { slug: string; updated_at?: string }>> = {};
-  for (const [loc, list] of blogByLocale) {
-    for (const it of list) {
-      blogSlugById[it.id] = blogSlugById[it.id] || {};
-      blogSlugById[it.id]![loc] = { slug: it.slug, updated_at: it.updated_at };
-    }
+    return map;
   }
 
   const entries: MetadataRoute.Sitemap = [];
 
-  for (const pathname of staticPaths) {
+  // Static pages
+  for (const pathname of STATIC_PATHS) {
     for (const loc of activeLocales) {
       entries.push({
         url: localizedAbsUrl(baseUrl, loc, pathname, defaultLocale),
@@ -181,31 +153,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  for (const perLocale of Object.values(serviceSlugById)) {
-    for (const loc of activeLocales) {
-      const found = perLocale[loc] || perLocale[defaultLocale];
-      if (!found?.slug) continue;
-      const path = `/services/${found.slug}`;
-      entries.push({
-        url: localizedAbsUrl(baseUrl, loc, path, defaultLocale),
-        alternates: buildAlternates(baseUrl, activeLocales, path, defaultLocale),
-        ...(found.updated_at ? { lastModified: found.updated_at } : {}),
-      });
+  // Dynamic pages
+  function pushDynamic(slugMap: Record<string, Record<string, SlugEntry>>, prefix: string) {
+    for (const perLocale of Object.values(slugMap)) {
+      for (const loc of activeLocales) {
+        const found = perLocale[loc] || perLocale[defaultLocale];
+        if (!found?.slug) continue;
+        const path = `${prefix}/${found.slug}`;
+        entries.push({
+          url: localizedAbsUrl(baseUrl, loc, path, defaultLocale),
+          alternates: buildAlternates(baseUrl, activeLocales, path, defaultLocale),
+          ...(found.updated_at ? { lastModified: found.updated_at } : {}),
+        });
+      }
     }
   }
 
-  for (const perLocale of Object.values(blogSlugById)) {
-    for (const loc of activeLocales) {
-      const found = perLocale[loc] || perLocale[defaultLocale];
-      if (!found?.slug) continue;
-      const path = `/blog/${found.slug}`;
-      entries.push({
-        url: localizedAbsUrl(baseUrl, loc, path, defaultLocale),
-        alternates: buildAlternates(baseUrl, activeLocales, path, defaultLocale),
-        ...(found.updated_at ? { lastModified: found.updated_at } : {}),
-      });
-    }
-  }
+  pushDynamic(buildSlugMap(servicesByLocale), '/services');
+  pushDynamic(buildSlugMap(blogByLocale), '/blog');
 
   return entries;
 }

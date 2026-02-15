@@ -2,13 +2,12 @@ import React from 'react';
 import type { Metadata } from 'next';
 import BlogDetails from '@/components/containers/blog/BlogDetails';
 import Banner from '@/layout/banner/Breadcrum';
-import { safeStr, titleFromSlug } from '@/integrations/shared';
-import { buildMetadataFromSeo, fetchSeoObject, absUrlJoin, normPath } from '@/seo/server';
-import { fetchCustomPagePublicBySlug } from '@/seo/server';
-import { excerpt } from '@/shared/text';
+import { safeStr, titleFromSlug, excerpt } from '@/integrations/shared';
+import { normPath, absUrlJoin } from '@/integrations/shared';
+import { buildMetadataFromSeo, fetchSeoObject, fetchCustomPagePublicBySlug } from '@/seo/server';
 
 type PageProps = {
-  params: Promise<{ locale: string; slug: string }> | { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

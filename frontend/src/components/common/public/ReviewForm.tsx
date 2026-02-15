@@ -14,8 +14,7 @@ import { toast } from 'sonner';
 import { useCreateReviewPublicMutation } from '@/integrations/rtk/hooks';
 import type { ReviewDto } from '@/integrations/shared';
 
-import { useResolvedLocale } from '@/i18n/locale';
-import { useUiSection } from '@/i18n/uiDb';
+import { useResolvedLocale, useUiSection } from '@/i18n';
 
 type ReviewFormProps = {
   targetType: string;

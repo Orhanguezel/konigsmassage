@@ -10,9 +10,9 @@
 'use client';
 
 import { useMemo, useSyncExternalStore } from 'react';
-import { FALLBACK_LOCALE } from '@/i18n/config';
-import { normLocaleTag, normalizeLocales, resolveDefaultLocale } from '@/i18n/localeUtils';
-import { ensureLocationEventsPatched } from '@/i18n/locationEvents';
+import { useParams } from 'next/navigation';
+import { FALLBACK_LOCALE, normLocaleTag, normalizeLocales, resolveDefaultLocale } from '@/integrations/shared';
+import { ensureLocationEventsPatched } from '@/i18n';
 import {
   useGetAppLocalesPublicQuery,
   useGetDefaultLocalePublicQuery,
@@ -78,6 +78,10 @@ function subscribePathname(onStoreChange: () => void): () => void {
 }
 
 export function useResolvedLocale(explicitLocale?: string | null): string {
+  // ✅ Next.js route param — SSR'da da doğru locale verir (hydration fix)
+  const params = useParams();
+  const routeLocale = typeof params?.locale === 'string' ? normLocaleTag(params.locale) : '';
+
   // ✅ No setState in listeners -> no "useInsertionEffect must not schedule updates"
   const pathname = useSyncExternalStore(subscribePathname, getPathnameSnapshot, () => '/');
 
@@ -103,32 +107,37 @@ export function useResolvedLocale(explicitLocale?: string | null): string {
     const activeLocales = computeActiveLocales((appLocalesMeta || []) as any);
     const activeSet = new Set(activeLocales.map(normLocaleTag));
 
-    // 0) PATH PREFIX (source of truth in /[locale]/... routing)
+    // 0) EXPLICIT LOCALE (highest priority - SSR-passed locale from layout)
+    // This ensures server and client use the same locale during hydration
+    const fromExplicit = normLocaleTag(explicitLocale);
+    if (fromExplicit && (!appLocalesMeta || activeSet.has(fromExplicit))) return fromExplicit;
+
+    // 1) ROUTE PARAM (Next.js [locale] — SSR + client, hydration-safe)
+    // SSR'da appLocalesMeta henüz yüklenmemiş olabilir → route param'a koşulsuz güven
+    if (routeLocale && (!appLocalesMeta || activeSet.has(routeLocale))) return routeLocale;
+
+    // 2) PATH PREFIX (client-side navigation fallback)
     const fromPath = readLocaleFromPath(pathname);
     if (fromPath && activeSet.has(fromPath)) return fromPath;
 
-    // 1) __lc query (rewrite source)
+    // 3) __lc query (rewrite source)
     const fromQuery = readLocaleFromQuery();
     if (fromQuery && activeSet.has(fromQuery)) return fromQuery;
 
-    // 2) cookie
+    // 4) cookie
     const fromCookie = readLocaleFromCookie();
     if (fromCookie && activeSet.has(fromCookie)) return fromCookie;
 
-    // 3) explicit
-    const fromExplicit = normLocaleTag(explicitLocale);
-    if (fromExplicit && activeSet.has(fromExplicit)) return fromExplicit;
-
-    // 4) DB default (validated against app_locales)
+    // 5) DB default (validated against app_locales)
     const candDefault =
       resolveDefaultLocale(defaultLocaleMeta, appLocalesMeta) || normLocaleTag(defaultLocaleMeta);
     if (candDefault && activeSet.has(normLocaleTag(candDefault))) return normLocaleTag(candDefault);
 
-    // 5) first active
+    // 6) first active
     const firstActive = normLocaleTag(activeLocales[0]);
     if (firstActive) return firstActive;
 
-    // 6) fallback
+    // 7) fallback
     return normLocaleTag(FALLBACK_LOCALE) || 'de';
-  }, [pathname, explicitLocale, appLocalesMeta, defaultLocaleMeta]);
+  }, [routeLocale, pathname, explicitLocale, appLocalesMeta, defaultLocaleMeta]);
 }

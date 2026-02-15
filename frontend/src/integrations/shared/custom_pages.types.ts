@@ -329,3 +329,10 @@ export type CustomPageBySlugArgs = {
   locale?: string;
   default_locale?: string;
 };
+
+
+/** Featured olanı tercih et, yoksa ilk published'i al */
+export function pickPage(items: CustomPageDto[]): CustomPageDto | null {
+  const published = items.filter((p) => p.is_published);
+  return published.find((p) => p.featured) ?? published[0] ?? null;
+}

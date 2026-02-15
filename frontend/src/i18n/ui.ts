@@ -4,7 +4,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import type { SupportedLocale, TranslatedLabel } from '@/types/common';
+import type { SupportedLocale, TranslatedLabel } from '@/integrations/shared';
 import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
 
 /**

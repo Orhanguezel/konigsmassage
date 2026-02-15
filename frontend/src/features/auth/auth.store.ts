@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useMeQuery } from '@/integrations/rtk/hooks';
-import { tokenStore } from '@/integrations/core/token';
+import { tokenStore } from '@/integrations/rtk/token';
 import type { User } from '@/integrations/shared';
 
 type AuthState = {

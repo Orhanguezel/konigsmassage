@@ -6,11 +6,9 @@ import Banner from '@/layout/banner/Breadcrum';
 import AppointmentPageContent from '@/components/containers/appointment/AppointmentPageContent';
 import { LayoutSeoBridge } from '@/seo';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
-import { safeStr } from '@/integrations/shared';
-import { toCdnSrc } from '@/shared/media';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { isValidUiText } from '@/integrations/shared';
+import { safeStr, toCdnSrc } from '@/integrations/shared';
 
 export default function AppointmentPage() {
   const locale = useLocaleShort();

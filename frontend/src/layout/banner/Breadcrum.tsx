@@ -5,9 +5,8 @@ import React from 'react';
 import Link from 'next/link';
 
 // Yeni i18n helper’lar
-import { useResolvedLocale } from '@/i18n/locale';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useResolvedLocale, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 type Props = { title: string };
 

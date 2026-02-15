@@ -1,14 +1,9 @@
 import type { Metadata } from 'next';
 import React from 'react';
-import Hero from '@/layout/banner/Hero';
-import About from '@/components/containers/about/AboutSection';
-import ServiceSection from '@/components/containers/services/ServiceSection';
-import BlogHomeSection from '@/components/containers/blog/BlogHomeSection';
-import Feedback from '@/components/containers/feedback/Feedback';
-import AppointmentHomeCta from '@/components/containers/appointment/AppointmentHomeCta';
+import HomeContent from '@/components/containers/home/HomeContent';
 
-import { absUrlJoin, buildMetadataFromSeo, fetchSeoObject, normPath } from '@/seo/server';
-import { fetchUiSectionObject, readUiText } from '@/seo/server';
+import { normPath, absUrlJoin } from '@/integrations/shared';
+import { buildMetadataFromSeo, fetchSeoObject, fetchUiSectionObject, readUiText } from '@/seo/server';
 
 export async function generateMetadata({
   params,
@@ -47,20 +42,11 @@ export async function generateMetadata({
   };
 }
 
-export default function HomePage() {
-  return (
-    <main className="flex flex-col w-full">
-      <Hero />
-      <About />
-      <ServiceSection />
-      <BlogHomeSection />
-      <Feedback />
-
-      <section className="w-full bg-brand-light py-20 lg:py-28">
-        <div className="container mx-auto px-4">
-          <AppointmentHomeCta />
-        </div>
-      </section>
-    </main>
-  );
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return <HomeContent locale={locale} />;
 }

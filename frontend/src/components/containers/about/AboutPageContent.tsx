@@ -1,12 +1,6 @@
 // =============================================================
 // FILE: src/components/containers/about/AboutPageContent.tsx
 // konigsmassage – About Page Content (SINGLE PAGE) (I18N + SAFE) [FINAL]
-// - NO inline styles / NO styled-jsx
-// - H1 forbidden: CMS html <h1> -> <h2>
-// - ✅ FIX: ui() missing-key returns key itself => treat as empty/fallback
-// - ✅ Pattern: t(key, fb) wrapper
-// - ✅ REPLACE: Legacy Bootstrap/Template classes with Tailwind v4
-// - ✅ Uses typed CustomPageDto (no `as any` casts)
 // =============================================================
 
 'use client';
@@ -17,18 +11,12 @@ import Image from 'next/image';
 // RTK – Custom Pages Public
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
 import type { CustomPageDto } from '@/integrations/shared';
-import { downgradeH1ToH2, isRemoteUrl } from '@/integrations/shared';
+import { downgradeH1ToH2, isRemoteUrl, pickPage, toCdnSrc} from '@/integrations/shared';
 
 // Helpers
-import { toCdnSrc } from '@/shared/media';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
+import { useLocaleShort, useUiSection } from '@/i18n';
 
-/** Featured olanı tercih et, yoksa ilk published'i al */
-function pickPage(items: CustomPageDto[]): CustomPageDto | null {
-  const published = items.filter((p) => p.is_published);
-  return published.find((p) => p.featured) ?? published[0] ?? null;
-}
+
 
 const AboutPageContent: React.FC = () => {
   const locale = useLocaleShort();

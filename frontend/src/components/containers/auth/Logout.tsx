@@ -8,13 +8,12 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLogoutMutation } from '@/integrations/rtk/hooks';
-import { tokenStore } from '@/integrations/core/token';
-import { normalizeError } from '@/integrations/core/errors';
+import { tokenStore } from '@/integrations/rtk/token';
+import { normalizeError } from '@/integrations/shared';
 
 // i18n
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 const Logout: React.FC = () => {
   const router = useRouter();

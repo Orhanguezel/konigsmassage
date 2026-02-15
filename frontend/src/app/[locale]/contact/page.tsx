@@ -8,9 +8,8 @@ import { LayoutSeoBridge } from '@/seo';
 
 import ContactPage from '@/components/containers/contact/ContactPage';
 
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { isValidUiText } from '@/integrations/shared';
 import { safeStr } from '@/integrations/shared';
 
 export default function ContactRoutePage() {

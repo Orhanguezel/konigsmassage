@@ -1,7 +1,7 @@
 'use client';
 
 import { useGetMyProfileQuery } from '@/integrations/rtk/hooks';
-import type { Profile } from '@/integrations/rtk/public/profiles.endpoints';
+import type { Profile } from '@/integrations/shared';
 
 type UseProfileOptions = {
   enabled?: boolean;

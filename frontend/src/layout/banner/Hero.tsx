@@ -14,15 +14,11 @@ import Link from 'next/link';
 // RTK – PUBLIC sliders
 import { useListSlidersQuery } from '@/integrations/rtk/hooks';
 import type { SliderPublicDto } from '@/integrations/shared';
-
-// helpers
-import { toCdnSrc } from '@/shared/media';
-import { excerpt } from '@/shared/text';
+import { toCdnSrc, excerpt } from '@/integrations/shared';
 
 // i18n
-import { useResolvedLocale } from '@/i18n/locale';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useResolvedLocale, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 import { IconChevronLeft, IconChevronRight } from '@/components/ui/icons';
 
@@ -36,8 +32,8 @@ type HeroSlide = {
   buttonLink?: string;
 };
 
-const Hero: React.FC = () => {
-  const locale = useResolvedLocale();
+const Hero: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
+  const locale = useResolvedLocale(explicitLocale);
   const { ui } = useUiSection('ui_hero', locale);
 
   const variantRaw = (ui('ui_hero_variant', 'v3') || '').toString().trim().toLowerCase();
@@ -129,7 +125,7 @@ const Hero: React.FC = () => {
   return (
     <section
       data-header-overlay="true"
-      className="relative w-full h-[100svh] min-h-screen overflow-hidden bg-bg-dark group"
+      className="relative w-full h-svh min-h-screen overflow-hidden bg-bg-dark group"
     >
       {variant === 'v2' ? (
         <>
@@ -248,8 +244,6 @@ const Hero: React.FC = () => {
                       </span>
 
                       <h1
-                        data-aos="fade-up"
-                        data-aos-delay="500"
                         className="text-4xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-text-on-dark"
                       >
                         {h2Text}

@@ -11,19 +11,12 @@ import {
   useGetSiteSettingByKeyQuery,
 } from '@/integrations/rtk/hooks';
 
-import { toCdnSrc } from '@/shared/media';
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { safeStr, toCdnSrc} from '@/integrations/shared';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 import ImageLightboxModal from '@/components/common/public/ImageLightboxModal';
 import OtherServicesSidebar from '@/components/containers/services/OtherServicesSidebar';
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
 
 export default function ServiceDetail() {
   const locale = useLocaleShort();

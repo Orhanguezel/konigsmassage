@@ -7,8 +7,7 @@
 
 'use client';
 
-import { localizePath, type RuntimeLocale } from '@/i18n/url';
-import { normLocaleTag } from '@/i18n/localeUtils';
+import { localizePath, normLocaleTag, type RuntimeLocale } from '@/integrations/shared';
 
 function safeAsPath(asPath?: string) {
   const v = String(asPath || '/').trim();

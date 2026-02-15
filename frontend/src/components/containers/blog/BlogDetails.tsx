@@ -19,14 +19,12 @@ import {
   useListCustomPagesPublicQuery,
 } from '@/integrations/rtk/hooks';
 import type { CustomPageDto } from '@/integrations/shared';
+import { safeStr,toCdnSrc, stripPresentationAttrs, extractImgSrcListFromHtml} from '@/integrations/shared';
 
-// Helpers
-import { toCdnSrc } from '@/shared/media';
 
 // i18n
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { localizePath } from '@/i18n/url';
+import { useLocaleShort, useUiSection } from '@/i18n';
+import { localizePath } from '@/integrations/shared';
 
 // Lightbox
 import ImageLightboxModal, {
@@ -40,35 +38,6 @@ import SocialShare from '@/components/common/public/SocialShare';
 
 const THUMB_W = 220;
 const THUMB_H = 140;
-
-function safeStr(v: unknown): string {
-  if (typeof v === 'string') return v.trim();
-  if (v == null) return '';
-  return String(v).trim();
-}
-
-function stripPresentationAttrs(html: string): string {
-  const src = safeStr(html);
-  if (!src) return '';
-  const noClass = src.replace(/\sclass="[^"]*"/gi, '');
-  const noStyle = noClass.replace(/\sstyle="[^"]*"/gi, '');
-  // Remove first h1 if present, we render title separately
-  return noStyle.replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i, '').trim();
-}
-
-function extractImgSrcListFromHtml(html: string): string[] {
-  const src = safeStr(html);
-  if (!src) return [];
-  const out: string[] = [];
-  const re = /<img\b[^>]*?\ssrc\s*=\s*["']([^"']+)["'][^>]*>/gi;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(src))) {
-    const u = safeStr(m[1]);
-    if (u) out.push(u);
-    if (out.length >= 12) break;
-  }
-  return out;
-}
 
 function buildGalleryImages(post: any, title: string): LightboxImage[] {
   const unique = new Set<string>();
