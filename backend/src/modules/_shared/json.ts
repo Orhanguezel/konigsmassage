@@ -32,6 +32,20 @@ export function unpackArray(s?: string | null): string[] {
   return Array.isArray(parsed) ? parsed.map((x) => String(x ?? '')).filter(Boolean) : [];
 }
 
+export function parseJsonArrayString(input: string): string[] {
+  const s = String(input ?? '').trim();
+  if (!s) return [];
+  const parsed = safeJsonParse<any>(s, []);
+  return Array.isArray(parsed) ? parsed.map((x) => String(x ?? '').trim()).filter(Boolean) : [];
+}
+
+export function asStringArray(v: unknown): string[] {
+  if (v == null) return [];
+  if (Array.isArray(v)) return v.map((x) => String(x ?? '').trim()).filter(Boolean);
+  if (typeof v === 'string') return parseJsonArrayString(v);
+  return [];
+}
+
 export function extractHtmlFromJson(s?: string | null): string {
   const parsed = safeJsonParse<any>(s, null);
   if (parsed && typeof parsed === 'object' && typeof parsed.html === 'string') return parsed.html;

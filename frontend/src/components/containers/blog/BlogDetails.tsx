@@ -18,7 +18,7 @@ import {
   useGetCustomPageBySlugPublicQuery,
   useListCustomPagesPublicQuery,
 } from '@/integrations/rtk/hooks';
-import type { CustomPageDto } from '@/integrations/types';
+import type { CustomPageDto } from '@/integrations/shared';
 
 // Helpers
 import { toCdnSrc } from '@/shared/media';
@@ -29,7 +29,9 @@ import { useUiSection } from '@/i18n/uiDb';
 import { localizePath } from '@/i18n/url';
 
 // Lightbox
-import ImageLightboxModal, { type LightboxImage } from '@/components/common/public/ImageLightboxModal';
+import ImageLightboxModal, {
+  type LightboxImage,
+} from '@/components/common/public/ImageLightboxModal';
 import OtherServicesSidebar from '@/components/containers/services/OtherServicesSidebar';
 import ReviewForm from '@/components/common/public/ReviewForm';
 import ReviewList from '@/components/common/public/ReviewList';
@@ -163,7 +165,8 @@ export default function BlogDetails() {
         commentLabel: 'Ihr Kommentar',
         commentSubmit: 'Kommentar senden',
         contactCtaTitle: 'Noch Fragen?',
-        contactCtaDesc: 'Wenn Sie Fragen zur Sitzung oder zur Terminvereinbarung haben, kontaktieren Sie uns gern.',
+        contactCtaDesc:
+          'Wenn Sie Fragen zur Sitzung oder zur Terminvereinbarung haben, kontaktieren Sie uns gern.',
         contactPhone: 'Telefon',
         contactWhatsapp: 'WhatsApp',
         contactForm: 'Kontaktformular',
@@ -184,7 +187,8 @@ export default function BlogDetails() {
       commentLabel: 'Your comment',
       commentSubmit: 'Post comment',
       contactCtaTitle: 'Have a question?',
-      contactCtaDesc: 'If you have questions about a session or scheduling, feel free to contact us.',
+      contactCtaDesc:
+        'If you have questions about a session or scheduling, feel free to contact us.',
       contactPhone: 'Phone',
       contactWhatsapp: 'WhatsApp',
       contactForm: 'Contact form',
@@ -225,17 +229,18 @@ export default function BlogDetails() {
   // ✅ Locale-prefixed URLs
   const blogListHref = useMemo(() => localizePath(locale, '/blog'), [locale]);
 
-  const { data, isLoading, isError } = useGetCustomPageBySlugPublicQuery(
-    { slug, locale } as any,
-    { skip: !isSlugReady },
-  );
+  const { data, isLoading, isError } = useGetCustomPageBySlugPublicQuery({ slug, locale } as any, {
+    skip: !isSlugReady,
+  });
 
   const post = data as CustomPageDto | undefined;
   const hasPost = !!post && !!post.id && !isError;
   const title = safeStr(post?.title);
 
   const rawHtml = useMemo(() => {
-    return safeStr((post as any)?.content_html) || safeStr(((post as any)?.content as any)?.html) || '';
+    return (
+      safeStr((post as any)?.content_html) || safeStr(((post as any)?.content as any)?.html) || ''
+    );
   }, [post]);
 
   const contentHtml = useMemo(() => stripPresentationAttrs(rawHtml), [rawHtml]);
@@ -368,7 +373,8 @@ export default function BlogDetails() {
                   href={blogListHref}
                   className="inline-flex items-center text-text-muted hover:text-brand-primary transition-colors text-sm font-bold uppercase tracking-wide group mb-6"
                 >
-                  <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> {t.backToList}
+                  <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span>{' '}
+                  {t.backToList}
                 </Link>
 
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-text-primary leading-tight mb-6">
@@ -379,7 +385,10 @@ export default function BlogDetails() {
               {/* HERO */}
               {heroSrc && (
                 <div className="mb-8 rounded-xl overflow-hidden shadow-medium bg-sand-100 relative group">
-                  <div className="aspect-video relative cursor-pointer" onClick={() => setLightboxOpen(true)}>
+                  <div
+                    className="aspect-video relative cursor-pointer"
+                    onClick={() => setLightboxOpen(true)}
+                  >
                     <Image
                       src={heroSrc as any}
                       alt={title}
@@ -443,11 +452,18 @@ export default function BlogDetails() {
                         setLightboxOpen(true);
                       }}
                       className={`relative w-24 h-16 rounded-md overflow-hidden shrink-0 border-2 transition-all ${
-                        i === activeIdx ? 'border-brand-primary' : 'border-transparent opacity-70 hover:opacity-100'
+                        i === activeIdx
+                          ? 'border-brand-primary'
+                          : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                       type="button"
                     >
-                      <Image src={(img.thumb || img.raw) as any} alt="thumb" fill className="object-cover" />
+                      <Image
+                        src={(img.thumb || img.raw) as any}
+                        alt="thumb"
+                        fill
+                        className="object-cover"
+                      />
                     </button>
                   ))}
                 </div>

@@ -6,7 +6,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import type { ResourceWorkingHourDto } from '@/integrations/types';
+import type { ResourceWorkingHourDto } from '@/integrations/shared';
 
 import { isValidHm, isValidYmd, safeStr, buildDowLabels } from '../_utils/appointmentHelpers';
 

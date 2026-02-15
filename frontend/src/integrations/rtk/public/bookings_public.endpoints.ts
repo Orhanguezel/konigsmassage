@@ -4,7 +4,7 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/rtk/baseApi';
-import type { BookingPublicCreatePayload, BookingPublicCreateResult } from '@/integrations/types';
+import type { BookingPublicCreatePayload, BookingPublicCreateResult } from '@/integrations/shared';
 
 export const bookingsPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

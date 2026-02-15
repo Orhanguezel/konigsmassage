@@ -44,10 +44,7 @@ export const CustomPageFormImageColumn: React.FC<CustomPageFormImageColumnProps>
       <AdminImageUploadField
         label={t('admin.customPage.form.featuredImage')}
         helperText={
-          <>
-            Bu sayfa için bir <strong>kapak/öne çıkan</strong> görsel yükleyebilirsin. Seçim{' '}
-            <code>custom_pages.featured_image</code> alanına yazılır.
-          </>
+          <>{t('admin.customPage.form.coverHelperText')}</>
         }
         bucket="public"
         folder="custom_pages/cover"
@@ -63,10 +60,7 @@ export const CustomPageFormImageColumn: React.FC<CustomPageFormImageColumnProps>
         <AdminImageUploadField
           label={t('admin.customPage.form.gallery')}
           helperText={
-            <>
-              Birden fazla görsel yükleyip sayfaya galeri tanımlayabilirsin. Galerideki{' '}
-              <strong>Kapak</strong> butonu ile seçilen görseli kapak olarak atayabilirsin.
-            </>
+            <>{t('admin.customPage.form.galleryHelperText')}</>
           }
           bucket="public"
           folder="custom_pages/gallery"

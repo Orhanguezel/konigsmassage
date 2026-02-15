@@ -2,7 +2,7 @@
 // FILE: src/components/containers/blog/BlogHomeSection.tsx
 // Home – Featured Blog (2 posts)
 // - Source: custom_pages (module_key="blog")
-// - "Featured": lowest display_order (curated via seed/admin)
+// - Featured: parent `featured=1` filter (curated via seed/admin)
 // - Tailwind v4 Semantic Tokens
 // =============================================================
 
@@ -46,16 +46,14 @@ export default function BlogHomeSection() {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_blog', locale as any);
 
-  const { data, isLoading } = useListCustomPagesPublicQuery(
-    {
-      module_key: 'blog',
-      locale,
-      is_published: 1,
-      limit: 10,
-      order: 'display_order.asc',
-    } as any,
-    // keep home stable; SSR already handles SEO, client can be cached
-  );
+  const { data, isLoading } = useListCustomPagesPublicQuery({
+    module_key: 'blog',
+    locale,
+    is_published: 1,
+    featured: 1,
+    limit: 2,
+    order: 'display_order.asc',
+  });
 
   const posts = useMemo(() => {
     const raw = (data as any)?.items ?? [];
@@ -202,4 +200,3 @@ export default function BlogHomeSection() {
     </section>
   );
 }
-

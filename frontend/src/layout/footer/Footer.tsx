@@ -21,7 +21,7 @@ import {
   useListMenuItemsQuery,
 } from '@/integrations/rtk/hooks';
 
-import type { FooterSectionDto, PublicMenuItemDto } from '@/integrations/types';
+import type { FooterSectionDto, PublicMenuItemDto } from '@/integrations/shared';
 
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { localizePath } from '@/i18n/url';
@@ -210,11 +210,7 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
             {renderSectionColumn(section1, 'col-span-1', 'footer__col-1')}
 
             {/* 2. kolon – Services (footer__col-2) */}
-            {renderSectionColumn(
-              section2,
-              'col-span-1',
-              'footer__col-2',
-            )}
+            {renderSectionColumn(section2, 'col-span-1', 'footer__col-2')}
 
             {/* 3. kolon – Explore (footer__col-3) */}
             {renderSectionColumn(section3, 'col-span-1', 'footer__col-3')}
@@ -224,7 +220,12 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
               <div className="mb-12">
                 <div className="mb-6">
                   <Link href={homeHref} aria-label={brandName || 'Home'}>
-                    <SiteLogo variant="dark" alt={brandName || 'Logo'} priority={false} wrapperClassName="w-48 sm:w-56 max-w-full" />
+                    <SiteLogo
+                      variant="dark"
+                      alt={brandName || 'Logo'}
+                      priority={false}
+                      wrapperClassName="w-48 sm:w-56 max-w-full"
+                    />
                   </Link>
                 </div>
 
@@ -241,10 +242,14 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
                     </span>
                   )}
                   {email && (
-                    <span className="block hover:text-brand-primary transition-colors">{email}</span>
+                    <span className="block hover:text-brand-primary transition-colors">
+                      {email}
+                    </span>
                   )}
                   {website && (
-                    <span className="block hover:text-brand-primary transition-colors">{website}</span>
+                    <span className="block hover:text-brand-primary transition-colors">
+                      {website}
+                    </span>
                   )}
                 </div>
 

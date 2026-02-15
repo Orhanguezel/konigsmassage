@@ -9,6 +9,7 @@ import ScrollProgress from '@/layout/ScrollProgress';
 import AnalyticsScripts from '@/features/analytics/AnalyticsScripts';
 import GAViewPages from '@/features/analytics/GAViewPages';
 import CookieConsentBanner from '@/layout/banner/CookieConsentBanner';
+import SupportBotWidget from '@/components/containers/chat/SupportBotWidget';
 import { resetLayoutSeo } from '@/seo';
 
 export default function ClientLayout({
@@ -42,6 +43,7 @@ export default function ClientLayout({
       <ScrollProgress />
 
       <CookieConsentBanner />
+      <SupportBotWidget />
     </Fragment>
   );
 }

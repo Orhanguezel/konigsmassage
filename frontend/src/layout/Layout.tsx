@@ -28,7 +28,7 @@ import ScrollProgress from './ScrollProgress';
 import { SiteIconsHead } from '@/seo';
 
 import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
-import type { SettingValue, SiteSettingRow } from '@/integrations/types';
+import type { SettingValue, SiteSettingRow } from '@/integrations/shared';
 
 import { asObj, buildCanonical, siteUrlBase, absoluteUrl } from '@/seo';
 import { buildMeta, filterClientHeadSpecs, type MetaInput } from '@/seo';
@@ -579,8 +579,8 @@ export default function Layout({
       typeof router.query?.__lc === 'string'
         ? router.query.__lc
         : Array.isArray(router.query?.__lc)
-        ? router.query.__lc[0]
-        : '';
+          ? router.query.__lc[0]
+          : '';
 
     return buildCanonical({
       asPath: router.asPath,

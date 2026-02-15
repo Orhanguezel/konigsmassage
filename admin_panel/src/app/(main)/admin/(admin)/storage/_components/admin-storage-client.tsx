@@ -126,7 +126,7 @@ function getMimeColor(mime: string): string {
 
 export default function AdminStorageClient() {
   const router = useRouter();
-  const t = useAdminT();
+  const t = useAdminT('admin.storage');
 
   function getErrMsg(e: unknown): string {
     const anyErr = e as any;
@@ -134,7 +134,7 @@ export default function AdminStorageClient() {
       anyErr?.data?.error?.message ||
       anyErr?.data?.message ||
       anyErr?.message ||
-      t('admin.storage.errorFallback')
+      t('errorFallback')
     );
   }
 
@@ -216,13 +216,13 @@ export default function AdminStorageClient() {
 
   const handleBulkDelete = async () => {
     if (selectedIds.size === 0) {
-      toast.error(t('admin.storage.list.selectFileError'));
+      toast.error(t('list.selectFileError'));
       return;
     }
 
     try {
       await bulkDeleteAssets({ ids: Array.from(selectedIds) }).unwrap();
-      toast.success(t('admin.storage.list.filesDeleted', { count: selectedIds.size }));
+      toast.success(t('list.filesDeleted', { count: selectedIds.size }));
       setSelectedIds(new Set());
       refetch();
     } catch (err) {
@@ -244,7 +244,7 @@ export default function AdminStorageClient() {
 
     try {
       await deleteAsset({ id: itemToDelete.id }).unwrap();
-      toast.success(t('admin.storage.list.fileDeleted'));
+      toast.success(t('list.fileDeleted'));
       setDeleteDialogOpen(false);
       setItemToDelete(null);
       refetch();
@@ -270,9 +270,9 @@ export default function AdminStorageClient() {
           <CardHeader>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
-                <CardTitle>{t('admin.storage.list.title')}</CardTitle>
+                <CardTitle>{t('list.title')}</CardTitle>
                 <CardDescription>
-                  {t('admin.storage.list.description')}
+                  {t('list.description')}
                 </CardDescription>
               </div>
               <div className="flex gap-2">
@@ -284,7 +284,7 @@ export default function AdminStorageClient() {
                     className="gap-2"
                   >
                     <Trash2 className="size-4" />
-                    {t('admin.storage.list.deleteSelected', { count: selectedIds.size })}
+                    {t('list.deleteSelected', { count: selectedIds.size })}
                   </Button>
                 )}
                 <Button
@@ -293,7 +293,7 @@ export default function AdminStorageClient() {
                   className="gap-2"
                 >
                   <Plus className="size-4" />
-                  {t('admin.storage.list.uploadButton')}
+                  {t('list.uploadButton')}
                 </Button>
               </div>
             </div>
@@ -305,13 +305,13 @@ export default function AdminStorageClient() {
               {/* Search */}
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="search" className="text-sm">
-                  {t('admin.storage.list.searchLabel')}
+                  {t('list.searchLabel')}
                 </Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="search"
-                    placeholder={t('admin.storage.list.searchPlaceholder')}
+                    placeholder={t('list.searchPlaceholder')}
                     value={filters.search}
                     onChange={(e) => handleSearch(e.target.value)}
                     disabled={busy}
@@ -323,7 +323,7 @@ export default function AdminStorageClient() {
               {/* Bucket */}
               <div className="space-y-2">
                 <Label htmlFor="bucket" className="text-sm">
-                  {t('admin.storage.list.bucketLabel')}
+                  {t('list.bucketLabel')}
                 </Label>
                 <Select
                   value={filters.bucket}
@@ -334,7 +334,7 @@ export default function AdminStorageClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t('admin.storage.list.allOption')}</SelectItem>
+                    <SelectItem value="all">{t('list.allOption')}</SelectItem>
                     {buckets.map((b) => (
                       <SelectItem key={b} value={b}>
                         {b}
@@ -349,7 +349,7 @@ export default function AdminStorageClient() {
                 <Label htmlFor="folder" className="text-sm">
                   <div className="flex items-center gap-1.5">
                     <Folder className="size-3.5" />
-                    {t('admin.storage.list.folderLabel')}
+                    {t('list.folderLabel')}
                   </div>
                 </Label>
                 <Select
@@ -361,10 +361,9 @@ export default function AdminStorageClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t('admin.storage.list.allOption')}</SelectItem>
                     {folders.map((f) => (
                       <SelectItem key={f} value={f}>
-                        {f || t('admin.storage.list.rootFolder')}
+                        {f || t('list.rootFolder')}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -376,7 +375,7 @@ export default function AdminStorageClient() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
                 <Label htmlFor="mime" className="text-sm">
-                  {t('admin.storage.list.fileTypeLabel')}
+                  {t('list.fileTypeLabel')}
                 </Label>
                 <Select
                   value={filters.mime}
@@ -387,11 +386,11 @@ export default function AdminStorageClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t('admin.storage.list.allOption')}</SelectItem>
-                    <SelectItem value="image/">{t('admin.storage.list.imageType')}</SelectItem>
-                    <SelectItem value="video/">{t('admin.storage.list.videoType')}</SelectItem>
-                    <SelectItem value="audio/">{t('admin.storage.list.audioType')}</SelectItem>
-                    <SelectItem value="application/pdf">{t('admin.storage.list.pdfType')}</SelectItem>
+                    <SelectItem value="all">{t('list.allOption')}</SelectItem>
+                    <SelectItem value="image/">{t('list.imageType')}</SelectItem>
+                    <SelectItem value="video/">{t('list.videoType')}</SelectItem>
+                    <SelectItem value="audio/">{t('list.audioType')}</SelectItem>
+                    <SelectItem value="application/pdf">{t('list.pdfType')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -406,7 +405,7 @@ export default function AdminStorageClient() {
                   <RefreshCcw
                     className={cn('size-4', isFetching && 'animate-spin')}
                   />
-                  {t('admin.storage.list.refreshButton')}
+                  {t('list.refreshButton')}
                 </Button>
               </div>
             </div>
@@ -414,13 +413,13 @@ export default function AdminStorageClient() {
             {/* Info */}
             <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
               <span>
-                {t('admin.storage.list.totalFiles', { total })}
-                {hasSelection && ` • ${t('admin.storage.list.selectedCount', { count: selectedIds.size })}`}
+                {t('list.totalFiles', { total })}
+                {hasSelection && ` • ${t('list.selectedCount', { count: selectedIds.size })}`}
               </span>
               {isFetching && (
                 <div className="flex items-center gap-2">
                   <Loader2 className="size-4 animate-spin" />
-                  <span>{t('admin.storage.list.loading')}</span>
+                  <span>{t('list.loading')}</span>
                 </div>
               )}
             </div>
@@ -447,14 +446,14 @@ export default function AdminStorageClient() {
                       )}
                     </Button>
                   </TableHead>
-                  <TableHead className="w-16">{t('admin.storage.list.previewColumn')}</TableHead>
-                  <TableHead>{t('admin.storage.list.fileColumn')}</TableHead>
-                  <TableHead className="w-32">{t('admin.storage.list.bucketColumn')}</TableHead>
-                  <TableHead className="w-32">{t('admin.storage.list.folderColumn')}</TableHead>
-                  <TableHead className="w-32">{t('admin.storage.list.typeColumn')}</TableHead>
-                  <TableHead className="w-24 text-right">{t('admin.storage.list.sizeColumn')}</TableHead>
-                  <TableHead className="w-44">{t('admin.storage.list.dateColumn')}</TableHead>
-                  <TableHead className="w-40 text-right">{t('admin.storage.list.actionsColumn')}</TableHead>
+                  <TableHead className="w-16">{t('list.previewColumn')}</TableHead>
+                  <TableHead>{t('list.fileColumn')}</TableHead>
+                  <TableHead className="w-32">{t('list.bucketColumn')}</TableHead>
+                  <TableHead className="w-32">{t('list.folderColumn')}</TableHead>
+                  <TableHead className="w-32">{t('list.typeColumn')}</TableHead>
+                  <TableHead className="w-24 text-right">{t('list.sizeColumn')}</TableHead>
+                  <TableHead className="w-44">{t('list.dateColumn')}</TableHead>
+                  <TableHead className="w-40 text-right">{t('list.actionsColumn')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -463,14 +462,14 @@ export default function AdminStorageClient() {
                     <TableCell colSpan={9} className="h-24 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Loader2 className="size-5 animate-spin" />
-                        <span>{t('admin.storage.list.loading')}</span>
+                        <span>{t('list.loading')}</span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : items.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="h-24 text-center">
-                      {t('admin.storage.list.noFiles')}
+                      {t('list.noFiles')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -549,7 +548,7 @@ export default function AdminStorageClient() {
                                 variant="ghost"
                                 size="icon-sm"
                                 asChild
-                                title={t('admin.storage.list.downloadTitle')}
+                                title={t('list.downloadTitle')}
                               >
                                 <a href={item.url} download target="_blank" rel="noopener noreferrer">
                                   <Download className="size-3.5" />
@@ -564,7 +563,7 @@ export default function AdminStorageClient() {
                               className="gap-2"
                             >
                               <Pencil className="size-3.5" />
-                              {t('admin.storage.list.editButton')}
+                              {t('list.editButton')}
                             </Button>
                             <Button
                               variant="outline"
@@ -600,7 +599,7 @@ export default function AdminStorageClient() {
           ) : items.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
-                {t('admin.storage.list.noFiles')}
+                {t('list.noFiles')}
               </CardContent>
             </Card>
           ) : (
@@ -672,7 +671,7 @@ export default function AdminStorageClient() {
                         >
                           <a href={item.url} download target="_blank" rel="noopener noreferrer">
                             <Download className="size-3.5" />
-                            {t('admin.storage.list.downloadTitle')}
+                            {t('list.downloadTitle')}
                           </a>
                         </Button>
                       )}
@@ -684,7 +683,7 @@ export default function AdminStorageClient() {
                         className="flex-1 gap-2"
                       >
                         <Pencil className="size-3.5" />
-                        {t('admin.storage.list.editButton')}
+                        {t('list.editButton')}
                       </Button>
                       <Button
                         variant="outline"
@@ -708,14 +707,14 @@ export default function AdminStorageClient() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.storage.list.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('list.deleteConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.storage.list.deleteConfirmDescription', { name: itemToDelete?.name || 'Bu dosya' })}
+              {t('list.deleteConfirmDescription', { name: itemToDelete?.name || t('list.defaultFileName') })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('admin.storage.list.cancelButton')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>{t('admin.storage.list.deleteButton')}</AlertDialogAction>
+            <AlertDialogCancel>{t('list.cancelButton')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>{t('list.deleteButton')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

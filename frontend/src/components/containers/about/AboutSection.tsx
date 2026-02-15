@@ -2,8 +2,8 @@
 // FILE: src/components/containers/about/AboutSection.tsx
 // Public About – Custom Pages (module_key="about") + UI i18n
 // FINAL (no extra cards / no bullets / no third page)
-// - Fixes syntax issue
-// - Uses only keys that exist in ui_about seed below
+// - ✅ Uses typed CustomPageDto (no `as any` casts)
+// - ✅ Prefers featured page
 // - ✅ Updated to Semantic Tailwind v4 Tokens
 // =============================================================
 
@@ -14,8 +14,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
-import type { CustomPageDto } from '@/integrations/types';
-import { downgradeH1ToH2, safeStr, extractHtmlFromAny, isRemoteUrl } from '@/integrations/types';
+import type { CustomPageDto } from '@/integrations/shared';
+import { downgradeH1ToH2, safeStr, isRemoteUrl } from '@/integrations/shared';
 
 import { excerpt } from '@/shared/text';
 import { toCdnSrc } from '@/shared/media';
@@ -40,9 +40,9 @@ const AboutSection: React.FC = () => {
   });
 
   const first = useMemo(() => {
-    const items: CustomPageDto[] = ((data as any)?.items ?? []) as any;
-    const published = items.filter((p) => !!p?.is_published);
-    return published[0] ?? null;
+    const items = data?.items ?? [];
+    const published = items.filter((p) => p.is_published);
+    return published.find((p) => p.featured) ?? published[0] ?? null;
   }, [data]);
 
   const aboutHref = useMemo(() => localizePath(locale as any, '/about'), [locale]);
@@ -53,7 +53,7 @@ const AboutSection: React.FC = () => {
   }, [first?.title, ui]);
 
   const firstSummaryRaw = useMemo(() => {
-    const raw = extractHtmlFromAny(first);
+    const raw = first?.content_html || first?.content || '';
     return raw ? downgradeH1ToH2(raw) : '';
   }, [first]);
 
@@ -72,7 +72,7 @@ const AboutSection: React.FC = () => {
   }, [firstSummaryRaw]);
 
   const heroSrc = useMemo(() => {
-    const raw = safeStr((first as any)?.featured_image);
+    const raw = safeStr(first?.featured_image);
     if (!raw) return '';
 
     const cdn = toCdnSrc(raw, 720, 520, 'fill');
@@ -80,7 +80,7 @@ const AboutSection: React.FC = () => {
   }, [first]);
 
   const heroAlt = useMemo(() => {
-    const alt = safeStr((first as any)?.featured_image_alt);
+    const alt = safeStr(first?.featured_image_alt);
     return alt || firstTitle || 'about';
   }, [first, firstTitle]);
 
@@ -132,7 +132,11 @@ const AboutSection: React.FC = () => {
   return (
     <div className="bg-bg-primary relative py-20 lg:py-32">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center" data-aos="fade-up" data-aos-delay="300">
+        <div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center"
+          data-aos="fade-up"
+          data-aos-delay="300"
+        >
           {/* Left */}
           <div className="w-full">
             <div className="relative mb-12 lg:mb-0">
@@ -185,7 +189,19 @@ const AboutSection: React.FC = () => {
                       className="text-brand-primary font-bold hover:text-brand-hover transition-colors inline-flex items-center gap-1"
                       aria-label={readMoreText}
                     >
-                      {readMoreText} <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                      {readMoreText}{' '}
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
                     </Link>
                   ) : null}
                 </div>
@@ -197,9 +213,9 @@ const AboutSection: React.FC = () => {
 
               {/* CTA */}
               <div className="mt-4">
-                <Link 
-                  href={aboutHref} 
-                  className="inline-flex items-center justify-center px-8 py-4 bg-brand-primary text-text-on-dark font-bold uppercase tracking-widest hover:bg-brand-hover transition-all duration-300 shadow-soft rounded-sm" 
+                <Link
+                  href={aboutHref}
+                  className="inline-flex items-center justify-center px-8 py-4 bg-brand-primary text-text-on-dark font-bold uppercase tracking-widest hover:bg-brand-hover transition-all duration-300 shadow-soft rounded-sm"
                   aria-label={viewAllText}
                 >
                   {viewAllText}

@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import type { ResourceSlotDto } from '@/integrations/types';
+import type { ResourceSlotDto } from '@/integrations/shared';
 
 import {
   slotIsActive,
@@ -52,7 +52,6 @@ export const DailyAvailableSlots: React.FC<DailyAvailableSlotsProps> = ({
       .sort((a, b) => slotTime(a).localeCompare(slotTime(b)));
   }, [slots]);
 
-
   const statusText = useMemo(() => {
     if (!isValidYmd(d)) return t('ui_appointment_daily_pick_date', 'Önce tarih seçin.');
     if (loading || fetching) return t('ui_appointment_slots_loading', 'Saatler yükleniyor...');
@@ -93,9 +92,10 @@ export const DailyAvailableSlots: React.FC<DailyAvailableSlotsProps> = ({
                 type="button"
                 className={`
                   relative flex items-center justify-center py-2.5 px-2 rounded-sm border text-sm font-bold transition-all duration-200
-                  ${selected 
-                    ? 'bg-brand-primary text-white border-brand-primary shadow-sm' 
-                    : 'bg-white text-brand-dark border-sand-200 hover:border-brand-primary hover:text-brand-primary hover:bg-sand-50'
+                  ${
+                    selected
+                      ? 'bg-brand-primary text-white border-brand-primary shadow-sm'
+                      : 'bg-white text-brand-dark border-sand-200 hover:border-brand-primary hover:text-brand-primary hover:bg-sand-50'
                   }
                 `}
                 onClick={() => onPickTime(time)}

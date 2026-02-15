@@ -46,7 +46,10 @@ export async function registerSiteSettingsAdmin(app: FastifyInstance) {
   app.get(`${LEGACY}/app-locales`, { config: { auth: true } }, adminGetAppLocales);
   app.get(`${LEGACY}/default-locale`, { config: { auth: true } }, adminGetDefaultLocale);
 
-  // İstersen legacy :key da ekleyebilirsin (opsiyonel)
   app.get(`${LEGACY}/:key`, { config: { auth: true } }, adminGetSiteSettingByKey);
+  app.post(LEGACY, { config: { auth: true } }, adminCreateSiteSetting);
   app.put(`${LEGACY}/:key`, { config: { auth: true } }, adminUpdateSiteSetting);
+  app.post(`${LEGACY}/bulk-upsert`, { config: { auth: true } }, adminBulkUpsertSiteSettings);
+  app.delete(LEGACY, { config: { auth: true } }, adminDeleteManySiteSettings);
+  app.delete(`${LEGACY}/:key`, { config: { auth: true } }, adminDeleteSiteSetting);
 }

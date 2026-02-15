@@ -31,39 +31,5 @@ export * from './public/health.endpoints';
 export * from './public/availability.endpoints';
 export * from './public/bookings_public.endpoints';
 export * from './public/resources.endpoints';
-
-// =============================================================
-// Admin – konigsmassage
-// Buradan sonrası sadece admin RTK endpoint hook’ları
-// =============================================================
-
-// Core / Auth / Dashboard
-export * from './admin/auth.admin.endpoints';
-export * from './admin/dashboard_admin.endpoints';
-export * from './admin/db_admin.endpoints';
-
-
-
-// Content / CMS
-export * from './admin/services_admin.endpoints';
-export * from './admin/reviews_admin.endpoints';
-export * from './admin/sliders_admin.endpoints';
-export * from './admin/faqs_admin.endpoints';
-export * from './admin/custom_pages_admin.endpoints';
-export * from './admin/menu_items_admin.endpoints';
-export * from './admin/footer_sections_admin.endpoints';
-
-// Communication / Contacts / Newsletter / Support
-export * from './admin/contacts_admin.endpoints';
-export * from './admin/email_templates_admin.endpoints';
-
-// System / Storage / Users / Settings
-export * from './admin/site_settings_admin.endpoints';
-export * from './admin/storage_admin.endpoints';
-export * from './admin/users_admin.endpoints';
-export * from './admin/audit_admin.endpoints';
-
-// Availability / Resources / Bookings
-export * from './admin/availability_admin.endpoints';
-export * from './admin/resources_admin.endpoints';
-export * from './admin/bookings_admin.endpoints';
+export * from './public/chat.endpoints';
+export * from './admin/chat_admin.endpoints';

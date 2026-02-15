@@ -5,12 +5,12 @@
 // - Dark theme support
 // =============================================================
 
-	'use client';
+'use client';
 
-	import React, { useCallback, useEffect, useMemo, useState } from 'react';
-	import Image from 'next/image';
-	import Link from 'next/link';
-	import { useSearchParams } from 'next/navigation';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import {
   useListResourcesPublicQuery,
@@ -26,13 +26,13 @@ import type {
   ResourceSlotDto,
   ResourceWorkingHourDto,
   ResourcePublicItemDto,
-} from '@/integrations/types';
+} from '@/integrations/shared';
 
-	import { useLocaleShort } from '@/i18n/useLocaleShort';
-	import { useUiSection } from '@/i18n/uiDb';
-	import { isValidUiText } from '@/i18n/uiText';
-	import { localizePath } from '@/i18n/url';
-	import { toCdnSrc } from '@/shared/media';
+import { useLocaleShort } from '@/i18n/useLocaleShort';
+import { useUiSection } from '@/i18n/uiDb';
+import { isValidUiText } from '@/i18n/uiText';
+import { localizePath } from '@/i18n/url';
+import { toCdnSrc } from '@/shared/media';
 
 import {
   safeStr,
@@ -120,22 +120,23 @@ export const AppointmentPageContent: React.FC = () => {
   }, [coverSetting, ui]);
 
   const coverAlt = useMemo(() => {
-    return safeStr(ui('ui_appointment_cover_image_alt', '')) || t('ui_appointment_page_title', 'Appointment');
+    return (
+      safeStr(ui('ui_appointment_cover_image_alt', '')) ||
+      t('ui_appointment_page_title', 'Appointment')
+    );
   }, [ui, t]);
 
   // -------- optional: service preselect via query param --------
   const serviceSlug = useMemo(() => {
-    const fromQuery = safeStr(searchParams?.get('service')) || safeStr(searchParams?.get('service_slug'));
+    const fromQuery =
+      safeStr(searchParams?.get('service')) || safeStr(searchParams?.get('service_slug'));
     return fromQuery;
   }, [searchParams]);
 
   const { data: defaultLocaleRow } = useGetSiteSettingByKeyQuery({ key: 'default_locale' } as any);
   const defaultLocale = safeStr((defaultLocaleRow as any)?.value) || 'de';
 
-  const {
-    data: serviceFromSlug,
-    isError: serviceError,
-  } = useGetServiceBySlugPublicQuery(
+  const { data: serviceFromSlug, isError: serviceError } = useGetServiceBySlugPublicQuery(
     { slug: serviceSlug, locale, default_locale: defaultLocale } as any,
     { skip: !serviceSlug } as any,
   );
@@ -305,7 +306,10 @@ export const AppointmentPageContent: React.FC = () => {
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
-      const m = err?.data?.error?.message || err?.message || t('ui_appointment_form_error', 'Bir hata oluştu.');
+      const m =
+        err?.data?.error?.message ||
+        err?.message ||
+        t('ui_appointment_form_error', 'Bir hata oluştu.');
       setLocalMsg(m);
     }
   };
@@ -340,7 +344,6 @@ export const AppointmentPageContent: React.FC = () => {
   return (
     <section className="bg-bg-primary py-12 lg:py-20 overflow-x-hidden">
       <div className="container mx-auto px-4">
-        
         {/* Header */}
         <div
           className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center mb-12 lg:mb-16"
@@ -348,13 +351,17 @@ export const AppointmentPageContent: React.FC = () => {
         >
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 text-brand-primary font-bold uppercase tracking-widest text-sm mb-4">
-              {t('ui_appointment_subprefix', 'KÖNIG ENERGETIK')} {t('ui_appointment_sublabel', 'Appointment')}
+              {t('ui_appointment_subprefix', 'KÖNIG ENERGETIK')}{' '}
+              {t('ui_appointment_sublabel', 'Appointment')}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-text-primary mb-5 leading-[1.05]">
               {t('ui_appointment_title', 'Randevu Al')}
             </h1>
             <p className="text-text-secondary text-lg leading-relaxed">
-              {t('ui_appointment_desc', 'Size uygun terapisti ve saati seçerek kolayca randevu oluşturabilirsiniz.')}
+              {t(
+                'ui_appointment_desc',
+                'Size uygun terapisti ve saati seçerek kolayca randevu oluşturabilirsiniz.',
+              )}
             </p>
           </div>
 
@@ -368,7 +375,10 @@ export const AppointmentPageContent: React.FC = () => {
               loading="lazy"
               unoptimized
             />
-            <div className="absolute inset-0 bg-linear-to-t from-bg-dark/35 via-transparent to-transparent" aria-hidden />
+            <div
+              className="absolute inset-0 bg-linear-to-t from-bg-dark/35 via-transparent to-transparent"
+              aria-hidden
+            />
           </div>
         </div>
 
@@ -384,7 +394,8 @@ export const AppointmentPageContent: React.FC = () => {
                         {t('ui_appointment_selected_service_label', 'Selected service')}
                       </div>
                       <div className="font-serif font-bold text-text-primary leading-snug">
-                        {lockedServiceTitle || t('ui_appointment_selected_service_loading', 'Loading...')}
+                        {lockedServiceTitle ||
+                          t('ui_appointment_selected_service_loading', 'Loading...')}
                       </div>
                       {serviceError ? (
                         <div className="text-sm text-rose-700 mt-1">

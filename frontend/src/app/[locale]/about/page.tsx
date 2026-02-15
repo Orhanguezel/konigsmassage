@@ -8,7 +8,7 @@ import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { isValidUiText } from '@/i18n/uiText';
 import { toCdnSrc } from '@/shared/media';
-import { safeStr } from '@/integrations/types';
+import { safeStr } from '@/integrations/shared';
 
 export default function AboutPage() {
   const locale = useLocaleShort();
@@ -42,8 +42,10 @@ export default function AboutPage() {
     const d = safeStr(ui(key2, ''));
     if (isValidUiText(d, key2)) return d;
 
-    if (locale === 'de') return 'Informationen zu Anastasia König und KÖNIG ENERGETIK: energetische Massage in Bonn, achtsam, klar abgegrenzt, nach Vereinbarung.';
-    if (locale === 'tr') return 'Anastasia König ve KÖNIG ENERGETIK hakkında: Bonn’da enerjetik masaj, saygılı yaklaşım, net sınırlar ve randevu ile seanslar.';
+    if (locale === 'de')
+      return 'Informationen zu Anastasia König und KÖNIG ENERGETIK: energetische Massage in Bonn, achtsam, klar abgegrenzt, nach Vereinbarung.';
+    if (locale === 'tr')
+      return 'Anastasia König ve KÖNIG ENERGETIK hakkında: Bonn’da enerjetik masaj, saygılı yaklaşım, net sınırlar ve randevu ile seanslar.';
     return 'About Anastasia König and KÖNIG ENERGETIK: energetic massage sessions in Bonn with mindful touch, clear boundaries, and appointments by arrangement.';
   }, [ui, locale]);
 

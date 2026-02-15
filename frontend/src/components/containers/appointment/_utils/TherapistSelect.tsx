@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useId, useMemo } from 'react';
-import type { ResourcePublicItemDto } from '@/integrations/types/resources.types';
+import type { ResourcePublicItemDto } from '@/integrations/shared/resources.types';
 
 import { safeStr, therapistLabelText } from '../_utils/appointmentHelpers';
 
@@ -96,7 +96,16 @@ export const TherapistSelect: React.FC<TherapistSelectProps> = ({
           })}
         </select>
         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">
-           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </div>
       </div>
 

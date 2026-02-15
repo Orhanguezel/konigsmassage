@@ -23,9 +23,11 @@ import {
 
 import { AvailabilityForm } from "./availability-form";
 import { getApiErrorMessage } from "./availability-utils";
+import { useAdminT } from "@/app/(main)/admin/_components/common/useAdminT";
 
 export default function AdminAvailabilityDetailClient({ id }: { id: string }) {
   const router = useRouter();
+  const t = useAdminT();
   const safeId = String(id ?? "").trim();
   const isNew = safeId === "new";
   const isValidId = isUuidLike(safeId);
@@ -43,7 +45,7 @@ export default function AdminAvailabilityDetailClient({ id }: { id: string }) {
 
   React.useEffect(() => {
     if (!isNew && !isValidId) {
-      toast.error("Geçersiz kaynak id.");
+      toast.error(t("availability.form.messages.invalidId"));
     }
   }, [isNew, isValidId]);
 
@@ -52,7 +54,7 @@ export default function AdminAvailabilityDetailClient({ id }: { id: string }) {
       if (isNew) {
         const created = await createResource(values).unwrap();
         const newId = String(created?.id ?? "").trim();
-        toast.success("Kaynak oluşturuldu.");
+        toast.success(t("availability.form.messages.createSuccess"));
         if (isUuidLike(newId)) {
           router.replace(`/admin/availability/${encodeURIComponent(newId)}`);
         } else {
@@ -62,7 +64,7 @@ export default function AdminAvailabilityDetailClient({ id }: { id: string }) {
       }
 
       await updateResource({ id: safeId, patch: values }).unwrap();
-      toast.success("Kaynak güncellendi.");
+      toast.success(t("availability.form.messages.updateSuccess"));
       await getQ.refetch();
     } catch (err) {
       toast.error(getApiErrorMessage(err));
@@ -73,12 +75,12 @@ export default function AdminAvailabilityDetailClient({ id }: { id: string }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Geçersiz Kaynak</CardTitle>
-          <CardDescription>Gelen id geçersiz. Lütfen listeye dön.</CardDescription>
+          <CardTitle>{t("availability.form.messages.invalidId")}</CardTitle>
+          <CardDescription>{t("availability.form.messages.notFoundDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button type="button" onClick={() => router.push("/admin/availability")}>
-            Listeye Dön
+            {t("availability.form.messages.returnToList")}
           </Button>
         </CardContent>
       </Card>
@@ -89,12 +91,12 @@ export default function AdminAvailabilityDetailClient({ id }: { id: string }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Kaynak Bulunamadı</CardTitle>
-          <CardDescription>Bu kaynağa erişilemedi veya silinmiş olabilir.</CardDescription>
+          <CardTitle>{t("availability.form.messages.notFound")}</CardTitle>
+          <CardDescription>{t("availability.form.messages.notFoundDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Button type="button" onClick={() => router.push("/admin/availability")}>
-            Listeye Dön
+            {t("availability.form.messages.returnToList")}
           </Button>
         </CardContent>
       </Card>

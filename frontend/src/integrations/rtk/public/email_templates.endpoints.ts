@@ -9,27 +9,9 @@ import type {
   EmailTemplatePublicListQueryParams,
   RenderedEmailTemplateDto,
   RenderEmailTemplateByKeyPayload,
-} from '@/integrations/types';
-
-type WithLocale<T> = T & { locale?: string | null };
-
-const cleanParams = (params?: Record<string, unknown>): Record<string, unknown> | undefined => {
-  if (!params) return undefined;
-  const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(params)) {
-    if (v === undefined || v === null || v === '') continue;
-    out[k] = v;
-  }
-  return Object.keys(out).length ? out : undefined;
-};
-
-const makeLocaleHeaders = (locale?: string | null) =>
-  locale
-    ? {
-        'x-locale': locale,
-        'Accept-Language': locale,
-      }
-    : undefined;
+  WithLocale,
+} from '@/integrations/shared';
+import { cleanParams, makeLocaleHeaders } from '@/integrations/shared';
 
 export const emailTemplatesPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

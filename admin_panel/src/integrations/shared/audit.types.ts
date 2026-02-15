@@ -130,6 +130,33 @@ export function coerceAuditList<T>(raw: unknown): AuditListResponse<T> {
   return { items: [], total: 0 };
 }
 
+/* ---- Geo Stats ---- */
+
+export type AuditGeoStatsQueryParams = {
+  days?: number;
+  only_admin?: BoolLike;
+  source?: 'requests' | 'auth';
+};
+
+export type AuditGeoStatsRowDto = {
+  country: string;
+  count: number;
+  unique_ips: number;
+};
+
+export type AuditGeoStatsResponseDto = {
+  items: AuditGeoStatsRowDto[];
+};
+
+export function coerceAuditGeoStats(raw: unknown): AuditGeoStatsResponseDto {
+  const r = raw as any;
+  if (!r) return { items: [] };
+  if (Array.isArray(r)) return { items: r };
+  if (Array.isArray(r.items)) return { items: r.items };
+  if (Array.isArray(r.data)) return { items: r.data };
+  return { items: [] };
+}
+
 export function coerceAuditMetricsDaily(raw: unknown): AuditMetricsDailyResponseDto {
   const r = raw as any;
   if (!r) return { days: [] };

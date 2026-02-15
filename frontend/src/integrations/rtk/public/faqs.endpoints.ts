@@ -4,43 +4,20 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/rtk/baseApi';
-import type { FaqDto, FaqListQueryParams } from '@/integrations/types';
-
-// RTK query paramlarını temizlemek için (admin pattern'i gibi)
-const cleanParams = (params?: Record<string, unknown>): Record<string, unknown> | undefined => {
-  if (!params) return undefined;
-  const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(params)) {
-    if (v === undefined || v === null || v === '') continue;
-    out[k] = v;
-  }
-  return Object.keys(out).length ? out : undefined;
-};
-
-// Locale varsa header'a bas
-const makeLocaleHeaders = (locale?: string) =>
-  locale
-    ? {
-        'x-locale': locale,
-        'Accept-Language': locale,
-      }
-    : undefined;
-
-type FaqListWithLocale = FaqListQueryParams & { locale?: string };
+import type { FaqDto, FaqListQueryParams } from '@/integrations/shared';
+import { cleanParams, makeLocaleHeaders } from '@/integrations/shared';
 
 export const faqsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     /** GET /faqs – liste (public) */
-    listFaqs: builder.query<FaqDto[], FaqListWithLocale | void>({
+    listFaqs: builder.query<FaqDto[], FaqListQueryParams | void>({
       query: (params) => {
-        const p = (params || {}) as FaqListWithLocale;
+        const p = (params || {}) as FaqListQueryParams;
         const { locale, ...rest } = p;
 
         return {
           url: '/faqs',
           method: 'GET',
-          // backend schema sadece is_active, sort, orderDir, limit vs.
-          // kabul ediyorsa sorun çıkmasın diye locale'i param'dan çıkarıyoruz
           params: cleanParams(rest),
           headers: makeLocaleHeaders(locale),
         };

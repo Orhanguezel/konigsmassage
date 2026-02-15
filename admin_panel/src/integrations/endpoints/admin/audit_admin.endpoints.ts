@@ -7,7 +7,7 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/baseApi';
-import { coerceAuditList, coerceAuditMetricsDaily } from '@/integrations/shared';
+import { coerceAuditList, coerceAuditMetricsDaily, coerceAuditGeoStats } from '@/integrations/shared';
 import type {
   AuditAuthEventDto,
   AuditAuthEventsListQueryParams,
@@ -16,9 +16,14 @@ import type {
   AuditMetricsDailyResponseDto,
   AuditRequestLogDto,
   AuditRequestLogsListQueryParams,
+  AuditGeoStatsQueryParams,
+  AuditGeoStatsResponseDto,
 } from '@/integrations/shared';
 
 const BASE = 'admin/audit';
+
+type ClearAuditTarget = 'requests' | 'auth' | 'all';
+type ClearAuditResponse = { ok: boolean; deletedRequests: number; deletedAuth: number };
 
 export const auditAdminApi = baseApi.injectEndpoints({
   overrideExisting: false,
@@ -61,6 +66,32 @@ export const auditAdminApi = baseApi.injectEndpoints({
       transformResponse: (raw: any) => coerceAuditMetricsDaily(raw),
       providesTags: [{ type: 'AuditMetric' as const, id: 'DAILY' }],
     }),
+
+    getAuditGeoStatsAdmin: build.query<
+      AuditGeoStatsResponseDto,
+      AuditGeoStatsQueryParams | void
+    >({
+      query: (params) => ({
+        url: `${BASE}/geo-stats`,
+        method: 'GET',
+        params: params ?? undefined,
+      }),
+      transformResponse: (raw: any) => coerceAuditGeoStats(raw),
+      providesTags: [{ type: 'AuditMetric' as const, id: 'GEO' }],
+    }),
+
+    clearAuditLogsAdmin: build.mutation<ClearAuditResponse, { target?: ClearAuditTarget }>({
+      query: ({ target = 'all' }) => ({
+        url: `${BASE}/clear?target=${encodeURIComponent(target)}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [
+        { type: 'AuditRequestLog' as const, id: 'LIST' },
+        { type: 'AuditAuthEvent' as const, id: 'LIST' },
+        { type: 'AuditMetric' as const, id: 'DAILY' },
+        { type: 'AuditMetric' as const, id: 'GEO' },
+      ],
+    }),
   }),
 });
 
@@ -68,4 +99,6 @@ export const {
   useListAuditRequestLogsAdminQuery,
   useListAuditAuthEventsAdminQuery,
   useGetAuditMetricsDailyAdminQuery,
+  useGetAuditGeoStatsAdminQuery,
+  useClearAuditLogsAdminMutation,
 } = auditAdminApi;

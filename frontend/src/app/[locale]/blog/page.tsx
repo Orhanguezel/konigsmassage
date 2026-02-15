@@ -9,8 +9,8 @@ import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { isValidUiText } from '@/i18n/uiText';
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
-import type { CustomPageDto } from '@/integrations/types';
-import { safeStr} from '@/integrations/types';
+import type { CustomPageDto } from '@/integrations/shared';
+import { safeStr } from '@/integrations/shared';
 
 export default function BlogPage() {
   const locale = useLocaleShort();
@@ -71,13 +71,13 @@ export default function BlogPage() {
 
     const md = safeStr(primary?.meta_description);
     if (md) return md;
-    
+
     return '';
   }, [ui, primary]);
-  
+
   const ogImageOverride = useMemo(() => {
-      // Just basic handling
-      return undefined;
+    // Just basic handling
+    return undefined;
   }, []);
 
   return (
@@ -90,12 +90,12 @@ export default function BlogPage() {
       />
 
       <Banner title={bannerTitle} />
-      
+
       <div className="bg-bg-primary min-h-[50vh]">
         <section className="container mx-auto py-16 px-4">
           <BlogPageContent />
         </section>
-        
+
         <section className="container mx-auto pb-16 px-4">
           <Feedback />
         </section>

@@ -28,13 +28,13 @@ SET @IMG_BLOG_1  := 'https://res.cloudinary.com/dbozv7wqd/image/upload/v17540798
 SET @IMAGES_1 := CONCAT('["', REPLACE(@IMG_BLOG_1, '"', '\"'), '"]');
 
 INSERT INTO `custom_pages`
-(`id`,`module_key`,`is_published`,`display_order`,`order_num`,
+(`id`,`module_key`,`is_published`,`featured`,`display_order`,`order_num`,
  `featured_image`,`featured_image_asset_id`,
  `image_url`,`storage_asset_id`,
  `images`,`storage_image_ids`,
  `created_at`,`updated_at`)
 VALUES
-(@PAGE_BLOG_1,@MODULE_KEY,1,110,110,
+(@PAGE_BLOG_1,@MODULE_KEY,1,1,110,110,
  @IMG_BLOG_1,NULL,
  @IMG_BLOG_1,NULL,
  @IMAGES_1,@EMPTY_ARR,
@@ -42,6 +42,7 @@ VALUES
 ON DUPLICATE KEY UPDATE
   `module_key`        = VALUES(`module_key`),
   `is_published`      = VALUES(`is_published`),
+  `featured`          = VALUES(`featured`),
   `display_order`     = VALUES(`display_order`),
   `order_num`         = VALUES(`order_num`),
   `featured_image`    = VALUES(`featured_image`),
@@ -192,13 +193,13 @@ SET @IMG_BLOG_2  := 'https://res.cloudinary.com/dbozv7wqd/image/upload/v17540823
 SET @IMAGES_2 := CONCAT('["', REPLACE(@IMG_BLOG_2, '"', '\"'), '"]');
 
 INSERT INTO `custom_pages`
-(`id`,`module_key`,`is_published`,`display_order`,`order_num`,
+(`id`,`module_key`,`is_published`,`featured`,`display_order`,`order_num`,
  `featured_image`,`featured_image_asset_id`,
  `image_url`,`storage_asset_id`,
  `images`,`storage_image_ids`,
  `created_at`,`updated_at`)
 VALUES
-(@PAGE_BLOG_2,@MODULE_KEY,1,120,120,
+(@PAGE_BLOG_2,@MODULE_KEY,1,1,120,120,
  @IMG_BLOG_2,NULL,
  @IMG_BLOG_2,NULL,
  @IMAGES_2,@EMPTY_ARR,
@@ -206,6 +207,7 @@ VALUES
 ON DUPLICATE KEY UPDATE
   `module_key`        = VALUES(`module_key`),
   `is_published`      = VALUES(`is_published`),
+  `featured`          = VALUES(`featured`),
   `display_order`     = VALUES(`display_order`),
   `order_num`         = VALUES(`order_num`),
   `featured_image`    = VALUES(`featured_image`),
@@ -343,13 +345,13 @@ SET @IMG_BLOG_3  := 'https://res.cloudinary.com/dbozv7wqd/image/upload/v17540824
 SET @IMAGES_3 := CONCAT('["', REPLACE(@IMG_BLOG_3, '"', '\"'), '"]');
 
 INSERT INTO `custom_pages`
-(`id`,`module_key`,`is_published`,`display_order`,`order_num`,
+(`id`,`module_key`,`is_published`,`featured`,`display_order`,`order_num`,
  `featured_image`,`featured_image_asset_id`,
  `image_url`,`storage_asset_id`,
  `images`,`storage_image_ids`,
  `created_at`,`updated_at`)
 VALUES
-(@PAGE_BLOG_3,@MODULE_KEY,1,130,130,
+(@PAGE_BLOG_3,@MODULE_KEY,1,0,130,130,
  @IMG_BLOG_3,NULL,
  @IMG_BLOG_3,NULL,
  @IMAGES_3,@EMPTY_ARR,
@@ -357,6 +359,7 @@ VALUES
 ON DUPLICATE KEY UPDATE
   `module_key`        = VALUES(`module_key`),
   `is_published`      = VALUES(`is_published`),
+  `featured`          = VALUES(`featured`),
   `display_order`     = VALUES(`display_order`),
   `order_num`         = VALUES(`order_num`),
   `featured_image`    = VALUES(`featured_image`),
@@ -485,13 +488,13 @@ SET @IMG_BLOG_4  := 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?a
 SET @IMAGES_4 := CONCAT('["', REPLACE(@IMG_BLOG_4, '"', '\"'), '"]');
 
 INSERT INTO `custom_pages`
-(`id`,`module_key`,`is_published`,`display_order`,`order_num`,
+(`id`,`module_key`,`is_published`,`featured`,`display_order`,`order_num`,
  `featured_image`,`featured_image_asset_id`,
  `image_url`,`storage_asset_id`,
  `images`,`storage_image_ids`,
  `created_at`,`updated_at`)
 VALUES
-(@PAGE_BLOG_4,@MODULE_KEY,1,140,140,
+(@PAGE_BLOG_4,@MODULE_KEY,1,0,140,140,
  @IMG_BLOG_4,NULL,
  @IMG_BLOG_4,NULL,
  @IMAGES_4,@EMPTY_ARR,
@@ -499,6 +502,7 @@ VALUES
 ON DUPLICATE KEY UPDATE
   `module_key`        = VALUES(`module_key`),
   `is_published`      = VALUES(`is_published`),
+  `featured`          = VALUES(`featured`),
   `display_order`     = VALUES(`display_order`),
   `order_num`         = VALUES(`order_num`),
   `featured_image`    = VALUES(`featured_image`),
@@ -654,13 +658,13 @@ SET @IMG_BLOG_5  := 'https://images.unsplash.com/photo-1525097487452-6278ff080c3
 SET @IMAGES_5 := CONCAT('["', REPLACE(@IMG_BLOG_5, '"', '\"'), '"]');
 
 INSERT INTO `custom_pages`
-(`id`,`module_key`,`is_published`,`display_order`,`order_num`,
+(`id`,`module_key`,`is_published`,`featured`,`display_order`,`order_num`,
  `featured_image`,`featured_image_asset_id`,
  `image_url`,`storage_asset_id`,
  `images`,`storage_image_ids`,
  `created_at`,`updated_at`)
 VALUES
-(@PAGE_BLOG_5,@MODULE_KEY,1,150,150,
+(@PAGE_BLOG_5,@MODULE_KEY,1,0,150,150,
  @IMG_BLOG_5,NULL,
  @IMG_BLOG_5,NULL,
  @IMAGES_5,@EMPTY_ARR,
@@ -668,6 +672,7 @@ VALUES
 ON DUPLICATE KEY UPDATE
   `module_key`        = VALUES(`module_key`),
   `is_published`      = VALUES(`is_published`),
+  `featured`          = VALUES(`featured`),
   `display_order`     = VALUES(`display_order`),
   `order_num`         = VALUES(`order_num`),
   `featured_image`    = VALUES(`featured_image`),
@@ -814,13 +819,13 @@ SET @IMG_BLOG_6  := 'https://images.unsplash.com/photo-1500530855697-b586d89ba3e
 SET @IMAGES_6 := CONCAT('["', REPLACE(@IMG_BLOG_6, '"', '\"'), '"]');
 
 INSERT INTO `custom_pages`
-(`id`,`module_key`,`is_published`,`display_order`,`order_num`,
+(`id`,`module_key`,`is_published`,`featured`,`display_order`,`order_num`,
  `featured_image`,`featured_image_asset_id`,
  `image_url`,`storage_asset_id`,
  `images`,`storage_image_ids`,
  `created_at`,`updated_at`)
 VALUES
-(@PAGE_BLOG_6,@MODULE_KEY,1,160,160,
+(@PAGE_BLOG_6,@MODULE_KEY,1,0,160,160,
  @IMG_BLOG_6,NULL,
  @IMG_BLOG_6,NULL,
  @IMAGES_6,@EMPTY_ARR,
@@ -828,6 +833,7 @@ VALUES
 ON DUPLICATE KEY UPDATE
   `module_key`        = VALUES(`module_key`),
   `is_published`      = VALUES(`is_published`),
+  `featured`          = VALUES(`featured`),
   `display_order`     = VALUES(`display_order`),
   `order_num`         = VALUES(`order_num`),
   `featured_image`    = VALUES(`featured_image`),

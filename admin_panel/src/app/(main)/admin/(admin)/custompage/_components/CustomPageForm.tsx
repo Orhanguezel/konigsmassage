@@ -11,6 +11,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import type { CustomPageDto } from '@/integrations/shared';
 import { useLazyListCustomPagesAdminQuery } from '@/integrations/hooks';
@@ -33,6 +34,7 @@ export type CustomPageFormValues = {
 
   locale: string;
   is_published: boolean;
+  featured: boolean;
   title: string;
   slug: string;
   content: string;
@@ -83,7 +85,7 @@ const norm = (v: unknown) =>
     .trim();
 
 const getLocaleFromDto = (dto?: CustomPageDto, fallback = 'de') => {
-  const raw = (dto as any)?.locale_resolved ?? (dto as any)?.locale ?? fallback;
+  const raw = dto?.locale_resolved ?? fallback;
   return norm(raw) || norm(fallback) || 'de';
 };
 
@@ -100,6 +102,7 @@ const buildInitialValues = (
 
       locale: safeLocale,
       is_published: false,
+      featured: false,
       title: '',
       slug: '',
       content: '',
@@ -120,9 +123,9 @@ const buildInitialValues = (
   }
 
   const tagsString =
-    Array.isArray((initial as any)?.tags) && (initial as any).tags.length
-      ? (initial as any).tags.join(', ')
-      : ((initial as any).tags_raw ?? '');
+    Array.isArray(initial.tags) && initial.tags.length
+      ? initial.tags.join(', ')
+      : (initial.tags_raw ?? '');
 
   const resolvedLocale = getLocaleFromDto(initial, safeLocale);
 
@@ -132,24 +135,25 @@ const buildInitialValues = (
 
     locale: resolvedLocale,
     is_published: !!initial.is_published,
+    featured: !!initial.featured,
 
     title: initial.title ?? '',
     slug: initial.slug ?? '',
-    content: (initial as any).content ?? (initial as any).content_html ?? '',
+    content: initial.content ?? initial.content_html ?? '',
 
-    featured_image: (initial as any).featured_image ?? '',
-    featured_image_asset_id: (initial as any).featured_image_asset_id ?? '',
-    featured_image_alt: (initial as any).featured_image_alt ?? '',
+    featured_image: initial.featured_image ?? '',
+    featured_image_asset_id: initial.featured_image_asset_id ?? '',
+    featured_image_alt: initial.featured_image_alt ?? '',
 
-    summary: (initial as any).summary ?? '',
-    meta_title: (initial as any).meta_title ?? '',
-    meta_description: (initial as any).meta_description ?? '',
+    summary: initial.summary ?? '',
+    meta_title: initial.meta_title ?? '',
+    meta_description: initial.meta_description ?? '',
 
     tags: tagsString,
 
-    images: Array.isArray((initial as any).images) ? (initial as any).images : [],
-    storage_image_ids: Array.isArray((initial as any).storage_image_ids)
-      ? (initial as any).storage_image_ids
+    images: Array.isArray(initial.images) ? initial.images : [],
+    storage_image_ids: Array.isArray(initial.storage_image_ids)
+      ? initial.storage_image_ids
       : [],
   };
 };
@@ -179,6 +183,7 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const t = useAdminT();
   const safeDefaultLocale = norm(defaultLocale || 'de') || 'de';
 
   const [values, setValues] = useState<CustomPageFormValues>(
@@ -273,8 +278,8 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
 
       if (mySeq !== localeReqSeq.current) return;
 
-      const items: CustomPageDto[] = (res as any)?.items ?? (res as any) ?? [];
-      const match = items.find((item: any) => String(item?.id || '') === String(baseId));
+      const items: CustomPageDto[] = res?.items ?? [];
+      const match = items.find((item) => String(item?.id || '') === String(baseId));
 
       if (match) {
         const nextValues = buildInitialValues(match, safeDefaultLocale);
@@ -283,17 +288,17 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
         setSlugTouched(false);
         pendingLocaleRef.current = '';
       } else {
-        toast.info('Seçilen dil için kayıt bulunamadı; bu dilde yeni içerik oluşturabilirsin.');
+        toast.info(t('admin.customPage.form.localeRecordNotFound'));
       }
     } catch (err: any) {
       if (mySeq !== localeReqSeq.current) return;
       const status = err?.status ?? err?.originalStatus;
       if (status === 400) {
         toast.info(
-          'Seçilen dil için kayıt listesi alınamadı; bu dilde yeni içerik oluşturabilirsin.',
+          t('admin.customPage.form.localeRecordNotFound'),
         );
       } else {
-        toast.error('Seçilen dil için özel sayfa yüklenirken bir hata oluştu.');
+        toast.error(t('admin.customPage.form.localeLoadFailed'));
       }
     }
   };
@@ -303,7 +308,7 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
     if (disabled) return;
 
     if (!values.title.trim() || !values.slug.trim()) {
-      toast.error('Başlık ve slug alanları zorunludur.');
+      toast.error(t('admin.customPage.form.titleSlugRequired'));
       return;
     }
 
@@ -347,13 +352,13 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
       ...prev,
       content: (prev.content || '') + '\n\n' + htmlBlock + '\n\n',
     }));
-    toast.success('Görsel içerik alanına eklendi. Editörde yerini değiştirebilirsin.');
+    toast.success(t('admin.customPage.form.imageAddedToContent'));
   };
 
   const handleAddManualImage = () => {
     const url = manualImageUrl.trim();
     if (!url) {
-      toast.error("Lütfen geçerli bir görsel URL'i gir.");
+      toast.error(t('admin.customPage.form.invalidImageUrl'));
       return;
     }
     handleAddContentImage(url, manualImageAlt.trim());
@@ -368,10 +373,10 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0">
               <div className="text-sm font-semibold">
-                {mode === 'create' ? 'Yeni Sayfa Oluştur' : 'Sayfa Düzenle'}
+                {mode === 'create' ? t('admin.customPage.form.createTitle') : t('admin.customPage.form.editTitle')}
               </div>
               <div className="text-xs text-muted-foreground">
-                Başlık, slug, içerik, etiketler ve SEO alanlarını doldur.
+                {t('admin.customPage.form.formDescription')}
               </div>
             </div>
 
@@ -408,7 +413,7 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
                   onClick={onCancel}
                   disabled={disabled}
                 >
-                  Geri
+                  {t('admin.customPage.form.back')}
                 </button>
               ) : null}
 
@@ -419,16 +424,16 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
               >
                 {saving
                   ? mode === 'create'
-                    ? 'Oluşturuluyor...'
-                    : 'Kaydediliyor...'
+                    ? t('admin.customPage.form.creating')
+                    : t('admin.customPage.form.saving')
                   : mode === 'create'
-                    ? 'Sayfayı Oluştur'
-                    : 'Değişiklikleri Kaydet'}
+                    ? t('admin.customPage.form.createBtn')
+                    : t('admin.customPage.form.saveBtn')}
               </button>
 
               {loading || isLocaleSwitchLoading ? (
                 <span className="rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-                  {isLocaleSwitchLoading ? 'Dil değiştiriliyor...' : 'Yükleniyor...'}
+                  {isLocaleSwitchLoading ? t('admin.customPage.form.switchingLocale') : t('admin.common.loading')}
                 </span>
               ) : null}
             </div>
@@ -442,7 +447,7 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
               disabled={disabled}
               onChange={(next) => setValues(next as CustomPageFormValues)}
               label="Custom Page JSON"
-              helperText="Bu JSON, formdaki tüm alanların bire bir karşılığıdır."
+              helperText={t('admin.customPage.form.jsonHelperText')}
             />
           ) : (
             <>
@@ -457,10 +462,10 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
                     (!!localesLoading && !localeSelectOptions.length) ||
                     isLocaleSwitchLoading
                   }
-                  label="Dil"
+                  label={t('admin.customPage.form.localeLabel')}
                 />
                 <div className="mt-1 text-xs text-muted-foreground">
-                  Seçim; aynı zamanda düzenlediğin locale kaydını belirler.
+                  {t('admin.customPage.form.localeHint')}
                 </div>
               </div>
 

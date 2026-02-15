@@ -4,7 +4,7 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/rtk/baseApi';
-import type { ResourcePublicItemDto, ResourcesPublicListQueryParams } from '@/integrations/types';
+import type { ResourcePublicItemDto, ResourcesPublicListQueryParams } from '@/integrations/shared';
 
 export const resourcesPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

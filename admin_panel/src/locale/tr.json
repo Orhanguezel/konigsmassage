@@ -1,5 +1,67 @@
 {
   "admin": {
+    "reports": {
+      "title": "Raporlar (Admin)",
+      "description": "KPI, kaynak performansı ve lokasyon kırılımı.",
+      "refresh": "Yenile",
+      "tabs": {
+        "title": "Sekmeler",
+        "description": "KPI • Kaynak Performansı • Lokasyonlar",
+        "kpi": "KPI",
+        "users": "Kaynaklar",
+        "locations": "Lokasyonlar"
+      },
+      "filter": {
+        "title": "Filtre",
+        "description": "Tarih aralığı (başlangıç/bitiş) ve kaynak seçimi.",
+        "apply": "Uygula",
+        "reset": "Sıfırla",
+        "from": "Başlangıç",
+        "to": "Bitiş",
+        "role": "Rol",
+        "roleHint": "Sadece “Kaynaklar” sekmesinde kullanılır.",
+        "invalidFrom": "Başlangıç geçersiz tarih.",
+        "invalidTo": "Bitiş geçersiz tarih."
+      },
+      "kpi": {
+        "daily": "Günlük",
+        "weekly": "Haftalık",
+        "monthly": "Aylık",
+        "loadingError": "KPI yüklenemedi.",
+        "noData": "Kayıt yok.",
+        "bucket": "Dönem",
+        "total": "Toplam",
+        "completed": "Tamamlanan",
+        "success": "Başarı"
+      },
+      "users": {
+        "title": "Kaynak Performansı",
+        "description": "rol={role} • kayıt: {count}",
+        "loadingError": "Performans raporu yüklenemedi.",
+        "noData": "Kayıt bulunamadı.",
+        "table": {
+          "user": "Kaynak",
+          "total": "Rezervasyon",
+          "completed": "Tamamlanan",
+          "cancelled": "İptal",
+          "success": "Başarı"
+        }
+      },
+      "locations": {
+        "title": "Lokasyon (Dil) Kırılımı",
+        "description": "kayıt: {count}",
+        "loadingError": "Lokasyon raporu yüklenemedi.",
+        "noData": "Kayıt bulunamadı.",
+        "table": {
+          "city": "Dil / Bölge",
+          "district": "Alt Bölge",
+          "total": "Rezervasyon",
+          "completed": "Tamamlanan",
+          "cancelled": "İptal",
+          "success": "Başarı"
+        }
+      }
+    },
     "db": {
       "title": "Veritabanı Yönetimi",
       "description": "Snapshot noktaları oluştur, tam yedek indir, SQL import uygula veya modül bazlı export/import yap.",
@@ -226,893 +288,7 @@
           "bootstrapError": "UI bootstrap başarısız.",
           "bootstrapErrorGeneric": "UI bootstrap sırasında hata oluştu."
         }
-      },
-      "siteSettings": {
-        "title": "Site Ayarları",
-        "description": "Key-value ayarlarını yönetin. Liste sekmeleri arama ile filtrelenebilir.",
-        "tabs": {
-          "general": "Genel",
-          "seo": "SEO",
-          "smtp": "SMTP / E-posta",
-          "cloudinary": "Cloudinary",
-          "api": "API",
-          "brandMedia": "Logo & Favicon",
-          "list": "Liste (Dil)",
-          "globalList": "Liste (Global *)",
-          "locales": "Diller"
-        },
-        "filters": {
-          "title": "Filtreler",
-          "description": "Arama, dil ve sekme seçimi.",
-          "search": "Ara",
-          "searchPlaceholder": "Key veya değer içinde ara...",
-          "language": "Dil",
-          "selectLanguage": "Dil seç",
-          "globalPlaceholder": "Global",
-          "defaultSuffix": "varsayılan",
-          "inactiveSuffix": "pasif",
-          "languageDisabledNote": "Bu sekmede dil seçimi kullanılmaz.",
-          "refreshButton": "Yenile",
-          "resetButton": "Sıfırla",
-          "refreshed": "Yenilendi."
-        },
-        "badges": {
-          "global": "Global"
-        },
-        "management": {
-          "title": "Yönetim",
-          "localeRecords": "Seçili dil kayıtları",
-          "globalRecords": "Global (*) kayıtları",
-          "loadingMeta": "Locale meta yükleniyor…"
-        },
-        "locales": {
-          "title": "Diller",
-          "description": "Aktif dilleri (app_locales) ve varsayılan dili (default_locale) yönetin.",
-          "defaultLabel": "Varsayılan dil",
-          "defaultPlaceholder": "Varsayılan dili seç",
-          "table": {
-            "code": "Kod",
-            "label": "Etiket",
-            "active": "Aktif",
-            "default": "Varsayılan"
-          },
-          "empty": "Dil konfigürasyonu bulunamadı.",
-          "presetDeEnTr": "de/en/tr preset uygula",
-          "presetTop20": "20 yaygın dil ekle",
-          "saved": "Diller güncellendi.",
-          "saveError": "Diller güncellenemedi."
-        },
-        "list": {
-          "title": "Ayar Listesi",
-          "description": "site_settings kayıtları",
-          "dash": "—",
-          "hideSeoNote": "SEO anahtarları bu listede gizlenir; SEO sekmesinden yönetilir.",
-          "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
-          "noRecords": "Kayıt bulunamadı.",
-          "updatedAtLabel": "Güncellenme",
-          "mobileNote": "Mobil görünümde kayıtlar kart formatında listelenir.",
-          "mobileHideSeoSuffix": "SEO anahtarları burada da gizlidir.",
-          "columns": {
-            "key": "Key",
-            "locale": "Dil",
-            "value": "Değer (Özet)",
-            "updatedAt": "Güncellenme",
-            "actions": "İşlemler"
-          },
-          "preview": {
-            "array": "Dizi [{count} öğe]",
-            "object": "Nesne ({count} alan)"
-          }
-        },
-        "form": {
-          "title": "Ayar",
-          "description": "Structured mod: form editörü. Raw mod: JSON veya düz string.",
-          "imageLabel": "Görsel",
-          "saved": "\"{key}\" ({locale}) kaydedildi.",
-          "saveError": "Kaydetme sırasında hata oluştu.",
-          "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
-          "deleted": "\"{key}\" ({locale}) silindi.",
-          "deleteError": "Silme sırasında hata oluştu.",
-          "modes": {
-            "structured": "Structured",
-            "raw": "Raw"
-          },
-          "structuredMissingTitle": "Structured renderer yok",
-          "structuredMissingDesc": "Bu key için structured renderer tanımlı değil. Raw modunu kullanın.",
-          "rawHelp": "Raw: Geçerli JSON girersen parse edilerek kaydedilir; değilse düz string kaydedilir.",
-          "rawPlaceholder": "Örn: {\"title\":\"...\"} veya düz metin",
-          "rawTip": "İpucu: JSON formatında kaydetmek istiyorsan başı “{” veya “[” ile başlamalı."
-        },
-        "detail": {
-          "globalOption": "Global (*)",
-          "keyMissingTitle": "Hata",
-          "keyMissingDesc": "Setting key bulunamadı.",
-          "localesMissingTitle": "Dil listesi bulunamadı",
-          "localesMissingDesc": "site_settings.app_locales boş veya geçersiz. Önce dilleri ayarla.",
-          "localesMissingAction": "Site Ayarlarına git",
-          "editTitle": "Düzenle",
-          "backToList": "Listeye Dön",
-          "localeLabel": "Locale",
-          "loadingLocale": "Locale yükleniyor…",
-          "fallbackNotice": "<code>{selectedLocale}</code> için birebir kayıt yok. <code>{effectiveLocale}</code> fallback değeri gösteriliyor. Kaydetmek <code>{selectedLocale}</code> için kayıt oluşturur/günceller.",
-          "noRecordNotice": "<code>{key}</code> (<code>{locale}</code>) için kayıt bulunamadı. Kaydedince oluşturabilirsiniz.",
-          "note": "Not: General/UI key’lerde structured form açılır. Diğer key’ler structured modda JSON editor fallback’tır.",
-          "siteMetaDefaultGlobalGuard": "site_meta_default locale=\"*\" olamaz. Dil seçip kaydet.",
-          "updated": "\"{key}\" ({locale}) güncellendi.",
-          "deleted": "\"{key}\" ({locale}) silindi.",
-          "structuredJson": {
-            "noRenderer": "Bu key için özel structured form tanımlı değil. Structured mod JSON editor olarak çalışır.",
-            "label": "Structured JSON",
-            "helperText": "Blur olduğunda parse edilir. Geçersiz JSON kaydedilmez."
-          }
-        },
-        "general": {
-          "title": "Genel / UI",
-          "description": "GLOBAL (*) default + seçili dil ({locale}) override birlikte yönetilir.",
-          "searchPlaceholder": "Key veya değer içinde ara",
-          "globalBootstrap": "Global Bootstrap",
-          "globalBootstrapTooltip": "Eksik GLOBAL (*) kayıtları default seed ile oluşturur",
-          "recordsTitle": "Kayıtlar",
-          "managedKeys": "Yönetilen anahtarlar:",
-          "keyColumn": "Key",
-          "sourceColumn": "Kaynak",
-          "effectiveColumn": "Effective (Özet)",
-          "actionsColumn": "İşlemler",
-          "globalExists": "GLOBAL (*) Var",
-          "globalNotExists": "GLOBAL (*) Yok",
-          "localeExists": "LOCALE ({locale}) Var",
-          "localeNotExists": "LOCALE ({locale}) Yok",
-          "sourceOverride": "Override",
-          "sourceGlobal": "Global",
-          "sourceNone": "Yok",
-          "noOverrideNote": "Bu key için {locale} override yok; GLOBAL (*) uygulanıyor.",
-          "overrideButton": "Override",
-          "restoreButton": "Restore",
-          "restoreTooltip": "Bu satırın default değerlerini geri yükler",
-          "deleteGlobal": "Sil*",
-          "deleteGlobalTooltip": "GLOBAL (*) sil",
-          "deleteLocale": "Sil",
-          "deleteLocaleTooltip": "LOCALE ({locale}) sil",
-          "noRecords": "Kayıt bulunamadı.",
-          "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
-          "deleted": "\"{key}\" ({locale}) silindi.",
-          "overrideCreated": "\"{key}\" için {locale} override oluşturuldu (GLOBAL kopyalandı).",
-          "defaultsRestored": "\"{key}\" ({locale}) default değerler geri yüklendi.",
-          "missingGlobalError": "GLOBAL (*) kayıt bulunamadı. Önce global değer oluşturmalısın.",
-          "globalBootstrapSuccess": "Eksik GLOBAL (*) General/UI kayıtları oluşturuldu.",
-          "loadingNote": "Global + locale kayıtları çekiliyor.",
-          "deleteTooltip": "İpucu: \"Sil*\" GLOBAL (*) kaydını siler. \"Sil\" seçili locale override'ını siler."
-        },
-        "cloudinary": {
-          "title": "Cloudinary / Storage Ayarları",
-          "description": "Global ayarlardır (locale=*). Seçili dil sadece arayüz bilgisidir.",
-          "badge": "Global (locale=*) • Seçili dil: {locale}",
-          "storageDriver": "Storage Driver",
-          "storageDriverPlaceholder": "local veya cloudinary",
-          "storageDriverHelp": "Örn: cloudinary veya local",
-          "localRoot": "Local Root",
-          "localRootPlaceholder": "/var/www/uploads",
-          "localBaseUrl": "Local Base URL",
-          "localBaseUrlPlaceholder": "/uploads veya https://cdn.site.com/uploads",
-          "cdnPublicBase": "CDN Public Base",
-          "cdnPublicBasePlaceholder": "https://cdn.guezelwebdesign.com",
-          "publicApiBase": "Public API Base",
-          "publicApiBasePlaceholder": "https://api.guezelwebdesign.com",
-          "cloudName": "Cloudinary Cloud Name",
-          "cloudNamePlaceholder": "cloud-name",
-          "apiKey": "Cloudinary API Key",
-          "apiKeyPlaceholder": "API key",
-          "apiSecret": "Cloudinary API Secret",
-          "apiSecretPlaceholder": "API secret",
-          "folder": "Cloudinary Folder",
-          "folderPlaceholder": "uploads",
-          "unsignedPreset": "Cloudinary Unsigned Preset",
-          "unsignedPresetPlaceholder": "İsteğe bağlı preset adı",
-          "testButton": "Cloudinary Test",
-          "testing": "Test ediliyor...",
-          "saved": "Cloudinary / Storage ayarları kaydedildi.",
-          "testSuccess": "Cloudinary bağlantısı başarılı. Cloud: {cloud}, test dosyası: {publicId}",
-          "testFailedConsole": "Cloudinary testi başarısız. Detaylar için console'a bak.",
-          "testFailedLocal": "Cloudinary testi başarısız: storage_driver şu an 'local'. Cloudinary kullanmak için storage_driver'ı 'cloudinary' yap ve keyleri doldur.",
-          "testFailedConfig": "Cloudinary yapılandırılmamış: Cloud name, API key ve secret değerlerini doldurup tekrar dene.",
-          "testFailedStep": "Cloudinary testi başarısız ({step}): {message}",
-          "testInfo": "Cloudinary bağlantısını test etmek için \"Cloudinary Test\" butonuna tıkla.",
-          "testInfoTesting": "Cloudinary testi yapılıyor...",
-          "testInfoSuccess": "Son test: BAŞARILI (cloud: {cloud})",
-          "testInfoError": "Son test: HATA – detaylar için loglara bak."
-        },
-        "brandMedia": {
-          "title": "Logo & Favicon",
-          "description": "Bu sekme dil bağımsızdır. Kayıtlar locale=\"*\" olarak tutulur.",
-          "badge": "Global (locale=*)",
-          "searchPlaceholder": "Key içinde ara (örn: logo, favicon)",
-          "labels": {
-            "site_logo": "Logo",
-            "site_logo_dark": "Logo (Dark)",
-            "site_logo_light": "Logo (Light)",
-            "site_favicon": "Favicon",
-            "site_apple_touch_icon": "Apple Touch Icon",
-            "site_app_icon_512": "App Icon 512x512",
-            "site_og_default_image": "Varsayılan OG Görseli",
-            "site_appointment_cover": "Randevu Kapak Görseli"
-          },
-          "updated": "{label} güncellendi.",
-          "updateError": "{label} kaydedilirken hata oluştu.",
-          "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
-          "deleteError": "Silme sırasında hata oluştu."
-        },
-        "api": {
-          "title": "API & Entegrasyon Ayarları",
-          "description": "Global ayarlardır (locale=*). Seçili dil sadece arayüz bilgisidir.",
-          "badge": "Global (locale=*)",
-          "uiBadge": "UI: {locale}",
-          "note": "Bu alanlar genellikle dillere göre değişmez. Veritabanında locale=* olarak tutulur.",
-          "googleClientId": "Google Client ID",
-          "googleClientIdHelp": "Google OAuth / Login entegrasyonu için Client ID.",
-          "googleClientSecret": "Google Client Secret",
-          "googleClientSecretHelp": "Güvenlik nedeniyle mümkünse sadece backend ortam değişkenleriyle yönet.",
-          "gtmContainerId": "GTM Container ID",
-          "gtmContainerIdPlaceholder": "GTM-XXXXXXX",
-          "gtmContainerIdHelp": "GTM aktifse frontend sadece GTM scriptini basar; GA4 tag'i GTM içinden yönetilir.",
-          "ga4MeasurementId": "GA4 Measurement ID",
-          "ga4MeasurementIdPlaceholder": "G-XXXXXXXXXX",
-          "ga4MeasurementIdHelp": "GTM yoksa gtag.js ile fallback olarak kullanılabilir.",
-          "cookieConsent": "Cookie Consent (JSON)",
-          "cookieConsentPlaceholder": "{\"consent_version\":1,\"defaults\":{\"necessary\":true,\"analytics\":false,\"marketing\":false},\"ui\":{\"enabled\":true}}",
-          "cookieConsentHelp": "JSON girersen obje olarak saklanır. Düz metin girersen string olarak saklanır.",
-          "saved": "API & entegrasyon ayarları kaydedildi.",
-          "saveError": "API ayarları kaydedilirken bir hata oluştu."
-        },
-        "actions": {
-          "edit": "Düzenle",
-          "delete": "Sil",
-          "restore": "Restore",
-          "override": "Override",
-          "save": "Kaydet",
-          "saving": "Kaydediliyor...",
-          "test": "Test",
-          "testing": "Test ediliyor...",
-          "refresh": "Yenile",
-          "reset": "Sıfırla",
-          "bootstrap": "Bootstrap",
-          "copy": "Kopyala"
-        },
-        "messages": {
-          "loading": "Yükleniyor…",
-          "deleted": "Ayar silindi.",
-          "saved": "Ayarlar kaydedildi.",
-          "copied": "Kopyalandı.",
-          "copyError": "Kopyalama başarısız.",
-          "error": "İşlem başarısız. Lütfen tekrar deneyin."
-        },
-        "seo": {
-          "title": "SEO Ayarları",
-          "description": "GLOBAL (*) default + seçili dil ({locale}) override birlikte yönetilir. \"Düzenle\" butonu form sayfasını açar.",
-          "ogDefaultImage": "Varsayılan OG Görseli (Global)",
-          "ogDefaultImageKey": "site_og_default_image",
-          "ogDefaultImageHelp": "Upload sonrası otomatik kaydedilir. Brand & Media tabındaki {key} ile aynıdır.",
-          "searchPlaceholder": "Key içinde ara (örn: site, meta)",
-          "effective": "Effective (Özet)",
-          "override": "Override",
-          "global": "Global",
-          "none": "Yok",
-          "globalRow": "GLOBAL (*)",
-          "localeRow": "LOCALE ({locale})",
-          "hasOverride": "Bu key için {locale} override yok; GLOBAL (*) uygulanıyor.",
-          "createOverride": "Override Oluştur",
-          "restoreTooltip": "Bu satırın default değerlerini geri yükler",
-          "note": "site_meta_default GLOBAL(*) olamaz; edit linki her zaman locale ile açılır.",
-          "defaultsCreated": "Varsayılan SEO ayarları oluşturuldu.",
-          "defaultsRestored": "\"{key}\" ({locale}) için varsayılan değerler geri yüklendi.",
-          "overrideCreated": "\"{key}\" ({locale}) override oluşturuldu.",
-          "overrideError": "Override oluşturulurken hata oluştu.",
-          "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
-          "deleted": "\"{key}\" ({locale}) silindi.",
-          "deleteError": "SEO ayarı silinirken hata oluştu.",
-          "defaultNotDefined": "Bu key için default tanımlı değil.",
-          "siteMetaDefaultGlobalError": "site_meta_default GLOBAL(*) olamaz. Locale ile kaydet/restore et.",
-          "siteMetaDefaultMustBeLocale": "site_meta_default GLOBAL(*) olamaz. Locale seçerek restore et.",
-          "defaultsRestoreError": "Default restore hata verdi.",
-          "defaultsCreateError": "GLOBAL bootstrap hata verdi.",
-          "globalBootstrap": "Global Bootstrap",
-          "globalBootstrapTooltip": "Eksik SEO GLOBAL(*) kayıtlarını default schema ile oluşturur",
-          "ogUpdated": "Varsayılan OG görseli güncellendi.",
-          "ogUpdateError": "Varsayılan OG görseli kaydedilirken hata oluştu.",
-          "savedUrlLabel": "Kayıtlı URL:",
-          "previewLabel": "Önizleme:",
-          "ogDefaultImageAlt": "Varsayılan OG görseli",
-          "imageLoadError": "Görsel yüklenemedi",
-          "existsYes": "Var",
-          "existsNo": "Yok",
-          "siteMetaDefaultGlobalDeleteHint": "Normalde GLOBAL olmaz; varsa silinebilir.",
-          "noRecords": "SEO kaydı bulunamadı.",
-          "seedNote": "Seed çalıştıysa en az seo ve site_seo GLOBAL satırı görünmelidir.",
-          "columns": {
-            "key": "Key",
-            "source": "Kaynak",
-            "effective": "Effective (Özet)",
-            "actions": "İşlemler"
-          }
-        },
-        "structured": {
-          "title": "Structured edit: SEO alanlarını form olarak yönetir. Kaydetme sırasında backend tarafında strict doğrulama uygulanıyorsa hatalı yapı kaydedilmez.",
-          "robotsNote": "Robots'ta {field} true ise arama motorlarına indeksleme önerilmez.",
-          "ogImageUpload": "OpenGraph Görsel Yükle (opsiyonel)",
-          "siteName": "Site Name",
-          "titleDefault": "Title Default",
-          "titleTemplate": "Title Template",
-          "titleTemplatePlaceholder": "%s | guezelwebdesign",
-          "description": "Description",
-          "ogType": "OpenGraph Type",
-          "ogImages": "OpenGraph Images (1 per line)",
-          "ogImagesPlaceholder": "/img/og-default.jpg",
-          "twitterCard": "Twitter Card",
-          "twitterCardRecommended": "Çoğu site için önerilen: {card}",
-          "twitterSite": "Twitter Site",
-          "twitterSitePlaceholder": "@guezelwebdesign",
-          "twitterCreator": "Twitter Creator",
-          "twitterCreatorPlaceholder": "@creator",
-          "robots": "Robots",
-          "noindex": "noindex",
-          "index": "index",
-          "follow": "follow",
-          "robotsRecommendation": "Öneri: Normalde {noindex}, {index}, {follow}.",
-          "contact": {
-            "description": "İletişim bilgileri. Boş bırakılan alanlar boş string olarak kaydedilir.",
-            "labels": {
-              "phone": "Telefon",
-              "email": "E-posta",
-              "whatsapp": "WhatsApp",
-              "address": "Adres"
-            }
-          },
-          "socials": {
-            "description": "Sosyal linkleri tam URL (https://...) veya kullanıcı adı olarak girebilirsin.",
-            "labels": {
-              "instagram": "Instagram",
-              "facebook": "Facebook",
-              "linkedin": "LinkedIn",
-              "youtube": "YouTube",
-              "x": "X (Twitter)"
-            }
-          },
-          "companyProfile": {
-            "labels": {
-              "companyName": "Şirket Adı",
-              "slogan": "Slogan",
-              "about": "Hakkımızda"
-            }
-          },
-          "uiHeader": {
-            "description": "Header navigasyon ve CTA label metinleri. Dil bazlı override için locale satırı kullan.",
-            "labels": {
-              "navHome": "Menü: Home",
-              "navProducts": "Menü: Products",
-              "navServices": "Menü: Services",
-              "navContact": "Menü: Contact",
-              "ctaLabel": "CTA Label"
-            }
-          },
-          "businessHours": {
-            "description": "Saat formatı HH:MM. \"Closed\" seçilirse gün kapalıdır.",
-            "columns": {
-              "day": "Gün",
-              "open": "Açılış",
-              "close": "Kapanış",
-              "closed": "Kapalı"
-            },
-            "closedLabel": "closed",
-            "addRow": "Satır Ekle",
-            "removeRow": "Sil",
-            "days": {
-              "mon": "Pzt",
-              "tue": "Sal",
-              "wed": "Çar",
-              "thu": "Per",
-              "fri": "Cum",
-              "sat": "Cmt",
-              "sun": "Paz"
-            }
-          }
-        },
-        "users": {
-          "list": {
-            "title": "Kullanıcılar",
-            "description": "Kullanıcıları görüntüleyin, düzenleyin ve rollerini yönetin.",
-            "filters": {
-              "title": "Filtreler",
-              "description": "Arama ve filtreleme ayarları.",
-              "searchLabel": "Arama",
-              "searchPlaceholder": "Ad, telefon, email...",
-              "roleLabel": "Rol",
-              "rolePlaceholder": "Tümü",
-              "onlyActive": "Sadece aktif",
-              "searchButton": "Ara",
-              "resetButton": "Sıfırla",
-              "refreshButton": "Yenile"
-            },
-            "table": {
-              "title": "Kullanıcı Listesi",
-              "loading": "Yükleniyor…",
-              "totalRecords": "Toplam: {count} kayıt (sayfa)",
-              "loadError": "Liste yüklenemedi.",
-              "retryButton": "Yeniden dene",
-              "noRecords": "Kayıt bulunamadı.",
-              "fullName": "Ad Soyad",
-              "email": "E-posta",
-              "phone": "Telefon",
-              "status": "Durum",
-              "role": "Rol",
-              "actions": "İşlem",
-              "viewButton": "Detay",
-              "statusActive": "Aktif",
-              "statusInactive": "Pasif",
-              "unknownUser": "İsimsiz Kullanıcı"
-            },
-            "pagination": {
-              "offset": "Offset: {offset}",
-              "limit": "Limit: {limit}",
-              "previous": "Önceki",
-              "next": "Sonraki"
-            }
-          },
-          "detail": {
-            "title": "Kullanıcı Detay",
-            "unknownUser": "İsimsiz Kullanıcı",
-            "backButton": "Geri",
-            "loadError": "Kullanıcı yüklenemedi.",
-            "loading": "Yükleniyor…",
-            "retryButton": "Yeniden dene",
-            "statusActive": "Aktif",
-            "statusInactive": "Pasif",
-            "profile": {
-              "title": "Temel Bilgiler",
-              "description": "Ad, telefon ve gerekirse e-posta alanlarını güncelleyin.",
-              "emailLabel": "E-posta",
-              "fullNameLabel": "Ad Soyad",
-              "phoneLabel": "Telefon",
-              "saveButton": "Kaydet",
-              "saved": "Kullanıcı bilgileri güncellendi."
-            },
-            "status": {
-              "title": "Kullanıcı Durumu",
-              "description": "Aktif/pasif durumunu değiştirin.",
-              "active": "Aktif",
-              "inactive": "Pasif",
-              "activated": "Kullanıcı aktif edildi.",
-              "deactivated": "Kullanıcı pasif edildi."
-            },
-            "roles": {
-              "title": "Rol Yönetimi",
-              "description": "Rol tekil tutulur; seçim \"set\" olarak kaydedilir.",
-              "currentRole": "Seçili rol:",
-              "saveButton": "Rolü Kaydet",
-              "saved": "Roller güncellendi.",
-              "admin": "Admin",
-              "moderator": "Moderatör",
-              "user": "Kullanıcı"
-            },
-            "password": {
-              "title": "Şifre Güncelle",
-              "description": "Güvenlik amacıyla yeni bir şifre belirleyin.",
-              "label": "Yeni Şifre",
-              "placeholder": "En az 8 karakter",
-              "updateButton": "Şifreyi Güncelle",
-              "minLengthError": "Şifre en az 8 karakter olmalıdır.",
-              "updated": "Şifre güncellendi."
-            },
-            "delete": {
-              "title": "Tehlikeli İşlem",
-              "description": "Kullanıcıyı kalıcı olarak siler.",
-              "button": "Kullanıcıyı Sil",
-              "confirm": "Bu kullanıcı silinecek. Devam edilsin mi?",
-              "deleted": "Kullanıcı silindi."
-            },
-            "errorFallback": "İşlem başarısız. Lütfen tekrar deneyin."
-          },
-          "roles": {
-            "all": "Tümü",
-            "admin": "Admin",
-            "moderator": "Moderatör",
-            "user": "Kullanıcı"
-          }
-        },
-        "emailTemplates": {
-          "common": {
-            "operationFailed": "İşlem başarısız. Lütfen tekrar deneyin.",
-            "loading": "Yükleniyor...",
-            "active": "Aktif",
-            "inactive": "Pasif"
-          },
-          "list": {
-            "title": "E-posta Şablonları",
-            "description": "E-posta şablonlarını yönetin. Her şablon farklı dillerde içerik içerebilir.",
-            "addButton": "Yeni Ekle",
-            "filters": {
-              "searchLabel": "Ara",
-              "searchPlaceholder": "Şablon anahtarı, ad, konu...",
-              "statusLabel": "Durum",
-              "statusOptions": {
-                "all": "Tümü",
-                "active": "Aktif",
-                "inactive": "Pasif"
-              }
-            },
-            "totalRecords": "Toplam {count} kayıt",
-            "refreshButton": "Yenile",
-            "fetching": "Yükleniyor...",
-            "loading": "Yükleniyor...",
-            "empty": "Kayıt bulunamadı.",
-            "table": {
-              "headers": {
-                "templateKey": "Şablon Anahtarı",
-                "nameSubject": "Ad & Konu",
-                "variables": "Değişkenler",
-                "active": "Aktif",
-                "locale": "Dil",
-                "date": "Tarih",
-                "actions": "İşlemler"
-              },
-              "updatedLabel": "Güncelleme"
-            },
-            "actions": {
-              "edit": "Düzenle",
-              "delete": "Sil"
-            },
-            "mobile": {
-              "activeLabel": "Aktif",
-              "variablesLabel": "Değişkenler",
-              "createdLabel": "Oluşturma",
-              "updatedLabel": "Güncelleme"
-            },
-            "toast": {
-              "activated": "Aktif yapıldı.",
-              "deactivated": "Pasif yapıldı.",
-              "deleted": "Kayıt silindi."
-            },
-            "dialog": {
-              "title": "Silmek istediğinizden emin misiniz?",
-              "description": "{template} silinecek. Bu işlem geri alınamaz.",
-              "templateFallback": "Bu şablon",
-              "cancel": "İptal",
-              "delete": "Sil"
-            }
-          },
-          "detail": {
-            "loadError": "Kayıt yüklenemedi",
-            "backToList": "Listeye Dön",
-            "titleCreate": "Yeni E-posta Şablonu",
-            "titleEdit": "E-posta Şablonu Düzenle",
-            "descriptionCreate": "Yeni bir e-posta şablonu oluşturun",
-            "descriptionEdit": "Mevcut e-posta şablonunu düzenleyin",
-            "sections": {
-              "generalInfo": "Genel Bilgiler",
-              "templateInfo": "Şablon Bilgileri",
-              "content": "E-posta İçeriği",
-              "contentDescription": "HTML içerik. Değişkenler için {{variable}} formatını kullanın.",
-              "variables": "Değişkenler",
-              "variablesDescription": "E-posta içeriğinde kullanılan değişkenleri tanımlayın (opsiyonel)"
-            },
-            "fields": {
-              "statusLabel": "Durum",
-              "templateKeyLabel": "Şablon Anahtarı",
-              "templateKeyPlaceholder": "welcome_email",
-              "templateKeyHelp": "Benzersiz anahtar (değiştirilemez). Örn: welcome_email, password_reset",
-              "templateNameLabel": "Şablon Adı",
-              "templateNamePlaceholder": "Hoş Geldiniz E-postası",
-              "subjectLabel": "Konu",
-              "subjectPlaceholder": "Hoş Geldiniz {{name}}!",
-              "subjectHelp": "E-posta konusu. Değişkenler için {{variable}} kullanın.",
-              "contentLabel": "HTML İçerik",
-              "contentPlaceholder": "<html><body><h1>Merhaba {{name}}!</h1><p>Hoş geldiniz...</p></body></html>",
-              "variablesLabel": "Değişkenler",
-              "variablesPlaceholder": "name, email, url veya [\"name\", \"email\", \"url\"]",
-              "variablesHelp": "Virgülle ayrılmış (name, email, url) veya JSON array formatında ([\"name\", \"email\"]).",
-              "detectedVariablesLabel": "İçerikte Tespit Edilen Değişkenler"
-            },
-            "validation": {
-              "templateKeyRequired": "Şablon anahtarı gerekli.",
-              "templateNameRequired": "Şablon adı gerekli.",
-              "subjectRequired": "Konu gerekli.",
-              "contentRequired": "İçerik gerekli."
-            },
-            "actions": {
-              "back": "Geri",
-              "delete": "Sil",
-              "deleting": "Siliniyor...",
-              "cancel": "İptal",
-              "save": "Kaydet",
-              "saving": "Kaydediliyor..."
-            },
-            "toast": {
-              "created": "Şablon oluşturuldu.",
-              "updated": "Şablon güncellendi.",
-              "deleted": "Şablon silindi."
-            },
-            "dialog": {
-              "title": "Silmek istediğinizden emin misiniz?",
-              "description": "{template} silinecek. Bu işlem geri alınamaz.",
-              "templateFallback": "Bu şablon",
-              "cancel": "İptal",
-              "delete": "Sil"
-            }
-          }
-        },
-        "userRoles": {
-          "title": "Rol Yönetimi",
-          "description": "Kullanıcı rollerini listeleyin, rol ekleyin ve rol silin.",
-          "create": {
-            "title": "Yeni Rol Ekle",
-            "description": "Admin-only. Aynı kullanıcıya aynı rol eklenemez.",
-            "userLabel": "Kullanıcı",
-            "userPlaceholder": "Kullanıcı seçin",
-            "roleLabel": "Rol",
-            "rolePlaceholder": "Rol seçin",
-            "addButton": "Ekle",
-            "selectUser": "Lütfen kullanıcı seçin.",
-            "added": "Rol eklendi.",
-            "alreadyExists": "Bu rol zaten mevcut.",
-            "usersLoading": "Yükleniyor…",
-            "usersLoadError": "Kullanıcılar yüklenemedi.",
-            "retryButton": "Yeniden dene"
-          },
-          "list": {
-            "title": "Rol Listesi",
-            "description": "Filtreleyin ve yönetim işlemlerini yapın.",
-            "userFilterLabel": "Kullanıcı filtresi",
-            "roleFilterLabel": "Rol filtresi",
-            "limitLabel": "Limit",
-            "all": "Tümü",
-            "refreshButton": "Yenile",
-            "loadError": "Roller yüklenemedi.",
-            "retryButton": "Yeniden dene",
-            "noRecords": "Kayıt bulunamadı.",
-            "note": "Not: Bu sayfa admin-only olduğu için, kullanıcı enumerasyon riskini azaltmak adına yetkiler dikkatli yönetilmelidir."
-          },
-          "table": {
-            "userColumn": "Kullanıcı",
-            "roleColumn": "Rol",
-            "createdColumn": "Oluşturma",
-            "actionColumn": "İşlem",
-            "deleteButton": "Sil",
-            "deleteConfirm": "Rol silinsin mi?\n{user} → {role}",
-            "deleted": "Rol silindi.",
-            "loading": "Yükleniyor",
-            "notFound": "Bulunamadı"
-          },
-          "roles": {
-            "admin": "Admin",
-            "seller": "Satıcı",
-            "driver": "Şoför"
-          },
-          "user": {
-            "unknown": "İsimsiz Kullanıcı",
-            "loading": "Yükleniyor…",
-            "notFound": "Kullanıcı bulunamadı"
-          },
-          "errorFallback": "İşlem başarısız. Lütfen tekrar deneyin."
-        },
-        "storage": {
-          "title": "Dosya Yönetimi",
-          "description": "Dosyaları yükleyin, düzenleyin ve silin.",
-          "list": {
-            "title": "Storage Assets",
-            "description": "Dosya yönetimi - yükleme, düzenleme, silme.",
-            "uploadButton": "Yükle",
-            "deleteSelected": "Seçilenleri Sil ({count})",
-            "selectFileError": "Lütfen en az bir dosya seçin",
-            "filesDeleted": "{count} dosya silindi",
-            "fileDeleted": "Dosya silindi",
-            "searchLabel": "Ara",
-            "searchPlaceholder": "Dosya adı...",
-            "bucketLabel": "Bucket",
-            "folderLabel": "Klasör",
-            "fileTypeLabel": "Dosya Tipi",
-            "allOption": "Tümü",
-            "rootFolder": "(root)",
-            "imageType": "Resim",
-            "videoType": "Video",
-            "audioType": "Ses",
-            "pdfType": "PDF",
-            "refreshButton": "Yenile",
-            "totalFiles": "Toplam {total} dosya",
-            "selectedCount": "{count} seçili",
-            "loading": "Yükleniyor...",
-            "noFiles": "Dosya bulunamadı.",
-            "previewColumn": "Preview",
-            "fileColumn": "Dosya",
-            "bucketColumn": "Bucket",
-            "folderColumn": "Klasör",
-            "typeColumn": "Tip",
-            "sizeColumn": "Boyut",
-            "dateColumn": "Tarih",
-            "actionsColumn": "İşlemler",
-            "downloadTitle": "İndir",
-            "editButton": "Düzenle",
-            "deleteConfirmTitle": "Silmek istediğinizden emin misiniz?",
-            "deleteConfirmDescription": "{name} silinecek. Bu işlem geri alınamaz.",
-            "cancelButton": "İptal",
-            "deleteButton": "Sil"
-          },
-          "detail": {
-            "uploadTitle": "Dosya Yükle",
-            "editTitle": "Dosya Düzenle",
-            "uploadDescription": "Yeni dosya yükleyin",
-            "editDescription": "Dosya bilgilerini düzenleyin",
-            "backButton": "Geri",
-            "previewTitle": "Önizleme",
-            "mimeLabel": "MIME:",
-            "sizeLabel": "Boyut:",
-            "dimensionsLabel": "Boyutlar:",
-            "urlLabel": "URL:",
-            "openLink": "Aç",
-            "selectFileTitle": "Dosya Seç",
-            "fileLabel": "Dosya",
-            "required": "*",
-            "selectedFile": "Seçili: {name} ({size})",
-            "bucketLabel": "Bucket",
-            "bucketPlaceholder": "public, private, assets...",
-            "folderLabel": "Klasör",
-            "folderPlaceholder": "images, documents...",
-            "folderHelp": "Opsiyonel. Dosyayı organize etmek için klasör adı.",
-            "fileInfoTitle": "Dosya Bilgileri",
-            "fileNameLabel": "Dosya Adı",
-            "fileNamePlaceholder": "example.jpg",
-            "bucketReadonlyHelp": "Bucket değiştirilemez.",
-            "deleting": "Siliniyor...",
-            "deleteButton": "Sil",
-            "cancelButton": "İptal",
-            "uploading": "Yükleniyor...",
-            "saving": "Kaydediliyor...",
-            "uploadButton": "Yükle",
-            "saveButton": "Kaydet",
-            "selectFileError": "Lütfen bir dosya seçin",
-            "bucketRequiredError": "Bucket gerekli",
-            "fileUploaded": "Dosya yüklendi",
-            "recordUpdated": "Kayıt güncellendi",
-            "loadError": "Kayıt yüklenemedi: {error}",
-            "backToList": "Listeye Dön"
-          },
-          "errorFallback": "İşlem başarısız"
-        },
-        "slider": {
-          "title": "Slider Yönetimi",
-          "description": "Slider kayıtlarını çok dilli olarak yönet; filtrele, sırala ve yayın durumunu değiştir.",
-          "header": {
-            "title": "Slider Yönetimi",
-            "description": "Slider kayıtlarını çok dilli olarak yönet; filtrele, sırala ve yayın durumunu değiştir.",
-            "total": "Toplam:",
-            "loading": "Yükleniyor…",
-            "searchLabel": "Ara",
-            "searchPlaceholder": "Başlık / slug içinde ara…",
-            "localeLabel": "Dil",
-            "localePlaceholder": "Locale seç",
-            "localeEmptyError": "app_locales boş.",
-            "localeEmptyHelp": "Site Settings → app_locales değerini kontrol et.",
-            "filterLabel": "Filtre",
-            "onlyActiveLabel": "Sadece aktif",
-            "onlyActiveHelp": "Aktif sliderları göster",
-            "refreshButton": "Yenile",
-            "createButton": "+ Yeni Slider"
-          },
-          "list": {
-            "title": "Slider Listesi",
-            "processing": "İşlem yapılıyor…",
-            "totalLabel": "Toplam:",
-            "saveOrderButton": "Sıralamayı Kaydet",
-            "savingOrder": "Sıralama kaydediliyor…",
-            "reorderHelp": "Sıralama için yukarı/aşağı butonlarını kullan. Kalıcı yapmak için \"Sıralamayı Kaydet\".",
-            "noImage": "Görsel yok",
-            "imageColumn": "Görsel",
-            "titleColumn": "Başlık",
-            "localeColumn": "Dil",
-            "slugColumn": "Slug",
-            "activeColumn": "Aktif",
-            "featuredColumn": "Öne Çıkan",
-            "orderColumn": "Sıra",
-            "actionsColumn": "İşlemler",
-            "noTitle": "(Başlık yok)",
-            "upButton": "Yukarı",
-            "downButton": "Aşağı",
-            "buttonLabel": "BTN:",
-            "linkLabel": "Link:",
-            "activeStatus": "Aktif",
-            "inactiveStatus": "Pasif",
-            "featuredStatus": "Öne çıkan",
-            "normalStatus": "Normal",
-            "editButton": "Düzenle",
-            "deleteButton": "Sil",
-            "loading": "Slider kayıtları yükleniyor…",
-            "noRecords": "Henüz slider kaydı bulunmuyor.",
-            "itemNumber": "#",
-            "localeLabel": "Dil:",
-            "orderLabel": "Sıra:",
-            "slugLabel": "Slug:",
-            "deleteConfirm": "\"{name}\" slider kaydını silmek üzeresin. Devam etmek istiyor musun?",
-            "deleted": "\"{name}\" slider kaydı silindi.",
-            "deleteError": "Slider silinirken bir hata oluştu.",
-            "activeUpdateError": "Aktif durumu güncellenemedi.",
-            "featuredUpdateError": "Öne çıkarma güncellenemedi.",
-            "orderSaved": "Slider sıralaması kaydedildi.",
-            "orderSaveError": "Sıralama kaydedilemedi."
-          },
-          "form": {
-            "contentTitle": "İçerik",
-            "localeLabel": "Dil",
-            "orderLabel": "Sıralama",
-            "activeLabel": "Aktif",
-            "activeHelp": "Yayında göster",
-            "featuredLabel": "Öne çıkan",
-            "featuredHelp": "Öncelikli göster",
-            "titleLabel": "Başlık",
-            "slugLabel": "Slug",
-            "slugHelp": "Başlık yazarken otomatik oluşur; manuel değiştirmek için slug alanına tıkla.",
-            "descriptionLabel": "Açıklama",
-            "buttonTextLabel": "Buton Metni",
-            "buttonLinkLabel": "Buton Linki",
-            "altLabel": "Görsel Alt Metni",
-            "localeRequired": "Locale zorunludur.",
-            "titleRequired": "Başlık zorunludur.",
-            "slugRequired": "Slug zorunludur.",
-            "created": "Slider oluşturuldu.",
-            "idNotFound": "ID bulunamadı. Sayfayı yenileyip tekrar deneyin.",
-            "updated": "Slider güncellendi.",
-            "saveError": "Kayıt sırasında hata.",
-            "editTitle": "Slider Düzenle",
-            "createTitle": "Yeni Slider Oluştur",
-            "formMode": "Form",
-            "jsonMode": "JSON"
-          },
-          "formHeader": {
-            "createTitle": "Yeni Slider Oluştur",
-            "editTitle": "Slider Düzenle",
-            "description": "Başlık/slug/içerik/görsel ve buton alanlarını düzenle. JSON modu ile tüm alanları tek seferde de güncelleyebilirsin.",
-            "loading": "Yükleniyor…",
-            "saving": "Kaydediliyor…",
-            "backButton": "Geri",
-            "createButton": "Oluştur",
-            "saveButton": "Kaydet"
-          },
-          "formImage": {
-            "imageLabel": "Slider Görseli",
-            "imageHelp": "Storage üzerinden slider için bir görsel yükleyebilirsin. Seçtiğin görselin URL'i image_url alanına yazılır (JSON moda da yansır).",
-            "altLabel": "Alt Metin",
-            "altPlaceholder": "Örn: Home hero slider görseli",
-            "altHelp": "Alt metin SEO ve erişilebilirlik için kullanılır."
-          },
-          "formJson": {
-            "label": "Slider JSON",
-            "helperText": "Formdaki tüm alanların bire bir karşılığıdır."
-          }
-        },
-        "smtp": {
-          "title": "SMTP / E-posta Ayarları",
-          "description": "Bu ayarlar genellikle globaldir (locale=`*`). Seçili dil sadece arayüz bilgisidir.",
-          "badge": "Global (locale=`*`) • Seçili dil: {locale}",
-          "host": "SMTP Host",
-          "hostPlaceholder": "smtp.hostinger.com veya smtp.gmail.com",
-          "port": "SMTP Port",
-          "portPlaceholder": "465 veya 587",
-          "ssl": "SSL etkin",
-          "username": "Kullanıcı Adı",
-          "usernamePlaceholder": "SMTP kullanıcı adı",
-          "password": "Şifre",
-          "passwordPlaceholder": "••••••••",
-          "fromEmail": "Gönderen E-posta",
-          "fromEmailPlaceholder": "no-reply@guezelwebdesign.com",
-          "fromEmailHelp": "Uygulamadaki e-postalar bu adresten gönderilir.",
-          "fromName": "Gönderen İsim",
-          "fromNamePlaceholder": "guezelwebdesign",
-          "testEmail": "Test mail alıcısı",
-          "testEmailPlaceholder": "ornek@ornek.com",
-          "testEmailHelp": "Dolu ise test maili buraya gider. Boşsa önce gönderen e-posta, o da yoksa giriş yapan kullanıcının e-postası kullanılır.",
-          "sendTest": "Test mail gönder",
-          "sendingTest": "Test maili gönderiliyor...",
-          "saved": "SMTP ayarları kaydedildi.",
-          "testSent": "Test e-postası gönderildi. Gelen kutunu (ve spam) kontrol et."
-        }
-      },
-      "services": {}
+      }
     },
     "auth": {
       "login": {
@@ -1187,19 +363,23 @@
       "remove": "Kaldır",
       "clear": "Temizle",
       "reset": "Sıfırla",
-	      "restore": "Restore",
-	      "apply": "Uygula",
-	      "locale": "Dil",
-	      "localePlaceholder": "Dil seç",
-	      "localeOptionsMissing": "Dil seçenekleri bulunamadı.",
-	      "key": "Key",
-	      "value": "Değer",
-	      "source": "Kaynak",
+      "restore": "Restore",
+      "apply": "Uygula",
+      "locale": "Dil",
+      "localePlaceholder": "Dil seç",
+      "localeOptionsMissing": "Dil seçenekleri bulunamadı.",
+      "key": "Key",
+      "value": "Değer",
+      "source": "Kaynak",
       "exists": "Var",
       "doesNotExist": "Yok",
       "note": "Not",
       "savedUrl": "Kayıtlı URL:",
-      "imageLoadFailed": "Görsel yüklenemedi"
+      "imageLoadFailed": "Görsel yüklenemedi",
+      "total": "Toplam",
+      "operationFailed": "İşlem başarısız. Lütfen tekrar deneyin.",
+      "active": "Aktif",
+      "inactive": "Pasif"
     },
     "slider": {
       "header": {
@@ -1305,17 +485,17 @@
         "helperText": "Dikkat: JSON verisini doğrudan düzenlemek gelişmiş kullanıcılar içindir."
       }
     },
-      "menuitem": {
-        "header": {
-          "title": "Menü Öğeleri (Header)",
-          "total": "Toplam {count} kayıt görüntüleniyor.",
-          "refresh": "Yenile",
-          "refreshing": "Yenileniyor...",
-          "loading": "Yükleniyor...",
-          "create": "Yeni Menü Öğesi",
-          "searchLabel": "Ara",
-          "searchPlaceholder": "Başlık veya URL ara...",
-          "localeLabel": "Dil",
+    "menuitem": {
+      "header": {
+        "title": "Menü Öğeleri (Header)",
+        "total": "Toplam {count} kayıt görüntüleniyor.",
+        "refresh": "Yenile",
+        "refreshing": "Yenileniyor...",
+        "loading": "Yükleniyor...",
+        "create": "Yeni Menü Öğesi",
+        "searchLabel": "Ara",
+        "searchPlaceholder": "Başlık veya URL ara...",
+        "localeLabel": "Dil",
         "allLocales": "Tüm Diller",
         "defaultLabel": "varsayılan",
         "activeLabel": "Durum",
@@ -1459,12 +639,27 @@
         "published": "Yayında",
         "draft": "Taslak",
         "saveOrder": "Sıralama Kaydet",
+        "savingOrder": "Kaydediliyor...",
         "deleteConfirm": "Bu sayfayı silmek üzeresin.\n\nBaşlık: {title}\nID: {id}\nSlug: {slug}\n\nDevam etmek istiyor musun?",
         "deleteSuccess": "Sayfa silindi",
-        "deleteError": "Silme başarısız"
+        "deleteError": "Silme başarısız",
+        "listTitle": "Liste",
+        "recordCount": "{count} kayıt",
+        "noTitle": "Başlık yok",
+        "created": "Oluşturulma",
+        "updated": "Güncelleme",
+        "moveUp": "Yukarı",
+        "moveDown": "Aşağı",
+        "reorderHelp": "Sıralama: Yukarı/Aşağı ile taşı, sonra kaydet.",
+        "cardViewHint": "Varsayılan görünüm karttır. Büyük ekranlarda tablo görünümü açılır.",
+        "featured": "Ana Sayfa",
+        "unfeatured": "Gösterilmiyor",
+        "featuredSuccess": "Ana sayfada yayınlanacak.",
+        "unfeaturedSuccess": "Ana sayfadan kaldırıldı."
       },
       "form": {
         "isPublished": "Yayında olsun",
+        "featured": "Ana Sayfada Yayınla",
         "title": "Başlık",
         "slug": "Slug (URL Yolu)",
         "summary": "Özet",
@@ -1475,8 +670,72 @@
         "metaTitle": "SEO Başlık",
         "metaDescription": "SEO Açıklama",
         "imageSize": "Görsel Boyutu",
-        "manualUrl": "Manuel Görsel URL"
+        "manualUrl": "Manuel Görsel URL",
+        "createTitle": "Yeni Sayfa Oluştur",
+        "editTitle": "Sayfa Düzenle",
+        "formDescription": "Başlık, slug, içerik, etiketler ve SEO alanlarını doldur.",
+        "formMode": "Form",
+        "jsonMode": "JSON",
+        "back": "Geri",
+        "createBtn": "Sayfayı Oluştur",
+        "saveBtn": "Değişiklikleri Kaydet",
+        "creating": "Oluşturuluyor...",
+        "saving": "Kaydediliyor...",
+        "switchingLocale": "Dil değiştiriliyor...",
+        "localeLabel": "Dil",
+        "localeHint": "Seçim; aynı zamanda düzenlediğin locale kaydını belirler.",
+        "jsonHelperText": "Bu JSON, formdaki tüm alanların bire bir karşılığıdır.",
+        "titleSlugRequired": "Başlık ve slug alanları zorunludur.",
+        "imageAddedToContent": "Görsel içerik alanına eklendi.",
+        "invalidImageUrl": "Lütfen geçerli bir görsel URL'i gir.",
+        "localeRecordNotFound": "Seçilen dil için kayıt bulunamadı; bu dilde yeni içerik oluşturabilirsin.",
+        "localeLoadFailed": "Seçilen dil için özel sayfa yüklenirken bir hata oluştu.",
+        "imageSizeSm": "Küçük (1/2)",
+        "imageSizeMd": "Orta (3/4)",
+        "imageSizeLg": "Büyük (varsayılan)",
+        "imageSizeFull": "Tam genişlik",
+        "uploadHelperText": "Yüklenen görsel içerik alanının sonuna blok olarak eklenir.",
+        "altTextPlaceholder": "Alt metin (opsiyonel)",
+        "addManualUrl": "Serbest URL'yi İçeriğe Ekle",
+        "coverHelperText": "Bu sayfa için kapak/öne çıkan görsel yükleyebilirsin.",
+        "galleryHelperText": "Birden fazla görsel yükleyip sayfaya galeri tanımlayabilirsin."
+      },
+      "detail": {
+        "noLocales": "Dil listesi bulunamadı",
+        "noLocalesDesc": "app_locales boş veya geçersiz. Önce Site Settings'ten dilleri ayarlayın.",
+        "invalidId": "Geçersiz ID",
+        "invalidIdDesc": "UUID değil:",
+        "returnToList": "Listeye dön",
+        "invalidLocale": "Geçerli bir locale seçilmedi.",
+        "createSuccess": "Sayfa başarıyla oluşturuldu.",
+        "createIdError": "Oluşturuldu ama id dönmedi.",
+        "updateSuccess": "Sayfa güncellendi.",
+        "noPageId": "Sayfa verisi yüklenemedi (id yok).",
+        "operationFailed": "İşlem başarısız. Lütfen tekrar deneyin.",
+        "localeListError": "Seçilen dil için kayıt listesi alınamadı."
       }
+    },
+    "profile": {
+      "subtitle": "Profil bilgilerinizi ve şifrenizi buradan güncelleyebilirsiniz.",
+      "personalInfo": "Kişisel Bilgiler",
+      "personalInfoDesc": "Adınız, e-posta adresiniz ve profil resminiz.",
+      "avatarUploaded": "Profil resmi yüklendi.",
+      "avatarUploadFailed": "Resim yüklenemedi.",
+      "updated": "Profil başarıyla güncellendi.",
+      "updateFailed": "Profil güncellenemedi.",
+      "avatarSet": "Özel profil resmi ayarlandı",
+      "noAvatar": "Varsayılan avatar kullanılıyor",
+      "name": "Tam Ad",
+      "email": "E-posta",
+      "security": "Güvenlik",
+      "securityDesc": "Hesap güvenliğiniz için şifrenizi güncelleyin.",
+      "newPassword": "Yeni Şifre",
+      "confirmPassword": "Şifreyi Onayla",
+      "changePassword": "Şifre Değiştir",
+      "passwordRequired": "Yeni şifre gerekli.",
+      "passwordsDontMatch": "Şifreler uyuşmuyor.",
+      "passwordUpdated": "Şifre başarıyla güncellendi.",
+      "passwordUpdateFailed": "Şifre güncellenemedi."
     },
     "sidebar": {
       "search": "Ara",
@@ -1529,11 +788,44 @@
         },
         "language": "Arayüz Dili",
         "languagePlaceholder": "Dil seçin"
+      },
+      "groups": {
+        "general": "Genel / Yönetim",
+        "content": "İçerik Yönetimi",
+        "marketing": "Pazarlama",
+        "communication": "İletişim & CRM",
+        "system": "Sistem & Ayarlar"
       }
     },
     "dashboard": {
-      "title": "Dashboard",
+      "title": "Özet Paneli",
       "subtitle": "Sistemdeki kayıtların özet görünümü",
+      "items": {
+        "db": "Veritabanı",
+        "audit": "Denetim Kayıtları",
+        "availability": "Rezervasyon Saatleri",
+        "notifications": "Bildirimler",
+        "storage": "Dosya Yöneticisi",
+        "contacts": "İletişim Mesajları",
+        "bookings": "Randevular",
+        "users": "Kullanıcılar",
+        "reviews": "Yorumlar",
+        "newsletter": "Bülten",
+        "menu_items": "Menü",
+        "sliders": "Slider",
+        "footer_sections": "Footer",
+        "custom_pages": "Özel Sayfalar",
+        "site_settings": "Site Ayarları",
+        "email_templates": "E-posta Şablonları",
+        "services": "Hizmetler",
+        "faqs": "S.S.S.",
+        "resources": "Kaynaklar",
+        "reports": "Raporlar",
+        "mail": "E-Posta",
+        "telegram": "Telegram",
+        "chat": "Chat & AI",
+        "dashboard": "Özet"
+      },
       "stats": {
         "deliveredOrders": "Teslim Edilen Sipariş",
         "deliveredOrdersHelp": "Teslim edilen sipariş adedi",
@@ -1780,394 +1072,1771 @@
         "title": "Geçersiz ID",
         "description": "UUID değil:"
       },
-	      "actions": {
-	        "backToList": "Listeye dön",
-	        "back": "Geri",
-	        "create": "Oluştur",
-	        "creating": "Oluşturuluyor...",
-	        "save": "Kaydet",
-	        "saving": "Kaydediliyor..."
-	      }
-	    },
-	    "contacts": {
-	      "header": {
-	        "title": "İletişim Mesajları",
-	        "subtitle": "İletişim formu mesajlarını yönet."
-	      },
-	      "filters": {
-	        "title": "Filtreler",
-	        "description": "Arama, durum ve sıralama seçenekleri.",
-	        "searchPlaceholder": "İsim, e-posta veya konu ile ara...",
-	        "statusLabel": "Durum",
-	        "statusAll": "Tümü",
-	        "statusNew": "Yeni",
-	        "statusInProgress": "İşlemde",
-	        "statusClosed": "Kapalı",
-	        "orderByLabel": "Sıralama",
-	        "orderByCreated": "Oluşturulma",
-	        "orderByUpdated": "Güncelleme",
-	        "orderByStatus": "Durum",
-	        "orderByName": "İsim",
-	        "orderLabel": "Yön",
-	        "orderDesc": "Azalan",
-	        "orderAsc": "Artan",
-	        "onlyUnresolved": "Sadece çözülmemiş"
-	      },
-	      "list": {
-	        "title": "Liste",
-	        "description": "İletişim mesajlarını görüntüle ve yönet.",
-	        "loading": "Mesajlar yükleniyor...",
-	        "empty": "İletişim mesajı bulunamadı."
-	      },
-	      "columns": {
-	        "name": "İsim",
-	        "email": "E-posta",
-	        "subject": "Konu",
-	        "status": "Durum",
-	        "createdAt": "Oluşturulma"
-	      },
-	      "status": {
-	        "new": "Yeni",
-	        "inProgress": "İşlemde",
-	        "closed": "Kapalı"
-	      },
-	      "details": {
-	        "title": "Detaylar",
-	        "name": "İsim",
-	        "email": "E-posta",
-	        "phone": "Telefon",
-	        "subject": "Konu",
-	        "message": "Mesaj",
-	        "createdAt": "Oluşturulma",
-	        "updatedAt": "Güncelleme",
-	        "id": "ID"
-	      },
-	      "editDialog": {
-	        "title": "Mesajı düzenle",
-	        "description": "Durum, çözüldü bilgisi ve admin notunu güncelle.",
-	        "statusLabel": "Durum",
-	        "resolvedLabel": "Çözüldü",
-	        "adminNoteLabel": "Admin notu",
-	        "adminNotePlaceholder": "Ekip için dahili not..."
-	      },
-	      "messages": {
-	        "saved": "Kaydedildi.",
-	        "saveError": "Değişiklikler kaydedilemedi.",
-	        "deleted": "Silindi.",
-	        "deleteError": "Mesaj silinemedi.",
-	        "loadError": "İletişim mesajları yüklenemedi."
-	      },
-		      "confirmDelete": "Bu iletişim mesajını silmek üzeresin.\n\nİsim: {name}\nE-posta: {email}\nKonu: {subject}\nID: {id}\n\nDevam etmek istiyor musun?"
-		    },
-		    "reviews": {
-		      "header": {
-		        "title": "Yorumlar & Testimonial",
-		        "description": "Müşteri yorumlarını ve değerlendirmelerini yönet."
-		      },
-		      "actions": {
-		        "create": "Yeni ekle",
-		        "backToList": "Listeye dön",
-		        "deleting": "Siliniyor..."
-		      },
-		      "filters": {
-		        "searchLabel": "Ara",
-		        "searchPlaceholder": "İsim, e-posta, yorum...",
-		        "approvedLabel": "Onay",
-		        "activeLabel": "Durum",
-		        "minRatingLabel": "Min. puan",
-		        "minRatingPlaceholder": "0",
-		        "maxRatingLabel": "Max. puan",
-		        "maxRatingPlaceholder": "5",
-		        "localeLabel": "Dil",
-		        "options": {
-		          "all": "Tümü",
-		          "approved": "Onaylı",
-		          "unapproved": "Onaysız",
-		          "active": "Aktif",
-		          "inactive": "Pasif"
-		        }
-		      },
-		      "summary": {
-		        "total": "Toplam {total} kayıt"
-		      },
-		      "table": {
-		        "columns": {
-		          "nameEmail": "İsim & E-posta",
-		          "rating": "Puan",
-		          "comment": "Yorum",
-		          "approved": "Onaylı",
-		          "active": "Aktif",
-		          "locale": "Locale",
-		          "date": "Tarih"
-		        },
-		        "empty": "Kayıt bulunamadı.",
-		        "updatedAt": "Güncelleme"
-		      },
-		      "labels": {
-		        "approved": "Onaylı",
-		        "unapproved": "Onaysız",
-		        "active": "Aktif",
-		        "inactive": "Pasif",
-		        "comment": "Yorum",
-		        "createdAt": "Oluşturma",
-		        "updatedAt": "Güncelleme"
-		      },
-		      "deleteDialog": {
-		        "title": "Silmek istediğine emin misin?",
-		        "description": "{name} tarafından yapılan yorum silinecek. Bu işlem geri alınamaz.",
-		        "fallbackName": "Bu kayıt"
-		      },
-		      "messages": {
-		        "activated": "Aktif yapıldı.",
-		        "deactivated": "Pasif yapıldı.",
-		        "approved": "Onaylandı.",
-		        "approvalRemoved": "Onay kaldırıldı.",
-		        "created": "Kayıt oluşturuldu.",
-		        "updated": "Kayıt güncellendi.",
-		        "deleted": "Kayıt silindi.",
-		        "loadError": "Kayıt yüklenemedi.",
-		        "genericError": "İşlem başarısız. Lütfen tekrar deneyin."
-		      },
-			      "form": {
-			        "titles": {
-			          "create": "Yeni yorum",
-			          "edit": "Yorumu düzenle"
-			        },
-		        "descriptions": {
-		          "create": "Yeni bir müşteri yorumu ekleyin.",
-		          "edit": "Mevcut müşteri yorumunu düzenleyin."
-		        },
-		        "sections": {
-		          "meta": "Genel bilgiler",
-		          "customer": "Müşteri bilgileri",
-		          "content": "Yorum içeriği",
-		          "extras": "Testimonial ek alanları",
-		          "extrasDescription": "Testimonial görünümü için opsiyonel alanlar.",
-		          "adminReply": "Admin yanıtı",
-		          "adminReplyDescription": "Bu yoruma admin olarak yanıt verebilirsiniz."
-		        },
-		        "fields": {
-		          "locale": "Dil",
-		          "displayOrder": "Sıralama",
-		          "approved": "Onay",
-		          "active": "Durum",
-		          "targetType": "Target type",
-		          "targetId": "Target ID",
-		          "name": "İsim",
-		          "email": "E-posta",
-		          "rating": "Puan",
-		          "title": "Başlık",
-		          "comment": "Yorum",
-		          "role": "Rol / Pozisyon",
-		          "company": "Şirket",
-		          "avatarUrl": "Avatar URL",
-		          "logoUrl": "Logo URL",
-		          "profileHref": "Profil linki",
-		          "adminReply": "Yanıt"
-		        },
-		        "placeholders": {
-		          "targetType": "örn: testimonial, product, service",
-		          "targetId": "UUID veya identifier",
-		          "name": "örn: Ahmet Yılmaz",
-		          "email": "ornek@email.com",
-		          "title": "Yorum başlığı (opsiyonel)",
-		          "comment": "Müşteri yorumu...",
-		          "role": "örn: CEO, Müdür",
-		          "company": "Şirket adı",
-		          "adminReply": "Admin yanıtı (opsiyonel)"
-		        },
-			        "validation": {
-			          "targetTypeRequired": "Target type zorunlu.",
-			          "targetIdRequired": "Target ID zorunlu.",
-			          "nameRequired": "İsim zorunlu.",
-			          "emailRequired": "E-posta zorunlu.",
-			          "commentRequired": "Yorum zorunlu.",
-			          "ratingRange": "Puan 0-5 arasında olmalı."
-			        }
-			      }
-			    },
-			    "bookings": {
-			      "header": {
-			        "title": "Randevular",
-			        "description": "Randevu taleplerini filtrele, görüntüle ve güncelle."
-			      },
-			      "summary": {
-			        "total": "Toplam {total}"
-			      },
-			      "states": {
-			        "loadingInline": "Yükleniyor…",
-			        "loading": "Randevular yükleniyor...",
-			        "empty": "Kayıt bulunamadı.",
-			        "resourcesLoading": "Kaynaklar yükleniyor..."
-			      },
-			      "filters": {
-			        "searchLabel": "Arama",
-			        "searchPlaceholder": "İsim / E-posta / Telefon",
-			        "statusLabel": "Durum",
-			        "statusOptions": {
-			          "all": "Hepsi",
-			          "new": "Yeni",
-			          "confirmed": "Onaylandı",
-			          "rejected": "Reddedildi",
-			          "completed": "Tamamlandı",
-			          "cancelled": "İptal",
-			          "expired": "Süresi doldu"
-			        },
-			        "readLabel": "Okunma",
-			        "readOptions": {
-			          "all": "Hepsi",
-			          "unread": "Okunmadı",
-			          "read": "Okundu"
-			        },
-			        "dateLabel": "Tarih",
-			        "resourceIdLabel": "Kaynak ID",
-			        "resourceIdPlaceholder": "(opsiyonel)",
-			        "serviceIdLabel": "Servis ID",
-			        "serviceIdPlaceholder": "(opsiyonel)"
-			      },
-			      "badges": {
-			        "unread": "Okunmadı"
-			      },
-			      "status": {
-			        "new": "Yeni",
-			        "confirmed": "Onaylandı",
-			        "rejected": "Reddedildi",
-			        "completed": "Tamamlandı",
-			        "cancelled": "İptal",
-			        "expired": "Süresi doldu"
-			      },
-			      "read": {
-			        "read": "Okundu",
-			        "unread": "Okunmadı"
-			      },
-			      "list": {
-			        "title": "Randevu listesi",
-			        "description": "Randevuları yönet ve hızlı işlemler yap.",
-			        "views": {
-			          "table": "Tablo",
-			          "cards": "Kart"
-			        },
-			        "columns": {
-			          "status": "Durum",
-			          "customer": "Müşteri",
-			          "date": "Tarih",
-			          "resource": "Kaynak",
-			          "service": "Servis"
-			        }
-			      },
-			      "labels": {
-			        "dateTime": "Tarih/saat",
-			        "resource": "Kaynak",
-			        "service": "Servis",
-			        "customerMessage": "Müşteri mesajı",
-			        "selected": "Seçili",
-			        "available": "Müsait",
-			        "full": "Dolu",
-			        "inactive": "Pasif"
-			      },
-			      "tooltips": {
-			        "acceptDisabled": "Sadece \"Yeni\" talepler kabul edilebilir.",
-			        "rejectDisabled": "Bu durum reddedilemez.",
-			        "alreadyRead": "Zaten okundu",
-			        "decisionAlreadyMade": "Bu randevu için karar zaten verilmiş."
-			      },
-			      "actions": {
-			        "accept": "Kabul et",
-			        "accepting": "Kabul ediliyor...",
-			        "reject": "Reddet",
-			        "rejecting": "Reddediliyor...",
-			        "markRead": "Okundu işaretle",
-			        "backToList": "Listeye dön"
-			      },
-			      "decision": {
-			        "titleAccept": "Randevu kabul",
-			        "titleReject": "Randevu red",
-			        "actionAccept": "Kabul et",
-			        "actionReject": "Reddet",
-			        "noteLabel": "Decision note (opsiyonel)",
-			        "notePlaceholder": "Bu not, e-posta template içinde müşteriye gösterilebilir.",
-			        "noteHelp": "Bu işlem backend’de e-posta template + bildirim tetikler.",
-			        "processing": "İşleniyor..."
-			      },
-			      "confirm": {
-			        "delete": "Bu randevu kaydını silmek üzeresin.\n\nMüşteri: {name}\nTarih: {dateTime}\n\nDevam etmek istiyor musun?",
-			        "reject": "Bu randevu talebini reddetmek üzeresin. Devam edilsin mi?"
-			      },
-			      "messages": {
-			        "created": "Kayıt oluşturuldu.",
-			        "updated": "Kayıt güncellendi.",
-			        "deleted": "Randevu silindi.",
-			        "deleteError": "Randevu silinemedi.",
-			        "markedRead": "Okundu olarak işaretlendi.",
-			        "accepted": "Randevu kabul edildi. (E-posta + bildirim tetiklendi)",
-			        "rejected": "Randevu reddedildi. (E-posta + bildirim tetiklendi)",
-			        "loadError": "Kayıt yüklenemedi.",
-			        "genericError": "İşlem başarısız. Lütfen tekrar deneyin."
-			      },
-			      "form": {
-			        "titles": {
-			          "create": "Yeni randevu",
-			          "edit": "Randevu düzenle"
-			        },
-			        "description": "Müşteri bilgileri, tarih/saat, kaynak ve durum alanlarını yönet.",
-			        "fields": {
-			          "name": "İsim",
-			          "email": "E-posta",
-			          "phone": "Telefon",
-			          "locale": "Locale",
-			          "status": "Durum",
-			          "isRead": "Okunma",
-			          "serviceId": "Servis ID",
-			          "resource": "Kaynak",
-			          "date": "Tarih",
-			          "time": "Saat",
-			          "customerMessage": "Müşteri mesajı",
-			          "adminNote": "Admin notu",
-			          "decisionNote": "Decision note"
-			        },
-			        "placeholders": {
-			          "serviceId": "(opsiyonel)",
-			          "resource": "Kaynak seç",
-			          "time": "Saat seç",
-			          "select": "Seç...",
-			          "optional": "(opsiyonel)",
-			          "decisionNote": "(opsiyonel) Kabul/Red e-postasında müşteriye gösterilebilir."
-			        },
-			        "help": {
-			          "locale": "Müşterinin tercih dili. E-posta template dili bu alana göre seçilir.",
-			          "status": "Kabul/Red için aksiyonları kullan. (Decision note + e-posta + bildirim)",
-			          "date": "Günlük plan bu tarihe göre çekilir.",
-			          "pickResourceAndDate": "Kaynak + tarih seç.",
-			          "slotsLoading": "Slotlar yükleniyor...",
-			          "slotCount": "{count} slot"
-			        },
-			        "validation": {
-			          "requiredCustomerFields": "İsim, e-posta ve telefon zorunludur.",
-			          "resourceRequired": "Kaynak seçimi zorunludur.",
-			          "invalidDate": "Geçerli bir tarih seç. (YYYY-MM-DD)",
-			          "invalidTime": "Geçerli bir saat seç. (HH:mm)"
-			        },
-			        "availability": {
-			          "checking": "Müsaitlik kontrol ediliyor...",
-			          "noSlot": "Slot kaydı yok (plan üzerinden oluşturulabilir).",
-			          "available": "Müsait ({reserved}/{cap})",
-			          "unavailable": "Dolu / pasif ({reserved}/{cap})"
-			        }
-			      },
-			      "plan": {
-			        "title": "Günlük plan",
-			        "description": "Slot listesi plan endpoint’inden gelir. Sadece müsait slotlar seçilebilir.",
-			        "columns": {
-			          "time": "Saat",
-			          "status": "Durum",
-			          "capacity": "Kapasite"
-			        }
-			      }
-			    }
-			  },
-			  "header": {
-			    "title": "Hizmet Yönetimi",
-			    "description": "Hizmetleri listele, filtrele, sırala ve düzenle.",
+      "actions": {
+        "backToList": "Listeye dön",
+        "back": "Geri",
+        "create": "Oluştur",
+        "creating": "Oluşturuluyor...",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor..."
+      }
+    },
+    "contacts": {
+      "header": {
+        "title": "İletişim Mesajları",
+        "subtitle": "İletişim formu mesajlarını yönet."
+      },
+      "filters": {
+        "title": "Filtreler",
+        "description": "Arama, durum ve sıralama seçenekleri.",
+        "searchPlaceholder": "İsim, e-posta veya konu ile ara...",
+        "statusLabel": "Durum",
+        "statusAll": "Tümü",
+        "statusNew": "Yeni",
+        "statusInProgress": "İşlemde",
+        "statusClosed": "Kapalı",
+        "orderByLabel": "Sıralama",
+        "orderByCreated": "Oluşturulma",
+        "orderByUpdated": "Güncelleme",
+        "orderByStatus": "Durum",
+        "orderByName": "İsim",
+        "orderLabel": "Yön",
+        "orderDesc": "Azalan",
+        "orderAsc": "Artan",
+        "onlyUnresolved": "Sadece çözülmemiş"
+      },
+      "list": {
+        "title": "Liste",
+        "description": "İletişim mesajlarını görüntüle ve yönet.",
+        "loading": "Mesajlar yükleniyor...",
+        "empty": "İletişim mesajı bulunamadı."
+      },
+      "columns": {
+        "name": "İsim",
+        "email": "E-posta",
+        "subject": "Konu",
+        "status": "Durum",
+        "createdAt": "Oluşturulma"
+      },
+      "status": {
+        "new": "Yeni",
+        "inProgress": "İşlemde",
+        "closed": "Kapalı"
+      },
+      "details": {
+        "title": "Detaylar",
+        "name": "İsim",
+        "email": "E-posta",
+        "phone": "Telefon",
+        "subject": "Konu",
+        "message": "Mesaj",
+        "createdAt": "Oluşturulma",
+        "updatedAt": "Güncelleme",
+        "id": "ID"
+      },
+      "editDialog": {
+        "title": "Mesajı düzenle",
+        "description": "Durum, çözüldü bilgisi ve admin notunu güncelle.",
+        "statusLabel": "Durum",
+        "resolvedLabel": "Çözüldü",
+        "adminNoteLabel": "Admin notu",
+        "adminNotePlaceholder": "Ekip için dahili not..."
+      },
+      "messages": {
+        "saved": "Kaydedildi.",
+        "saveError": "Değişiklikler kaydedilemedi.",
+        "deleted": "Silindi.",
+        "deleteError": "Mesaj silinemedi.",
+        "loadError": "İletişim mesajları yüklenemedi."
+      },
+      "confirmDelete": "Bu iletişim mesajını silmek üzeresin.\n\nİsim: {name}\nE-posta: {email}\nKonu: {subject}\nID: {id}\n\nDevam etmek istiyor musun?"
+    },
+    "reviews": {
+      "header": {
+        "title": "Yorumlar & Testimonial",
+        "description": "Müşteri yorumlarını ve değerlendirmelerini yönet."
+      },
+      "actions": {
+        "create": "Yeni ekle",
+        "backToList": "Listeye dön",
+        "deleting": "Siliniyor..."
+      },
+      "filters": {
+        "searchLabel": "Ara",
+        "searchPlaceholder": "İsim, e-posta, yorum...",
+        "approvedLabel": "Onay",
+        "activeLabel": "Durum",
+        "minRatingLabel": "Min. puan",
+        "minRatingPlaceholder": "0",
+        "maxRatingLabel": "Max. puan",
+        "maxRatingPlaceholder": "5",
+        "localeLabel": "Dil",
+        "options": {
+          "all": "Tümü",
+          "approved": "Onaylı",
+          "unapproved": "Onaysız",
+          "active": "Aktif",
+          "inactive": "Pasif"
+        }
+      },
+      "summary": {
+        "total": "Toplam {total} kayıt"
+      },
+      "table": {
+        "columns": {
+          "nameEmail": "İsim & E-posta",
+          "rating": "Puan",
+          "comment": "Yorum",
+          "approved": "Onaylı",
+          "active": "Aktif",
+          "locale": "Locale",
+          "date": "Tarih"
+        },
+        "empty": "Kayıt bulunamadı.",
+        "updatedAt": "Güncelleme"
+      },
+      "labels": {
+        "approved": "Onaylı",
+        "unapproved": "Onaysız",
+        "active": "Aktif",
+        "inactive": "Pasif",
+        "comment": "Yorum",
+        "createdAt": "Oluşturma",
+        "updatedAt": "Güncelleme"
+      },
+      "deleteDialog": {
+        "title": "Silmek istediğine emin misin?",
+        "description": "{name} tarafından yapılan yorum silinecek. Bu işlem geri alınamaz.",
+        "fallbackName": "Bu kayıt"
+      },
+      "messages": {
+        "activated": "Aktif yapıldı.",
+        "deactivated": "Pasif yapıldı.",
+        "approved": "Onaylandı.",
+        "approvalRemoved": "Onay kaldırıldı.",
+        "created": "Kayıt oluşturuldu.",
+        "updated": "Kayıt güncellendi.",
+        "deleted": "Kayıt silindi.",
+        "loadError": "Kayıt yüklenemedi.",
+        "genericError": "İşlem başarısız. Lütfen tekrar deneyin."
+      },
+      "form": {
+        "titles": {
+          "create": "Yeni yorum",
+          "edit": "Yorumu düzenle"
+        },
+        "descriptions": {
+          "create": "Yeni bir müşteri yorumu ekleyin.",
+          "edit": "Mevcut müşteri yorumunu düzenleyin."
+        },
+        "sections": {
+          "meta": "Genel bilgiler",
+          "customer": "Müşteri bilgileri",
+          "content": "Yorum içeriği",
+          "extras": "Testimonial ek alanları",
+          "extrasDescription": "Testimonial görünümü için opsiyonel alanlar.",
+          "adminReply": "Admin yanıtı",
+          "adminReplyDescription": "Bu yoruma admin olarak yanıt verebilirsiniz."
+        },
+        "fields": {
+          "locale": "Dil",
+          "displayOrder": "Sıralama",
+          "approved": "Onay",
+          "active": "Durum",
+          "targetType": "Target type",
+          "targetId": "Target ID",
+          "name": "İsim",
+          "email": "E-posta",
+          "rating": "Puan",
+          "title": "Başlık",
+          "comment": "Yorum",
+          "role": "Rol / Pozisyon",
+          "company": "Şirket",
+          "avatarUrl": "Avatar URL",
+          "logoUrl": "Logo URL",
+          "profileHref": "Profil linki",
+          "adminReply": "Yanıt"
+        },
+        "placeholders": {
+          "targetType": "örn: testimonial, product, service",
+          "targetId": "UUID veya identifier",
+          "name": "örn: Ahmet Yılmaz",
+          "email": "ornek@email.com",
+          "title": "Yorum başlığı (opsiyonel)",
+          "comment": "Müşteri yorumu...",
+          "role": "örn: CEO, Müdür",
+          "company": "Şirket adı",
+          "adminReply": "Admin yanıtı (opsiyonel)"
+        },
+        "validation": {
+          "targetTypeRequired": "Target type zorunlu.",
+          "targetIdRequired": "Target ID zorunlu.",
+          "nameRequired": "İsim zorunlu.",
+          "emailRequired": "E-posta zorunlu.",
+          "commentRequired": "Yorum zorunlu.",
+          "ratingRange": "Puan 0-5 arasında olmalı."
+        }
+      }
+    },
+    "bookings": {
+      "header": {
+        "title": "Randevular",
+        "description": "Randevu taleplerini filtrele, görüntüle ve güncelle."
+      },
+      "summary": {
+        "total": "Toplam {total}"
+      },
+      "states": {
+        "loadingInline": "Yükleniyor…",
+        "loading": "Randevular yükleniyor...",
+        "empty": "Kayıt bulunamadı.",
+        "resourcesLoading": "Kaynaklar yükleniyor..."
+      },
+      "filters": {
+        "searchLabel": "Arama",
+        "searchPlaceholder": "İsim / E-posta / Telefon",
+        "statusLabel": "Durum",
+        "statusOptions": {
+          "all": "Hepsi",
+          "new": "Yeni",
+          "confirmed": "Onaylandı",
+          "rejected": "Reddedildi",
+          "completed": "Tamamlandı",
+          "cancelled": "İptal",
+          "expired": "Süresi doldu"
+        },
+        "readLabel": "Okunma",
+        "readOptions": {
+          "all": "Hepsi",
+          "unread": "Okunmadı",
+          "read": "Okundu"
+        },
+        "dateLabel": "Tarih",
+        "resourceIdLabel": "Kaynak ID",
+        "resourceIdPlaceholder": "(opsiyonel)",
+        "serviceIdLabel": "Servis ID",
+        "serviceIdPlaceholder": "(opsiyonel)"
+      },
+      "badges": {
+        "unread": "Okunmadı"
+      },
+      "status": {
+        "new": "Yeni",
+        "confirmed": "Onaylandı",
+        "rejected": "Reddedildi",
+        "completed": "Tamamlandı",
+        "cancelled": "İptal",
+        "expired": "Süresi doldu"
+      },
+      "read": {
+        "read": "Okundu",
+        "unread": "Okunmadı"
+      },
+      "list": {
+        "title": "Randevu listesi",
+        "description": "Randevuları yönet ve hızlı işlemler yap.",
+        "views": {
+          "table": "Tablo",
+          "cards": "Kart"
+        },
+        "columns": {
+          "status": "Durum",
+          "customer": "Müşteri",
+          "date": "Tarih",
+          "resource": "Kaynak",
+          "service": "Servis"
+        }
+      },
+      "labels": {
+        "dateTime": "Tarih/saat",
+        "resource": "Kaynak",
+        "service": "Servis",
+        "customerMessage": "Müşteri mesajı",
+        "selected": "Seçili",
+        "available": "Müsait",
+        "full": "Dolu",
+        "inactive": "Pasif"
+      },
+      "tooltips": {
+        "acceptDisabled": "Sadece \"Yeni\" talepler kabul edilebilir.",
+        "rejectDisabled": "Bu durum reddedilemez.",
+        "alreadyRead": "Zaten okundu",
+        "decisionAlreadyMade": "Bu randevu için karar zaten verilmiş."
+      },
+      "actions": {
+        "accept": "Kabul et",
+        "accepting": "Kabul ediliyor...",
+        "reject": "Reddet",
+        "rejecting": "Reddediliyor...",
+        "markRead": "Okundu işaretle",
+        "backToList": "Listeye dön"
+      },
+      "decision": {
+        "titleAccept": "Randevu kabul",
+        "titleReject": "Randevu red",
+        "actionAccept": "Kabul et",
+        "actionReject": "Reddet",
+        "noteLabel": "Decision note (opsiyonel)",
+        "notePlaceholder": "Bu not, e-posta template içinde müşteriye gösterilebilir.",
+        "noteHelp": "Bu işlem backend’de e-posta template + bildirim tetikler.",
+        "processing": "İşleniyor..."
+      },
+      "confirm": {
+        "delete": "Bu randevu kaydını silmek üzeresin.\n\nMüşteri: {name}\nTarih: {dateTime}\n\nDevam etmek istiyor musun?",
+        "reject": "Bu randevu talebini reddetmek üzeresin. Devam edilsin mi?"
+      },
+      "messages": {
+        "created": "Kayıt oluşturuldu.",
+        "updated": "Kayıt güncellendi.",
+        "deleted": "Randevu silindi.",
+        "deleteError": "Randevu silinemedi.",
+        "markedRead": "Okundu olarak işaretlendi.",
+        "accepted": "Randevu kabul edildi. (E-posta + bildirim tetiklendi)",
+        "rejected": "Randevu reddedildi. (E-posta + bildirim tetiklendi)",
+        "loadError": "Kayıt yüklenemedi.",
+        "genericError": "İşlem başarısız. Lütfen tekrar deneyin."
+      },
+      "form": {
+        "titles": {
+          "create": "Yeni randevu",
+          "edit": "Randevu düzenle"
+        },
+        "description": "Müşteri bilgileri, tarih/saat, kaynak ve durum alanlarını yönet.",
+        "fields": {
+          "name": "İsim",
+          "email": "E-posta",
+          "phone": "Telefon",
+          "locale": "Locale",
+          "status": "Durum",
+          "isRead": "Okunma",
+          "serviceId": "Servis ID",
+          "resource": "Kaynak",
+          "date": "Tarih",
+          "time": "Saat",
+          "customerMessage": "Müşteri mesajı",
+          "adminNote": "Admin notu",
+          "decisionNote": "Decision note"
+        },
+        "placeholders": {
+          "serviceId": "(opsiyonel)",
+          "resource": "Kaynak seç",
+          "time": "Saat seç",
+          "select": "Seç...",
+          "optional": "(opsiyonel)",
+          "decisionNote": "(opsiyonel) Kabul/Red e-postasında müşteriye gösterilebilir."
+        },
+        "help": {
+          "locale": "Müşterinin tercih dili. E-posta template dili bu alana göre seçilir.",
+          "status": "Kabul/Red için aksiyonları kullan. (Decision note + e-posta + bildirim)",
+          "date": "Günlük plan bu tarihe göre çekilir.",
+          "pickResourceAndDate": "Kaynak + tarih seç.",
+          "slotsLoading": "Slotlar yükleniyor...",
+          "slotCount": "{count} slot"
+        },
+        "validation": {
+          "requiredCustomerFields": "İsim, e-posta ve telefon zorunludur.",
+          "resourceRequired": "Kaynak seçimi zorunludur.",
+          "invalidDate": "Geçerli bir tarih seç. (YYYY-MM-DD)",
+          "invalidTime": "Geçerli bir saat seç. (HH:mm)"
+        },
+        "availability": {
+          "checking": "Müsaitlik kontrol ediliyor...",
+          "noSlot": "Slot kaydı yok (plan üzerinden oluşturulabilir).",
+          "available": "Müsait ({reserved}/{cap})",
+          "unavailable": "Dolu / pasif ({reserved}/{cap})"
+        }
+      },
+      "plan": {
+        "title": "Günlük plan",
+        "description": "Slot listesi plan endpoint’inden gelir. Sadece müsait slotlar seçilebilir.",
+        "columns": {
+          "time": "Saat",
+          "status": "Durum",
+          "capacity": "Kapasite"
+        }
+      }
+    },
+    "storage": {
+      "title": "Dosya Yönetimi",
+      "description": "Dosyaları yükleyin, düzenleyin ve silin.",
+      "list": {
+        "title": "Storage Assets",
+        "description": "Dosya yönetimi - yükleme, düzenleme, silme.",
+        "uploadButton": "Yükle",
+        "deleteSelected": "Seçilenleri Sil ({count})",
+        "selectFileError": "Lütfen en az bir dosya seçin",
+        "filesDeleted": "{count} dosya silindi",
+        "fileDeleted": "Dosya silindi",
+        "searchLabel": "Ara",
+        "searchPlaceholder": "Dosya adı...",
+        "bucketLabel": "Bucket",
+        "folderLabel": "Klasör",
+        "fileTypeLabel": "Dosya Tipi",
+        "allOption": "Tümü",
+        "rootFolder": "(root)",
+        "imageType": "Resim",
+        "videoType": "Video",
+        "audioType": "Ses",
+        "pdfType": "PDF",
+        "refreshButton": "Yenile",
+        "totalFiles": "Toplam {total} dosya",
+        "selectedCount": "{count} seçili",
+        "loading": "Yükleniyor...",
+        "noFiles": "Dosya bulunamadı.",
+        "previewColumn": "Preview",
+        "fileColumn": "Dosya",
+        "bucketColumn": "Bucket",
+        "folderColumn": "Klasör",
+        "typeColumn": "Tip",
+        "sizeColumn": "Boyut",
+        "dateColumn": "Tarih",
+        "actionsColumn": "İşlemler",
+        "downloadTitle": "İndir",
+        "editButton": "Düzenle",
+        "deleteConfirmTitle": "Silmek istediğinizden emin misiniz?",
+        "deleteConfirmDescription": "{name} silinecek. Bu işlem geri alınamaz.",
+        "cancelButton": "İptal",
+        "deleteButton": "Sil",
+        "defaultFileName": "Bu dosya"
+      },
+      "detail": {
+        "uploadTitle": "Dosya Yükle",
+        "editTitle": "Dosya Düzenle",
+        "uploadDescription": "Yeni dosya yükleyin",
+        "editDescription": "Dosya bilgilerini düzenleyin",
+        "backButton": "Geri",
+        "previewTitle": "Önizleme",
+        "mimeLabel": "MIME:",
+        "sizeLabel": "Boyut:",
+        "dimensionsLabel": "Boyutlar:",
+        "urlLabel": "URL:",
+        "openLink": "Aç",
+        "selectFileTitle": "Dosya Seç",
+        "fileLabel": "Dosya",
+        "required": "*",
+        "selectedFile": "Seçili: {name} ({size})",
+        "bucketLabel": "Bucket",
+        "bucketPlaceholder": "public, private, assets...",
+        "folderLabel": "Klasör",
+        "folderPlaceholder": "images, documents...",
+        "folderHelp": "Opsiyonel. Dosyayı organize etmek için klasör adı.",
+        "fileInfoTitle": "Dosya Bilgileri",
+        "fileNameLabel": "Dosya Adı",
+        "fileNamePlaceholder": "example.jpg",
+        "bucketReadonlyHelp": "Bucket değiştirilemez.",
+        "deleting": "Siliniyor...",
+        "deleteButton": "Sil",
+        "cancelButton": "İptal",
+        "uploading": "Yükleniyor...",
+        "saving": "Kaydediliyor...",
+        "uploadButton": "Yükle",
+        "saveButton": "Kaydet",
+        "selectFileError": "Lütfen bir dosya seçin",
+        "bucketRequiredError": "Bucket gerekli",
+        "fileUploaded": "Dosya yüklendi",
+        "recordUpdated": "Kayıt güncellendi",
+        "loadError": "Kayıt yüklenemedi: {error}",
+        "backToList": "Listeye Dön"
+      },
+      "errorFallback": "İşlem başarısız"
+    },
+    "users": {
+      "list": {
+        "title": "Kullanıcılar",
+        "description": "Kullanıcıları görüntüleyin, düzenleyin ve rollerini yönetin.",
+        "filters": {
+          "title": "Filtreler",
+          "description": "Arama ve filtreleme ayarları.",
+          "searchLabel": "Arama",
+          "searchPlaceholder": "Ad, telefon, email...",
+          "roleLabel": "Rol",
+          "rolePlaceholder": "Tümü",
+          "onlyActive": "Sadece aktif",
+          "searchButton": "Ara",
+          "resetButton": "Sıfırla",
+          "refreshButton": "Yenile"
+        },
+        "table": {
+          "title": "Kullanıcı Listesi",
+          "loading": "Yükleniyor…",
+          "totalRecords": "Toplam: {count} kayıt (sayfa)",
+          "loadError": "Liste yüklenemedi.",
+          "retryButton": "Yeniden dene",
+          "noRecords": "Kayıt bulunamadı.",
+          "fullName": "Ad Soyad",
+          "email": "E-posta",
+          "phone": "Telefon",
+          "status": "Durum",
+          "role": "Rol",
+          "actions": "İşlem",
+          "viewButton": "Detay",
+          "statusActive": "Aktif",
+          "statusInactive": "Pasif",
+          "unknownUser": "İsimsiz Kullanıcı"
+        },
+        "pagination": {
+          "offset": "Offset: {offset}",
+          "limit": "Limit: {limit}",
+          "previous": "Önceki",
+          "next": "Sonraki"
+        }
+      },
+      "detail": {
+        "title": "Kullanıcı Detay",
+        "unknownUser": "İsimsiz Kullanıcı",
+        "backButton": "Geri",
+        "loadError": "Kullanıcı yüklenemedi.",
+        "loading": "Yükleniyor…",
+        "retryButton": "Yeniden dene",
+        "statusActive": "Aktif",
+        "statusInactive": "Pasif",
+        "profile": {
+          "title": "Temel Bilgiler",
+          "description": "Ad, telefon ve gerekirse e-posta alanlarını güncelleyin.",
+          "emailLabel": "E-posta",
+          "fullNameLabel": "Ad Soyad",
+          "phoneLabel": "Telefon",
+          "saveButton": "Kaydet",
+          "saved": "Kullanıcı bilgileri güncellendi."
+        },
+        "status": {
+          "title": "Kullanıcı Durumu",
+          "description": "Aktif/pasif durumunu değiştirin.",
+          "active": "Aktif",
+          "inactive": "Pasif",
+          "activated": "Kullanıcı aktif edildi.",
+          "deactivated": "Kullanıcı pasif edildi."
+        },
+        "roles": {
+          "title": "Rol Yönetimi",
+          "description": "Rol tekil tutulur; seçim \"set\" olarak kaydedilir.",
+          "currentRole": "Seçili rol:",
+          "saveButton": "Rolü Kaydet",
+          "saved": "Roller güncellendi.",
+          "admin": "Admin",
+          "moderator": "Moderatör",
+          "user": "Kullanıcı"
+        },
+        "password": {
+          "title": "Şifre Güncelle",
+          "description": "Güvenlik amacıyla yeni bir şifre belirleyin.",
+          "label": "Yeni Şifre",
+          "placeholder": "En az 8 karakter",
+          "updateButton": "Şifreyi Güncelle",
+          "minLengthError": "Şifre en az 8 karakter olmalıdır.",
+          "updated": "Şifre güncellendi."
+        },
+        "delete": {
+          "title": "Tehlikeli İşlem",
+          "description": "Kullanıcıyı kalıcı olarak siler.",
+          "button": "Kullanıcıyı Sil",
+          "confirm": "Bu kullanıcı silinecek. Devam edilsin mi?",
+          "deleted": "Kullanıcı silindi."
+        },
+        "errorFallback": "İşlem başarısız. Lütfen tekrar deneyin."
+      },
+      "roles": {
+        "all": "Tümü",
+        "admin": "Admin",
+        "moderator": "Moderatör",
+        "user": "Kullanıcı"
+      }
+    },
+    "userRoles": {
+      "title": "Rol Yönetimi",
+      "description": "Kullanıcı rollerini listeleyin, rol ekleyin ve rol silin.",
+      "create": {
+        "title": "Yeni Rol Ekle",
+        "description": "Admin-only. Aynı kullanıcıya aynı rol eklenemez.",
+        "userLabel": "Kullanıcı",
+        "userPlaceholder": "Kullanıcı seçin",
+        "roleLabel": "Rol",
+        "rolePlaceholder": "Rol seçin",
+        "addButton": "Ekle",
+        "selectUser": "Lütfen kullanıcı seçin.",
+        "added": "Rol eklendi.",
+        "alreadyExists": "Bu rol zaten mevcut.",
+        "usersLoading": "Yükleniyor…",
+        "usersLoadError": "Kullanıcılar yüklenemedi.",
+        "retryButton": "Yeniden dene"
+      },
+      "list": {
+        "title": "Rol Listesi",
+        "description": "Filtreleyin ve yönetim işlemlerini yapın.",
+        "userFilterLabel": "Kullanıcı filtresi",
+        "roleFilterLabel": "Rol filtresi",
+        "limitLabel": "Limit",
+        "all": "Tümü",
+        "refreshButton": "Yenile",
+        "loadError": "Roller yüklenemedi.",
+        "retryButton": "Yeniden dene",
+        "noRecords": "Kayıt bulunamadı.",
+        "note": "Not: Bu sayfa admin-only olduğu için, kullanıcı enumerasyon riskini azaltmak adına yetkiler dikkatli yönetilmelidir."
+      },
+      "table": {
+        "userColumn": "Kullanıcı",
+        "roleColumn": "Rol",
+        "createdColumn": "Oluşturma",
+        "actionColumn": "İşlem",
+        "deleteButton": "Sil",
+        "deleteConfirm": "Rol silinsin mi?\n{user} → {role}",
+        "deleted": "Rol silindi.",
+        "loading": "Yükleniyor",
+        "notFound": "Bulunamadı"
+      },
+      "roles": {
+        "admin": "Admin",
+        "seller": "Satıcı",
+        "driver": "Şoför"
+      },
+      "user": {
+        "unknown": "İsimsiz Kullanıcı",
+        "loading": "Yükleniyor…",
+        "notFound": "Kullanıcı bulunamadı"
+      },
+      "errorFallback": "İşlem başarısız. Lütfen tekrar deneyin."
+    },
+    "emailTemplates": {
+      "list": {
+        "title": "E-posta Şablonları",
+        "description": "E-posta şablonlarını yönetin. Her şablon farklı dillerde içerik içerebilir.",
+        "addButton": "Yeni Ekle",
+        "filters": {
+          "searchLabel": "Ara",
+          "searchPlaceholder": "Şablon anahtarı, ad, konu...",
+          "statusLabel": "Durum",
+          "statusOptions": {
+            "all": "Tümü",
+            "active": "Aktif",
+            "inactive": "Pasif"
+          }
+        },
+        "totalRecords": "Toplam {count} kayıt",
+        "refreshButton": "Yenile",
+        "fetching": "Yükleniyor...",
+        "loading": "Yükleniyor...",
+        "empty": "Kayıt bulunamadı.",
+        "table": {
+          "headers": {
+            "templateKey": "Şablon Anahtarı",
+            "nameSubject": "Ad & Konu",
+            "variables": "Değişkenler",
+            "active": "Aktif",
+            "locale": "Dil",
+            "date": "Tarih",
+            "actions": "İşlemler"
+          },
+          "updatedLabel": "Güncelleme"
+        },
+        "actions": {
+          "edit": "Düzenle",
+          "delete": "Sil"
+        },
+        "mobile": {
+          "activeLabel": "Aktif",
+          "variablesLabel": "Değişkenler",
+          "createdLabel": "Oluşturma",
+          "updatedLabel": "Güncelleme"
+        },
+        "toast": {
+          "activated": "Aktif yapıldı.",
+          "deactivated": "Pasif yapıldı.",
+          "deleted": "Kayıt silindi."
+        },
+        "dialog": {
+          "title": "Silmek istediğinizden emin misiniz?",
+          "description": "{template} silinecek. Bu işlem geri alınamaz.",
+          "templateFallback": "Bu şablon",
+          "cancel": "İptal",
+          "delete": "Sil"
+        }
+      },
+      "detail": {
+        "loadError": "Kayıt yüklenemedi",
+        "backToList": "Listeye Dön",
+        "titleCreate": "Yeni E-posta Şablonu",
+        "titleEdit": "E-posta Şablonu Düzenle",
+        "descriptionCreate": "Yeni bir e-posta şablonu oluşturun",
+        "descriptionEdit": "Mevcut e-posta şablonunu düzenleyin",
+        "sections": {
+          "generalInfo": "Genel Bilgiler",
+          "templateInfo": "Şablon Bilgileri",
+          "content": "E-posta İçeriği",
+          "contentDescription": "HTML içerik. Değişkenler için {{variable}} formatını kullanın.",
+          "variables": "Değişkenler",
+          "variablesDescription": "E-posta içeriğinde kullanılan değişkenleri tanımlayın (opsiyonel)"
+        },
+        "fields": {
+          "statusLabel": "Durum",
+          "templateKeyLabel": "Şablon Anahtarı",
+          "templateKeyPlaceholder": "welcome_email",
+          "templateKeyHelp": "Benzersiz anahtar (değiştirilemez). Örn: welcome_email, password_reset",
+          "templateNameLabel": "Şablon Adı",
+          "templateNamePlaceholder": "Hoş Geldiniz E-postası",
+          "subjectLabel": "Konu",
+          "subjectPlaceholder": "Hoş Geldiniz {{name}}!",
+          "subjectHelp": "E-posta konusu. Değişkenler için {{variable}} kullanın.",
+          "contentLabel": "HTML İçerik",
+          "contentPlaceholder": "<html><body><h1>Merhaba {{name}}!</h1><p>Hoş geldiniz...</p></body></html>",
+          "variablesLabel": "Değişkenler",
+          "variablesPlaceholder": "name, email, url veya [\"name\", \"email\", \"url\"]",
+          "variablesHelp": "Virgülle ayrılmış (name, email, url) veya JSON array formatında ([\"name\", \"email\"]).",
+          "detectedVariablesLabel": "İçerikte Tespit Edilen Değişkenler"
+        },
+        "validation": {
+          "templateKeyRequired": "Şablon anahtarı gerekli.",
+          "templateNameRequired": "Şablon adı gerekli.",
+          "subjectRequired": "Konu gerekli.",
+          "contentRequired": "İçerik gerekli."
+        },
+        "actions": {
+          "back": "Geri",
+          "delete": "Sil",
+          "deleting": "Siliniyor...",
+          "cancel": "İptal",
+          "save": "Kaydet",
+          "saving": "Kaydediliyor..."
+        },
+        "toast": {
+          "created": "Şablon oluşturuldu.",
+          "updated": "Şablon güncellendi.",
+          "deleted": "Şablon silindi."
+        },
+        "dialog": {
+          "title": "Silmek istediğinizden emin misiniz?",
+          "description": "{template} silinecek. Bu işlem geri alınamaz.",
+          "templateFallback": "Bu şablon",
+          "cancel": "İptal",
+          "delete": "Sil"
+        }
+      }
+    },
+    "notifications": {
+      "title": "Bildirimler",
+      "description": "Tüm sistem bildirimlerini yönetin ({count} bildirim, {unread} okunmamış)",
+      "actions": {
+        "markAllRead": "Tümünü Okundu İşaretle",
+        "refresh": "Yenile",
+        "create": "Yeni Bildirim",
+        "back": "Geri",
+        "delete": "Sil",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor...",
+        "cancel": "İptal",
+        "edit": "Düzenle",
+        "markRead": "Okundu Yap",
+        "markUnread": "Okunmadı Yap"
+      },
+      "filters": {
+        "title": "Filtreler",
+        "search": "Ara",
+        "searchPlaceholder": "Başlık, mesaj veya tip...",
+        "status": "Durum",
+        "type": "Tip",
+        "all": "Tümü",
+        "read": "Okundu",
+        "unread": "Okunmadı",
+        "typePlaceholder": "Tümü"
+      },
+      "table": {
+        "status": "Durum",
+        "title": "Başlık",
+        "message": "Mesaj",
+        "type": "Tip",
+        "date": "Tarih",
+        "actions": "İşlemler",
+        "loading": "Yükleniyor...",
+        "noRecords": "Bildirim bulunamadı",
+        "read": "Okundu",
+        "unread": "Okunmadı"
+      },
+      "form": {
+        "createTitle": "Yeni Bildirim",
+        "editTitle": "Bildirim Detayı",
+        "createDescription": "Yeni bir bildirim oluşturun",
+        "editDescription": "Bildirim detaylarını görüntüleyin",
+        "infoTitle": "Bildirim Bilgileri",
+        "userId": "Kullanıcı ID",
+        "userIdPlaceholder": "Boş bırakılırsa mevcut kullanıcı",
+        "userIdHelp": "Belirli bir kullanıcıya göndermek için UUID girin",
+        "title": "Başlık",
+        "titlePlaceholder": "Bildirim başlığı",
+        "message": "Mesaj",
+        "messagePlaceholder": "Bildirim mesajı",
+        "type": "Tip",
+        "optional": "(opsiyonel)",
+        "editWarning": "ℹ️ Bildirimler oluşturulduktan sonra düzenlenemez. Sadece okundu/okunmadı durumu değiştirilebilir."
+      },
+      "details": {
+        "title": "Bildirim Detayları",
+        "id": "ID",
+        "userId": "Kullanıcı ID",
+        "status": "Durum",
+        "createdAt": "Oluşturulma Tarihi",
+        "read": "Okundu",
+        "unread": "Okunmadı"
+      },
+      "messages": {
+        "markAllSuccess": "Tüm bildirimler okundu olarak işaretlendi",
+        "markedRead": "Okundu olarak işaretlendi",
+        "markedUnread": "Okunmadı olarak işaretlendi",
+        "deleteConfirm": "\"{title}\" bildirimini silmek istediğinize emin misiniz?",
+        "deleteSuccess": "Bildirim silindi",
+        "operationFailed": "İşlem başarısız",
+        "titleRequired": "Başlık gerekli",
+        "messageRequired": "Mesaj gerekli",
+        "createSuccess": "Bildirim oluşturuldu",
+        "editNotSupported": "Bildirimleri düzenleme şu anda desteklenmiyor"
+      },
+      "types": {
+        "order_created": "Sipariş Oluşturuldu",
+        "order_paid": "Sipariş Ödendi",
+        "order_failed": "Sipariş Başarısız",
+        "booking_created": "Rezervasyon Oluşturuldu",
+        "booking_status_changed": "Rezervasyon Durumu Değişti",
+        "system": "Sistem",
+        "custom": "Özel"
+      }
+    },
+    "audit": {
+      "header": {
+        "title": "Denetim Kayıtları",
+        "description": "İstek logları, kimlik doğrulama olayları, metrikler ve coğrafi dağılım."
+      },
+      "refresh": "Yenile",
+      "refreshed": "Veriler yenilendi.",
+      "error": "Veriler yüklenirken hata oluştu.",
+      "clear": {
+        "button": "Logları Temizle",
+        "dialogTitle": "Tüm loglar silinsin mi?",
+        "dialogDescription": "Mevcut sekmedeki tüm denetim kayıtları kalıcı olarak silinecektir. Bu işlem geri alınamaz.",
+        "cancel": "İptal",
+        "confirm": "Kalıcı olarak sil",
+        "success": "{count} kayıt silindi."
+      },
+      "tabs": {
+        "requests": "İstekler",
+        "auth": "Kimlik Doğrulama",
+        "metrics": "Metrikler",
+        "map": "Harita"
+      },
+      "requests": {
+        "filtersTitle": "Filtreler",
+        "filtersDescription": "İstek loglarını kriterlere göre filtreleyin.",
+        "search": "Ara (URL/Yol)",
+        "method": "Metod",
+        "status": "Durum Kodu",
+        "sort": "Sıralama",
+        "sortDate": "Tarih",
+        "sortResponseTime": "Yanıt Süresi",
+        "sortStatusCode": "Durum Kodu",
+        "logsTitle": "İstek Logları"
+      },
+      "auth": {
+        "filtersTitle": "Filtreler",
+        "filtersDescription": "Kimlik doğrulama olaylarını filtreleyin.",
+        "event": "Olay",
+        "email": "E-posta",
+        "eventsTitle": "Kimlik Doğrulama Olayları"
+      },
+      "metrics": {
+        "title": "Günlük Metrikler",
+        "description": "Günlük istek istatistikleri ve trendler.",
+        "days": "Dönem",
+        "nDays": "{n} Gün",
+        "pathPrefix": "Yol Ön Eki",
+        "chartTitle": "Günlük Grafik",
+        "lastNDays": "Son {n} gün"
+      },
+      "map": {
+        "title": "Coğrafi Dağılım",
+        "description": "Son {days} günün konuma göre istek dağılımı."
+      },
+      "common": {
+        "from": "Başlangıç",
+        "to": "Bitiş",
+        "userId": "Kullanıcı ID",
+        "ip": "IP Adresi",
+        "desc": "Azalan",
+        "asc": "Artan",
+        "onlyAdmin": "Sadece Admin",
+        "adminRequests": "Admin istekleri",
+        "apply": "Uygula",
+        "reset": "Sıfırla",
+        "all": "Tümü",
+        "loading": "Yükleniyor...",
+        "noRecords": "Kayıt bulunamadı.",
+        "totalRecords": "Toplam: {count} kayıt",
+        "recordCount": "{count} kayıt",
+        "prev": "Önceki",
+        "next": "Sonraki",
+        "anon": "Anonim"
+      },
+      "columns": {
+        "date": "Tarih",
+        "request": "İstek",
+        "status": "Durum",
+        "ipUser": "IP / Kullanıcı",
+        "location": "Konum",
+        "userAgent": "User Agent",
+        "user": "Kullanıcı"
+      }
+    },
+    "siteSettings": {
+      "title": "Site Ayarları",
+      "description": "Key-value ayarlarını yönetin. Liste sekmeleri arama ile filtrelenebilir.",
+      "tabs": {
+        "general": "Genel",
+        "seo": "SEO",
+        "smtp": "SMTP / E-posta",
+        "cloudinary": "Cloudinary",
+        "api": "API",
+        "brandMedia": "Logo & Favicon",
+        "list": "Liste (Dil)",
+        "globalList": "Liste (Global *)",
+        "locales": "Diller",
+        "branding": "Marka"
+      },
+      "filters": {
+        "title": "Filtreler",
+        "description": "Arama, dil ve sekme seçimi.",
+        "search": "Ara",
+        "searchPlaceholder": "Key veya değer içinde ara...",
+        "language": "Dil",
+        "selectLanguage": "Dil seç",
+        "globalPlaceholder": "Global",
+        "defaultSuffix": "varsayılan",
+        "inactiveSuffix": "pasif",
+        "languageDisabledNote": "Bu sekmede dil seçimi kullanılmaz.",
+        "refreshButton": "Yenile",
+        "resetButton": "Sıfırla",
+        "refreshed": "Yenilendi."
+      },
+      "badges": {
+        "global": "Global"
+      },
+      "management": {
+        "title": "Yönetim",
+        "localeRecords": "Seçili dil kayıtları",
+        "globalRecords": "Global (*) kayıtları",
+        "loadingMeta": "Locale meta yükleniyor…"
+      },
+      "locales": {
+        "title": "Diller",
+        "description": "Aktif dilleri (app_locales) ve varsayılan dili (default_locale) yönetin.",
+        "defaultLabel": "Varsayılan dil",
+        "defaultPlaceholder": "Varsayılan dili seç",
+        "table": {
+          "code": "Kod",
+          "label": "Etiket",
+          "active": "Aktif",
+          "default": "Varsayılan"
+        },
+        "empty": "Dil konfigürasyonu bulunamadı.",
+        "presetDeEnTr": "de/en/tr preset uygula",
+        "presetTop20": "20 yaygın dil ekle",
+        "saved": "Diller güncellendi.",
+        "saveError": "Diller güncellenemedi."
+      },
+      "list": {
+        "title": "Ayar Listesi",
+        "description": "site_settings kayıtları",
+        "dash": "—",
+        "hideSeoNote": "SEO anahtarları bu listede gizlenir; SEO sekmesinden yönetilir.",
+        "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
+        "noRecords": "Kayıt bulunamadı.",
+        "updatedAtLabel": "Güncellenme",
+        "mobileNote": "Mobil görünümde kayıtlar kart formatında listelenir.",
+        "mobileHideSeoSuffix": "SEO anahtarları burada da gizlidir.",
+        "columns": {
+          "key": "Key",
+          "locale": "Dil",
+          "value": "Değer (Özet)",
+          "updatedAt": "Güncellenme",
+          "actions": "İşlemler"
+        },
+        "preview": {
+          "array": "Dizi [{count} öğe]",
+          "object": "Nesne ({count} alan)"
+        }
+      },
+      "form": {
+        "title": "Ayar",
+        "description": "Structured mod: form editörü. Raw mod: JSON veya düz string.",
+        "imageLabel": "Görsel",
+        "saved": "\"{key}\" ({locale}) kaydedildi.",
+        "saveError": "Kaydetme sırasında hata oluştu.",
+        "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
+        "deleted": "\"{key}\" ({locale}) silindi.",
+        "deleteError": "Silme sırasında hata oluştu.",
+        "modes": {
+          "structured": "Structured",
+          "raw": "Raw"
+        },
+        "structuredMissingTitle": "Structured renderer yok",
+        "structuredMissingDesc": "Bu key için structured renderer tanımlı değil. Raw modunu kullanın.",
+        "rawHelp": "Raw: Geçerli JSON girersen parse edilerek kaydedilir; değilse düz string kaydedilir.",
+        "rawPlaceholder": "Örn: {\"title\":\"...\"} veya düz metin",
+        "rawTip": "İpucu: JSON formatında kaydetmek istiyorsan başı “{” veya “[” ile başlamalı."
+      },
+      "detail": {
+        "globalOption": "Global (*)",
+        "keyMissingTitle": "Hata",
+        "keyMissingDesc": "Setting key bulunamadı.",
+        "localesMissingTitle": "Dil listesi bulunamadı",
+        "localesMissingDesc": "site_settings.app_locales boş veya geçersiz. Önce dilleri ayarla.",
+        "localesMissingAction": "Site Ayarlarına git",
+        "editTitle": "Düzenle",
+        "backToList": "Listeye Dön",
+        "localeLabel": "Locale",
+        "loadingLocale": "Locale yükleniyor…",
+        "fallbackNotice": "<code>{selectedLocale}</code> için birebir kayıt yok. <code>{effectiveLocale}</code> fallback değeri gösteriliyor. Kaydetmek <code>{selectedLocale}</code> için kayıt oluşturur/günceller.",
+        "noRecordNotice": "<code>{key}</code> (<code>{locale}</code>) için kayıt bulunamadı. Kaydedince oluşturabilirsiniz.",
+        "note": "Not: General/UI key’lerde structured form açılır. Diğer key’ler structured modda JSON editor fallback’tır.",
+        "siteMetaDefaultGlobalGuard": "site_meta_default locale=\"*\" olamaz. Dil seçip kaydet.",
+        "updated": "\"{key}\" ({locale}) güncellendi.",
+        "deleted": "\"{key}\" ({locale}) silindi.",
+        "structuredJson": {
+          "noRenderer": "Bu key için özel structured form tanımlı değil. Structured mod JSON editor olarak çalışır.",
+          "label": "Structured JSON",
+          "helperText": "Blur olduğunda parse edilir. Geçersiz JSON kaydedilmez."
+        }
+      },
+      "general": {
+        "title": "Genel / UI",
+        "description": "GLOBAL (*) default + seçili dil ({locale}) override birlikte yönetilir.",
+        "searchPlaceholder": "Key veya değer içinde ara",
+        "globalBootstrap": "Global Bootstrap",
+        "globalBootstrapTooltip": "Eksik GLOBAL (*) kayıtları default seed ile oluşturur",
+        "recordsTitle": "Kayıtlar",
+        "managedKeys": "Yönetilen anahtarlar:",
+        "keyColumn": "Key",
+        "sourceColumn": "Kaynak",
+        "effectiveColumn": "Effective (Özet)",
+        "actionsColumn": "İşlemler",
+        "globalExists": "GLOBAL (*) Var",
+        "globalNotExists": "GLOBAL (*) Yok",
+        "localeExists": "LOCALE ({locale}) Var",
+        "localeNotExists": "LOCALE ({locale}) Yok",
+        "sourceOverride": "Override",
+        "sourceGlobal": "Global",
+        "sourceNone": "Yok",
+        "noOverrideNote": "Bu key için {locale} override yok; GLOBAL (*) uygulanıyor.",
+        "overrideButton": "Override",
+        "restoreButton": "Restore",
+        "restoreTooltip": "Bu satırın default değerlerini geri yükler",
+        "deleteGlobal": "Sil*",
+        "deleteGlobalTooltip": "GLOBAL (*) sil",
+        "deleteLocale": "Sil",
+        "deleteLocaleTooltip": "LOCALE ({locale}) sil",
+        "noRecords": "Kayıt bulunamadı.",
+        "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
+        "deleted": "\"{key}\" ({locale}) silindi.",
+        "overrideCreated": "\"{key}\" için {locale} override oluşturuldu (GLOBAL kopyalandı).",
+        "defaultsRestored": "\"{key}\" ({locale}) default değerler geri yüklendi.",
+        "missingGlobalError": "GLOBAL (*) kayıt bulunamadı. Önce global değer oluşturmalısın.",
+        "globalBootstrapSuccess": "Eksik GLOBAL (*) General/UI kayıtları oluşturuldu.",
+        "loadingNote": "Global + locale kayıtları çekiliyor.",
+        "deleteTooltip": "İpucu: \"Sil*\" GLOBAL (*) kaydını siler. \"Sil\" seçili locale override'ını siler."
+      },
+      "cloudinary": {
+        "title": "Cloudinary / Storage Ayarları",
+        "description": "Global ayarlardır (locale=*). Seçili dil sadece arayüz bilgisidir.",
+        "badge": "Global (locale=*) • Seçili dil: {locale}",
+        "storageDriver": "Storage Driver",
+        "storageDriverPlaceholder": "local veya cloudinary",
+        "storageDriverHelp": "Örn: cloudinary veya local",
+        "localRoot": "Local Root",
+        "localRootPlaceholder": "/var/www/uploads",
+        "localBaseUrl": "Local Base URL",
+        "localBaseUrlPlaceholder": "/uploads veya https://cdn.site.com/uploads",
+        "cdnPublicBase": "CDN Public Base",
+        "cdnPublicBasePlaceholder": "https://cdn.guezelwebdesign.com",
+        "publicApiBase": "Public API Base",
+        "publicApiBasePlaceholder": "https://api.guezelwebdesign.com",
+        "cloudName": "Cloudinary Cloud Name",
+        "cloudNamePlaceholder": "cloud-name",
+        "apiKey": "Cloudinary API Key",
+        "apiKeyPlaceholder": "API key",
+        "apiSecret": "Cloudinary API Secret",
+        "apiSecretPlaceholder": "API secret",
+        "folder": "Cloudinary Folder",
+        "folderPlaceholder": "uploads",
+        "unsignedPreset": "Cloudinary Unsigned Preset",
+        "unsignedPresetPlaceholder": "İsteğe bağlı preset adı",
+        "testButton": "Cloudinary Test",
+        "testing": "Test ediliyor...",
+        "saved": "Cloudinary / Storage ayarları kaydedildi.",
+        "testSuccess": "Cloudinary bağlantısı başarılı. Cloud: {cloud}, test dosyası: {publicId}",
+        "testFailedConsole": "Cloudinary testi başarısız. Detaylar için console'a bak.",
+        "testFailedLocal": "Cloudinary testi başarısız: storage_driver şu an 'local'. Cloudinary kullanmak için storage_driver'ı 'cloudinary' yap ve keyleri doldur.",
+        "testFailedConfig": "Cloudinary yapılandırılmamış: Cloud name, API key ve secret değerlerini doldurup tekrar dene.",
+        "testFailedStep": "Cloudinary testi başarısız ({step}): {message}",
+        "testInfo": "Cloudinary bağlantısını test etmek için \"Cloudinary Test\" butonuna tıkla.",
+        "testInfoTesting": "Cloudinary testi yapılıyor...",
+        "testInfoSuccess": "Son test: BAŞARILI (cloud: {cloud})",
+        "testInfoError": "Son test: HATA – detaylar için loglara bak."
+      },
+      "branding": {
+        "title": "Marka & Kimlik",
+        "description": "Genel panel ayarları: sayfa başlığı, telif hakkı, favicon ve meta etiketleri.",
+        "saved": "Marka ayarları kaydedildi.",
+        "saveError": "Marka ayarları kaydedilemedi.",
+        "identity": "Kimlik",
+        "visual": "Görsel",
+        "metaSeo": "Meta / SEO",
+        "fields": {
+          "appName": "Panel Adı",
+          "copyright": "Telif Hakkı Metni",
+          "htmlLang": "HTML Dili",
+          "htmlLangHelp": "<html lang=\"...\"> özelliği. Ör: de, en, tr",
+          "themeColor": "Tema Rengi",
+          "favicon16": "Favicon 16×16",
+          "favicon32": "Favicon 32×32",
+          "appleTouchIcon": "Apple Touch Icon",
+          "ogImage": "OG Görsel",
+          "metaTitle": "Meta Başlık",
+          "metaDescription": "Meta Açıklama",
+          "ogUrl": "OG URL",
+          "ogTitle": "OG Başlık",
+          "ogDescription": "OG Açıklama",
+          "twitterCard": "Twitter Card Tipi"
+        }
+      },
+      "brandMedia": {
+        "title": "Logo & Favicon",
+        "description": "Bu sekme dil bağımsızdır. Kayıtlar locale=\"*\" olarak tutulur.",
+        "badge": "Global (locale=*)",
+        "searchPlaceholder": "Key içinde ara (örn: logo, favicon)",
+        "labels": {
+          "site_logo": "Logo",
+          "site_logo_dark": "Logo (Dark)",
+          "site_logo_light": "Logo (Light)",
+          "site_favicon": "Favicon",
+          "site_apple_touch_icon": "Apple Touch Icon",
+          "site_app_icon_512": "App Icon 512x512",
+          "site_og_default_image": "Varsayılan OG Görseli",
+          "site_appointment_cover": "Randevu Kapak Görseli"
+        },
+        "updated": "{label} güncellendi.",
+        "updateError": "{label} kaydedilirken hata oluştu.",
+        "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
+        "deleteError": "Silme sırasında hata oluştu."
+      },
+      "api": {
+        "title": "API & Entegrasyon Ayarları",
+        "description": "Global ayarlardır (locale=*). Seçili dil sadece arayüz bilgisidir.",
+        "badge": "Global (locale=*)",
+        "uiBadge": "UI: {locale}",
+        "note": "Bu alanlar genellikle dillere göre değişmez. Veritabanında locale=* olarak tutulur.",
+        "googleClientId": "Google Client ID",
+        "googleClientIdHelp": "Google OAuth / Login entegrasyonu için Client ID.",
+        "googleClientSecret": "Google Client Secret",
+        "googleClientSecretHelp": "Güvenlik nedeniyle mümkünse sadece backend ortam değişkenleriyle yönet.",
+        "gtmContainerId": "GTM Container ID",
+        "gtmContainerIdPlaceholder": "GTM-XXXXXXX",
+        "gtmContainerIdHelp": "GTM aktifse frontend sadece GTM scriptini basar; GA4 tag'i GTM içinden yönetilir.",
+        "ga4MeasurementId": "GA4 Measurement ID",
+        "ga4MeasurementIdPlaceholder": "G-XXXXXXXXXX",
+        "ga4MeasurementIdHelp": "GTM yoksa gtag.js ile fallback olarak kullanılabilir.",
+        "cookieConsent": "Cookie Consent (JSON)",
+        "cookieConsentPlaceholder": "{\"consent_version\":1,\"defaults\":{\"necessary\":true,\"analytics\":false,\"marketing\":false},\"ui\":{\"enabled\":true}}",
+        "cookieConsentHelp": "JSON girersen obje olarak saklanır. Düz metin girersen string olarak saklanır.",
+        "saved": "API & entegrasyon ayarları kaydedildi.",
+        "saveError": "API ayarları kaydedilirken bir hata oluştu."
+      },
+      "actions": {
+        "edit": "Düzenle",
+        "delete": "Sil",
+        "restore": "Restore",
+        "override": "Override",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor...",
+        "test": "Test",
+        "testing": "Test ediliyor...",
+        "refresh": "Yenile",
+        "reset": "Sıfırla",
+        "bootstrap": "Bootstrap",
+        "copy": "Kopyala"
+      },
+      "messages": {
+        "loading": "Yükleniyor…",
+        "deleted": "Ayar silindi.",
+        "saved": "Ayarlar kaydedildi.",
+        "copied": "Kopyalandı.",
+        "copyError": "Kopyalama başarısız.",
+        "error": "İşlem başarısız. Lütfen tekrar deneyin."
+      },
+      "seo": {
+        "title": "SEO Ayarları",
+        "description": "GLOBAL (*) default + seçili dil ({locale}) override birlikte yönetilir. \"Düzenle\" butonu form sayfasını açar.",
+        "ogDefaultImage": "Varsayılan OG Görseli (Global)",
+        "ogDefaultImageKey": "site_og_default_image",
+        "ogDefaultImageHelp": "Upload sonrası otomatik kaydedilir. Brand & Media tabındaki {key} ile aynıdır.",
+        "searchPlaceholder": "Key içinde ara (örn: site, meta)",
+        "effective": "Effective (Özet)",
+        "override": "Override",
+        "global": "Global",
+        "none": "Yok",
+        "globalRow": "GLOBAL (*)",
+        "localeRow": "LOCALE ({locale})",
+        "hasOverride": "Bu key için {locale} override yok; GLOBAL (*) uygulanıyor.",
+        "createOverride": "Override Oluştur",
+        "restoreTooltip": "Bu satırın default değerlerini geri yükler",
+        "note": "site_meta_default GLOBAL(*) olamaz; edit linki her zaman locale ile açılır.",
+        "defaultsCreated": "Varsayılan SEO ayarları oluşturuldu.",
+        "defaultsRestored": "\"{key}\" ({locale}) için varsayılan değerler geri yüklendi.",
+        "overrideCreated": "\"{key}\" ({locale}) override oluşturuldu.",
+        "overrideError": "Override oluşturulurken hata oluştu.",
+        "deleteConfirm": "\"{key}\" ({locale}) silinsin mi?",
+        "deleted": "\"{key}\" ({locale}) silindi.",
+        "deleteError": "SEO ayarı silinirken hata oluştu.",
+        "defaultNotDefined": "Bu key için default tanımlı değil.",
+        "siteMetaDefaultGlobalError": "site_meta_default GLOBAL(*) olamaz. Locale ile kaydet/restore et.",
+        "siteMetaDefaultMustBeLocale": "site_meta_default GLOBAL(*) olamaz. Locale seçerek restore et.",
+        "defaultsRestoreError": "Default restore hata verdi.",
+        "defaultsCreateError": "GLOBAL bootstrap hata verdi.",
+        "globalBootstrap": "Global Bootstrap",
+        "globalBootstrapTooltip": "Eksik SEO GLOBAL(*) kayıtlarını default schema ile oluşturur",
+        "ogUpdated": "Varsayılan OG görseli güncellendi.",
+        "ogUpdateError": "Varsayılan OG görseli kaydedilirken hata oluştu.",
+        "savedUrlLabel": "Kayıtlı URL:",
+        "previewLabel": "Önizleme:",
+        "ogDefaultImageAlt": "Varsayılan OG görseli",
+        "imageLoadError": "Görsel yüklenemedi",
+        "existsYes": "Var",
+        "existsNo": "Yok",
+        "siteMetaDefaultGlobalDeleteHint": "Normalde GLOBAL olmaz; varsa silinebilir.",
+        "noRecords": "SEO kaydı bulunamadı.",
+        "seedNote": "Seed çalıştıysa en az seo ve site_seo GLOBAL satırı görünmelidir.",
+        "columns": {
+          "key": "Key",
+          "source": "Kaynak",
+          "effective": "Effective (Özet)",
+          "actions": "İşlemler"
+        }
+      },
+      "structured": {
+        "title": "Structured edit: SEO alanlarını form olarak yönetir. Kaydetme sırasında backend tarafında strict doğrulama uygulanıyorsa hatalı yapı kaydedilmez.",
+        "robotsNote": "Robots'ta {field} true ise arama motorlarına indeksleme önerilmez.",
+        "ogImageUpload": "OpenGraph Görsel Yükle (opsiyonel)",
+        "siteName": "Site Name",
+        "titleDefault": "Title Default",
+        "titleTemplate": "Title Template",
+        "titleTemplatePlaceholder": "%s | guezelwebdesign",
+        "description": "Description",
+        "ogType": "OpenGraph Type",
+        "ogImages": "OpenGraph Images (1 per line)",
+        "ogImagesPlaceholder": "/img/og-default.jpg",
+        "twitterCard": "Twitter Card",
+        "twitterCardRecommended": "Çoğu site için önerilen: {card}",
+        "twitterSite": "Twitter Site",
+        "twitterSitePlaceholder": "@guezelwebdesign",
+        "twitterCreator": "Twitter Creator",
+        "twitterCreatorPlaceholder": "@creator",
+        "robots": "Robots",
+        "noindex": "noindex",
+        "index": "index",
+        "follow": "follow",
+        "robotsRecommendation": "Öneri: Normalde {noindex}, {index}, {follow}.",
+        "contact": {
+          "description": "İletişim bilgileri. Boş bırakılan alanlar boş string olarak kaydedilir.",
+          "labels": {
+            "phone": "Telefon",
+            "email": "E-posta",
+            "whatsapp": "WhatsApp",
+            "address": "Adres"
+          }
+        },
+        "socials": {
+          "description": "Sosyal linkleri tam URL (https://...) veya kullanıcı adı olarak girebilirsin.",
+          "labels": {
+            "instagram": "Instagram",
+            "facebook": "Facebook",
+            "linkedin": "LinkedIn",
+            "youtube": "YouTube",
+            "x": "X (Twitter)"
+          }
+        },
+        "companyProfile": {
+          "labels": {
+            "companyName": "Şirket Adı",
+            "slogan": "Slogan",
+            "about": "Hakkımızda"
+          }
+        },
+        "uiHeader": {
+          "description": "Header navigasyon ve CTA label metinleri. Dil bazlı override için locale satırı kullan.",
+          "labels": {
+            "navHome": "Menü: Home",
+            "navProducts": "Menü: Products",
+            "navServices": "Menü: Services",
+            "navContact": "Menü: Contact",
+            "ctaLabel": "CTA Label"
+          }
+        },
+        "businessHours": {
+          "description": "Saat formatı HH:MM. \"Closed\" seçilirse gün kapalıdır.",
+          "columns": {
+            "day": "Gün",
+            "open": "Açılış",
+            "close": "Kapanış",
+            "closed": "Kapalı"
+          },
+          "closedLabel": "closed",
+          "addRow": "Satır Ekle",
+          "removeRow": "Sil",
+          "days": {
+            "mon": "Pzt",
+            "tue": "Sal",
+            "wed": "Çar",
+            "thu": "Per",
+            "fri": "Cum",
+            "sat": "Cmt",
+            "sun": "Paz"
+          }
+        }
+      },
+      "slider": {
+        "title": "Slider Yönetimi",
+        "description": "Slider kayıtlarını çok dilli olarak yönet; filtrele, sırala ve yayın durumunu değiştir.",
+        "header": {
+          "title": "Slider Yönetimi",
+          "description": "Slider kayıtlarını çok dilli olarak yönet; filtrele, sırala ve yayın durumunu değiştir.",
+          "total": "Toplam:",
+          "loading": "Yükleniyor…",
+          "searchLabel": "Ara",
+          "searchPlaceholder": "Başlık / slug içinde ara…",
+          "localeLabel": "Dil",
+          "localePlaceholder": "Locale seç",
+          "localeEmptyError": "app_locales boş.",
+          "localeEmptyHelp": "Site Settings → app_locales değerini kontrol et.",
+          "filterLabel": "Filtre",
+          "onlyActiveLabel": "Sadece aktif",
+          "onlyActiveHelp": "Aktif sliderları göster",
+          "refreshButton": "Yenile",
+          "createButton": "+ Yeni Slider"
+        },
+        "list": {
+          "title": "Slider Listesi",
+          "processing": "İşlem yapılıyor…",
+          "totalLabel": "Toplam:",
+          "saveOrderButton": "Sıralamayı Kaydet",
+          "savingOrder": "Sıralama kaydediliyor…",
+          "reorderHelp": "Sıralama için yukarı/aşağı butonlarını kullan. Kalıcı yapmak için \"Sıralamayı Kaydet\".",
+          "noImage": "Görsel yok",
+          "imageColumn": "Görsel",
+          "titleColumn": "Başlık",
+          "localeColumn": "Dil",
+          "slugColumn": "Slug",
+          "activeColumn": "Aktif",
+          "featuredColumn": "Öne Çıkan",
+          "orderColumn": "Sıra",
+          "actionsColumn": "İşlemler",
+          "noTitle": "(Başlık yok)",
+          "upButton": "Yukarı",
+          "downButton": "Aşağı",
+          "buttonLabel": "BTN:",
+          "linkLabel": "Link:",
+          "activeStatus": "Aktif",
+          "inactiveStatus": "Pasif",
+          "featuredStatus": "Öne çıkan",
+          "normalStatus": "Normal",
+          "editButton": "Düzenle",
+          "deleteButton": "Sil",
+          "loading": "Slider kayıtları yükleniyor…",
+          "noRecords": "Henüz slider kaydı bulunmuyor.",
+          "itemNumber": "#",
+          "localeLabel": "Dil:",
+          "orderLabel": "Sıra:",
+          "slugLabel": "Slug:",
+          "deleteConfirm": "\"{name}\" slider kaydını silmek üzeresin. Devam etmek istiyor musun?",
+          "deleted": "\"{name}\" slider kaydı silindi.",
+          "deleteError": "Slider silinirken bir hata oluştu.",
+          "activeUpdateError": "Aktif durumu güncellenemedi.",
+          "featuredUpdateError": "Öne çıkarma güncellenemedi.",
+          "orderSaved": "Slider sıralaması kaydedildi.",
+          "orderSaveError": "Sıralama kaydedilemedi."
+        },
+        "form": {
+          "contentTitle": "İçerik",
+          "localeLabel": "Dil",
+          "orderLabel": "Sıralama",
+          "activeLabel": "Aktif",
+          "activeHelp": "Yayında göster",
+          "featuredLabel": "Öne çıkan",
+          "featuredHelp": "Öncelikli göster",
+          "titleLabel": "Başlık",
+          "slugLabel": "Slug",
+          "slugHelp": "Başlık yazarken otomatik oluşur; manuel değiştirmek için slug alanına tıkla.",
+          "descriptionLabel": "Açıklama",
+          "buttonTextLabel": "Buton Metni",
+          "buttonLinkLabel": "Buton Linki",
+          "altLabel": "Görsel Alt Metni",
+          "localeRequired": "Locale zorunludur.",
+          "titleRequired": "Başlık zorunludur.",
+          "slugRequired": "Slug zorunludur.",
+          "created": "Slider oluşturuldu.",
+          "idNotFound": "ID bulunamadı. Sayfayı yenileyip tekrar deneyin.",
+          "updated": "Slider güncellendi.",
+          "saveError": "Kayıt sırasında hata.",
+          "editTitle": "Slider Düzenle",
+          "createTitle": "Yeni Slider Oluştur",
+          "formMode": "Form",
+          "jsonMode": "JSON"
+        },
+        "formHeader": {
+          "createTitle": "Yeni Slider Oluştur",
+          "editTitle": "Slider Düzenle",
+          "description": "Başlık/slug/içerik/görsel ve buton alanlarını düzenle. JSON modu ile tüm alanları tek seferde de güncelleyebilirsin.",
+          "loading": "Yükleniyor…",
+          "saving": "Kaydediliyor…",
+          "backButton": "Geri",
+          "createButton": "Oluştur",
+          "saveButton": "Kaydet"
+        },
+        "formImage": {
+          "imageLabel": "Slider Görseli",
+          "imageHelp": "Storage üzerinden slider için bir görsel yükleyebilirsin. Seçtiğin görselin URL'i image_url alanına yazılır (JSON moda da yansır).",
+          "altLabel": "Alt Metin",
+          "altPlaceholder": "Örn: Home hero slider görseli",
+          "altHelp": "Alt metin SEO ve erişilebilirlik için kullanılır."
+        },
+        "formJson": {
+          "label": "Slider JSON",
+          "helperText": "Formdaki tüm alanların bire bir karşılığıdır."
+        }
+      },
+      "smtp": {
+        "title": "SMTP / E-posta Ayarları",
+        "description": "Bu ayarlar genellikle globaldir (locale=`*`). Seçili dil sadece arayüz bilgisidir.",
+        "badge": "Global (locale=`*`) • Seçili dil: {locale}",
+        "host": "SMTP Host",
+        "hostPlaceholder": "smtp.hostinger.com veya smtp.gmail.com",
+        "port": "SMTP Port",
+        "portPlaceholder": "465 veya 587",
+        "ssl": "SSL etkin",
+        "username": "Kullanıcı Adı",
+        "usernamePlaceholder": "SMTP kullanıcı adı",
+        "password": "Şifre",
+        "passwordPlaceholder": "••••••••",
+        "fromEmail": "Gönderen E-posta",
+        "fromEmailPlaceholder": "no-reply@guezelwebdesign.com",
+        "fromEmailHelp": "Uygulamadaki e-postalar bu adresten gönderilir.",
+        "fromName": "Gönderen İsim",
+        "fromNamePlaceholder": "guezelwebdesign",
+        "testEmail": "Test mail alıcısı",
+        "testEmailPlaceholder": "ornek@ornek.com",
+        "testEmailHelp": "Dolu ise test maili buraya gider. Boşsa önce gönderen e-posta, o da yoksa giriş yapan kullanıcının e-postası kullanılır.",
+        "sendTest": "Test mail gönder",
+        "sendingTest": "Test maili gönderiliyor...",
+        "saved": "SMTP ayarları kaydedildi.",
+        "testSent": "Test e-postası gönderildi. Gelen kutunu (ve spam) kontrol et."
+      }
+    },
+    "services": {},
+    "mail": {
+      "title": "Mail Ayarları",
+      "description": "Email sistemini test edin ve SMTP ayarlarını doğrulayın",
+      "test": {
+        "title": "Test Email Gönder",
+        "description": "Test emaili göndermek için bir adres girin",
+        "label": "Email Adresi",
+        "placeholder": "ornek@domain.com",
+        "send": "Test Gönder",
+        "sending": "Gönderiliyor...",
+        "success": "Test emaili başarıyla gönderildi",
+        "error": "Test emaili gönderilirken hata oluştu",
+        "required": "Email adresi gerekli"
+      },
+      "smtp": {
+        "title": "SMTP Yapılandırması",
+        "description": "Test emailleri, ortam değişkenlerindeki mevcut SMTP ayarlarını kullanır",
+        "info": ".env dosyasındaki SMTP yapılandırmanızı kontrol edin:",
+        "variables": {
+          "host": "SMTP Sunucusu",
+          "port": "SMTP Portu",
+          "user": "SMTP Kullanıcısı",
+          "pass": "SMTP Şifresi",
+          "from": "Gönderen Adresi"
+        }
+      }
+    },
+    "availability": {
+      "header": {
+        "title": "Müsaitlik Yönetimi",
+        "description": "Kaynakları (terapist, oda, vb.) ve çalışma saatlerini yönetin.",
+        "totalLabel": "Toplam:",
+        "actions": {
+          "refresh": "Yenile",
+          "create": "Yeni Kaynak"
+        }
+      },
+      "filters": {
+        "searchLabel": "Ara",
+        "searchPlaceholder": "Ad veya referans...",
+        "typeLabel": "Tür",
+        "typeAll": "Tümü",
+        "statusLabel": "Durum",
+        "statusAll": "Tümü",
+        "statusActive": "Aktif",
+        "statusInactive": "Pasif",
+        "clear": "Temizle",
+        "statusOptions": {
+          "all": "Hepsi",
+          "active": "Aktif",
+          "inactive": "Pasif"
+        }
+      },
+      "list": {
+        "title": "Kaynak Listesi",
+        "empty": "Kayıt bulunamadı",
+        "loading": "Yükleniyor...",
+        "total": "Toplam: {count}",
+        "columns": {
+          "name": "Ad",
+          "type": "Tür",
+          "status": "Durum",
+          "updated": "Güncellendi",
+          "created": "Oluşturuldu",
+          "actions": "İşlemler",
+          "ref": "Referans"
+        },
+        "actions": {
+          "manage": "Yönet",
+          "delete": "Sil"
+        },
+        "deleteConfirm": {
+          "title": "Kaynağı Sil",
+          "description": "\"{name}\" kaynağını silmek istediğinize emin misiniz?\nTür: {type}\nReferans: {ref}\nBu işlem geri alınamaz."
+        }
+      },
+      "form": {
+        "createTitle": "Yeni Kaynak",
+        "editTitle": "Kaynak Yönetimi",
+        "description": "Kaynak detaylarını, haftalık ve günlük planları yönetin.",
+        "tabs": {
+          "resource": "Genel Bilgiler",
+          "weekly": "Haftalık Plan",
+          "daily": "Günlük Plan"
+        },
+        "buttons": {
+          "back": "Geri",
+          "create": "Oluştur",
+          "save": "Kaydet",
+          "creating": "Oluşturuluyor...",
+          "saving": "Kaydediliyor..."
+        },
+        "messages": {
+          "createSuccess": "Kaynak başarıyla oluşturuldu.",
+          "updateSuccess": "Kaynak başarıyla güncellendi.",
+          "deleteSuccess": "Kaynak başarıyla silindi.",
+          "invalidId": "Geçersiz ID.",
+          "notFound": "Kaynak bulunamadı.",
+          "notFoundDesc": "Bu kaynağa erişilemedi veya silinmiş olabilir.",
+          "returnToList": "Listeye Dön"
+        },
+        "resource": {
+          "titleLabel": "Kaynak Adı",
+          "titlePlaceholder": "Örn: Terapist Ayşe",
+          "typeLabel": "Tür",
+          "capacityLabel": "Kapasite",
+          "capacityHelp": "Aynı anda kaç kişi hizmet alabilir? Genelde 1.",
+          "refLabel": "Harici Referans",
+          "refPlaceholder": "Örn: room-101 (opsiyonel)",
+          "statusLabel": "Durum",
+          "active": "Aktif",
+          "inactive": "Pasif"
+        }
+      },
+      "common": {
+        "loading": "Yükleniyor...",
+        "noName": "(ad yok)",
+        "noRef": "(referans yok)"
+      }
+    },
+    "telegram": {
+      "header": {
+        "title": "Telegram",
+        "description": "Telegram bildirimlerini ve otomatik yanıtları yapılandırın"
+      },
+      "tabs": {
+        "settings": "Ayarlar",
+        "autoreply": "Otomatik Yanıt",
+        "inbound": "Gelen Mesajlar"
+      },
+      "settings": {
+        "title": "Telegram Ayarları",
+        "enableNotifications": "Telegram Bildirimlerini Etkinleştir",
+        "enableNotificationsDesc": "Kapalıysa event mesajları gönderilmez.",
+        "enableWebhook": "Webhook Etkinleştir",
+        "enableWebhookDesc": "Gelen mesajlar ve ham yanıt akışları için.",
+        "botToken": "Bot Token",
+        "primaryChatId": "Birincil Chat ID",
+        "defaultChatId": "Varsayılan Chat ID",
+        "events": {
+          "title": "Olay Bildirimleri",
+          "newBooking": "Yeni Randevu",
+          "bookingConfirmed": "Randevu Onaylandı",
+          "bookingRejected": "Randevu Reddedildi",
+          "bookingCancelled": "Randevu İptal Edildi",
+          "bookingStatusChanged": "Randevu Durumu Değişti",
+          "newContact": "Yeni İletişim Mesajı"
+        },
+        "templates": {
+          "title": "Mesaj Şablonları",
+          "newBooking": "Şablon: Yeni Randevu",
+          "newBookingVars": "{{customer_name}}, {{customer_email}}, {{customer_phone}}, {{appointment_date}}, {{appointment_time}}, {{service_title}}, {{resource_title}}, {{customer_message}}",
+          "bookingConfirmed": "Şablon: Randevu Onaylandı",
+          "bookingConfirmedVars": "{{customer_name}}, {{appointment_date}}, {{appointment_time}}, {{service_title}}, {{decision_note}}",
+          "bookingRejected": "Şablon: Randevu Reddedildi",
+          "bookingRejectedVars": "{{customer_name}}, {{appointment_date}}, {{appointment_time}}, {{service_title}}, {{decision_note}}",
+          "bookingCancelled": "Şablon: Randevu İptal Edildi",
+          "bookingCancelledVars": "{{customer_name}}, {{appointment_date}}, {{appointment_time}}, {{service_title}}, {{decision_note}}",
+          "bookingStatusChanged": "Şablon: Randevu Durumu Değişti",
+          "bookingStatusChangedVars": "{{customer_name}}, {{appointment_date}}, {{appointment_time}}, {{service_title}}, {{status_before}}, {{status_after}}, {{decision_note}}",
+          "newContact": "Şablon: Yeni İletişim Mesajı",
+          "newContactVars": "{{name}}, {{email}}, {{phone}}, {{subject}}, {{message}}"
+        },
+        "preview": "Önizleme",
+        "variables": "Değişkenler",
+        "testSend": "Bu Şablonla Test Gönder",
+        "testSending": "Gönderiliyor...",
+        "testEmpty": "Test mesajı boş olamaz.",
+        "testRequirements": "Test için bildirimler açık + token + chatId gerekir.",
+        "testSent": "Test mesajı gönderildi.",
+        "testFailed": "Telegram testi başarısız.",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor...",
+        "saved": "Telegram ayarları kaydedildi.",
+        "saveError": "Telegram ayarları kaydedilemedi.",
+        "loading": "Yükleniyor..."
+      },
+      "autoreply": {
+        "title": "Otomatik Yanıt",
+        "enable": "Otomatik Yanıt",
+        "enableDesc": "Açıkken gelen mesajlara şablon yanıt gönderilir.",
+        "templateLabel": "Yanıt Mesajı (Şablon)",
+        "modeInfo": "Mod: {mode}. AI modu + prompt/agent config ileride eklenecek.",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor...",
+        "saved": "Otomatik yanıt kaydedildi.",
+        "saveError": "Kaydedilemedi.",
+        "emptyError": "Otomatik yanıt mesajı boş olamaz.",
+        "loading": "Yükleniyor..."
+      },
+      "inbound": {
+        "title": "Gelen Mesajlar",
+        "searchPlaceholder": "Ara: mesaj / kullanıcı adı / chat...",
+        "chatIdPlaceholder": "Chat ID (opsiyonel)",
+        "limitPlaceholder": "Limit",
+        "refresh": "Yenile",
+        "refreshing": "Yenileniyor...",
+        "loadMore": "Daha Fazla",
+        "loading": "Yükleniyor...",
+        "noMoreRecords": "Daha fazla kayıt yok",
+        "noRecords": "Kayıt yok.",
+        "nextPage": "Sonraki sayfa mevcut (cursor).",
+        "noText": "(metin yok)",
+        "table": {
+          "date": "Tarih",
+          "chat": "Chat",
+          "sender": "Gönderen",
+          "message": "Mesaj",
+          "source": "Kaynak"
+        }
+      }
+    },
+    "chat": {
+      "header": {
+        "title": "Chat & AI Destek",
+        "description": "Chat thread'lerini yönet ve AI bilgi tabanını düzenle"
+      },
+      "tabs": {
+        "threads": "Görüşmeler",
+        "knowledge": "AI Bilgi Tabanı",
+        "settings": "Ayarlar"
+      },
+      "settings": {
+        "loading": "Yükleniyor...",
+        "saved": "Ayarlar kaydedildi.",
+        "saveError": "Kaydetme başarısız.",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor...",
+        "generalTitle": "Genel Ayarlar",
+        "aiEnabled": "AI Destek Aktif",
+        "aiEnabledDesc": "AI müşteri mesajlarına otomatik yanıt verir.",
+        "widgetEnabled": "Web Sitesinde Chat Widget",
+        "widgetEnabledDesc": "Müşteri web sitesinde chat widget'ı göster.",
+        "defaultProvider": "Varsayılan AI Sağlayıcı",
+        "providerOrder": "Sağlayıcı Sırası (Fallback)",
+        "providerOrderDesc": "Virgülle ayrılmış sıra: grok, openai, anthropic. Hata durumunda sıradaki sağlayıcı denenir.",
+        "providersTitle": "AI Sağlayıcılar & API Anahtarları",
+        "offerUrl": "Teklif URL'si",
+        "offerUrlDesc": "Teklif yönlendirme URL'si. {locale} dil koduyla değiştirilir.",
+        "systemPromptTitle": "Sistem Prompt (AI Talimatı)",
+        "systemPromptPlaceholder": "Özel AI talimatı girin (boş = varsayılan)...",
+        "systemPromptDesc": "Varsayılan prompt için boş bırakın. AI'ya sistem mesajı olarak gönderilir.",
+        "welcomeTitle": "Hoş Geldiniz Mesajları"
+      },
+      "threads": {
+        "title": "Chat Thread'leri",
+        "noThreads": "Henüz görüşme yok.",
+        "selectThread": "Listeden bir görüşme seçin.",
+        "filterAll": "Tümü",
+        "filterAi": "AI Modu",
+        "filterAdmin": "Admin Modu",
+        "modeAi": "AI",
+        "modeAdmin": "Admin",
+        "takeover": "Devral",
+        "releaseToAi": "AI'ya Bırak",
+        "takeoverSuccess": "Thread devralındı.",
+        "takeoverError": "Devralma başarısız.",
+        "releaseSuccess": "AI'ya bırakıldı.",
+        "releaseError": "Bırakma başarısız.",
+        "providerChanged": "AI sağlayıcı değiştirildi.",
+        "providerError": "Değişiklik başarısız."
+      },
+      "messages": {
+        "noMessages": "Henüz mesaj yok.",
+        "placeholder": "Mesaj yazın...",
+        "sendError": "Mesaj gönderilemedi."
+      },
+      "knowledge": {
+        "title": "AI Bilgi Tabanı",
+        "noItems": "Kayıt bulunamadı.",
+        "loading": "Yükleniyor...",
+        "addNew": "Yeni Ekle",
+        "addTitle": "Yeni kayıt oluştur",
+        "editTitle": "Kaydı düzenle",
+        "locale": "Dil",
+        "priority": "Öncelik",
+        "titleLabel": "Başlık",
+        "titlePlaceholder": "Örn: Fiyat politikası",
+        "contentLabel": "İçerik",
+        "contentPlaceholder": "AI talimatını buraya yazın...",
+        "tags": "Etiketler",
+        "tagsPlaceholder": "virgülle ayırın, örn: fiyat,randevu",
+        "active": "Aktif",
+        "yes": "Evet",
+        "no": "Hayır",
+        "allLocales": "Tüm Diller",
+        "searchPlaceholder": "Ara...",
+        "requiredFields": "Başlık ve içerik zorunludur.",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor...",
+        "cancel": "İptal",
+        "created": "Kayıt oluşturuldu.",
+        "updated": "Kayıt güncellendi.",
+        "deleted": "Kayıt silindi.",
+        "saveError": "Kaydetme başarısız.",
+        "deleteError": "Silme başarısız."
+      }
+    }
+  },
+  "header": {
+    "title": "Hizmet Yönetimi",
+    "description": "Hizmetleri listele, filtrele, sırala ve düzenle.",
     "searchLabel": "Arama",
     "searchPlaceholder": "İsim, slug...",
     "searchPlaceholderLong": "Örn: bakım, modernizasyon…",
@@ -2347,5 +3016,10 @@
     "engineering_support": "Mühendislik",
     "production": "Üretim",
     "other": "Diğer"
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı.",
+    "description": "Aradığınız sayfa mevcut olmayabilir veya taşınmış olabilir.",
+    "goBack": "Anasayfaya dön"
   }
 }

@@ -18,6 +18,8 @@ import {
   listAuditAuthEventsAdmin,
   listAuditRequestLogsAdmin,
   getAuditMetricsDailyAdmin,
+  getAuditGeoStatsAdmin,
+  clearAuditLogsAdmin,
 } from './admin.controller';
 
 const BASE = '/audit';
@@ -57,4 +59,10 @@ export async function registerAuditAdmin(app: FastifyInstance) {
 
   // GET /api/admin/audit/metrics/daily
   app.get(`${BASE}/metrics/daily`, ph, getAuditMetricsDailyAdmin);
+
+  // GET /api/admin/audit/geo-stats
+  app.get(`${BASE}/geo-stats`, ph, getAuditGeoStatsAdmin);
+
+  // DELETE /api/admin/audit/clear?target=all|requests|auth
+  app.delete(`${BASE}/clear`, ph, clearAuditLogsAdmin);
 }

@@ -8,6 +8,7 @@
 import {
   BarChart,
   Bell,
+  Bot,
   Briefcase,
   Calendar,
   Clock,
@@ -22,6 +23,7 @@ import {
   Mail,
   Megaphone,
   Menu,
+  MessageCircle,
   MessageSquare,
   Newspaper,
   Package,
@@ -34,6 +36,7 @@ import {
   Wrench,
   type LucideIcon,
 } from 'lucide-react';
+import type { TranslateFn } from '@/i18n';
 
 export interface NavSubItem {
   title: string;
@@ -80,7 +83,9 @@ export type AdminNavItemKey =
   | 'db'
   | 'audit'
   | 'availability'
-  | 'reports';
+  | 'reports'
+  | 'telegram'
+  | 'chat';
 
 export type AdminNavGroupKey = 'general' | 'content' | 'marketing' | 'communication' | 'system';
 
@@ -124,6 +129,8 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'bookings', url: '/admin/bookings', icon: Calendar },
       { key: 'availability', url: '/admin/availability', icon: Clock },
       { key: 'mail', url: '/admin/mail', icon: Send },
+      { key: 'telegram', url: '/admin/telegram', icon: MessageCircle },
+      { key: 'chat', url: '/admin/chat', icon: Bot },
     ],
   },
   {
@@ -168,19 +175,44 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   audit: 'Audit',
   availability: 'Availability',
   reports: 'Reports',
+  telegram: 'Telegram',
+  chat: 'Chat & AI',
 };
 
-export function buildAdminSidebarItems(copy?: Partial<AdminNavCopy> | null): NavGroup[] {
+export function buildAdminSidebarItems(
+  copy?: Partial<AdminNavCopy> | null,
+  t?: TranslateFn,
+): NavGroup[] {
   const labels = copy?.labels ?? ({} as AdminNavCopy['labels']);
   const items = copy?.items ?? ({} as AdminNavCopy['items']);
 
-  return adminNavConfig.map((group) => ({
-    id: group.id,
-    label: labels[group.key] || '',
-    items: group.items.map((item) => ({
-      title: items[item.key] || FALLBACK_TITLES[item.key] || item.key,
-      url: item.url,
-      icon: item.icon,
-    })),
-  }));
+  return adminNavConfig.map((group) => {
+    // 1. Try copy.labels[group.key]
+    // 2. Try t(`admin.sidebar.groups.${group.key}`)
+    // 3. Fallback to empty (or key)
+    const label =
+      labels[group.key] || (t ? t(`admin.sidebar.groups.${group.key}` as any) : '') || '';
+
+    return {
+      id: group.id,
+      label,
+      items: group.items.map((item) => {
+        // 1. Try copy.items[item.key]
+        // 2. Try t(`admin.dashboard.items.${item.key}`)
+        // 3. Fallback to FALLBACK_TITLES
+        // 4. Fallback to key
+        const title =
+          items[item.key] ||
+          (t ? t(`admin.dashboard.items.${item.key}` as any) : '') ||
+          FALLBACK_TITLES[item.key] ||
+          item.key;
+
+        return {
+          title,
+          url: item.url,
+          icon: item.icon,
+        };
+      }),
+    };
+  });
 }

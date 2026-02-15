@@ -104,6 +104,10 @@ const DASHBOARD_TOTALS_KEY_MAP: Record<string, string> = {
   users_total: "users",
   storage_assets_total: "storage",
   contact_messages_total: "contacts",
+  db_snapshots_total: "db",
+  audit_logs_total: "audit",
+  availability_total: "availability",
+  notifications_total: "notifications",
 };
 
 function isRecord(v: unknown): v is Record<string, unknown> {

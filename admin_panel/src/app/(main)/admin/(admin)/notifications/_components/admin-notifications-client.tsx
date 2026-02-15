@@ -52,22 +52,33 @@ type Filters = {
   type: string;
 };
 
-function getErrMsg(e: unknown): string {
+// function getErrMsg(e: unknown): string { ... } moved inside or adapted
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
+
+function getErrMsg(e: unknown, t: (k: string) => string): string {
   const anyErr = e as any;
   return (
     anyErr?.data?.error?.message ||
     anyErr?.data?.message ||
     anyErr?.message ||
-    'İşlem başarısız'
+    t('notifications.messages.operationFailed')
   );
 }
 
-function fmtDate(val: string | null | undefined) {
+const localeMapping: Record<string, string> = {
+  tr: 'tr-TR',
+  en: 'en-US',
+  de: 'de-DE',
+};
+
+function fmtDate(val: string | null | undefined, localeStr: string) {
   if (!val) return '-';
   try {
     const d = new Date(val);
     if (Number.isNaN(d.getTime())) return String(val);
-    return d.toLocaleString('tr-TR', {
+    const loc = localeMapping[localeStr] || 'tr-TR';
+    return d.toLocaleString(loc, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -86,6 +97,8 @@ function truncate(text: string, max = 60) {
 
 export default function AdminNotificationsClient() {
   const router = useRouter();
+  const t = useAdminT();
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
 
   const [filters, setFilters] = React.useState<Filters>({
     search: '',
@@ -140,29 +153,38 @@ export default function AdminNotificationsClient() {
   const handleMarkAllRead = async () => {
     try {
       await markAllRead().unwrap();
-      toast.success('Tüm bildirimler okundu olarak işaretlendi');
+      toast.success(t('notifications.messages.markAllSuccess'));
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t));
     }
   };
 
   const handleToggleRead = async (item: NotificationView) => {
     try {
       await updateNotification({ id: item.id, body: { is_read: !item.is_read } }).unwrap();
-      toast.success(item.is_read ? 'Okunmadı olarak işaretlendi' : 'Okundu olarak işaretlendi');
+      toast.success(
+        item.is_read
+          ? t('notifications.messages.markedUnread')
+          : t('notifications.messages.markedRead')
+      );
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t));
     }
   };
 
   const handleDelete = async (item: NotificationView) => {
-    if (!confirm(`"${item.title}" bildirimini silmek istediğinize emin misiniz?`)) return;
+    if (
+      !confirm(
+        t('notifications.messages.deleteConfirm').replace('{title}', item.title)
+      )
+    )
+      return;
 
     try {
       await deleteNotification({ id: item.id }).unwrap();
-      toast.success('Bildirim silindi');
+      toast.success(t('notifications.messages.deleteSuccess'));
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t));
     }
   };
 
@@ -189,24 +211,25 @@ export default function AdminNotificationsClient() {
         <CardHeader className="pb-3">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle className="text-2xl font-bold">Bildirimler</CardTitle>
+              <CardTitle className="text-2xl font-bold">{t('notifications.title')}</CardTitle>
               <CardDescription>
-                Tüm sistem bildirimlerini yönetin ({filteredItems.length} bildirim, {unreadCount}{' '}
-                okunmamış)
+                {t('notifications.description')
+                  .replace('{count}', String(filteredItems.length))
+                  .replace('{unread}', String(unreadCount))}
               </CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button onClick={handleMarkAllRead} disabled={busy || unreadCount === 0} size="sm">
                 <CheckCheck className="mr-2 size-4" />
-                Tümünü Okundu İşaretle
+                {t('notifications.actions.markAllRead')}
               </Button>
               <Button onClick={handleRefresh} disabled={busy} variant="outline" size="sm">
                 <RefreshCcw className={cn('mr-2 size-4', busy && 'animate-spin')} />
-                Yenile
+                {t('notifications.actions.refresh')}
               </Button>
               <Button onClick={handleCreate} size="sm">
                 <Plus className="mr-2 size-4" />
-                Yeni Bildirim
+                {t('notifications.actions.create')}
               </Button>
             </div>
           </div>
@@ -216,19 +239,19 @@ export default function AdminNotificationsClient() {
       {/* Filters */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold">Filtreler</CardTitle>
+          <CardTitle className="text-base font-semibold">{t('notifications.filters.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {/* Search */}
             <div className="space-y-2">
-              <Label htmlFor="search">Ara</Label>
+              <Label htmlFor="search">{t('notifications.filters.search')}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="search"
                   className="pl-9"
-                  placeholder="Başlık, mesaj veya tip..."
+                  placeholder={t('notifications.filters.searchPlaceholder')}
                   value={filters.search}
                   onChange={(e) => setFilters((p) => ({ ...p, search: e.target.value }))}
                 />
@@ -237,7 +260,7 @@ export default function AdminNotificationsClient() {
 
             {/* Read Filter */}
             <div className="space-y-2">
-              <Label htmlFor="readFilter">Durum</Label>
+              <Label htmlFor="readFilter">{t('notifications.filters.status')}</Label>
               <Select
                 value={filters.readFilter}
                 onValueChange={(v) => setFilters((p) => ({ ...p, readFilter: v as ReadFilter }))}
@@ -246,28 +269,28 @@ export default function AdminNotificationsClient() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tümü</SelectItem>
-                  <SelectItem value="read">Okundu</SelectItem>
-                  <SelectItem value="unread">Okunmadı</SelectItem>
+                  <SelectItem value="all">{t('notifications.filters.all')}</SelectItem>
+                  <SelectItem value="read">{t('notifications.filters.read')}</SelectItem>
+                  <SelectItem value="unread">{t('notifications.filters.unread')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Type Filter - ✅ FIXED: No empty string value */}
             <div className="space-y-2">
-              <Label htmlFor="type">Tip</Label>
+              <Label htmlFor="type">{t('notifications.filters.type')}</Label>
               <Select
                 value={filters.type}
                 onValueChange={(v) => setFilters((p) => ({ ...p, type: v }))}
               >
                 <SelectTrigger id="type">
-                  <SelectValue placeholder="Tümü" />
+                  <SelectValue placeholder={t('notifications.filters.typePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tümü</SelectItem>
-                  {typeOptions.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
+                  <SelectItem value="all">{t('notifications.filters.all')}</SelectItem>
+                  {typeOptions.map((tVal) => (
+                    <SelectItem key={tVal} value={tVal}>
+                      {t(`notifications.types.${tVal}`, {}, tVal)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -285,19 +308,19 @@ export default function AdminNotificationsClient() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">Durum</TableHead>
-                  <TableHead className="w-52">Başlık</TableHead>
-                  <TableHead className="w-80">Mesaj</TableHead>
-                  <TableHead className="w-32">Tip</TableHead>
-                  <TableHead className="w-48">Tarih</TableHead>
-                  <TableHead className="w-52 text-right">İşlemler</TableHead>
+                  <TableHead className="w-12">{t('notifications.table.status')}</TableHead>
+                  <TableHead className="w-52">{t('notifications.table.title')}</TableHead>
+                  <TableHead className="w-80">{t('notifications.table.message')}</TableHead>
+                  <TableHead className="w-32">{t('notifications.table.type')}</TableHead>
+                  <TableHead className="w-48">{t('notifications.table.date')}</TableHead>
+                  <TableHead className="w-52 text-right">{t('notifications.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredItems.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                      {busy ? 'Yükleniyor...' : 'Bildirim bulunamadı'}
+                      {busy ? t('notifications.table.loading') : t('notifications.table.noRecords')}
                     </TableCell>
                   </TableRow>
                 )}
@@ -324,10 +347,10 @@ export default function AdminNotificationsClient() {
                       {truncate(item.message, 60)}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{item.type}</Badge>
+                      <Badge variant="outline">{t(`notifications.types.${item.type}`, {}, item.type)}</Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {fmtDate(item.created_at)}
+                      {fmtDate(item.created_at, adminLocale)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -340,7 +363,9 @@ export default function AdminNotificationsClient() {
                           }}
                           disabled={busy}
                         >
-                          {item.is_read ? 'Okunmadı' : 'Okundu'}
+                          {item.is_read
+                            ? t('notifications.actions.markUnread')
+                            : t('notifications.actions.markRead')}
                         </Button>
                         <Button
                           size="sm"
@@ -376,7 +401,7 @@ export default function AdminNotificationsClient() {
           <div className="flex flex-col gap-3 p-4 xl:hidden">
             {filteredItems.length === 0 && (
               <div className="py-12 text-center text-muted-foreground">
-                {busy ? 'Yükleniyor...' : 'Bildirim bulunamadı'}
+                {busy ? t('notifications.table.loading') : t('notifications.table.noRecords')}
               </div>
             )}
             {filteredItems.map((item) => (
@@ -402,10 +427,11 @@ export default function AdminNotificationsClient() {
                       <p className="text-sm text-muted-foreground">{item.message}</p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Badge variant="outline" className="text-xs">
-                          {item.type}
+                          {t(`notifications.types.${item.type}`, {}, item.type)}
                         </Badge>
                         <span>•</span>
-                        <span>{fmtDate(item.created_at)}</span>
+
+                        <span>{fmtDate(item.created_at, adminLocale)}</span>
                       </div>
                     </div>
                   </div>
@@ -420,7 +446,9 @@ export default function AdminNotificationsClient() {
                       disabled={busy}
                       className="flex-1"
                     >
-                      {item.is_read ? 'Okunmadı' : 'Okundu'}
+                      {item.is_read
+                        ? t('notifications.actions.markUnread')
+                        : t('notifications.actions.markRead')}
                     </Button>
                     <Button
                       size="sm"

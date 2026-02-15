@@ -9,7 +9,7 @@ import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { isValidUiText } from '@/i18n/uiText';
 import { toCdnSrc } from '@/shared/media';
-import { safeStr} from '@/integrations/types';
+import { safeStr } from '@/integrations/shared';
 
 export default function ServicesPage() {
   const locale = useLocaleShort();
@@ -64,7 +64,7 @@ export default function ServicesPage() {
         <section className="container mx-auto py-16 px-4">
           <Service />
         </section>
-        
+
         <section className="container mx-auto pb-16 px-4">
           <ServiceMore />
         </section>

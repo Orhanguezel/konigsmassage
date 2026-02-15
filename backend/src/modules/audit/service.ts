@@ -9,6 +9,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { db } from '@/db/client';
 import { auditRequestLogs } from './schema';
 import { emitAppEvent } from '@/common/events/bus';
+import geoip from 'geoip-lite';
 
 /* -------------------- helper: headers -------------------- */
 function firstHeader(req: FastifyRequest, name: string): string {
@@ -98,10 +99,27 @@ function normalizeReferer(req: FastifyRequest): string | null {
   return ref ? ref : null;
 }
 
-function normalizeGeo(req: FastifyRequest): { country: string | null; city: string | null } {
-  const country = firstHeader(req, 'cf-ipcountry') || null;
-  const city = firstHeader(req, 'x-geo-city') || null;
-  return { country, city };
+function normalizeGeo(req: FastifyRequest, ip: string): { country: string | null; city: string | null } {
+  // 1. CDN header'larından oku (Cloudflare vb.)
+  const cfCountry = firstHeader(req, 'cf-ipcountry') || null;
+  const cfCity = firstHeader(req, 'x-geo-city') || null;
+  if (cfCountry) return { country: cfCountry, city: cfCity };
+
+  // 2. Header yoksa geoip-lite ile IP lookup yap
+  const isLocal =
+    !ip || ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.');
+
+  if (!isLocal) {
+    const geo = geoip.lookup(ip);
+    if (geo) {
+      return { country: geo.country || null, city: geo.city || null };
+    }
+  }
+
+  // 3. Yerel/özel IP ise "LOCAL" işaretle
+  if (isLocal) return { country: 'LOCAL', city: null };
+
+  return { country: null, city: null };
 }
 
 /* -------------------- writer -------------------- */
@@ -124,7 +142,7 @@ export async function writeRequestAuditLog(args: {
 
   const ua = normalizeUserAgent(req);
   const referer = normalizeReferer(req);
-  const geo = normalizeGeo(req);
+  const geo = normalizeGeo(req, ip);
 
   await db.insert(auditRequestLogs).values({
     req_id: String(args.reqId || ''),

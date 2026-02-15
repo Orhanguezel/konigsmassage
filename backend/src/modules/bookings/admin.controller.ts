@@ -30,6 +30,7 @@ import {
 
 import { sendTemplatedEmail } from '@/modules/email-templates/mailer';
 import { createUserNotification } from '@/modules/notifications/service';
+import { telegramNotify } from '@/modules/telegram/telegram.notifier';
 
 import { db } from '@/db/client';
 import { siteSettings } from '@/modules/siteSettings/schema';
@@ -461,6 +462,29 @@ export const updateBookingAdminHandler: RouteHandler = async (req, reply) => {
           // ignore
         }
       }
+
+      // Telegram notification (best-effort)
+      try {
+        await telegramNotify({
+          event: 'booking_status_changed',
+          locale: customerLocale,
+          data: {
+            booking_id: (updated as any).id,
+            customer_name: (updated as any).name,
+            customer_email: (updated as any).email,
+            appointment_date: (updated as any).appointment_date,
+            appointment_time: (updated as any).appointment_time ?? '',
+            service_title: (updated as any).service_title ?? '',
+            resource_title: (updated as any).resource_title ?? '',
+            status_before: statusBefore,
+            status_after: statusAfter,
+            decision_note: (updated as any).decision_note ?? '',
+            locale: customerLocale,
+          },
+        });
+      } catch {
+        // ignore
+      }
     }
 
     return reply.send(updated);
@@ -538,6 +562,7 @@ async function sendDecisionEmailAndNotify(args: {
   statusBefore: string;
   statusAfter: string;
   templateKey: string;
+  telegramEvent: 'booking_confirmed' | 'booking_rejected' | 'booking_cancelled' | 'booking_status_changed';
   req: any;
 }) {
   const b = args.booking;
@@ -607,6 +632,29 @@ async function sendDecisionEmailAndNotify(args: {
       // ignore
     }
   }
+
+  // Telegram notification (best-effort)
+  try {
+    await telegramNotify({
+      event: args.telegramEvent,
+      locale: customerLocale,
+      data: {
+        booking_id: String(b.id),
+        customer_name: String(b.name),
+        customer_email: String(b.email),
+        appointment_date: String(b.appointment_date),
+        appointment_time: String(b.appointment_time ?? ''),
+        service_title: String(b.service_title ?? ''),
+        resource_title: String(b.resource_title ?? ''),
+        status_before: statusBefore,
+        status_after: statusAfter,
+        decision_note: String(b.decision_note ?? ''),
+        locale: customerLocale,
+      },
+    });
+  } catch {
+    // ignore — telegramNotify already catches internally
+  }
 }
 
 // ----------------------------- ACCEPT -----------------------------
@@ -664,6 +712,7 @@ export const acceptBookingAdminHandler: RouteHandler = async (req, reply) => {
       statusBefore,
       statusAfter,
       templateKey: 'booking_accepted_customer',
+      telegramEvent: 'booking_confirmed',
       req,
     });
 
@@ -742,6 +791,7 @@ export const rejectBookingAdminHandler: RouteHandler = async (req, reply) => {
       statusBefore,
       statusAfter,
       templateKey: 'booking_rejected_customer',
+      telegramEvent: 'booking_rejected',
       req,
     });
 

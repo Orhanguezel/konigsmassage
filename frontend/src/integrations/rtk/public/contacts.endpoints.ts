@@ -4,7 +4,7 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/rtk/baseApi';
-import type { ContactDto, ContactCreatePayload } from '@/integrations/types';
+import type { ContactDto, ContactCreatePayload } from '@/integrations/shared';
 
 export const contactsPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

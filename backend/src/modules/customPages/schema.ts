@@ -1,9 +1,6 @@
 // =============================================================
 // FILE: src/modules/customPages/schema.ts
 // FINAL — MariaDB/MySQL compatible (LONGTEXT JSON-string columns)
-// - module_key on parent table
-// - images/storage_image_ids are LONGTEXT in DB, but exposed as string[] in app
-// - category/subcategory kaldırıldı
 // =============================================================
 
 import {
@@ -14,42 +11,10 @@ import {
   datetime,
   uniqueIndex,
   index,
-  customType,
   int,
 } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
-
-/** LONGTEXT */
-const longtext = customType<{ data: string; driverData: string }>({
-  dataType() {
-    return 'longtext';
-  },
-});
-
-/**
- * LONGTEXT that stores JSON-string for string[] (e.g. '[]', '["a","b"]')
- * App tarafında: string[]
- */
-const longtextJsonStringArray = customType<{ data: string[]; driverData: string }>({
-  dataType() {
-    return 'longtext';
-  },
-  toDriver(value) {
-    if (!value) return '[]';
-    if (Array.isArray(value)) return JSON.stringify(value);
-    return '[]';
-  },
-  fromDriver(value) {
-    const s = String(value ?? '').trim();
-    if (!s) return [];
-    try {
-      const parsed = JSON.parse(s);
-      return Array.isArray(parsed) ? parsed.map((x) => String(x ?? '').trim()).filter(Boolean) : [];
-    } catch {
-      return [];
-    }
-  },
-});
+import { longtext, longtextJsonStringArray } from '@/modules/_shared';
 
 export const customPages = mysqlTable(
   'custom_pages',
@@ -61,6 +26,7 @@ export const customPages = mysqlTable(
 
     // dil bağımsız
     is_published: tinyint('is_published').notNull().default(0),
+    featured: tinyint('featured').notNull().default(0),
 
     /** sıralama */
     display_order: int('display_order').notNull().default(0),
@@ -78,8 +44,8 @@ export const customPages = mysqlTable(
      * ✅ DB: LONGTEXT DEFAULT '[]'
      * ✅ App: string[]
      */
-    images: longtextJsonStringArray('images').notNull().default([]),
-    storage_image_ids: longtextJsonStringArray('storage_image_ids').notNull().default([]),
+    images: longtextJsonStringArray('images'),
+    storage_image_ids: longtextJsonStringArray('storage_image_ids'),
 
     created_at: datetime('created_at', { fsp: 3 })
       .notNull()
@@ -94,6 +60,7 @@ export const customPages = mysqlTable(
     index('custom_pages_created_idx').on(t.created_at),
     index('custom_pages_updated_idx').on(t.updated_at),
     index('custom_pages_is_published_idx').on(t.is_published),
+    index('custom_pages_featured_idx').on(t.featured),
 
     index('custom_pages_module_key_idx').on(t.module_key),
 

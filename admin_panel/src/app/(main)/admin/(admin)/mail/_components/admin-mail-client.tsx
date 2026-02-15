@@ -14,13 +14,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { useAdminUiCopy } from '@/app/(main)/admin/_components/common/useAdminUiCopy';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { useSendTestMailMutation } from '@/integrations/hooks';
 
 export default function AdminMailClient() {
-  const { copy } = useAdminUiCopy();
-  const page = copy.pages?.mail ?? {};
-  const common = copy.common;
+  const t = useAdminT();
 
   const [sendTestMail, { isLoading }] = useSendTestMailMutation();
   const [email, setEmail] = React.useState('');
@@ -29,16 +27,16 @@ export default function AdminMailClient() {
     e.preventDefault();
 
     if (!email.trim()) {
-      toast.error('Email is required');
+      toast.error(t('mail.test.required'));
       return;
     }
 
     try {
       await sendTestMail({ to: email }).unwrap();
-      toast.success(page?.test_mail_sent || 'Test mail sent successfully');
+      toast.success(t('mail.test.success'));
       setEmail('');
     } catch (err: any) {
-      const msg = err?.data?.message || err?.message || common?.states?.error || 'Failed to send test mail';
+      const msg = err?.data?.message || err?.message || t('mail.test.error');
       toast.error(msg);
     }
   };
@@ -48,10 +46,10 @@ export default function AdminMailClient() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {page?.title || 'Mail Test'}
+            {t('mail.title')}
           </h1>
           <p className="text-muted-foreground">
-            {page?.subtitle || 'Send test emails to verify SMTP configuration'}
+            {t('mail.description')}
           </p>
         </div>
       </div>
@@ -60,22 +58,22 @@ export default function AdminMailClient() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
-            {page?.test_section_title || 'Send Test Email'}
+            {t('mail.test.title')}
           </CardTitle>
           <CardDescription>
-            {page?.test_section_description || 'Enter an email address to send a test email'}
+            {t('mail.test.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSendTest} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">
-                {page?.email_label || 'Email Address'}
+                {t('mail.test.label')}
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder={page?.email_placeholder || 'test@example.com'}
+                placeholder={t('mail.test.placeholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
@@ -86,8 +84,8 @@ export default function AdminMailClient() {
             <Button type="submit" disabled={isLoading}>
               <Send className="h-4 w-4 mr-2" />
               {isLoading
-                ? (page?.sending || 'Sending...')
-                : (page?.send_test || 'Send Test Email')}
+                ? t('mail.test.sending')
+                : t('mail.test.send')}
             </Button>
           </form>
         </CardContent>
@@ -95,21 +93,21 @@ export default function AdminMailClient() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{page?.info_title || 'SMTP Configuration'}</CardTitle>
+          <CardTitle>{t('mail.smtp.title')}</CardTitle>
           <CardDescription>
-            {page?.info_description || 'Test emails use your current SMTP settings from environment variables'}
+            {t('mail.smtp.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>
-            {page?.info_line1 || 'Check your SMTP configuration in .env file:'}
+            {t('mail.smtp.info')}
           </p>
           <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>SMTP_HOST</li>
-            <li>SMTP_PORT</li>
-            <li>SMTP_USER</li>
-            <li>SMTP_PASS</li>
-            <li>MAIL_FROM</li>
+            <li>{t('mail.smtp.variables.host')} (SMTP_HOST)</li>
+            <li>{t('mail.smtp.variables.port')} (SMTP_PORT)</li>
+            <li>{t('mail.smtp.variables.user')} (SMTP_USER)</li>
+            <li>{t('mail.smtp.variables.pass')} (SMTP_PASS)</li>
+            <li>{t('mail.smtp.variables.from')} (MAIL_FROM)</li>
           </ul>
         </CardContent>
       </Card>

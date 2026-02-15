@@ -1,7 +1,6 @@
 // =============================================================
 // FILE: src/modules/customPages/repository.ts
 // FINAL — module_key support + LONGTEXT JSON-string arrays normalized
-// - category/subcategory kaldırıldı
 // =============================================================
 
 import { db } from '@/db/client';
@@ -14,6 +13,7 @@ import {
 import { and, asc, desc, eq, sql, type SQL } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/mysql-core';
 import { randomUUID } from 'crypto';
+import { to01, type BoolLike01 } from '@/modules/_shared';
 
 /** Güvenilir sıralama kolonları */
 type Sortable = 'created_at' | 'updated_at' | 'display_order' | 'order_num';
@@ -25,7 +25,8 @@ export type ListParams = {
   limit?: number;
   offset?: number;
 
-  is_published?: boolean | 0 | 1 | '0' | '1' | 'true' | 'false';
+  is_published?: BoolLike01;
+  featured?: BoolLike01;
   q?: string;
   slug?: string;
 
@@ -34,12 +35,6 @@ export type ListParams = {
 
   locale: string;
   defaultLocale: string;
-};
-
-const to01 = (v: ListParams['is_published']): 0 | 1 | undefined => {
-  if (v === true || v === 1 || v === '1' || v === 'true') return 1;
-  if (v === false || v === 0 || v === '0' || v === 'false') return 0;
-  return undefined;
 };
 
 const parseOrder = (
@@ -54,56 +49,13 @@ const parseOrder = (
     if (
       col &&
       dir &&
-      (col === 'created_at' ||
-        col === 'updated_at' ||
-        col === 'display_order' ||
-        col === 'order_num')
+      ['created_at', 'updated_at', 'display_order', 'order_num'].includes(col)
     ) {
-      return { col, dir };
+      return { col: col as Sortable, dir };
     }
   }
   if (sort && ord) return { col: sort, dir: ord };
   return null;
-};
-
-const isRec = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
-
-/** HTML string → JSON-string {"html": "..."} */
-export const packContent = (htmlOrJson: string): string => {
-  try {
-    const parsed = JSON.parse(htmlOrJson) as unknown;
-    if (isRec(parsed) && typeof (parsed as any).html === 'string') {
-      return JSON.stringify({ html: (parsed as any).html });
-    }
-  } catch {
-    // düz HTML ise no-op
-  }
-  return JSON.stringify({ html: htmlOrJson });
-};
-
-const parseJsonStringArray = (s: string): string[] => {
-  const raw = String(s ?? '').trim();
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map((x) => String(x ?? '').trim()).filter(Boolean);
-  } catch {
-    return [];
-  }
-};
-
-/**
- * DB LONGTEXT JSON-string kolonlar için güvenli normalize:
- * - string[] => ok
- * - string(JSON) => parse
- * - null/undefined => []
- */
-const asStringArray = (v: unknown): string[] => {
-  if (!v) return [];
-  if (Array.isArray(v)) return v.map((x) => String(x ?? '').trim()).filter(Boolean);
-  if (typeof v === 'string') return parseJsonStringArray(v);
-  return [];
 };
 
 export type CustomPageMerged = {
@@ -112,6 +64,7 @@ export type CustomPageMerged = {
   module_key: string;
 
   is_published: 0 | 1;
+  featured: 0 | 1;
   featured_image: string | null;
   featured_image_asset_id: string | null;
 
@@ -144,6 +97,7 @@ function baseSelect(i18nReq: any, i18nDef: any) {
     module_key: customPages.module_key,
 
     is_published: customPages.is_published,
+    featured: customPages.featured,
     featured_image: customPages.featured_image,
     featured_image_asset_id: customPages.featured_image_asset_id,
 
@@ -153,6 +107,7 @@ function baseSelect(i18nReq: any, i18nDef: any) {
     image_url: customPages.image_url,
     storage_asset_id: customPages.storage_asset_id,
 
+    // Schema customType handles deserialization
     images: customPages.images,
     storage_image_ids: customPages.storage_image_ids,
 
@@ -185,14 +140,6 @@ function baseSelect(i18nReq: any, i18nDef: any) {
   };
 }
 
-function normalizeMerged(row: any): CustomPageMerged {
-  return {
-    ...row,
-    images: asStringArray(row?.images),
-    storage_image_ids: asStringArray(row?.storage_image_ids),
-  } as CustomPageMerged;
-}
-
 /** LIST (coalesced) */
 export async function listCustomPages(params: ListParams) {
   const i18nReq = alias(customPagesI18n, 'cpi_req');
@@ -205,6 +152,8 @@ export async function listCustomPages(params: ListParams) {
 
   const pub = to01(params.is_published);
   if (pub !== undefined) filters.push(eq(customPages.is_published, pub));
+  const featured = to01(params.featured);
+  if (featured !== undefined) filters.push(eq(customPages.featured, featured));
 
   // ✅ slug OR matching
   if (params.slug && params.slug.trim()) {
@@ -263,7 +212,9 @@ export async function listCustomPages(params: ListParams) {
 
   const rowsQuery = whereExpr ? baseQuery.where(whereExpr) : baseQuery;
   const rowsRaw = await rowsQuery.orderBy(orderBy).limit(take).offset(skip);
-  const rows = (rowsRaw as any[]).map(normalizeMerged);
+  
+  // Implicit casting due to schema customization
+  const rows = rowsRaw as CustomPageMerged[];
 
   const baseCountQuery = db
     .select({ c: sql<number>`COUNT(1)` })
@@ -275,7 +226,7 @@ export async function listCustomPages(params: ListParams) {
   const cnt = await countQuery;
 
   const total = cnt[0]?.c ?? 0;
-  return { items: rows as unknown as CustomPageMerged[], total };
+  return { items: rows, total };
 }
 
 /** GET by id (coalesced) */
@@ -294,7 +245,7 @@ export async function getCustomPageMergedById(locale: string, defaultLocale: str
     .where(eq(customPages.id, id))
     .limit(1);
 
-  return rows[0] ? normalizeMerged(rows[0]) : null;
+  return rows[0] ? (rows[0] as CustomPageMerged) : null;
 }
 
 /** GET by slug (coalesced) */
@@ -318,7 +269,7 @@ export async function getCustomPageMergedBySlug(
     .where(sql`(${i18nReq.slug} = ${slugTrimmed} OR ${i18nDef.slug} = ${slugTrimmed})`)
     .limit(1);
 
-  return rows[0] ? normalizeMerged(rows[0]) : null;
+  return rows[0] ? (rows[0] as CustomPageMerged) : null;
 }
 
 /* ----------------- Admin write helpers ----------------- */

@@ -1,9 +1,9 @@
 // =============================================================
 // FILE: src/app/layout.tsx
-// FINAL — RootLayout (fix hydration mismatch)
+// RootLayout — DB'den branding config ile dinamik metadata
+// - generateMetadata() ile SSR'da DB'den meta bilgileri çekilir
 // - ThemeBootScript runs before interactive via next/script
 // - suppressHydrationWarning on html + body to tolerate extension-added attrs
-// - Avoid server/client className drift on <html>
 // =============================================================
 
 import type { ReactNode } from 'react';
@@ -11,10 +11,9 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 
 import { Toaster } from '@/components/ui/sonner';
-import { APP_CONFIG } from '@/config/app-config';
 import { fontVars } from '@/lib/fonts/registry';
 import { PREFERENCE_DEFAULTS } from '@/lib/preferences/preferences-config';
-
+import { fetchBrandingConfig } from '@/server/fetch-branding';
 
 import StoreProvider from '@/stores/Provider';
 import { PreferencesStoreProvider } from '@/stores/preferences/preferences-provider';
@@ -22,10 +21,35 @@ import { LocaleProvider } from '@/i18n';
 
 import './globals.css';
 
-export const metadata: Metadata = {
-  title: APP_CONFIG.meta.title,
-  description: APP_CONFIG.meta.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const branding = await fetchBrandingConfig();
+
+  return {
+    title: branding.meta.title,
+    description: branding.meta.description,
+    themeColor: branding.theme_color,
+    icons: {
+      icon: [
+        { url: branding.favicon_16, sizes: '16x16', type: 'image/svg+xml' },
+        { url: branding.favicon_32, sizes: '32x32', type: 'image/svg+xml' },
+      ],
+      apple: branding.apple_touch_icon,
+    },
+    openGraph: {
+      type: 'website',
+      url: branding.meta.og_url,
+      title: branding.meta.og_title,
+      description: branding.meta.og_description,
+      images: [branding.meta.og_image],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: branding.meta.og_title,
+      description: branding.meta.og_description,
+      images: [branding.meta.og_image],
+    },
+  };
+}
 
 function ThemeBootInlineScript() {
   const {
@@ -38,29 +62,31 @@ function ThemeBootInlineScript() {
     font,
   } = PREFERENCE_DEFAULTS;
 
-  /**
-   * Not:
-   * - Extension’lar <body> üzerinde attribute ekleyebilir (cz-shortcut-listen gibi).
-   * - Bu script, theme class’ı React hydration’dan önce oturtur.
-   */
   const code = `
 (function () {
   try {
     var d = document.documentElement;
 
-    // defaults (server ile aynı snapshot)
-    d.dataset.themePreset = ${JSON.stringify(theme_preset)};
-    d.dataset.contentLayout = ${JSON.stringify(content_layout)};
-    d.dataset.navbarStyle = ${JSON.stringify(navbar_style)};
-    d.dataset.sidebarVariant = ${JSON.stringify(sidebar_variant)};
-    d.dataset.sidebarCollapsible = ${JSON.stringify(sidebar_collapsible)};
-    d.dataset.font = ${JSON.stringify(font)};
+    // cookie reader helper
+    function ck(n) {
+      var m = document.cookie.match(new RegExp('(?:^|;\\\\s*)' + n + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }
 
-    // localStorage overrides (if exists)
-    var lsMode = localStorage.getItem('theme_mode');
-    var mode = (lsMode === 'dark' || lsMode === 'light') ? lsMode : ${JSON.stringify(theme_mode)};
+    // theme mode (cookie → localStorage → default)
+    var mode = ck('theme_mode') || (function(){try{return localStorage.getItem('theme_mode')}catch(e){return null}})() || ${JSON.stringify(theme_mode)};
     if (mode === 'dark') d.classList.add('dark');
     else d.classList.remove('dark');
+
+    // theme preset
+    d.dataset.themePreset = ck('theme_preset') || ${JSON.stringify(theme_preset)};
+
+    // layout & font from cookies or defaults
+    d.dataset.contentLayout = ck('content_layout') || ${JSON.stringify(content_layout)};
+    d.dataset.navbarStyle = ck('navbar_style') || ${JSON.stringify(navbar_style)};
+    d.dataset.sidebarVariant = ck('sidebar_variant') || ${JSON.stringify(sidebar_variant)};
+    d.dataset.sidebarCollapsible = ck('sidebar_collapsible') || ${JSON.stringify(sidebar_collapsible)};
+    d.dataset.font = ck('font') || ${JSON.stringify(font)};
 
   } catch (e) {}
 })();
@@ -73,14 +99,15 @@ function ThemeBootInlineScript() {
   );
 }
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const branding = await fetchBrandingConfig();
+
   const { theme_preset, content_layout, navbar_style, sidebar_variant, sidebar_collapsible, font } =
     PREFERENCE_DEFAULTS;
 
   return (
     <html
-      lang="de"
-      // html/body hydration mismatch’lerini tolere et (extension + theme class)
+      lang={branding.html_lang}
       suppressHydrationWarning
       data-theme-preset={theme_preset}
       data-content-layout={content_layout}
@@ -89,45 +116,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       data-sidebar-collapsible={sidebar_collapsible}
       data-font={font}
     >
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
-        {/* Primary Meta Tags */}
-        <title>König Energetik - Energetische Massage Berlin | Anastasia König</title>
-        <meta name="title" content="König Energetik - Energetische Massage Berlin | Anastasia König" />
-        <meta name="description" content="König Energetik: Ganzheitliche energetische Massage in Berlin. Anastasia König bietet mobile Körperarbeit bei Ihnen zu Hause. Heilende Berührung mit Herz." />
-        
-        {/* Favicons */}
-        <link rel="icon" type="image/svg+xml" href="/favicon/favicon-16.svg" sizes="16x16" />
-        <link rel="icon" type="image/svg+xml" href="/favicon/favicon-32.svg" sizes="32x32" />
-        
-        {/* Apple Touch Icon - using SVG for now, browsers might need PNG */}
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.svg" />
-        
-        {/* Theme Color */}
-        <meta name="theme-color" content="#FDFCFB" />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://koenig-energetik.de/" />
-        <meta property="og:title" content="König Energetik - Energetische Massage Berlin" />
-        <meta property="og:description" content="Ganzheitliche energetische Massage in Berlin. Heilende Berührung mit Herz. Mobile Körperarbeit von Anastasia König." />
-        <meta property="og:image" content="/logo/koenig-energetik-icon.svg" />
-        
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://koenig-energetik.de/" />
-        <meta property="twitter:title" content="König Energetik - Energetische Massage Berlin" />
-        <meta property="twitter:description" content="Ganzheitliche energetische Massage in Berlin. Heilende Berührung mit Herz." />
-        <meta property="twitter:image" content="/logo/koenig-energetik-icon.svg" />
-      </head>
       <body className={`${fontVars} min-h-screen antialiased`} suppressHydrationWarning>
         <ThemeBootInlineScript />
 
-        {/* Redux store gerekiyorsa kalsın */}
         <StoreProvider>
-          {/* Preferences Zustand */}
           <PreferencesStoreProvider>
             <LocaleProvider>
               {children}

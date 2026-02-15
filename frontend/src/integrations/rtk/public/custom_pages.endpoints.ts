@@ -9,43 +9,14 @@ import type {
   ApiCustomPage,
   CustomPageDto,
   CustomPageListPublicQueryParams,
-} from '@/integrations/types';
-import { mapApiCustomPageToDto } from '@/integrations/types';
-
-const cleanParams = (
-  params?: Record<string, unknown>,
-): Record<string, string | number | boolean> | undefined => {
-  if (!params) return undefined;
-  const out: Record<string, string | number | boolean> = {};
-  for (const [k, v] of Object.entries(params)) {
-    if (v === undefined || v === null || v === '' || (typeof v === 'number' && Number.isNaN(v))) {
-      continue;
-    }
-    if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'string') out[k] = v;
-    else out[k] = String(v);
-  }
-  return Object.keys(out).length ? out : undefined;
-};
-
-const getTotalFromHeaders = (headers: Headers | undefined, fallbackLength: number): number => {
-  const headerValue = headers?.get('x-total-count') ?? headers?.get('X-Total-Count');
-  if (!headerValue) return fallbackLength;
-  const n = Number(headerValue);
-  return Number.isFinite(n) && n >= 0 ? n : fallbackLength;
-};
-
-const normalizeList = (raw: unknown): ApiCustomPage[] => {
-  if (Array.isArray(raw)) return raw as ApiCustomPage[];
-  const anyRaw: any = raw as any;
-  if (anyRaw && Array.isArray(anyRaw.items)) return anyRaw.items as ApiCustomPage[];
-  return [];
-};
-
-export type CustomPageBySlugArgs = {
-  slug: string;
-  locale?: string;
-  default_locale?: string;
-};
+  CustomPageBySlugArgs,
+} from '@/integrations/shared';
+import {
+  mapApiCustomPageToDto,
+  cleanParams,
+  parseTotalFromHeaders,
+  normalizeArrayResponse,
+} from '@/integrations/shared';
 
 export const customPagesPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -59,8 +30,11 @@ export const customPagesPublicApi = baseApi.injectEndpoints({
         params: cleanParams(params as any),
       }),
       transformResponse: (response: unknown, meta) => {
-        const rows = normalizeList(response);
-        const total = getTotalFromHeaders(meta?.response?.headers, rows.length);
+        const rows = normalizeArrayResponse<ApiCustomPage>(response);
+        const total = parseTotalFromHeaders(
+          (meta as any)?.response?.headers,
+          rows.length,
+        );
         return { items: rows.map(mapApiCustomPageToDto), total };
       },
       providesTags: (result) =>

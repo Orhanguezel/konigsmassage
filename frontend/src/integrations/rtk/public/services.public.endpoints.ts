@@ -11,9 +11,9 @@ import type {
   ServiceImageDto,
   ServiceListPublicQueryParams,
   ServiceListResult,
-} from '@/integrations/types';
+} from '@/integrations/shared';
 
-import { normalizeService, normalizeServiceImage } from '@/integrations/types';
+import { normalizeService, normalizeServiceImage } from '@/integrations/shared';
 
 export const servicesPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

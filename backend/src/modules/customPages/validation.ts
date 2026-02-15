@@ -1,74 +1,20 @@
 // =============================================================
 // FILE: src/modules/customPages/validation.ts
 // FINAL — module_key parent'ta, LONGTEXT JSON-string columns ile uyumlu
-// - images/storage_image_ids: array OR JSON-string OR null
-// - URL/UUID validation tutarlı
-// - category/subcategory kaldırıldı
 // =============================================================
 
 import { z } from 'zod';
-import { normalizeLocale } from '@/core/i18n';
-
-export const boolLike = z.union([
-  z.boolean(),
-  z.literal(0),
-  z.literal(1),
-  z.literal('0'),
-  z.literal('1'),
-  z.literal('true'),
-  z.literal('false'),
-]);
-
-const LOCALE_LIKE = z
-  .string()
-  .trim()
-  .min(1)
-  .transform((s) => normalizeLocale(s) || s.toLowerCase());
-
-const UUID36 = z.string().length(36);
-const URL2000 = z.string().trim().max(2000).url('Geçersiz URL');
-
-const SLUG = z
-  .string()
-  .min(1)
-  .max(255)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'slug sadece küçük harf, rakam ve tire içermelidir')
-  .trim();
+import {
+  boolLike,
+  LOCALE_LIKE,
+  UUID36,
+  URL2000,
+  SLUG,
+  UrlArrayLike,
+  UuidArrayLike,
+} from '@/modules/_shared';
 
 const MODULE_KEY = z.string().trim().min(1).max(100);
-
-/** JSON-string veya array kabul eden helper */
-function parseJsonArrayString(input: string): string[] {
-  const s = input.trim();
-  if (!s) return [];
-  try {
-    const parsed = JSON.parse(s);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map((x) => String(x ?? '').trim()).filter(Boolean);
-  } catch {
-    return [];
-  }
-}
-
-const UrlArrayLike = z
-  .union([z.array(URL2000), z.string(), z.null(), z.undefined()])
-  .transform((val) => {
-    if (val == null) return null;
-    if (Array.isArray(val)) return val;
-    if (typeof val === 'string') return parseJsonArrayString(val);
-    return null;
-  })
-  .refine((v) => v === null || Array.isArray(v), 'images formatı geçersiz');
-
-const UuidArrayLike = z
-  .union([z.array(UUID36), z.string(), z.null(), z.undefined()])
-  .transform((val) => {
-    if (val == null) return null;
-    if (Array.isArray(val)) return val;
-    if (typeof val === 'string') return parseJsonArrayString(val);
-    return null;
-  })
-  .refine((v) => v === null || Array.isArray(v), 'storage_image_ids formatı geçersiz');
 
 /** LIST query (public/admin ortak) */
 export const customPageListQuerySchema = z.object({
@@ -78,6 +24,7 @@ export const customPageListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).optional(),
   offset: z.coerce.number().int().min(0).optional(),
   is_published: boolLike.optional(),
+  featured: boolLike.optional(),
   q: z.string().optional(),
   slug: z.string().optional(),
   select: z.string().optional(),
@@ -96,6 +43,7 @@ export const upsertCustomPageParentBodySchema = z.object({
   module_key: MODULE_KEY.optional(),
 
   is_published: boolLike.optional().default(false),
+  featured: boolLike.optional().default(false),
 
   featured_image: URL2000.nullable().optional(),
   featured_image_asset_id: UUID36.nullable().optional(),
@@ -161,6 +109,7 @@ export const upsertCustomPageBodySchema = upsertCustomPageI18nBodySchema.extend(
   module_key: MODULE_KEY.optional(),
 
   is_published: boolLike.optional().default(false),
+  featured: boolLike.optional().default(false),
 
   featured_image: URL2000.nullable().optional(),
   featured_image_asset_id: UUID36.nullable().optional(),
@@ -182,6 +131,7 @@ export const patchCustomPageBodySchema = patchCustomPageI18nBodySchema.extend({
   module_key: MODULE_KEY.optional(),
 
   is_published: boolLike.optional(),
+  featured: boolLike.optional(),
 
   featured_image: URL2000.nullable().optional(),
   featured_image_asset_id: UUID36.nullable().optional(),

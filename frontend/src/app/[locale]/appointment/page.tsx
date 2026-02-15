@@ -9,7 +9,7 @@ import { LayoutSeoBridge } from '@/seo';
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { isValidUiText } from '@/i18n/uiText';
-import { safeStr } from '@/integrations/types';
+import { safeStr } from '@/integrations/shared';
 import { toCdnSrc } from '@/shared/media';
 
 export default function AppointmentPage() {
@@ -73,4 +73,3 @@ export default function AppointmentPage() {
     </>
   );
 }
-

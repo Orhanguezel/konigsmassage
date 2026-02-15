@@ -10,8 +10,8 @@
 import React, { useMemo, useState, useEffect, useId, useCallback } from 'react';
 
 import { useListFaqsQuery } from '@/integrations/rtk/hooks';
-import type { FaqDto } from '@/integrations/types';
-import { normalizeFaq, safeStr } from '@/integrations/types';
+import type { FaqDto } from '@/integrations/shared';
+import { normalizeFaq, safeStr } from '@/integrations/shared';
 
 // i18n
 import { useLocaleShort } from '@/i18n/useLocaleShort';
@@ -99,7 +99,10 @@ const FaqsPageContent: React.FC = () => {
           </span>
 
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-text-primary mb-6">
-            {titlePrefix} <span className="text-brand-primary border-b-2 border-brand-primary/20 pb-1">{titleMark}</span>
+            {titlePrefix}{' '}
+            <span className="text-brand-primary border-b-2 border-brand-primary/20 pb-1">
+              {titleMark}
+            </span>
           </h2>
 
           {intro && <p className="text-text-secondary text-lg leading-relaxed">{intro}</p>}
@@ -108,74 +111,97 @@ const FaqsPageContent: React.FC = () => {
         {/* ACCORDION */}
         <div className="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
           <div className="space-y-4">
-              {/* EMPTY */}
-              {!isLoading && !hasFaqs && (
-                <div className="bg-white p-8 rounded-xl shadow-soft text-center border border-sand-100">
-                  <p className="text-text-muted">{emptyText}</p>
-                </div>
-              )}
+            {/* EMPTY */}
+            {!isLoading && !hasFaqs && (
+              <div className="bg-white p-8 rounded-xl shadow-soft text-center border border-sand-100">
+                <p className="text-text-muted">{emptyText}</p>
+              </div>
+            )}
 
-              {/* LOADING */}
-              {isLoading && (
-                 <div className="space-y-4">
-                    {[1,2,3].map(i => (
-                        <div key={i} className="bg-white p-6 rounded-xl border border-sand-100 shadow-soft animate-pulse">
-                            <div className="h-6 bg-sand-100 rounded w-2/3 mb-4"/>
-                            <div className="h-4 bg-sand-100 rounded w-full"/>
-                        </div>
-                    ))}
-                 </div>
-              )}
+            {/* LOADING */}
+            {isLoading && (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white p-6 rounded-xl border border-sand-100 shadow-soft animate-pulse"
+                  >
+                    <div className="h-6 bg-sand-100 rounded w-2/3 mb-4" />
+                    <div className="h-4 bg-sand-100 rounded w-full" />
+                  </div>
+                ))}
+              </div>
+            )}
 
-              {/* ITEMS */}
-              {faqs.map((faq, idx) => {
-                const id = safeStr(faq.id) || `${uid}-${idx}`;
-                const isOpen = openId === id;
+            {/* ITEMS */}
+            {faqs.map((faq, idx) => {
+              const id = safeStr(faq.id) || `${uid}-${idx}`;
+              const isOpen = openId === id;
 
-                const headingId = `faqHeading-${id}`;
-                const panelId = `faqCollapse-${id}`;
+              const headingId = `faqHeading-${id}`;
+              const panelId = `faqCollapse-${id}`;
 
-                const q = safeStr(faq.question) || untitled;
-                const a = safeStr(faq.answer);
+              const q = safeStr(faq.question) || untitled;
+              const a = safeStr(faq.answer);
 
-                return (
-                  <div className="bg-white border border-sand-100 rounded-xl shadow-soft overflow-hidden transition-all duration-300 hover:border-brand-primary/20 hover:shadow-medium" key={id}>
-                    <h2>
-                      <button
-                        type="button"
-                        className={`w-full text-left px-6 py-5 flex justify-between items-center font-bold text-lg md:text-xl transition-colors ${
-                            isOpen ? 'text-brand-primary' : 'text-text-primary hover:text-brand-primary'
-                        }`}
-                        aria-expanded={isOpen}
-                        aria-controls={panelId}
-                        id={headingId}
-                        onClick={() => setOpenId((prev) => (prev === id ? null : id))}
-                      >
-                        <span className="font-serif">{q}</span>
-                        <span className={`ml-4 transform transition-transform duration-300 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-sand-50 ${isOpen ? 'rotate-180 bg-brand-primary/10 text-brand-primary' : 'text-text-muted'}`}>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </span>
-                      </button>
-                    </h2>
-
-                    <div
-                      id={panelId}
-                      className={`transition-all duration-300 ease-in-out overflow-hidden bg-sand-50/50 ${
-                        isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+              return (
+                <div
+                  className="bg-white border border-sand-100 rounded-xl shadow-soft overflow-hidden transition-all duration-300 hover:border-brand-primary/20 hover:shadow-medium"
+                  key={id}
+                >
+                  <h2>
+                    <button
+                      type="button"
+                      className={`w-full text-left px-6 py-5 flex justify-between items-center font-bold text-lg md:text-xl transition-colors ${
+                        isOpen ? 'text-brand-primary' : 'text-text-primary hover:text-brand-primary'
                       }`}
-                      aria-labelledby={headingId}
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
+                      id={headingId}
+                      onClick={() => setOpenId((prev) => (prev === id ? null : id))}
                     >
-                      <div className="p-6 pt-2 text-text-secondary leading-relaxed border-t border-sand-100/50">
-                        {a ? (
-                          <div className="prose prose-rose max-w-none" dangerouslySetInnerHTML={{ __html: a }} />
-                        ) : (
-                          <p className="text-text-muted italic text-sm">{noAnswer}</p>
-                        )}
-                      </div>
+                      <span className="font-serif">{q}</span>
+                      <span
+                        className={`ml-4 transform transition-transform duration-300 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-sand-50 ${isOpen ? 'rotate-180 bg-brand-primary/10 text-brand-primary' : 'text-text-muted'}`}
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          ></path>
+                        </svg>
+                      </span>
+                    </button>
+                  </h2>
+
+                  <div
+                    id={panelId}
+                    className={`transition-all duration-300 ease-in-out overflow-hidden bg-sand-50/50 ${
+                      isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                    aria-labelledby={headingId}
+                  >
+                    <div className="p-6 pt-2 text-text-secondary leading-relaxed border-t border-sand-100/50">
+                      {a ? (
+                        <div
+                          className="prose prose-rose max-w-none"
+                          dangerouslySetInnerHTML={{ __html: a }}
+                        />
+                      ) : (
+                        <p className="text-text-muted italic text-sm">{noAnswer}</p>
+                      )}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
           </div>
 
           {/* FOOTER NOTE */}

@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import BlogDetails from '@/components/containers/blog/BlogDetails';
 import Banner from '@/layout/banner/Breadcrum';
-import { safeStr, titleFromSlug } from '@/integrations/types';
+import { safeStr, titleFromSlug } from '@/integrations/shared';
 import { buildMetadataFromSeo, fetchSeoObject, absUrlJoin, normPath } from '@/seo/server';
 import { fetchCustomPagePublicBySlug } from '@/seo/server';
 import { excerpt } from '@/shared/text';
@@ -26,9 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const base = await buildMetadataFromSeo(seo, { locale, pathname });
 
   const pageTitle =
-    safeStr(page?.meta_title) ||
-    safeStr(page?.title) ||
-    titleFromSlug(slug, 'Blog Detail');
+    safeStr(page?.meta_title) || safeStr(page?.title) || titleFromSlug(slug, 'Blog Detail');
 
   const rawDesc =
     safeStr(page?.meta_description) ||

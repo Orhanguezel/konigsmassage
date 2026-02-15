@@ -15,7 +15,7 @@ import {
   useListReviewsPublicQuery,
   useAddReviewReactionPublicMutation,
 } from '@/integrations/rtk/hooks';
-import type { ReviewDto } from '@/integrations/types';
+import type { ReviewDto } from '@/integrations/shared';
 
 import { useResolvedLocale } from '@/i18n/locale';
 import { useUiSection } from '@/i18n/uiDb';

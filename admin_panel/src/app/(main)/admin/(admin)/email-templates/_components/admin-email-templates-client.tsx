@@ -111,7 +111,7 @@ function getErrMsg(e: unknown, fallback: string): string {
 export default function AdminEmailTemplatesClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const t = useAdminT();
+  const t = useAdminT('admin.emailTemplates');
 
   // Locale management
   const {
@@ -211,12 +211,12 @@ export default function AdminEmailTemplatesClient() {
       }).unwrap();
       toast.success(
         item.is_active
-          ? t('admin.emailTemplates.list.toast.deactivated')
-          : t('admin.emailTemplates.list.toast.activated'),
+          ? t('list.toast.deactivated')
+          : t('list.toast.activated'),
       );
       refetch();
     } catch (err) {
-      toast.error(getErrMsg(err, t('admin.emailTemplates.common.operationFailed')));
+      toast.error(getErrMsg(err, t('common.operationFailed')));
     }
   };
 
@@ -234,12 +234,12 @@ export default function AdminEmailTemplatesClient() {
 
     try {
       await deleteTemplate({ id: itemToDelete.id }).unwrap();
-      toast.success(t('admin.emailTemplates.list.toast.deleted'));
+      toast.success(t('list.toast.deleted'));
       setDeleteDialogOpen(false);
       setItemToDelete(null);
       refetch();
     } catch (err) {
-      toast.error(getErrMsg(err, t('admin.emailTemplates.common.operationFailed')));
+      toast.error(getErrMsg(err, t('common.operationFailed')));
     }
   };
 
@@ -253,8 +253,8 @@ export default function AdminEmailTemplatesClient() {
           <CardHeader>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
-                <CardTitle>{t('admin.emailTemplates.list.title')}</CardTitle>
-                <CardDescription>{t('admin.emailTemplates.list.description')}</CardDescription>
+                <CardTitle>{t('list.title')}</CardTitle>
+                <CardDescription>{t('list.description')}</CardDescription>
               </div>
               <Button
                 onClick={() => router.push('/admin/email-templates/new')}
@@ -262,7 +262,7 @@ export default function AdminEmailTemplatesClient() {
                 className="gap-2"
               >
                 <Plus className="size-4" />
-                {t('admin.emailTemplates.list.addButton')}
+                {t('list.addButton')}
               </Button>
             </div>
           </CardHeader>
@@ -273,13 +273,13 @@ export default function AdminEmailTemplatesClient() {
               {/* Search */}
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="search" className="text-sm">
-                  {t('admin.emailTemplates.list.filters.searchLabel')}
+                  {t('list.filters.searchLabel')}
                 </Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="search"
-                    placeholder={t('admin.emailTemplates.list.filters.searchPlaceholder')}
+                    placeholder={t('list.filters.searchPlaceholder')}
                     value={filters.search}
                     onChange={(e) => handleSearch(e.target.value)}
                     disabled={busy}
@@ -291,7 +291,7 @@ export default function AdminEmailTemplatesClient() {
               {/* Active Filter */}
               <div className="space-y-2">
                 <Label htmlFor="activeFilter" className="text-sm">
-                  {t('admin.emailTemplates.list.filters.statusLabel')}
+                  {t('list.filters.statusLabel')}
                 </Label>
                 <Select
                   value={filters.activeFilter}
@@ -303,13 +303,13 @@ export default function AdminEmailTemplatesClient() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">
-                      {t('admin.emailTemplates.list.filters.statusOptions.all')}
+                      {t('list.filters.statusOptions.all')}
                     </SelectItem>
                     <SelectItem value="active">
-                      {t('admin.emailTemplates.list.filters.statusOptions.active')}
+                      {t('list.filters.statusOptions.active')}
                     </SelectItem>
                     <SelectItem value="inactive">
-                      {t('admin.emailTemplates.list.filters.statusOptions.inactive')}
+                      {t('list.filters.statusOptions.inactive')}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -330,18 +330,18 @@ export default function AdminEmailTemplatesClient() {
             {/* Refresh */}
             <div className="flex items-center justify-between gap-2">
               <div className="text-sm text-muted-foreground">
-                {t('admin.emailTemplates.list.totalRecords', { count: total })}
+                {t('list.totalRecords', { count: total })}
               </div>
               <Button variant="outline" onClick={() => refetch()} disabled={busy} className="gap-2">
                 <RefreshCcw className={cn('size-4', isFetching && 'animate-spin')} />
-                {t('admin.emailTemplates.list.refreshButton')}
+                {t('list.refreshButton')}
               </Button>
             </div>
 
             {isFetching && (
               <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
-                <span>{t('admin.emailTemplates.list.fetching')}</span>
+                <span>{t('list.fetching')}</span>
               </div>
             )}
           </CardContent>
@@ -353,22 +353,22 @@ export default function AdminEmailTemplatesClient() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('admin.emailTemplates.list.table.headers.templateKey')}</TableHead>
-                  <TableHead>{t('admin.emailTemplates.list.table.headers.nameSubject')}</TableHead>
+                  <TableHead>{t('list.table.headers.templateKey')}</TableHead>
+                  <TableHead>{t('list.table.headers.nameSubject')}</TableHead>
                   <TableHead className="w-48">
-                    {t('admin.emailTemplates.list.table.headers.variables')}
+                    {t('list.table.headers.variables')}
                   </TableHead>
                   <TableHead className="w-24 text-center">
-                    {t('admin.emailTemplates.list.table.headers.active')}
+                    {t('list.table.headers.active')}
                   </TableHead>
                   <TableHead className="w-32">
-                    {t('admin.emailTemplates.list.table.headers.locale')}
+                    {t('list.table.headers.locale')}
                   </TableHead>
                   <TableHead className="w-44">
-                    {t('admin.emailTemplates.list.table.headers.date')}
+                    {t('list.table.headers.date')}
                   </TableHead>
                   <TableHead className="w-40 text-right">
-                    {t('admin.emailTemplates.list.table.headers.actions')}
+                    {t('list.table.headers.actions')}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -378,14 +378,14 @@ export default function AdminEmailTemplatesClient() {
                     <TableCell colSpan={7} className="h-24 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Loader2 className="size-5 animate-spin" />
-                        <span>{t('admin.emailTemplates.list.loading')}</span>
+                        <span>{t('list.loading')}</span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : items.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="h-24 text-center">
-                      {t('admin.emailTemplates.list.empty')}
+                      {t('list.empty')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -443,7 +443,7 @@ export default function AdminEmailTemplatesClient() {
                       <TableCell className="text-xs text-muted-foreground">
                         <div>{fmtDate(item.created_at, dateLocale)}</div>
                         <div className="text-[10px]">
-                          {t('admin.emailTemplates.list.table.updatedLabel')}:{' '}
+                          {t('list.table.updatedLabel')}:{' '}
                           {fmtDate(item.updated_at, dateLocale)}
                         </div>
                       </TableCell>
@@ -457,7 +457,7 @@ export default function AdminEmailTemplatesClient() {
                             className="gap-2"
                           >
                             <Pencil className="size-3.5" />
-                            {t('admin.emailTemplates.list.actions.edit')}
+                            {t('list.actions.edit')}
                           </Button>
                           <Button
                             variant="outline"
@@ -467,7 +467,7 @@ export default function AdminEmailTemplatesClient() {
                             className="gap-2"
                           >
                             <Trash2 className="size-3.5" />
-                            {t('admin.emailTemplates.list.actions.delete')}
+                            {t('list.actions.delete')}
                           </Button>
                         </div>
                       </TableCell>
@@ -486,14 +486,14 @@ export default function AdminEmailTemplatesClient() {
               <CardContent className="flex items-center justify-center py-12">
                 <div className="flex items-center gap-2">
                   <Loader2 className="size-5 animate-spin" />
-                  <span>{t('admin.emailTemplates.list.loading')}</span>
+                  <span>{t('list.loading')}</span>
                 </div>
               </CardContent>
             </Card>
           ) : items.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
-                {t('admin.emailTemplates.list.empty')}
+                {t('list.empty')}
               </CardContent>
             </Card>
           ) : (
@@ -518,7 +518,7 @@ export default function AdminEmailTemplatesClient() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Label className="text-sm">
-                        {t('admin.emailTemplates.list.mobile.activeLabel')}
+                        {t('list.mobile.activeLabel')}
                       </Label>
                       <Switch
                         checked={item.is_active}
@@ -532,7 +532,7 @@ export default function AdminEmailTemplatesClient() {
                   {item.detected_variables && item.detected_variables.length > 0 && (
                     <div className="space-y-2">
                       <Label className="text-xs text-muted-foreground">
-                        {t('admin.emailTemplates.list.mobile.variablesLabel')}
+                        {t('list.mobile.variablesLabel')}
                       </Label>
                       <div className="flex flex-wrap gap-1">
                         {item.detected_variables.map((v) => (
@@ -547,11 +547,11 @@ export default function AdminEmailTemplatesClient() {
                   {/* Dates */}
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <div>
-                      {t('admin.emailTemplates.list.mobile.createdLabel')}:{' '}
+                      {t('list.mobile.createdLabel')}:{' '}
                       {fmtDate(item.created_at, dateLocale)}
                     </div>
                     <div>
-                      {t('admin.emailTemplates.list.mobile.updatedLabel')}:{' '}
+                      {t('list.mobile.updatedLabel')}:{' '}
                       {fmtDate(item.updated_at, dateLocale)}
                     </div>
                   </div>
@@ -566,7 +566,7 @@ export default function AdminEmailTemplatesClient() {
                       className="flex-1 gap-2"
                     >
                       <Pencil className="size-3.5" />
-                      {t('admin.emailTemplates.list.actions.edit')}
+                      {t('list.actions.edit')}
                     </Button>
                     <Button
                       variant="outline"
@@ -576,7 +576,7 @@ export default function AdminEmailTemplatesClient() {
                       className="flex-1 gap-2"
                     >
                       <Trash2 className="size-3.5" />
-                      {t('admin.emailTemplates.list.actions.delete')}
+                      {t('list.actions.delete')}
                     </Button>
                   </div>
                 </CardContent>
@@ -590,19 +590,19 @@ export default function AdminEmailTemplatesClient() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.emailTemplates.list.dialog.title')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('list.dialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.emailTemplates.list.dialog.description', {
+              {t('list.dialog.description', {
                 template:
                   itemToDelete?.template_key ||
-                  t('admin.emailTemplates.list.dialog.templateFallback'),
+                  t('list.dialog.templateFallback'),
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('admin.emailTemplates.list.dialog.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel>{t('list.dialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirm}>
-              {t('admin.emailTemplates.list.dialog.delete')}
+              {t('list.dialog.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

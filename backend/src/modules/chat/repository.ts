@@ -2,9 +2,9 @@
 // FILE: src/modules/chat/repository.ts
 // =============================================================
 
-import { and, desc, eq, lt, sql } from "drizzle-orm";
+import { and, asc, desc, eq, like, lt, or, sql } from "drizzle-orm";
 import type { MySql2Database } from "drizzle-orm/mysql2";
-import { chat_messages, chat_participants, chat_threads } from "./schema";
+import { chat_ai_knowledge, chat_messages, chat_participants, chat_threads } from "./schema";
 
 export function chatRepo(db: MySql2Database<Record<string, never>>) {
   return {
@@ -29,6 +29,35 @@ export function chatRepo(db: MySql2Database<Record<string, never>>) {
         .where(eq(chat_threads.id, id))
         .limit(1);
       return rows[0] ?? null;
+    },
+
+    async listThreadsAdmin(args: {
+      limit: number;
+      offset: number;
+      context_type?: string;
+      context_id?: string;
+      handoff_mode?: "ai" | "admin";
+    }) {
+      const where = and(
+        args.context_type ? eq(chat_threads.context_type, args.context_type) : undefined,
+        args.context_id ? eq(chat_threads.context_id, args.context_id) : undefined,
+        args.handoff_mode ? eq(chat_threads.handoff_mode, args.handoff_mode) : undefined,
+      );
+
+      const rows = await db
+        .select()
+        .from(chat_threads)
+        .where(where)
+        .orderBy(desc(chat_threads.updated_at))
+        .limit(args.limit)
+        .offset(args.offset);
+
+      const totalRow = await db
+        .select({ c: sql<number>`count(*)` })
+        .from(chat_threads)
+        .where(where);
+
+      return { rows, total: Number(totalRow?.[0]?.c ?? 0) };
     },
 
     async insertThread(row: typeof chat_threads.$inferInsert) {
@@ -83,6 +112,13 @@ export function chatRepo(db: MySql2Database<Record<string, never>>) {
       return !!rows[0];
     },
 
+    async listParticipants(thread_id: string) {
+      return db
+        .select()
+        .from(chat_participants)
+        .where(eq(chat_participants.thread_id, thread_id));
+    },
+
     async upsertParticipant(row: typeof chat_participants.$inferInsert) {
       // MySQL upsert pattern: insert ignore + update optional
       // MVP: insert ignore is enough; role changes admin-only later.
@@ -117,6 +153,16 @@ export function chatRepo(db: MySql2Database<Record<string, never>>) {
       return { rows, total: Number(totalRow?.[0]?.c ?? 0) };
     },
 
+    async listRecentMessagesForAi(thread_id: string, limit: number) {
+      const rows = await db
+        .select()
+        .from(chat_messages)
+        .where(eq(chat_messages.thread_id, thread_id))
+        .orderBy(desc(chat_messages.created_at))
+        .limit(limit);
+      return [...rows].reverse();
+    },
+
     async insertMessage(row: typeof chat_messages.$inferInsert) {
       await db.insert(chat_messages).values(row);
       return row;
@@ -127,6 +173,119 @@ export function chatRepo(db: MySql2Database<Record<string, never>>) {
         .update(chat_threads)
         .set({ updated_at })
         .where(eq(chat_threads.id, thread_id));
+    },
+
+    async updateThreadRouting(
+      thread_id: string,
+      patch: {
+        handoff_mode?: "ai" | "admin";
+        ai_provider_preference?: "auto" | "openai" | "anthropic" | "grok";
+        preferred_locale?: string;
+        assigned_admin_user_id?: string | null;
+        updated_at?: Date;
+      },
+    ) {
+      const nextPatch = Object.fromEntries(
+        Object.entries(patch).filter(([, v]) => v !== undefined),
+      ) as typeof patch;
+
+      if (!Object.keys(nextPatch).length) return;
+
+      await db.update(chat_threads).set(nextPatch).where(eq(chat_threads.id, thread_id));
+    },
+
+    async listAiKnowledge(args: {
+      locale?: string;
+      is_active?: 0 | 1;
+      q?: string;
+      limit: number;
+      offset: number;
+    }) {
+      const where = and(
+        args.locale ? eq(chat_ai_knowledge.locale, args.locale) : undefined,
+        args.is_active !== undefined ? eq(chat_ai_knowledge.is_active, args.is_active) : undefined,
+        args.q?.trim()
+          ? or(
+              like(chat_ai_knowledge.title, `%${args.q.trim()}%`),
+              like(chat_ai_knowledge.content, `%${args.q.trim()}%`),
+              like(chat_ai_knowledge.tags, `%${args.q.trim()}%`),
+            )
+          : undefined,
+      );
+
+      const rows = await db
+        .select()
+        .from(chat_ai_knowledge)
+        .where(where)
+        .orderBy(asc(chat_ai_knowledge.priority), desc(chat_ai_knowledge.updated_at))
+        .limit(args.limit)
+        .offset(args.offset);
+
+      const totalRow = await db
+        .select({ c: sql<number>`count(*)` })
+        .from(chat_ai_knowledge)
+        .where(where);
+
+      return { rows, total: Number(totalRow?.[0]?.c ?? 0) };
+    },
+
+    async getAiKnowledgeById(id: string) {
+      const rows = await db
+        .select()
+        .from(chat_ai_knowledge)
+        .where(eq(chat_ai_knowledge.id, id))
+        .limit(1);
+      return rows[0] ?? null;
+    },
+
+    async createAiKnowledge(row: typeof chat_ai_knowledge.$inferInsert) {
+      await db.insert(chat_ai_knowledge).values(row);
+      return row;
+    },
+
+    async updateAiKnowledge(id: string, patch: Partial<typeof chat_ai_knowledge.$inferInsert>) {
+      const nextPatch = Object.fromEntries(
+        Object.entries(patch).filter(([, v]) => v !== undefined),
+      ) as Partial<typeof chat_ai_knowledge.$inferInsert>;
+
+      if (!Object.keys(nextPatch).length) return;
+      await db.update(chat_ai_knowledge).set(nextPatch).where(eq(chat_ai_knowledge.id, id));
+    },
+
+    async deleteAiKnowledge(id: string) {
+      const res: any = await db.delete(chat_ai_knowledge).where(eq(chat_ai_knowledge.id, id));
+      return Number(res?.[0]?.affectedRows ?? res?.affectedRows ?? 0);
+    },
+
+    async listAiKnowledgeForContext(args: { locale: string; tokens: string[]; limit: number }) {
+      const tokenConds = args.tokens.flatMap((t) => [
+        like(chat_ai_knowledge.title, `%${t}%`),
+        like(chat_ai_knowledge.content, `%${t}%`),
+        like(chat_ai_knowledge.tags, `%${t}%`),
+      ]);
+
+      const rows = await db
+        .select()
+        .from(chat_ai_knowledge)
+        .where(
+          and(
+            eq(chat_ai_knowledge.locale, args.locale),
+            eq(chat_ai_knowledge.is_active, 1),
+            tokenConds.length ? or(...tokenConds) : undefined,
+          ),
+        )
+        .orderBy(asc(chat_ai_knowledge.priority), desc(chat_ai_knowledge.updated_at))
+        .limit(args.limit);
+
+      if (rows.length) return rows;
+
+      // locale için eşleşme yoksa en yüksek öncelikli genel kayıtları dön
+      return db
+        .select()
+        .from(chat_ai_knowledge)
+        .where(and(eq(chat_ai_knowledge.locale, args.locale), eq(chat_ai_knowledge.is_active, 1)))
+        .orderBy(asc(chat_ai_knowledge.priority), desc(chat_ai_knowledge.updated_at))
+        .limit(args.limit);
     },
   };
 }

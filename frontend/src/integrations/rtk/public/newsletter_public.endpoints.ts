@@ -8,7 +8,7 @@ import type {
   NewsletterPublicDto,
   NewsletterSubscribePayload,
   NewsletterUnsubscribePayload,
-} from '@/integrations/types';
+} from '@/integrations/shared';
 
 export const newsletterPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

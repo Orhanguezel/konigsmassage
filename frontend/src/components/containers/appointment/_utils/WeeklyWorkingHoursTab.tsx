@@ -8,7 +8,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
-import type { AdminUpsertWorkingHourPayload, ResourceType } from '@/integrations/types';
+import type { AdminUpsertWorkingHourPayload, ResourceType } from '@/integrations/shared';
 import {
   useListWorkingHoursAdminQuery,
   useUpsertWorkingHourAdminMutation,
@@ -157,7 +157,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
 
   useEffect(() => {
     if (!hasResourceId) return;
-    setNewWh((p) => ({ ...p, resource_id: resourceId } as any));
+    setNewWh((p) => ({ ...p, resource_id: resourceId }) as any);
   }, [hasResourceId, resourceId]);
 
   const validateRange = (start: string, end: string) => {
@@ -500,7 +500,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
           <select
             className="form-select form-select-sm"
             value={newWh.dow}
-            onChange={(e) => setNewWh((p) => ({ ...p, dow: Number(e.target.value) } as any))}
+            onChange={(e) => setNewWh((p) => ({ ...p, dow: Number(e.target.value) }) as any)}
             disabled={busy}
           >
             {DOWS.map((d) => (
@@ -517,7 +517,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
             type="time"
             className="form-control form-control-sm"
             value={String(newWh.start_time)}
-            onChange={(e) => setNewWh((p) => ({ ...p, start_time: e.target.value } as any))}
+            onChange={(e) => setNewWh((p) => ({ ...p, start_time: e.target.value }) as any)}
             disabled={busy}
           />
         </div>
@@ -528,7 +528,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
             type="time"
             className="form-control form-control-sm"
             value={String(newWh.end_time)}
-            onChange={(e) => setNewWh((p) => ({ ...p, end_time: e.target.value } as any))}
+            onChange={(e) => setNewWh((p) => ({ ...p, end_time: e.target.value }) as any)}
             disabled={busy}
           />
         </div>
@@ -542,7 +542,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
             min={1}
             max={24 * 60}
             onChange={(e) =>
-              setNewWh((p) => ({ ...p, slot_minutes: Number(e.target.value) } as any))
+              setNewWh((p) => ({ ...p, slot_minutes: Number(e.target.value) }) as any)
             }
             disabled={busy}
           />
@@ -557,7 +557,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
             min={0}
             max={24 * 60}
             onChange={(e) =>
-              setNewWh((p) => ({ ...p, break_minutes: Number(e.target.value) } as any))
+              setNewWh((p) => ({ ...p, break_minutes: Number(e.target.value) }) as any)
             }
             disabled={busy}
           />
@@ -571,7 +571,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
             value={Number(newWh.capacity ?? 1)}
             min={0}
             max={999}
-            onChange={(e) => setNewWh((p) => ({ ...p, capacity: Number(e.target.value) } as any))}
+            onChange={(e) => setNewWh((p) => ({ ...p, capacity: Number(e.target.value) }) as any)}
             disabled={busy}
           />
         </div>
@@ -583,7 +583,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
               className="form-check-input"
               type="checkbox"
               checked={toBool01(newWh.is_active)}
-              onChange={(e) => setNewWh((p) => ({ ...p, is_active: e.target.checked } as any))}
+              onChange={(e) => setNewWh((p) => ({ ...p, is_active: e.target.checked }) as any)}
               disabled={busy}
             />
           </div>

@@ -78,17 +78,31 @@ export const CustomPageMainColumn: React.FC<Props> = ({
   const t = useAdminT();
   return (
     <div className="space-y-4">
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          id="is_published"
-          type="checkbox"
-          className="h-4 w-4"
-          checked={values.is_published}
-          onChange={handleCheckboxChange('is_published')}
-          disabled={disabled}
-        />
-        <span>{t('admin.customPage.form.isPublished')}</span>
-      </label>
+      <div className="flex flex-wrap items-center gap-6">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            id="is_published"
+            type="checkbox"
+            className="h-4 w-4"
+            checked={values.is_published}
+            onChange={handleCheckboxChange('is_published')}
+            disabled={disabled}
+          />
+          <span>{t('admin.customPage.form.isPublished')}</span>
+        </label>
+
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            id="featured"
+            type="checkbox"
+            className="h-4 w-4"
+            checked={values.featured}
+            onChange={handleCheckboxChange('featured')}
+            disabled={disabled}
+          />
+          <span>{t('admin.customPage.form.featured')}</span>
+        </label>
+      </div>
 
       <div>
         <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.form.title')}</label>

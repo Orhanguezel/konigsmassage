@@ -33,6 +33,12 @@ export type AdminUiPageCopy = Record<string, string>;
 
 export type AdminUiCopy = {
   app_name: string;
+  app_version?: string;
+  developer_branding?: {
+    name: string;
+    url: string;
+    full_name: string;
+  };
   nav: AdminNavCopy;
   common: AdminUiCommonCopy;
   pages: Record<string, AdminUiPageCopy>;
@@ -90,6 +96,8 @@ const emptyNav: AdminNavCopy = {
     audit: '',
     availability: '',
     reports: '',
+    telegram: '',
+    chat: '',
   },
 };
 
@@ -128,6 +136,8 @@ export function normalizeAdminUiCopy(raw: unknown): AdminUiCopy {
     audit: uiText(itemsRaw.audit),
     availability: uiText(itemsRaw.availability),
     reports: uiText(itemsRaw.reports),
+    telegram: uiText(itemsRaw.telegram),
+    chat: uiText(itemsRaw.chat),
   };
 
   const commonRaw = parseJsonObject(o.common);
@@ -168,8 +178,16 @@ export function normalizeAdminUiCopy(raw: unknown): AdminUiCopy {
     pages[k] = out;
   }
 
+  const devRaw = parseJsonObject(o.developer_branding);
+
   return {
     app_name: uiText(o.app_name),
+    app_version: uiText(o.app_version),
+    developer_branding: devRaw ? {
+      name: uiText(devRaw.name),
+      url: uiText(devRaw.url),
+      full_name: uiText(devRaw.full_name),
+    } : undefined,
     nav: {
       labels: { ...emptyNav.labels, ...labels },
       items: { ...emptyNav.items, ...items },

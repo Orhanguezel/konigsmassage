@@ -97,111 +97,100 @@ export const CustomPageHeader: React.FC<CustomPageHeaderProps> = ({
   const ALL = '__all__' as const;
 
   return (
-    <div className="rounded-lg border bg-card">
-      <div className="border-b p-3">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0 flex-1">
+    <div className="min-w-0 w-full max-w-full overflow-hidden rounded-lg border bg-card">
+      <div className="p-2.5">
+        {/* Title row + summary */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div className="min-w-0">
             <div className="text-sm font-semibold">{t('admin.customPage.title')}</div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-[11px] text-muted-foreground">
               {t('admin.customPage.subtitle')}
-            </div>
-
-            <div className="mt-3 grid gap-2 md:grid-cols-12 md:items-end">
-              <div className="md:col-span-5">
-                <label className="mb-1 block text-xs text-muted-foreground">
-                  {t('admin.customPage.searchPlaceholder')}
-                </label>
-                <input
-                  type="search"
-                  className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                  placeholder={t('admin.customPage.searchPlaceholder')}
-                  value={filters.search}
-                  onChange={handleSearchChange}
-                />
-              </div>
-
-              <div className="md:col-span-3">
-                <AdminLocaleSelect
-                  value={filters.locale}
-                  onChange={handleLocaleChange}
-                  options={localeOptions}
-                  loading={!!localesLoading}
-                  disabled={disabledLocaleSelect}
-                  label={t('admin.common.locale')}
-                />
-                {localesLoading ? (
-                  <div className="mt-1 text-xs text-muted-foreground">{t('admin.common.loading')}</div>
-                ) : null}
-                {!localesLoading && localeOptions.length === 0 ? (
-                  <div className="mt-1 text-xs text-destructive">
-                    Aktif dil listesi yok. Site ayarlarından app_locales kontrol et.
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.allModules')}</label>
-                <select
-                  className="w-full rounded-md border bg-background px-2 py-2 text-sm"
-                  value={filters.moduleKey}
-                  onChange={handleModuleChange}
-                  disabled={disabledModuleSelect}
-                >
-                  <option value={ALL}>{t('admin.customPage.allModules')}</option>
-                  {moduleOpts.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                {disabledModuleSelect ? (
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {t('admin.common.loading')}
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.status.all')}</label>
-                <select
-                  className="w-full rounded-md border bg-background px-2 py-2 text-sm"
-                  value={filters.publishedFilter}
-                  onChange={handlePublishedChange}
-                >
-                  <option value="all">{t('admin.customPage.status.all')}</option>
-                  <option value="published">{t('admin.customPage.status.published')}</option>
-                  <option value="draft">{t('admin.customPage.status.draft')}</option>
-                </select>
-              </div>
             </div>
           </div>
 
-          <div className="lg:w-72 lg:border-l lg:pl-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs text-muted-foreground">{t('admin.common.total')}</div>
-                <div className="text-2xl font-bold">{total}</div>
-              </div>
-
-              {onRefresh ? (
-                <button
-                  type="button"
-                  className="rounded-md border px-3 py-1 text-xs"
-                  onClick={onRefresh}
-                >
-                  {t('admin.common.refresh')}
-                </button>
-              ) : null}
-            </div>
-
-            <div className="mt-3 flex justify-end">
-              <Link
-                href="/admin/custompage/new"
-                className="rounded-md bg-primary px-3 py-2 text-xs text-primary-foreground"
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-muted-foreground">{t('admin.common.total')}:</span>
+            <span className="text-sm font-bold">{total}</span>
+            {onRefresh ? (
+              <button
+                type="button"
+                className="rounded border px-2 py-1 text-[11px] hover:bg-muted"
+                onClick={onRefresh}
               >
-                {t('admin.customPage.newPage')}
-              </Link>
-            </div>
+                {t('admin.common.refresh')}
+              </button>
+            ) : null}
+            <Link
+              href="/admin/custompage/new"
+              className="rounded-md bg-primary px-2.5 py-1 text-[11px] font-medium text-primary-foreground"
+            >
+              {t('admin.customPage.newPage')}
+            </Link>
+          </div>
+        </div>
+
+        {/* Filters row — flex wrap, compact */}
+        <div className="flex flex-wrap items-end gap-2">
+          <div className="min-w-[140px] max-w-[220px] flex-1">
+            <label className="mb-0.5 block text-[11px] text-muted-foreground">
+              {t('admin.customPage.searchPlaceholder')}
+            </label>
+            <input
+              type="search"
+              className="w-full rounded border bg-background px-2 py-1.5 text-xs"
+              placeholder={t('admin.customPage.searchPlaceholder')}
+              value={filters.search}
+              onChange={handleSearchChange}
+            />
+          </div>
+
+          <div className="min-w-[120px] max-w-[180px]">
+            <AdminLocaleSelect
+              value={filters.locale}
+              onChange={handleLocaleChange}
+              options={localeOptions}
+              loading={!!localesLoading}
+              disabled={disabledLocaleSelect}
+              label={t('admin.common.locale')}
+            />
+            {localesLoading ? (
+              <div className="mt-0.5 text-[10px] text-muted-foreground">{t('admin.common.loading')}</div>
+            ) : null}
+            {!localesLoading && localeOptions.length === 0 ? (
+              <div className="mt-0.5 text-[10px] text-destructive">
+                {t('admin.common.localeOptionsMissing')}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="min-w-[100px] max-w-[160px]">
+            <label className="mb-0.5 block text-[11px] text-muted-foreground">{t('admin.customPage.allModules')}</label>
+            <select
+              className="w-full rounded border bg-background px-1.5 py-1.5 text-xs"
+              value={filters.moduleKey}
+              onChange={handleModuleChange}
+              disabled={disabledModuleSelect}
+            >
+              <option value={ALL}>{t('admin.customPage.allModules')}</option>
+              {moduleOpts.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="min-w-[80px] max-w-[130px]">
+            <label className="mb-0.5 block text-[11px] text-muted-foreground">{t('admin.customPage.status.all')}</label>
+            <select
+              className="w-full rounded border bg-background px-1.5 py-1.5 text-xs"
+              value={filters.publishedFilter}
+              onChange={handlePublishedChange}
+            >
+              <option value="all">{t('admin.customPage.status.all')}</option>
+              <option value="published">{t('admin.customPage.status.published')}</option>
+              <option value="draft">{t('admin.customPage.status.draft')}</option>
+            </select>
           </div>
         </div>
       </div>

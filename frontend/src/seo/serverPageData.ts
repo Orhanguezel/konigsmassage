@@ -6,8 +6,13 @@ import 'server-only';
 
 import { cache } from 'react';
 
-import type { ServiceDto, ApiServicePublic, CustomPageDto, ApiCustomPage } from '@/integrations/types';
-import { normalizeService, mapApiCustomPageToDto } from '@/integrations/types';
+import type {
+  ServiceDto,
+  ApiServicePublic,
+  CustomPageDto,
+  ApiCustomPage,
+} from '@/integrations/shared';
+import { normalizeService, mapApiCustomPageToDto } from '@/integrations/shared';
 import { getDefaultLocale } from '@/i18n/server';
 import { getServerApiBase } from '@/i18n/apiBase.server';
 import { normLocaleShort } from '@/seo/helpers';

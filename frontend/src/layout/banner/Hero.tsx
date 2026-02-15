@@ -13,7 +13,7 @@ import Link from 'next/link';
 
 // RTK – PUBLIC sliders
 import { useListSlidersQuery } from '@/integrations/rtk/hooks';
-import type { SliderPublicDto } from '@/integrations/types';
+import type { SliderPublicDto } from '@/integrations/shared';
 
 // helpers
 import { toCdnSrc } from '@/shared/media';
@@ -41,7 +41,8 @@ const Hero: React.FC = () => {
   const { ui } = useUiSection('ui_hero', locale);
 
   const variantRaw = (ui('ui_hero_variant', 'v3') || '').toString().trim().toLowerCase();
-  const variant: 'v1' | 'v2' | 'v3' = variantRaw === 'v1' || variantRaw === 'v2' ? variantRaw : 'v3';
+  const variant: 'v1' | 'v2' | 'v3' =
+    variantRaw === 'v1' || variantRaw === 'v2' ? variantRaw : 'v3';
 
   // ✅ Fallback: ilk açılışta boş görünmesin (adresini sen güncelle)
   const FALLBACK_HERO_IMAGE =
@@ -319,7 +320,6 @@ const Hero: React.FC = () => {
           )}
         </>
       )}
-
     </section>
   );
 };

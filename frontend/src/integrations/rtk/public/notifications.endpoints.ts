@@ -4,37 +4,15 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/rtk/baseApi';
-
 import type {
   NotificationDto,
-  NotificationType,
   NotificationListQueryParams,
   NotificationCreatePayload,
   NotificationUpdatePayload,
   NotificationDeletePayload,
   NotificationUnreadCountResponse,
-} from '@/integrations/types';
-
-// Küçük yardımcılar – normalize
-const asStr = (x: unknown): string => (typeof x === 'string' ? x : String(x ?? ''));
-
-const toBool = (v: unknown): boolean => {
-  if (v === true || v === false) return v;
-  const s = String(v ?? '')
-    .trim()
-    .toLowerCase();
-  return s === '1' || s === 'true' || s === 'yes';
-};
-
-const normalizeNotification = (n: any): NotificationDto => ({
-  id: asStr(n.id),
-  user_id: asStr(n.user_id),
-  title: asStr(n.title),
-  message: asStr(n.message),
-  type: (n.type ?? 'system') as NotificationType,
-  is_read: toBool(n.is_read),
-  created_at: asStr(n.created_at),
-});
+} from '@/integrations/shared';
+import { normalizeNotification } from '@/integrations/shared';
 
 export const notificationsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -112,7 +90,7 @@ export const notificationsApi = baseApi.injectEndpoints({
         body: patch,
       }),
       transformResponse: (data: unknown): NotificationDto => normalizeNotification(data),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'Notification', id },
         { type: 'Notification', id: 'LIST' },
         { type: 'Notification', id: 'UNREAD_COUNT' },
@@ -142,7 +120,7 @@ export const notificationsApi = baseApi.injectEndpoints({
         url: `/notifications/${encodeURIComponent(id)}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'Notification', id },
         { type: 'Notification', id: 'LIST' },
         { type: 'Notification', id: 'UNREAD_COUNT' },

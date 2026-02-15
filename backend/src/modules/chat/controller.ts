@@ -8,6 +8,7 @@ import {
   ListMessagesQuerySchema,
   ListThreadsQuerySchema,
   PostMessageBodySchema,
+  RequestAdminHandoffBodySchema,
   ThreadIdParamsSchema,
   WsQuerySchema,
 } from "./validation";
@@ -15,12 +16,18 @@ import { chatService } from "./service";
 
 function getUser(req: any) {
   // authPlugin attaches req.user (adjust if needed)
-  if (!req.user?.id) {
+  const userId = req.user?.id ?? req.user?.sub;
+  if (!userId) {
     const err: any = new Error("unauthorized");
     err.statusCode = 401;
     throw err;
   }
-  return req.user as { id: string; role: "admin" | "buyer" | "vendor" };
+  const roleRaw = String(req.user.role ?? "").toLowerCase();
+  const role = roleRaw === "admin" || roleRaw === "vendor" ? roleRaw : "buyer";
+  return { id: String(userId), role } as {
+    id: string;
+    role: "admin" | "buyer" | "vendor";
+  };
 }
 
 function setListHeaders(reply: FastifyReply, total: number, offset: number, limit: number) {
@@ -48,6 +55,7 @@ export function chatController(app: any) {
       const thread = await svc.getOrCreateThread({
         context_type: body.context_type,
         context_id: body.context_id,
+        preferred_locale: String((req as any).locale || "tr"),
         created_by: user,
       });
       return { thread };
@@ -75,6 +83,15 @@ export function chatController(app: any) {
       const body = PostMessageBodySchema.parse((req as any).body ?? {});
       const msg = await svc.postMessage(user, params.id, body);
       return { message: msg };
+    },
+
+    // POST /chat/threads/:id/request-admin
+    async requestAdminHandoff(req: FastifyRequest, _reply: FastifyReply) {
+      const user = getUser(req);
+      const params = ThreadIdParamsSchema.parse((req as any).params ?? {});
+      const body = RequestAdminHandoffBodySchema.parse((req as any).body ?? {});
+      const thread = await svc.requestAdminHandoff(user, params.id, body.note);
+      return { thread };
     },
 
     // WS handler: GET /chat/ws?thread_id=...

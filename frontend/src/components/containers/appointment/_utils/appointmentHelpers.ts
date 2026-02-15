@@ -3,7 +3,7 @@
 // FINAL — Appointment helpers
 // =============================================================
 
-import type { ResourcePublicItemDto, ResourceSlotDto } from '@/integrations/types';
+import type { ResourcePublicItemDto, ResourceSlotDto } from '@/integrations/shared';
 
 export const safeStr = (v: unknown) => (v == null ? '' : String(v).trim());
 

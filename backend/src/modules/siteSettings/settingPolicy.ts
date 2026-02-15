@@ -70,6 +70,24 @@ export const GLOBAL_ONLY_KEYS = new Set<string>([
   'storage_cdn_public_base',
   'storage_public_api_base',
 
+  // ✅ telegram (global-only — credentials & flags)
+  'telegram_enabled',
+  'telegram_notifications_enabled',
+  'telegram_webhook_enabled',
+  'telegram_bot_token',
+  'telegram_chat_id',
+  'telegram_default_chat_id',
+  'telegram_notification_locale',
+  'telegram_autoreply_enabled',
+  'telegram_autoreply_mode',
+  'telegram_autoreply_template',
+  'telegram_event_new_booking_enabled',
+  'telegram_event_booking_confirmed_enabled',
+  'telegram_event_booking_rejected_enabled',
+  'telegram_event_booking_cancelled_enabled',
+  'telegram_event_booking_status_changed_enabled',
+  'telegram_event_new_contact_enabled',
+
   // ✅ site media (global-only)
   'site_logo',
   'site_logo_dark',

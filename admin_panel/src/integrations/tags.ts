@@ -179,6 +179,11 @@ export const tags = [
   'Resource',
   'Resources',
   'CustomPageSlug',
+  'TelegramInbound',
+  'TelegramAutoReply',
+  'ChatThreads',
+  'ChatMessages',
+  'ChatKnowledge',
 ] as const;
 
 export type tag = typeof tags[number];

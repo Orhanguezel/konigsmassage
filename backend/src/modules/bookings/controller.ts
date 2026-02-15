@@ -16,6 +16,7 @@ import { createBookingPublic, getBookingMergedById } from './repository';
 
 import { sendTemplatedEmail } from '@/modules/email-templates/mailer';
 import { createUserNotification } from '@/modules/notifications/service';
+import { telegramNotify } from '@/modules/telegram/telegram.notifier';
 
 import { db } from '@/db/client';
 import { siteSettings } from '@/modules/siteSettings/schema';
@@ -262,6 +263,28 @@ export const createBookingPublicHandler: RouteHandler = async (req, reply) => {
       } catch {
         // ignore
       }
+    }
+
+    // ---------------- telegram notification (best-effort) ----------------
+    try {
+      await telegramNotify({
+        event: 'new_booking',
+        locale,
+        data: {
+          booking_id: created.id,
+          customer_name: created.name,
+          customer_email: created.email,
+          customer_phone: created.phone ?? '',
+          appointment_date: created.appointment_date,
+          appointment_time: created.appointment_time ?? '',
+          service_title: merged?.service_title ?? '',
+          resource_title: merged?.resource_title ?? '',
+          customer_message: msg,
+          locale,
+        },
+      });
+    } catch {
+      // ignore — telegramNotify already catches internally
     }
 
     return reply.code(201).send({ ok: true, id: created.id, status: created.status });

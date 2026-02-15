@@ -33,15 +33,25 @@ import {
   useDeleteNotificationMutation,
 } from '@/integrations/hooks';
 
-function getErrMsg(e: unknown): string {
+// function getErrMsg(e: unknown): string { ... } moved inside or adapted
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
+
+function getErrMsg(e: unknown, t: (k: string) => string): string {
   const anyErr = e as any;
   return (
     anyErr?.data?.error?.message ||
     anyErr?.data?.message ||
     anyErr?.message ||
-    'İşlem başarısız'
+    t('notifications.messages.operationFailed')
   );
 }
+
+const localeMapping: Record<string, string> = {
+  tr: 'tr-TR',
+  en: 'en-US',
+  de: 'de-DE',
+};
 
 const NOTIFICATION_TYPES = [
   'order_created',
@@ -62,6 +72,8 @@ type FormData = {
 
 export default function AdminNotificationDetailClient({ id }: { id: string }) {
   const router = useRouter();
+  const t = useAdminT();
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const isNew = id === 'new';
 
   const { data: items = [] } = useListNotificationsQuery();
@@ -96,15 +108,15 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
     router.push('/admin/notifications');
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      toast.error('Başlık gerekli');
+      toast.error(t('notifications.messages.titleRequired'));
       return;
     }
     if (!formData.message.trim()) {
-      toast.error('Mesaj gerekli');
+      toast.error(t('notifications.messages.messageRequired'));
       return;
     }
 
@@ -117,27 +129,32 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
           type: formData.type as any,
         };
         await createNotification(body).unwrap();
-        toast.success('Bildirim oluşturuldu');
+        toast.success(t('notifications.messages.createSuccess'));
         router.push('/admin/notifications');
       } else {
         // Note: notifications endpoint only supports updating is_read
         // For full edit, we'd need backend support
-        toast.warning('Bildirimleri düzenleme şu anda desteklenmiyor');
+        toast.warning(t('notifications.messages.editNotSupported'));
       }
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t));
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm(`"${item?.title}" bildirimini silmek istediğinize emin misiniz?`)) return;
+    if (
+      !confirm(
+        t('notifications.messages.deleteConfirm').replace('{title}', item?.title || '')
+      )
+    )
+      return;
 
     try {
       await deleteNotification({ id }).unwrap();
-      toast.success('Bildirim silindi');
+      toast.success(t('notifications.messages.deleteSuccess'));
       router.push('/admin/notifications');
     } catch (err) {
-      toast.error(getErrMsg(err));
+      toast.error(getErrMsg(err, t));
     }
   };
 
@@ -149,16 +166,20 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl font-bold">
-                {isNew ? 'Yeni Bildirim' : 'Bildirim Detayı'}
+                {isNew
+                  ? t('notifications.form.createTitle')
+                  : t('notifications.form.editTitle')}
               </CardTitle>
               <CardDescription>
-                {isNew ? 'Yeni bir bildirim oluşturun' : 'Bildirim detaylarını görüntüleyin'}
+                {isNew
+                  ? t('notifications.form.createDescription')
+                  : t('notifications.form.editDescription')}
               </CardDescription>
             </div>
             <div className="flex gap-2">
               <Button onClick={handleBack} variant="outline" size="sm">
                 <ArrowLeft className="mr-2 size-4" />
-                Geri
+                {t('notifications.actions.back')}
               </Button>
               {!isNew && (
                 <Button
@@ -168,7 +189,7 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
                   size="sm"
                 >
                   <Trash2 className="mr-2 size-4" />
-                  Sil
+                  {t('notifications.actions.delete')}
                 </Button>
               )}
             </div>
@@ -179,37 +200,37 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
       {/* Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Bildirim Bilgileri</CardTitle>
+          <CardTitle>{t('notifications.form.infoTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSave} className="space-y-4">
             {/* User ID (optional) */}
             <div className="space-y-2">
               <Label htmlFor="user_id">
-                Kullanıcı ID <span className="text-muted-foreground">(opsiyonel)</span>
+                {t('notifications.form.userId')} <span className="text-muted-foreground">{t('notifications.form.optional')}</span>
               </Label>
               <Input
                 id="user_id"
                 value={formData.user_id}
                 onChange={(e) => setFormData((p) => ({ ...p, user_id: e.target.value }))}
-                placeholder="Boş bırakılırsa mevcut kullanıcı"
+                placeholder={t('notifications.form.userIdPlaceholder')}
                 disabled={!isNew || busy}
               />
               <p className="text-xs text-muted-foreground">
-                Belirli bir kullanıcıya göndermek için UUID girin
+                {t('notifications.form.userIdHelp')}
               </p>
             </div>
 
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title">
-                Başlık <span className="text-destructive">*</span>
+                {t('notifications.form.title')} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData((p) => ({ ...p, title: e.target.value }))}
-                placeholder="Bildirim başlığı"
+                placeholder={t('notifications.form.titlePlaceholder')}
                 required
                 disabled={!isNew || busy}
               />
@@ -218,13 +239,13 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
             {/* Message */}
             <div className="space-y-2">
               <Label htmlFor="message">
-                Mesaj <span className="text-destructive">*</span>
+                {t('notifications.form.message')} <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="message"
                 value={formData.message}
                 onChange={(e) => setFormData((p) => ({ ...p, message: e.target.value }))}
-                placeholder="Bildirim mesajı"
+                placeholder={t('notifications.form.messagePlaceholder')}
                 rows={4}
                 required
                 disabled={!isNew || busy}
@@ -234,7 +255,7 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
             {/* Type */}
             <div className="space-y-2">
               <Label htmlFor="type">
-                Tip <span className="text-destructive">*</span>
+                {t('notifications.form.type')} <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={formData.type}
@@ -245,12 +266,11 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {NOTIFICATION_TYPES.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
+                  {NOTIFICATION_TYPES.map((tVal) => (
+                    <SelectItem key={tVal} value={tVal}>
+                      {t(`notifications.types.${tVal}`, {}, tVal)}
                     </SelectItem>
                   ))}
-                  <SelectItem value="custom">custom (özel)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -259,11 +279,11 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
             {isNew && (
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" onClick={handleBack} variant="outline" disabled={busy}>
-                  İptal
+                  {t('notifications.actions.cancel')}
                 </Button>
                 <Button type="submit" disabled={busy}>
                   <Save className="mr-2 size-4" />
-                  {busy ? 'Kaydediliyor...' : 'Kaydet'}
+                  {busy ? t('notifications.actions.saving') : t('notifications.actions.save')}
                 </Button>
               </div>
             )}
@@ -271,8 +291,7 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
             {!isNew && (
               <div className="rounded-md border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-950/20">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  ℹ️ Bildirimler oluşturulduktan sonra düzenlenemez. Sadece okundu/okunmadı
-                  durumu değiştirilebilir.
+                  {t('notifications.form.editWarning')}
                 </p>
               </div>
             )}
@@ -284,26 +303,26 @@ export default function AdminNotificationDetailClient({ id }: { id: string }) {
       {!isNew && item && (
         <Card>
           <CardHeader>
-            <CardTitle>Bildirim Detayları</CardTitle>
+            <CardTitle>{t('notifications.details.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">ID</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('notifications.details.id')}</p>
                 <p className="text-sm">{item.id}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Kullanıcı ID</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('notifications.details.userId')}</p>
                 <p className="text-sm">{item.user_id}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Durum</p>
-                <p className="text-sm">{item.is_read ? 'Okundu' : 'Okunmadı'}</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('notifications.details.status')}</p>
+                <p className="text-sm">{item.is_read ? t('notifications.details.read') : t('notifications.details.unread')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Oluşturulma Tarihi</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('notifications.details.createdAt')}</p>
                 <p className="text-sm">
-                  {new Date(item.created_at).toLocaleString('tr-TR')}
+                  {new Date(item.created_at).toLocaleString((localeMapping[adminLocale] || 'tr-TR'))}
                 </p>
               </div>
             </div>

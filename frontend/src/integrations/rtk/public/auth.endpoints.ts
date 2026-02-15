@@ -5,103 +5,18 @@
 
 import { baseApi } from '@/integrations/rtk/baseApi';
 import type { FetchArgs } from '@reduxjs/toolkit/query';
-import type { User as AuthUser, UserRoleName } from '@/integrations/types';
-
-/* -----------------------------
- * Request/Response Types
- * ----------------------------- */
-
-type LoginBody = {
-  grant_type: 'password';
-  email: string;
-  password: string;
-};
-
-/**
- * Backend validation (signupBody) ile uyumlu:
- * - email, password zorunlu
- * - full_name, phone opsiyonel
- * - options.emailRedirectTo / options.data.full_name / options.data.phone opsiyonel
- */
-export type SignUpBody = {
-  email: string;
-  password: string;
-  full_name?: string;
-  phone?: string;
-  options?: {
-    emailRedirectTo?: string;
-    data?: {
-      full_name?: string;
-      phone?: string;
-      [k: string]: unknown;
-    };
-  };
-};
-
-/**
- * /auth/token ve /auth/signup cevap tipleri
- * (backend tarafında controller'ların döndürdüğü shape'i
- * buna göre tasarlıyoruz)
- */
-export type TokenResp = {
-  access_token: string;
-  refresh_token?: string;
-  expires_in?: number;
-  token_type?: 'bearer';
-  user: AuthUser;
-};
-
-/** /auth/user cevabı (şeklen { user } döndürmesini bekliyoruz) */
-export type UserResp = {
-  user: AuthUser;
-};
-
-/** /auth/status cevabı */
-export type StatusResp = {
-  authenticated: boolean;
-  is_admin: boolean;
-  user?: {
-    id: string;
-    email: string | null;
-    role: UserRoleName;
-  };
-};
-
-/* -----------------------------
- * Password reset types
- * ----------------------------- */
-
-export type PasswordResetRequestBody = {
-  email: string;
-};
-
-export type PasswordResetRequestResp = {
-  success: boolean;
-  token?: string;
-  message?: string;
-  error?: string;
-};
-
-export type PasswordResetConfirmBody = {
-  token: string;
-  password: string;
-};
-
-export type PasswordResetConfirmResp = {
-  success: boolean;
-  message?: string;
-  error?: string;
-};
-
-/* -----------------------------
- * Update (profil/hesap)
- * Backend validation: updateBody { email?, password? }
- * ----------------------------- */
-
-export type UpdateUserBody = {
-  email?: string;
-  password?: string;
-};
+import type {
+  LoginBody,
+  SignUpBody,
+  TokenResp,
+  UserResp,
+  StatusResp,
+  UpdateUserBody,
+  PasswordResetRequestBody,
+  PasswordResetRequestResp,
+  PasswordResetConfirmBody,
+  PasswordResetConfirmResp,
+} from '@/integrations/shared';
 
 const BASE = '/auth';
 
@@ -237,7 +152,7 @@ export const {
   useConfirmPasswordResetMutation,
 } = authApi;
 
-// Kısa alias’lar
+// Kısa alias'lar
 export const useLoginMutation = useTokenMutation;
 export const useSignupMutation = useSignUpMutation;
 export const useGetSessionQuery = useMeQuery;

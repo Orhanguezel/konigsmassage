@@ -150,6 +150,85 @@ export async function listAuditAuthEvents(
 }
 
 /* -------------------------------------------------------------
+ * Geo Stats: group by country
+ * ------------------------------------------------------------- */
+export type AuditGeoStatsRow = {
+  country: string;
+  count: number;
+  unique_ips: number;
+};
+
+export type AuditGeoStatsQuery = {
+  days?: number;
+  only_admin?: any;
+  source?: 'requests' | 'auth';
+};
+
+export async function getAuditGeoStats(
+  q: AuditGeoStatsQuery,
+): Promise<AuditGeoStatsRow[]> {
+  const days = Math.max(1, Math.min(90, Number(q.days ?? 30)));
+  const startExpr = sql`DATE_SUB(UTC_DATE(), INTERVAL ${days - 1} DAY)`;
+
+  const useAuth = q.source === 'auth';
+  const table = useAuth ? auditAuthEvents : auditRequestLogs;
+
+  const conds: (SQL | undefined)[] = [];
+  conds.push(sql`DATE(${table.created_at}) >= ${startExpr}`);
+  conds.push(sql`${table.country} IS NOT NULL AND ${table.country} != ''`);
+
+  if (!useAuth && typeof q.only_admin !== 'undefined' && isTruthyBoolLike(q.only_admin)) {
+    conds.push(eq(auditRequestLogs.is_admin, 1));
+  }
+
+  const whereCond = and(...(conds.filter(Boolean) as SQL[]));
+
+  const rows = await db
+    .select({
+      country: table.country,
+      count: sql<number>`COUNT(*)`,
+      unique_ips: sql<number>`COUNT(DISTINCT ${table.ip})`,
+    })
+    .from(table)
+    .where(whereCond)
+    .groupBy(table.country)
+    .orderBy(sql`COUNT(*) DESC`)
+    .limit(200);
+
+  return rows.map((r: any) => ({
+    country: String(r.country ?? ''),
+    count: Number(r.count ?? 0),
+    unique_ips: Number(r.unique_ips ?? 0),
+  }));
+}
+
+/* -------------------------------------------------------------
+ * CLEAR – Tüm audit loglarını sil
+ * ------------------------------------------------------------- */
+export type ClearAuditTarget = 'requests' | 'auth' | 'all';
+
+export async function clearAuditLogs(
+  target: ClearAuditTarget = 'all',
+): Promise<{ deletedRequests: number; deletedAuth: number }> {
+  let deletedRequests = 0;
+  let deletedAuth = 0;
+
+  if (target === 'requests' || target === 'all') {
+    const countRes = await db.select({ c: sql<number>`COUNT(*)` }).from(auditRequestLogs);
+    deletedRequests = Number(countRes[0]?.c ?? 0);
+    await db.execute(sql`TRUNCATE TABLE audit_request_logs`);
+  }
+
+  if (target === 'auth' || target === 'all') {
+    const countRes = await db.select({ c: sql<number>`COUNT(*)` }).from(auditAuthEvents);
+    deletedAuth = Number(countRes[0]?.c ?? 0);
+    await db.execute(sql`TRUNCATE TABLE audit_auth_events`);
+  }
+
+  return { deletedRequests, deletedAuth };
+}
+
+/* -------------------------------------------------------------
  * Metrics: daily aggregation (requests, unique_ips, errors)
  * ------------------------------------------------------------- */
 export type AuditMetricsDailyRow = {

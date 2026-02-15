@@ -13,10 +13,10 @@ import { Lightbulb } from 'lucide-react';
 
 import { AdminDbAuthGate } from './admin-db-auth-gate';
 
-import { FullDbHeader } from '../fullDb/FullDbHeader';
-import { FullDbImportPanel } from '../fullDb/FullDbImportPanel';
-import { SnapshotsPanel } from '../fullDb/SnapshotsPanel';
-import { ModuleTabs } from '../modules/ModuleTabs';
+import { FullDbHeader } from '../fullDb/full-db-header';
+import { FullDbImportPanel } from '../fullDb/full-db-import-panel';
+import { SnapshotsPanel } from '../fullDb/snapshots-panel';
+import { ModuleTabs } from '../modules/module-tabs';
 
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
@@ -25,7 +25,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 
 export const AdminDbClient: React.FC = () => {
-  const t = useAdminT();
+  const t = useAdminT('admin.db');
 
   return (
     <AdminDbAuthGate>
@@ -35,37 +35,37 @@ export const AdminDbClient: React.FC = () => {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold">{t('admin.db.title')}</h1>
+                <h1 className="text-lg font-semibold">{t('title')}</h1>
 
                 {/* Help Popover */}
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="ghost" size="sm" className="size-8 p-0">
                       <Lightbulb className="size-4 text-muted-foreground" />
-                      <span className="sr-only">{t('admin.db.help.pageTitle')}</span>
+                      <span className="sr-only">{t('help.pageTitle')}</span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent align="start" className="w-80">
                     <div className="space-y-3">
-                      <p className="text-sm font-semibold">{t('admin.db.help.dbAdmin')}</p>
+                      <p className="text-sm font-semibold">{t('help.dbAdmin')}</p>
                       <ul className="space-y-2 text-sm text-muted-foreground">
                         <li>
                           <span className="font-medium text-foreground">Full DB</span>:{' '}
-                          {t('admin.db.help.fullDbDesc')}
+                          {t('help.fullDbDesc')}
                         </li>
                         <li>
                           <span className="font-medium text-foreground">Snapshot</span>:{' '}
-                          {t('admin.db.help.snapshotDesc')}
+                          {t('help.snapshotDesc')}
                         </li>
                         <li>
                           <span className="font-medium text-foreground">Module Export/Import</span>:{' '}
-                          {t('admin.db.help.moduleDesc')}
+                          {t('help.moduleDesc')}
                         </li>
                         <li>
                           <span className="font-medium text-foreground">
                             UI (site_settings ui_*)
                           </span>
-                          : {t('admin.db.help.uiDesc')}
+                          : {t('help.uiDesc')}
                         </li>
                       </ul>
                     </div>
@@ -73,7 +73,7 @@ export const AdminDbClient: React.FC = () => {
                 </Popover>
               </div>
 
-              <p className="text-sm text-muted-foreground">{t('admin.db.description')}</p>
+              <p className="text-sm text-muted-foreground">{t('description')}</p>
             </div>
           </div>
 

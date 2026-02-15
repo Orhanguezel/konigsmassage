@@ -6,40 +6,17 @@ import { baseApi } from '@/integrations/rtk/baseApi';
 import type {
   StorageServerUploadArgs,
   StoragePublicUploadResponse,
+  StorageUploadManyResponse,
   StorageSignMultipartBody,
   StorageSignMultipartResponse,
-} from '@/integrations/types';
-
-const sanitize = (name: string) => name.replace(/[^\w.\-]+/g, '_');
-
-type UploadManyResponse = { items: StoragePublicUploadResponse[] };
-
-/** File[]’a kesin daraltma: undefined/null/yanlış tipleri atar */
-function compactFiles(list: unknown[]): File[] {
-  const out: File[] = [];
-  for (const f of list) {
-    if (!f) continue;
-    if (typeof File !== 'undefined' && f instanceof File) {
-      out.push(f);
-      continue;
-    }
-    if (typeof Blob !== 'undefined' && f instanceof Blob) {
-      try {
-        const name = (f as any)?.name || 'blob';
-        out.push(new File([f], name, { type: f.type || 'application/octet-stream' }));
-      } catch {
-        out.push(f as unknown as File);
-      }
-    }
-  }
-  return out;
-}
+} from '@/integrations/shared';
+import { sanitizeFilename, compactFiles } from '@/integrations/shared';
 
 export const storagePublicApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Server-side upload: /storage/:bucket/upload
     uploadToBucket: builder.mutation<
-      UploadManyResponse,
+      StorageUploadManyResponse,
       Omit<StorageServerUploadArgs, 'file'> & { files: File | File[] }
     >({
       async queryFn(args, _api, _extra, baseQuery) {
@@ -59,7 +36,7 @@ export const storagePublicApi = baseApi.injectEndpoints({
 
           for (const [i, file] of files.entries()) {
             const fd = new FormData();
-            const filename = sanitize(file.name || `file-${i}`);
+            const filename = sanitizeFilename(file.name || `file-${i}`);
             fd.append('file', file, filename);
 
             const qs = new URLSearchParams();

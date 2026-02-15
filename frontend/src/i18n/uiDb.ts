@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
 import { useResolvedLocale } from '@/i18n/locale';
 import { UI_FALLBACK_EN } from './ui';
-import type { SiteSettingRow } from '@/integrations/types';
+import type { SiteSettingRow } from '@/integrations/shared';
 import type { TranslatedLabel } from '@/types/common';
 
 /**
@@ -57,7 +57,7 @@ export type UiSectionKey =
   | 'ui_common'
   | 'ui_solutions'
   | 'ui_appointment'
-  ;
+  | 'ui_chat';
 
 /**
  * UI key listeleri:
@@ -422,6 +422,27 @@ const SECTION_KEYS: Record<UiSectionKey, readonly string[]> = {
     'ui_appointment_meta_description',
     'ui_appointment_og_image',
   ],
+  ui_chat: [
+    'ui_chat_title',
+    'ui_chat_subtitle',
+    'ui_chat_placeholder',
+    'ui_chat_send',
+    'ui_chat_connect_admin',
+    'ui_chat_connecting',
+    'ui_chat_login_title',
+    'ui_chat_login_button',
+    'ui_chat_loading',
+    'ui_chat_ai_mode',
+    'ui_chat_admin_mode',
+    'ui_chat_admin_inbox',
+    'ui_chat_no_admin_threads',
+    'ui_chat_thread_label',
+    'ui_chat_queue_pending',
+    'ui_chat_queue_mine',
+    'ui_chat_queue_all',
+    'ui_chat_unread_label',
+    'ui_chat_empty',
+  ],
 };
 
 export type UiSectionResult = {
@@ -453,7 +474,9 @@ function tryParseJsonObject(input: unknown): Record<string, unknown> {
       try {
         const j = JSON.parse(s);
         if (j && typeof j === 'object' && !Array.isArray(j)) return j as Record<string, unknown>;
-      } catch { return {}; }
+      } catch {
+        return {};
+      }
     }
   }
   return {};
@@ -464,13 +487,22 @@ function tryParseJson(x: unknown): unknown {
   const s = x.trim();
   if (!s) return x;
   if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) {
-    try { return JSON.parse(s); } catch { return x; }
+    try {
+      return JSON.parse(s);
+    } catch {
+      return x;
+    }
   }
   return x;
 }
 
 function normShortLocale(x: unknown): string {
-  return String(x || '').trim().toLowerCase().replace('_', '-').split('-')[0].trim();
+  return String(x || '')
+    .trim()
+    .toLowerCase()
+    .replace('_', '-')
+    .split('-')[0]
+    .trim();
 }
 
 type SettingsValueRecord = { label?: TranslatedLabel; [k: string]: unknown };

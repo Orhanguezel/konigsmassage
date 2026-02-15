@@ -6,9 +6,14 @@ import 'server-only';
 
 import { cache } from 'react';
 
-import { fetchSetting, getDefaultLocale, DEFAULT_LOCALE_FALLBACK, type JsonLike } from '@/i18n/server';
+import {
+  fetchSetting,
+  getDefaultLocale,
+  DEFAULT_LOCALE_FALLBACK,
+  type JsonLike,
+} from '@/i18n/server';
 import { isValidUiText } from '@/i18n/uiText';
-import { safeStr } from '@/integrations/types';
+import { safeStr } from '@/integrations/shared';
 import { normLocaleShort } from '@/seo/helpers';
 
 function parseUiObject(v: JsonLike): Record<string, unknown> {
@@ -28,23 +33,25 @@ function parseUiObject(v: JsonLike): Record<string, unknown> {
   return {};
 }
 
-export const fetchUiSectionObject = cache(async (key: string, locale: string): Promise<Record<string, unknown>> => {
-  const k = safeStr(key);
-  if (!k) return {};
+export const fetchUiSectionObject = cache(
+  async (key: string, locale: string): Promise<Record<string, unknown>> => {
+    const k = safeStr(key);
+    if (!k) return {};
 
-  const defaultLocale = await getDefaultLocale();
-  const loc = normLocaleShort(locale, defaultLocale);
+    const defaultLocale = await getDefaultLocale();
+    const loc = normLocaleShort(locale, defaultLocale);
 
-  const tryLocales = [loc, '*', defaultLocale, DEFAULT_LOCALE_FALLBACK].filter(Boolean);
-  for (const l of tryLocales) {
-    const row = await fetchSetting(k, l, { revalidate: 600 });
-    if (row?.value == null) continue;
-    const obj = parseUiObject(row.value as any);
-    if (Object.keys(obj).length) return obj;
-  }
+    const tryLocales = [loc, '*', defaultLocale, DEFAULT_LOCALE_FALLBACK].filter(Boolean);
+    for (const l of tryLocales) {
+      const row = await fetchSetting(k, l, { revalidate: 600 });
+      if (row?.value == null) continue;
+      const obj = parseUiObject(row.value as any);
+      if (Object.keys(obj).length) return obj;
+    }
 
-  return {};
-});
+    return {};
+  },
+);
 
 export function readUiText(ui: Record<string, unknown>, key: string, fallback = ''): string {
   const k = safeStr(key);
@@ -54,4 +61,3 @@ export function readUiText(ui: Record<string, unknown>, key: string, fallback = 
   const fb = safeStr(fallback);
   return fb || '';
 }
-

@@ -4,31 +4,13 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/rtk/baseApi';
-
 import type {
   ApiSliderPublic,
   SliderPublicDto,
   SliderPublicListQueryParams,
   SliderPublicDetailQuery,
-} from '@/integrations/types';
-import { normalizeSliderPublic } from '@/integrations/types';
-
-const cleanParams = (
-  params?: Record<string, unknown>,
-): Record<string, string | number | boolean> | undefined => {
-  if (!params) return undefined;
-  const out: Record<string, string | number | boolean> = {};
-
-  for (const [k, v] of Object.entries(params)) {
-    if (v === undefined || v === null || v === '' || (typeof v === 'number' && Number.isNaN(v)))
-      continue;
-
-    out[k] =
-      typeof v === 'boolean' || typeof v === 'number' || typeof v === 'string' ? v : String(v);
-  }
-
-  return Object.keys(out).length ? out : undefined;
-};
+} from '@/integrations/shared';
+import { normalizeSliderPublic, cleanParams } from '@/integrations/shared';
 
 export const slidersApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

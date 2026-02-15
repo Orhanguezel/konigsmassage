@@ -30,18 +30,30 @@ function normalizeAdminLocaleJson(raw: unknown): PlainObject {
   const admin: PlainObject = { ...adminBase };
   const out: PlainObject = { ...base, admin };
 
-  // de.json gibi: { admin: {...}, db: {...}, services: {...}, siteSettings: {...} }
+  // de.json gibi: { admin: {...}, db: {...}, services: {...}, siteSettings: {...}, audit: {...} }
   if (!isPlainObject(admin.db) && isPlainObject(base.db)) admin.db = base.db as PlainObject;
   if (!isPlainObject(admin.services) && isPlainObject(base.services))
     admin.services = base.services as PlainObject;
   if (!isPlainObject(admin.siteSettings) && isPlainObject(base.siteSettings))
     admin.siteSettings = base.siteSettings as PlainObject;
+  if (!isPlainObject(admin.audit) && isPlainObject(base.audit))
+    admin.audit = base.audit as PlainObject;
+  if (!isPlainObject(admin.notifications) && isPlainObject(base.notifications))
+    admin.notifications = base.notifications as PlainObject;
+  if (!isPlainObject(admin.mail) && isPlainObject(base.mail))
+    admin.mail = base.mail as PlainObject;
+  if (!isPlainObject(admin.availability) && isPlainObject(base.availability))
+    admin.availability = base.availability as PlainObject;
 
-  // tr.json gibi: admin.db.siteSettings (yanlış yerde)
+  // tr.json gibi: admin.db.siteSettings / admin.db.audit (yanlış yerde)
   const adminDb = isPlainObject(admin.db) ? (admin.db as PlainObject) : null;
   const nestedDbSiteSettings = getPlainChild(adminDb, 'siteSettings');
   if (!isPlainObject(admin.siteSettings) && nestedDbSiteSettings) {
     admin.siteSettings = nestedDbSiteSettings;
+  }
+  const nestedDbAudit = getPlainChild(adminDb, 'audit');
+  if (!isPlainObject(admin.audit) && nestedDbAudit) {
+    admin.audit = nestedDbAudit;
   }
 
   // Legacy locale shapes: users/userRoles can be nested under siteSettings.

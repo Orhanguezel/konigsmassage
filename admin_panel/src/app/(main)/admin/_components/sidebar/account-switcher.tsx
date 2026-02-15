@@ -8,6 +8,7 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut, User } from 'lucide-react';
+import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -19,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { getInitials } from '@/lib/utils';
 
-import { useLogoutMutation } from '@/integrations/hooks';
+import { useLogoutMutation, useStatusQuery, useGetMyProfileQuery } from '@/integrations/hooks';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 type Me = {
@@ -28,12 +29,26 @@ type Me = {
   role: string;
 };
 
-export function AccountSwitcher({ me }: { me: Me }) {
+export function AccountSwitcher({ me: propMe }: { me: Me }) {
   const router = useRouter();
   const [logout, { isLoading }] = useLogoutMutation();
   const t = useAdminT();
 
-  const displayName = useMemo(() => me.email ?? 'Admin', [me.email]);
+  const { data: statusData } = useStatusQuery();
+  const { data: profileData } = useGetMyProfileQuery();
+
+  const me = useMemo(() => {
+    const s = statusData?.user;
+    return {
+      id: s?.id || propMe?.id || 'me',
+      email: s?.email || propMe?.email || 'admin',
+      role: s?.role || propMe?.role || 'admin',
+      displayName: profileData?.full_name || s?.email?.split('@')[0] || propMe?.email || 'Admin',
+      avatar: profileData?.avatar_url || '',
+    };
+  }, [statusData, profileData, propMe]);
+
+  const displayName = me.displayName;
 
   async function onLogout() {
     try {
@@ -50,7 +65,7 @@ export function AccountSwitcher({ me }: { me: Me }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="size-9 rounded-lg">
-          <AvatarImage src={undefined} alt={displayName} />
+          <AvatarImage src={me.avatar || undefined} alt={displayName} />
           <AvatarFallback className="rounded-lg">{getInitials(displayName)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -63,9 +78,11 @@ export function AccountSwitcher({ me }: { me: Me }) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem disabled>
-          <User className="mr-2 size-4" />
-          <span className="truncate">{me.email ?? 'admin'}</span>
+        <DropdownMenuItem asChild>
+          <Link href="/admin/profile">
+            <User className="mr-2 size-4" />
+            <span className="truncate">{t('admin.sidebar.user.account')}</span>
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

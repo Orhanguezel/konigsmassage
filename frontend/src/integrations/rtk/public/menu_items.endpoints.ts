@@ -8,23 +8,9 @@ import type {
   PublicMenuItemDto,
   PublicMenuItemListQueryParams,
   MenuItemListResponse,
-} from '@/integrations/types';
-
-type MetaWithHeaders = {
-  response?: {
-    headers?: {
-      get: (name: string) => string | null;
-    };
-  };
-};
-
-const parseTotalFromMeta = (dataLength: number, meta?: MetaWithHeaders | unknown): number => {
-  const m = meta as MetaWithHeaders | undefined;
-  const raw = m?.response?.headers?.get('x-total-count');
-  if (!raw) return dataLength;
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : dataLength;
-};
+  RtkMetaWithHeaders,
+} from '@/integrations/shared';
+import { parseTotalFromHeaders } from '@/integrations/shared';
 
 export const menuItemsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -38,8 +24,8 @@ export const menuItemsApi = baseApi.injectEndpoints({
         method: 'GET',
         params,
       }),
-      transformResponse: (data: PublicMenuItemDto[], meta?: MetaWithHeaders) => {
-        const total = parseTotalFromMeta(data?.length ?? 0, meta);
+      transformResponse: (data: PublicMenuItemDto[], meta?: RtkMetaWithHeaders) => {
+        const total = parseTotalFromHeaders(meta?.response?.headers, data?.length ?? 0);
         return {
           items: data ?? [],
           total,

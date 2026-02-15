@@ -677,3 +677,70 @@ export async function getCookieConsentConfig(locale?: string | null): Promise<Co
     return defaultCookieConsentConfig;
   }
 }
+
+// ---------------------------------------------------------------------------
+// CHAT AI PROVIDER SETTINGS
+// ---------------------------------------------------------------------------
+
+const CHAT_AI_KEYS = [
+  'chat_ai_enabled',
+  'chat_ai_provider_order',
+  'chat_ai_system_prompt',
+  'chat_ai_offer_url',
+  // Groq
+  'chat_ai_groq_api_key',
+  'chat_ai_groq_model',
+  'chat_ai_groq_api_base',
+  // xAI / Grok
+  'chat_ai_xai_api_key',
+  'chat_ai_xai_model',
+  'chat_ai_xai_api_base',
+  // OpenAI
+  'chat_ai_openai_api_key',
+  'chat_ai_openai_model',
+  'chat_ai_openai_api_base',
+  // Anthropic
+  'chat_ai_anthropic_api_key',
+  'chat_ai_anthropic_model',
+] as const;
+
+export type ChatAiSettings = {
+  enabled: boolean;
+  providerOrder: string;
+  systemPrompt: string | null;
+  appointmentUrl: string | null;
+  groqApiKey: string | null;
+  groqModel: string | null;
+  groqApiBase: string | null;
+  xaiApiKey: string | null;
+  xaiModel: string | null;
+  xaiApiBase: string | null;
+  openaiApiKey: string | null;
+  openaiModel: string | null;
+  openaiApiBase: string | null;
+  anthropicApiKey: string | null;
+  anthropicModel: string | null;
+};
+
+export async function getChatAiSettings(): Promise<ChatAiSettings> {
+  const localeCandidates = ['*'];
+  const map = await loadSettingsMap({ keys: CHAT_AI_KEYS, localeCandidates });
+
+  return {
+    enabled: toBool(map.get('chat_ai_enabled') ?? 'true'),
+    providerOrder: normalizeStr(map.get('chat_ai_provider_order')) ?? '',
+    systemPrompt: normalizeStr(map.get('chat_ai_system_prompt')),
+    appointmentUrl: normalizeStr(map.get('chat_ai_offer_url')),
+    groqApiKey: normalizeStr(map.get('chat_ai_groq_api_key')),
+    groqModel: normalizeStr(map.get('chat_ai_groq_model')),
+    groqApiBase: normalizeStr(map.get('chat_ai_groq_api_base')),
+    xaiApiKey: normalizeStr(map.get('chat_ai_xai_api_key')),
+    xaiModel: normalizeStr(map.get('chat_ai_xai_model')),
+    xaiApiBase: normalizeStr(map.get('chat_ai_xai_api_base')),
+    openaiApiKey: normalizeStr(map.get('chat_ai_openai_api_key')),
+    openaiModel: normalizeStr(map.get('chat_ai_openai_model')),
+    openaiApiBase: normalizeStr(map.get('chat_ai_openai_api_base')),
+    anthropicApiKey: normalizeStr(map.get('chat_ai_anthropic_api_key')),
+    anthropicModel: normalizeStr(map.get('chat_ai_anthropic_model')),
+  };
+}

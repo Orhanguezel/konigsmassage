@@ -23,19 +23,14 @@ import { persistPreference } from "@/lib/preferences/preferences-storage";
 import { THEME_PRESET_OPTIONS, type ThemeMode, type ThemePreset } from "@/lib/preferences/theme";
 import { applyThemeMode, applyThemePreset } from "@/lib/preferences/theme-utils";
 import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
+import { useAdminSettings } from '../admin-settings-provider';
 import { useAdminTranslations, ADMIN_LOCALE_OPTIONS } from '@/i18n';
-import { toast } from "sonner";
-import { useEffect, useRef } from "react";
-import { useGetDefaultLocaleAdminQuery, useUpdateSiteSettingAdminMutation } from "@/integrations/hooks";
 
 export function LayoutControls() {
+  const { saveAdminConfig } = useAdminSettings();
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const setAdminLocale = usePreferencesStore((s) => s.setAdminLocale);
   const t = useAdminTranslations(adminLocale || undefined);
-  const pendingDbLocaleRef = useRef<{ value: string; startedAt: number } | null>(null);
-
-  const defaultLocaleQ = useGetDefaultLocaleAdminQuery();
-  const [updateSetting] = useUpdateSiteSettingAdminMutation();
   const themeMode = usePreferencesStore((s) => s.themeMode);
   const setThemeMode = usePreferencesStore((s) => s.setThemeMode);
   const themePreset = usePreferencesStore((s) => s.themePreset);
@@ -55,6 +50,7 @@ export function LayoutControls() {
     applyThemePreset(preset);
     setThemePreset(preset);
     persistPreference("theme_preset", preset);
+    saveAdminConfig();
   };
 
   const onThemeModeChange = async (mode: ThemeMode | "") => {
@@ -62,6 +58,7 @@ export function LayoutControls() {
     applyThemeMode(mode);
     setThemeMode(mode);
     persistPreference("theme_mode", mode);
+    saveAdminConfig();
   };
 
   const onContentLayoutChange = async (layout: ContentLayout | "") => {
@@ -69,6 +66,7 @@ export function LayoutControls() {
     applyContentLayout(layout);
     setContentLayout(layout);
     persistPreference("content_layout", layout);
+    saveAdminConfig();
   };
 
   const onNavbarStyleChange = async (style: NavbarStyle | "") => {
@@ -76,6 +74,7 @@ export function LayoutControls() {
     applyNavbarStyle(style);
     setNavbarStyle(style);
     persistPreference("navbar_style", style);
+    saveAdminConfig();
   };
 
   const onSidebarStyleChange = async (value: SidebarVariant | "") => {
@@ -83,6 +82,7 @@ export function LayoutControls() {
     setSidebarVariant(value);
     applySidebarVariant(value);
     persistPreference("sidebar_variant", value);
+    saveAdminConfig();
   };
 
   const onSidebarCollapseModeChange = async (value: SidebarCollapsible | "") => {
@@ -90,6 +90,7 @@ export function LayoutControls() {
     setSidebarCollapsible(value);
     applySidebarCollapsible(value);
     persistPreference("sidebar_collapsible", value);
+    saveAdminConfig();
   };
 
   const onFontChange = async (value: FontKey | "") => {
@@ -97,67 +98,15 @@ export function LayoutControls() {
     applyFont(value);
     setFont(value);
     persistPreference("font", value);
+    saveAdminConfig();
   };
 
-  useEffect(() => {
-    const dbDefault = String(defaultLocaleQ.data || "").trim();
-    if (!dbDefault) return;
-
-    /**
-     * ✅ Race fix:
-     * - Kullanıcı locale seçtiğinde state hemen değişir.
-     * - DB endpoint'i kısa süre eski değeri döndürebilir (cache/propagation).
-     * - Bu durumda effect UI seçimini geri "eski" locale'e çekmemeli.
-     *
-     * pendingDbLocaleRef:
-     * - Locale değişikliği başladıktan sonra, DB yeni değeri döndürünceye kadar korunur.
-     * - DB yeni değeri döndürdüğünde otomatik temizlenir.
-     */
-    const pending = pendingDbLocaleRef.current;
-    if (pending) {
-      // ✅ Safety valve: DB hiç güncellenmezse UI sync'i kilitlenmesin.
-      if (Date.now() - pending.startedAt > 10_000) {
-        pendingDbLocaleRef.current = null;
-      } else if (dbDefault !== pending.value) {
-        return;
-      } else {
-        pendingDbLocaleRef.current = null;
-      }
-    }
-
-    if (adminLocale !== dbDefault) {
-      setAdminLocale(dbDefault);
-      persistPreference("admin_locale", dbDefault);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultLocaleQ.data]);
-
-  const onAdminLocaleChange = async (value: string) => {
+  const onAdminLocaleChange = (value: string) => {
     const next = String(value || '').trim();
     if (!next) return;
-
-    pendingDbLocaleRef.current = { value: next, startedAt: Date.now() };
     setAdminLocale(next);
     persistPreference("admin_locale", next);
-
-    try {
-      await updateSetting({ key: "default_locale", locale: "*", value: next }).unwrap();
-      // ✅ DB hızlı sync için query'yi zorla yenile (invalidation zaten var, bu ek garanti).
-      await defaultLocaleQ.refetch();
-      toast.success(t("admin.common.updated", { item: "default_locale" }));
-    } catch (err: any) {
-      const msg =
-        err?.data?.error?.message || err?.message || t("admin.siteSettings.messages.error");
-      toast.error(msg);
-      pendingDbLocaleRef.current = null;
-      const dbDefault = String(defaultLocaleQ.data || "").trim();
-      if (dbDefault) {
-        setAdminLocale(dbDefault);
-        persistPreference("admin_locale", dbDefault);
-      }
-    } finally {
-      // pending temizliği effect içinde DB eşleşince yapılır.
-    }
+    saveAdminConfig();
   };
 
   const handleRestore = () => {
@@ -183,9 +132,6 @@ export function LayoutControls() {
           <div className="space-y-1.5">
             <h4 className="font-medium text-sm leading-none">{t('admin.sidebar.preferences.title')}</h4>
             <p className="text-muted-foreground text-xs">{t('admin.sidebar.preferences.description')}</p>
-            <p className="font-medium text-muted-foreground text-xs">
-              {t('admin.sidebar.preferences.cookieNote')}
-            </p>
           </div>
           <div className="space-y-3 **:data-[slot=toggle-group]:w-full **:data-[slot=toggle-group-item]:flex-1 **:data-[slot=toggle-group-item]:text-xs">
             <div className="space-y-1">

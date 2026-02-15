@@ -11,7 +11,7 @@ import ContactPage from '@/components/containers/contact/ContactPage';
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { isValidUiText } from '@/i18n/uiText';
-import { safeStr } from '@/integrations/types';
+import { safeStr } from '@/integrations/shared';
 
 export default function ContactRoutePage() {
   const locale = useLocaleShort();
@@ -56,4 +56,3 @@ export default function ContactRoutePage() {
     </>
   );
 }
-

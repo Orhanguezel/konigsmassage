@@ -22,6 +22,7 @@ export interface CustomPageListQueryParams {
   offset?: number;
 
   is_published?: BoolLike;
+  featured?: BoolLike;
   q?: string;
   slug?: string;
   select?: string;
@@ -47,6 +48,7 @@ export interface ApiCustomPage {
   module_key: string;
 
   is_published: 0 | 1;
+  featured: 0 | 1;
 
   featured_image: string | null;
   featured_image_asset_id: string | null;
@@ -96,6 +98,7 @@ export interface CustomPageDto {
   module_key: string;
 
   is_published: boolean;
+  featured: boolean;
 
   featured_image: string | null;
   featured_image_asset_id: string | null;
@@ -218,6 +221,7 @@ export const normalizeCustomPage = (api: ApiCustomPage): CustomPageDto => {
     id: api.id,
     module_key: String((api as any).module_key ?? (api as any).moduleKey ?? ''),
     is_published: toBoolFrom01(api.is_published),
+    featured: toBoolFrom01(api.featured),
 
     featured_image: api.featured_image ?? null,
     featured_image_asset_id: api.featured_image_asset_id ?? null,
@@ -277,6 +281,7 @@ export interface CustomPageCreatePayload {
 
   // parent alanları
   is_published?: BoolLike;
+  featured?: BoolLike;
 
   featured_image?: string | null;
   featured_image_asset_id?: string | null;
@@ -295,6 +300,7 @@ export interface CustomPageUpdatePayload {
 
   // parent
   is_published?: BoolLike;
+  featured?: BoolLike;
   featured_image?: string | null;
   featured_image_asset_id?: string | null;
 

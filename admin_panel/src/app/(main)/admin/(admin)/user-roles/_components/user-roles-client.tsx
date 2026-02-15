@@ -59,17 +59,17 @@ function chunk<T>(arr: T[], size: number): T[][] {
  * - sonuç gelince cache’e alınır, sıradaki id’ye geçilir
  */
 export default function UserRolesClient() {
-  const t = useAdminT();
+  const t = useAdminT('admin.userRoles');
 
   function roleLabel(r: UserRoleName) {
-    if (r === 'admin') return t('admin.userRoles.roles.admin');
-    if (r === 'moderator') return t('admin.userRoles.roles.moderator');
-    return t('admin.userRoles.roles.user');
+    if (r === 'admin') return t('roles.admin');
+    if (r === 'moderator') return t('roles.moderator');
+    return t('roles.user');
   }
 
   function userName(u: Pick<AdminUserView, 'full_name'>): string {
     const name = String(u.full_name ?? '').trim();
-    return name.length ? name : t('admin.userRoles.user.unknown');
+    return name.length ? name : t('user.unknown');
   }
 
   function getErrMessage(err: unknown): string {
@@ -87,7 +87,7 @@ export default function UserRolesClient() {
     const m3 = anyErr?.error;
     if (typeof m3 === 'string' && m3.trim()) return m3;
 
-    return t('admin.userRoles.errorFallback');
+    return t('errorFallback');
   }
 
   // ------------------------------------------------------------
@@ -221,13 +221,13 @@ export default function UserRolesClient() {
     if (u) return { text: userName(u), status: 'ok' };
 
     // şu an fetch ediliyorsa loading
-    if (queueId === id && userGetQ.isFetching) return { text: t('admin.userRoles.user.loading'), status: 'loading' };
+    if (queueId === id && userGetQ.isFetching) return { text: t('user.loading'), status: 'loading' };
 
     // kuyrukta bekliyorsa loading
-    if (queue.includes(id)) return { text: t('admin.userRoles.user.loading'), status: 'loading' };
+    if (queue.includes(id)) return { text: t('user.loading'), status: 'loading' };
 
     // ne cache'de ne kuyrukta => muhtemelen bulunamadı / yetki / silinmiş
-    return { text: t('admin.userRoles.user.notFound'), status: 'missing' };
+    return { text: t('user.notFound'), status: 'missing' };
   }
 
   // ------------------------------------------------------------
@@ -261,30 +261,30 @@ export default function UserRolesClient() {
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!newUserId) {
-      toast.error(t('admin.userRoles.create.selectUser'));
+      toast.error(t('create.selectUser'));
       return;
     }
 
     try {
       await createRole({ user_id: newUserId, role: newRole }).unwrap();
-      toast.success(t('admin.userRoles.create.added'));
+      toast.success(t('create.added'));
       setNewUserId('');
       setNewRole('user');
       rolesQ.refetch();
     } catch (err) {
       const msg = getErrMessage(err);
-      toast.error(msg === 'user_role_already_exists' ? t('admin.userRoles.create.alreadyExists') : msg);
+      toast.error(msg === 'user_role_already_exists' ? t('create.alreadyExists') : msg);
     }
   }
 
   async function onDelete(row: UserRole) {
     const who = userNameById(row.user_id).text;
-    const confirmMsg = t('admin.userRoles.table.deleteConfirm', { user: who, role: roleLabel(row.role) });
+    const confirmMsg = t('table.deleteConfirm', { user: who, role: roleLabel(row.role) });
     if (!confirm(confirmMsg)) return;
 
     try {
       await deleteRole({ id: row.id }).unwrap();
-      toast.success(t('admin.userRoles.table.deleted'));
+      toast.success(t('table.deleted'));
       rolesQ.refetch();
     } catch (err) {
       toast.error(getErrMessage(err));
@@ -297,28 +297,28 @@ export default function UserRolesClient() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-lg font-semibold">{t('admin.userRoles.title')}</h1>
+        <h1 className="text-lg font-semibold">{t('title')}</h1>
         <p className="text-sm text-muted-foreground">
-          {t('admin.userRoles.description')}
+          {t('description')}
         </p>
       </div>
 
       {/* ---------------- Yeni Rol Ekle ---------------- */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('admin.userRoles.create.title')}</CardTitle>
-          <CardDescription>{t('admin.userRoles.create.description')}</CardDescription>
+          <CardTitle className="text-base">{t('create.title')}</CardTitle>
+          <CardDescription>{t('create.description')}</CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={onCreate} className="grid gap-3 md:grid-cols-3 md:items-end">
             <div className="space-y-2 md:col-span-2">
-              <Label>{t('admin.userRoles.create.userLabel')}</Label>
+              <Label>{t('create.userLabel')}</Label>
 
               <Select value={newUserId} onValueChange={(v) => setNewUserId(v)} disabled={busy}>
                 <SelectTrigger className="w-full">
                   <SelectValue
-                    placeholder={usersQ.isFetching ? t('admin.userRoles.create.usersLoading') : t('admin.userRoles.create.userPlaceholder')}
+                    placeholder={usersQ.isFetching ? t('create.usersLoading') : t('create.userPlaceholder')}
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -332,29 +332,29 @@ export default function UserRolesClient() {
 
               {usersQ.isError ? (
                 <div className="text-xs text-muted-foreground">
-                  {t('admin.userRoles.create.usersLoadError')}{' '}
+                  {t('create.usersLoadError')}{' '}
                   <Button
                     type="button"
                     variant="link"
                     className="px-1"
                     onClick={() => usersQ.refetch()}
                   >
-                    {t('admin.userRoles.create.retryButton')}
+                    {t('create.retryButton')}
                   </Button>
                 </div>
               ) : null}
             </div>
 
             <div className="space-y-2">
-              <Label>{t('admin.userRoles.create.roleLabel')}</Label>
+              <Label>{t('create.roleLabel')}</Label>
               <Select value={newRole} onValueChange={(v) => setNewRole(v as UserRoleName)} disabled={busy}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('admin.userRoles.create.rolePlaceholder')} />
+                  <SelectValue placeholder={t('create.rolePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">{t('admin.userRoles.roles.admin')}</SelectItem>
-                  <SelectItem value="moderator">{t('admin.userRoles.roles.moderator')}</SelectItem>
-                  <SelectItem value="user">{t('admin.userRoles.roles.user')}</SelectItem>
+                  <SelectItem value="admin">{t('roles.admin')}</SelectItem>
+                  <SelectItem value="moderator">{t('roles.moderator')}</SelectItem>
+                  <SelectItem value="user">{t('roles.user')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -362,7 +362,7 @@ export default function UserRolesClient() {
             <div className="md:col-span-3 flex justify-end">
               <Button type="submit" disabled={busy || !newUserId}>
                 <Plus className="mr-2 size-4" />
-                {t('admin.userRoles.create.addButton')}
+                {t('create.addButton')}
               </Button>
             </div>
           </form>
@@ -372,25 +372,25 @@ export default function UserRolesClient() {
       {/* ---------------- Rol Listesi ---------------- */}
       <Card>
         <CardHeader className="gap-2">
-          <CardTitle className="text-base">{t('admin.userRoles.list.title')}</CardTitle>
-          <CardDescription>{t('admin.userRoles.list.description')}</CardDescription>
+          <CardTitle className="text-base">{t('list.title')}</CardTitle>
+          <CardDescription>{t('list.description')}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
             {/* Kullanıcı filtresi: dropdown */}
             <div className="flex-1 space-y-2">
-              <Label>{t('admin.userRoles.list.userFilterLabel')}</Label>
+              <Label>{t('list.userFilterLabel')}</Label>
               <Select
                 value={filterUserId}
                 onValueChange={(v) => setFilterUserId(v)}
                 disabled={busy}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('admin.userRoles.list.all')} />
+                  <SelectValue placeholder={t('list.all')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('admin.userRoles.list.all')}</SelectItem>
+                  <SelectItem value="all">{t('list.all')}</SelectItem>
                   {userOptions.map((u) => (
                     <SelectItem key={u.id} value={u.id}>
                       {u.name}
@@ -402,23 +402,23 @@ export default function UserRolesClient() {
 
             {/* Rol filtresi */}
             <div className="w-full space-y-2 lg:w-56">
-              <Label>{t('admin.userRoles.list.roleFilterLabel')}</Label>
+              <Label>{t('list.roleFilterLabel')}</Label>
               <Select value={role} onValueChange={(v) => setRole(v as UserRoleName | 'all')} disabled={busy}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('admin.userRoles.list.all')} />
+                  <SelectValue placeholder={t('list.all')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('admin.userRoles.list.all')}</SelectItem>
-                  <SelectItem value="admin">{t('admin.userRoles.roles.admin')}</SelectItem>
-                  <SelectItem value="moderator">{t('admin.userRoles.roles.moderator')}</SelectItem>
-                  <SelectItem value="user">{t('admin.userRoles.roles.user')}</SelectItem>
+                  <SelectItem value="all">{t('list.all')}</SelectItem>
+                  <SelectItem value="admin">{t('roles.admin')}</SelectItem>
+                  <SelectItem value="moderator">{t('roles.moderator')}</SelectItem>
+                  <SelectItem value="user">{t('roles.user')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Limit */}
             <div className="w-full space-y-2 lg:w-44">
-              <Label>{t('admin.userRoles.list.limitLabel')}</Label>
+              <Label>{t('list.limitLabel')}</Label>
               <Select
                 value={String(limit)}
                 onValueChange={(v) => setLimit(Number(v))}
@@ -444,7 +444,7 @@ export default function UserRolesClient() {
                 variant="ghost"
                 onClick={() => rolesQ.refetch()}
                 disabled={busy}
-                title={t('admin.userRoles.list.refreshButton')}
+                title={t('list.refreshButton')}
               >
                 <RefreshCcw className="size-4" />
               </Button>
@@ -453,9 +453,9 @@ export default function UserRolesClient() {
 
           {rolesQ.isError ? (
             <div className="rounded-md border p-4 text-sm">
-              {t('admin.userRoles.list.loadError')}{' '}
+              {t('list.loadError')}{' '}
               <Button variant="link" className="px-1" onClick={() => rolesQ.refetch()}>
-                {t('admin.userRoles.list.retryButton')}
+                {t('list.retryButton')}
               </Button>
             </div>
           ) : null}
@@ -464,10 +464,10 @@ export default function UserRolesClient() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('admin.userRoles.table.userColumn')}</TableHead>
-                  <TableHead>{t('admin.userRoles.table.roleColumn')}</TableHead>
-                  <TableHead>{t('admin.userRoles.table.createdColumn')}</TableHead>
-                  <TableHead className="text-right">{t('admin.userRoles.table.actionColumn')}</TableHead>
+                  <TableHead>{t('table.userColumn')}</TableHead>
+                  <TableHead>{t('table.roleColumn')}</TableHead>
+                  <TableHead>{t('table.createdColumn')}</TableHead>
+                  <TableHead className="text-right">{t('table.actionColumn')}</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -480,10 +480,10 @@ export default function UserRolesClient() {
                         <div className="flex items-center gap-2">
                           <span className="truncate font-medium">{u.text}</span>
                           {u.status === 'loading' ? (
-                            <Badge variant="secondary">{t('admin.userRoles.table.loading')}</Badge>
+                            <Badge variant="secondary">{t('table.loading')}</Badge>
                           ) : null}
                           {u.status === 'missing' ? (
-                            <Badge variant="outline">{t('admin.userRoles.table.notFound')}</Badge>
+                            <Badge variant="outline">{t('table.notFound')}</Badge>
                           ) : null}
                         </div>
                       </TableCell>
@@ -506,7 +506,7 @@ export default function UserRolesClient() {
                           disabled={busy}
                         >
                           <Trash2 className="mr-2 size-4" />
-                          {t('admin.userRoles.table.deleteButton')}
+                          {t('table.deleteButton')}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -516,7 +516,7 @@ export default function UserRolesClient() {
                 {!rolesQ.isFetching && (rolesQ.data?.length ?? 0) === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
-                      {t('admin.userRoles.list.noRecords')}
+                      {t('list.noRecords')}
                     </TableCell>
                   </TableRow>
                 ) : null}
@@ -525,7 +525,7 @@ export default function UserRolesClient() {
           </div>
 
           <div className="text-xs text-muted-foreground">
-            {t('admin.userRoles.list.note')}
+            {t('list.note')}
           </div>
         </CardContent>
       </Card>

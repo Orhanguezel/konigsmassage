@@ -12,13 +12,16 @@ import React, { useCallback, useId, useMemo, useState } from 'react';
 
 import { toast } from 'sonner';
 
-import { useCreateContactPublicMutation, useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
-import type { ContactCreatePayload } from '@/integrations/types';
+import {
+  useCreateContactPublicMutation,
+  useGetSiteSettingByKeyQuery,
+} from '@/integrations/rtk/hooks';
+import type { ContactCreatePayload } from '@/integrations/shared';
 
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { localizePath } from '@/i18n/url';
-import { safeStr } from '@/integrations/types';
+import { safeStr } from '@/integrations/shared';
 
 type ContactInfo = Partial<{
   companyName: string;
@@ -96,7 +99,10 @@ export default function ContactPage() {
       errRequired: ui('ui_contact_error_required', 'This field is required.'),
       errEmail: ui('ui_contact_error_email', 'Please enter a valid email address.'),
       errPhone: ui('ui_contact_error_phone', 'Please enter a valid phone number.'),
-      errMinMessage: ui('ui_contact_error_message', 'Please write a message (at least 10 characters).'),
+      errMinMessage: ui(
+        'ui_contact_error_message',
+        'Please write a message (at least 10 characters).',
+      ),
 
       mapTitle: ui('ui_contact_map_title', 'Location'),
       infoTitle: ui('ui_contact_info_title', 'Contact info'),
@@ -106,7 +112,10 @@ export default function ContactPage() {
   );
 
   // contact_info (localized)
-  const { data: contactInfoRaw } = useGetSiteSettingByKeyQuery({ key: 'contact_info', locale } as any);
+  const { data: contactInfoRaw } = useGetSiteSettingByKeyQuery({
+    key: 'contact_info',
+    locale,
+  } as any);
   const contactInfo = useMemo<ContactInfo>(() => {
     const v = (contactInfoRaw as any)?.value ?? contactInfoRaw;
     const parsed = tryParseJson<ContactInfo>(v) ?? {};
@@ -141,7 +150,9 @@ export default function ContactPage() {
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [topic, setTopic] = useState<'appointment' | 'question' | 'collab' | 'other'>('appointment');
+  const [topic, setTopic] = useState<'appointment' | 'question' | 'collab' | 'other'>(
+    'appointment',
+  );
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [agree, setAgree] = useState(false);
@@ -283,7 +294,9 @@ export default function ContactPage() {
 
                 {address ? (
                   <div>
-                    <strong className="text-text-primary">{safeStr(ui('ui_contact_address_label', 'Address'))}:</strong>{' '}
+                    <strong className="text-text-primary">
+                      {safeStr(ui('ui_contact_address_label', 'Address'))}:
+                    </strong>{' '}
                     <span>{address}</span>
                     {address2 ? <span className="block">{address2}</span> : null}
                   </div>
@@ -334,7 +347,10 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-text-primary mb-2" htmlFor={firstId}>
+                    <label
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                      htmlFor={firstId}
+                    >
                       {safeStr(t.firstName)}
                     </label>
                     <input
@@ -354,7 +370,10 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-text-primary mb-2" htmlFor={lastId}>
+                    <label
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                      htmlFor={lastId}
+                    >
                       {safeStr(t.lastName)}
                     </label>
                     <input
@@ -369,7 +388,10 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-text-primary mb-2" htmlFor={emailId}>
+                    <label
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                      htmlFor={emailId}
+                    >
                       {safeStr(t.email)}
                     </label>
                     <input
@@ -390,7 +412,10 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-text-primary mb-2" htmlFor={phoneId}>
+                    <label
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                      htmlFor={phoneId}
+                    >
                       {safeStr(t.phone)}
                     </label>
                     <input
@@ -412,7 +437,10 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-text-primary mb-2" htmlFor={topicId}>
+                    <label
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                      htmlFor={topicId}
+                    >
                       {safeStr(t.topicLabel)}
                     </label>
                     <select
@@ -431,7 +459,10 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-text-primary mb-2" htmlFor={subjectId}>
+                    <label
+                      className="block text-sm font-semibold text-text-primary mb-2"
+                      htmlFor={subjectId}
+                    >
                       {safeStr(t.subject)}
                     </label>
                     <input
@@ -445,7 +476,10 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-text-primary mb-2" htmlFor={msgId}>
+                  <label
+                    className="block text-sm font-semibold text-text-primary mb-2"
+                    htmlFor={msgId}
+                  >
                     {safeStr(t.message)}
                   </label>
                   <textarea
@@ -465,7 +499,10 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="inline-flex items-start gap-3 text-sm text-text-secondary" htmlFor={agreeId}>
+                  <label
+                    className="inline-flex items-start gap-3 text-sm text-text-secondary"
+                    htmlFor={agreeId}
+                  >
                     <input
                       id={agreeId}
                       type="checkbox"
@@ -512,4 +549,3 @@ export default function ContactPage() {
     </section>
   );
 }
-

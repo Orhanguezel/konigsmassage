@@ -1,10 +1,5 @@
 // =============================================================
 // FILE: src/app/(main)/admin/(admin)/db/_components/admin-db-auth-gate.tsx
-// FINAL — App Router + shadcn standards
-// ✅ No Bootstrap classes
-// ✅ No inline styles
-// ✅ useRouter from next/navigation
-// ✅ shadcn UI components
 // =============================================================
 'use client';
 
@@ -23,7 +18,7 @@ export type AdminDbAuthGateProps = {
 
 export const AdminDbAuthGate: React.FC<AdminDbAuthGateProps> = ({ children }) => {
   const router = useRouter();
-  const t = useAdminT();
+  const t = useAdminT('admin.db');
 
   const { data: statusData, isLoading: statusLoading, isError: statusError } = useStatusQuery();
 
@@ -41,12 +36,10 @@ export const AdminDbAuthGate: React.FC<AdminDbAuthGateProps> = ({ children }) =>
   if (statusLoading || !statusData) {
     return (
       <div className="space-y-6">
-        <Card>
-          <CardContent className="flex min-h-64 items-center justify-center py-12">
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">{t('admin.db.auth.loading')}</p>
-            </div>
+        <Card className="border-none shadow-sm">
+          <CardContent className="flex min-h-[300px] flex-col items-center justify-center py-12">
+            <Loader2 className="size-8 animate-spin text-primary mb-4" />
+            <p className="text-sm font-medium animate-pulse">{t('auth.loading')}</p>
           </CardContent>
         </Card>
       </div>

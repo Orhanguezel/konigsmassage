@@ -12,6 +12,7 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { RefreshCcw, Calendar, Users, MapPin, BarChart3, Loader2 } from 'lucide-react';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import { cn } from '@/lib/utils';
 
@@ -56,7 +57,7 @@ function safeText(v: unknown, fb = ''): string {
   return s ? s : fb;
 }
 
-function getErrMessage(err: unknown): string {
+function getErrMessage(err: unknown, t: (k: string, p?: any, fb?: string) => string): string {
   const anyErr = err as any;
   const m1 = anyErr?.data?.error?.message;
   if (typeof m1 === 'string' && m1.trim()) return m1;
@@ -64,7 +65,7 @@ function getErrMessage(err: unknown): string {
   if (typeof m2 === 'string' && m2.trim()) return m2;
   const m3 = anyErr?.error;
   if (typeof m3 === 'string' && m3.trim()) return m3;
-  return 'İşlem başarısız. Lütfen tekrar deneyin.';
+  return t('reports.error.generic', {}, 'İşlem başarısız. Lütfen tekrar deneyin.');
 }
 
 function pickTab(sp: URLSearchParams): TabKey {
@@ -118,6 +119,7 @@ function fmtRate(r: any): string {
 /* ----------------------------- component ----------------------------- */
 
 export default function AdminReportsClient() {
+  const t = useAdminT();
   const router = useRouter();
   const sp = useSearchParams();
 
@@ -127,23 +129,19 @@ export default function AdminReportsClient() {
   const { from: dfb, to: dtb } = React.useMemo(() => defaultRange(), []);
   const from = sp.get('from') ?? dfb;
   const to = sp.get('to') ?? dtb;
-  const role = (sp.get('role') as ReportRole) ?? 'seller';
 
   // local inputs
   const [fromText, setFromText] = React.useState(from);
   const [toText, setToText] = React.useState(to);
-  const [roleSel, setRoleSel] = React.useState<ReportRole>(role);
 
   React.useEffect(() => setFromText(from), [from]);
   React.useEffect(() => setToText(to), [to]);
-  React.useEffect(() => setRoleSel(role), [role]);
 
-  function apply(next: Partial<{ tab: TabKey; from: string; to: string; role: ReportRole }>) {
+  function apply(next: Partial<{ tab: TabKey; from: string; to: string }>) {
     const merged = {
       tab,
       from,
       to,
-      role,
       ...next,
     };
 
@@ -151,10 +149,9 @@ export default function AdminReportsClient() {
       tab: merged.tab,
       from: merged.from || undefined,
       to: merged.to || undefined,
-      role: merged.tab === 'users' ? merged.role : undefined,
     });
 
-    router.push(`/admin/dashboard/reports${qs}`);
+    router.push(`/admin/reports${qs}`);
   }
 
   function onSubmitFilters(e: React.FormEvent) {
@@ -162,26 +159,25 @@ export default function AdminReportsClient() {
 
     // minimal UI guard (backend refine will still validate)
     const f = fromText.trim();
-    const t = toText.trim();
+    const toVal = toText.trim();
 
     if (f && Number.isNaN(new Date(f).getTime())) {
-      toast.error('from geçersiz tarih.');
+      toast.error(t('reports.filter.invalidFrom', {}, 'Başlangıç geçersiz tarih.'));
       return;
     }
-    if (t && Number.isNaN(new Date(t).getTime())) {
-      toast.error('to geçersiz tarih.');
+    if (toVal && Number.isNaN(new Date(toVal).getTime())) {
+      toast.error(t('reports.filter.invalidTo', {}, 'Bitiş geçersiz tarih.'));
       return;
     }
 
-    apply({ from: f, to: t, role: roleSel });
+    apply({ from: f, to: toVal });
   }
 
   function onReset() {
     const d = defaultRange();
     setFromText(d.from);
     setToText(d.to);
-    setRoleSel('seller');
-    apply({ from: d.from, to: d.to, role: 'seller' });
+    apply({ from: d.from, to: d.to });
   }
 
   /* ----------------------------- queries ----------------------------- */
@@ -193,7 +189,7 @@ export default function AdminReportsClient() {
   } as any) as any;
 
   const usersQ = useAdminReportsUsersPerformanceQuery(
-    tab === 'users' ? ({ ...commonRange, role } as any) : (undefined as any),
+    tab === 'users' ? ({ ...commonRange } as any) : (undefined as any),
     { skip: tab !== 'users' } as any,
   ) as any;
 
@@ -218,9 +214,9 @@ export default function AdminReportsClient() {
       {/* header */}
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
-          <h1 className="text-lg font-semibold">Raporlar (Admin)</h1>
+          <h1 className="text-lg font-semibold">{t('reports.title', {}, 'Raporlar (Admin)')}</h1>
           <p className="text-sm text-muted-foreground">
-            KPI, kullanıcı performansı ve lokasyon kırılımı.
+            {t('reports.description', {}, 'KPI, kaynak performansı ve lokasyon kırılımı.')}
           </p>
         </div>
 
@@ -234,14 +230,14 @@ export default function AdminReportsClient() {
               if (tab === 'locations') locQ.refetch();
             }}
             disabled={busy}
-            title="Yenile"
+            title={t('reports.refresh', {}, 'Yenile')}
           >
             {busy ? (
               <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               <RefreshCcw className="mr-2 size-4" />
             )}
-            Yenile
+            {t('reports.refresh', {}, 'Yenile')}
           </Button>
         </div>
       </div>
@@ -249,23 +245,25 @@ export default function AdminReportsClient() {
       {/* tabs */}
       <Card>
         <CardHeader className="gap-2">
-          <CardTitle className="text-base">Sekmeler</CardTitle>
-          <CardDescription>KPI • Kullanıcı Performansı • Lokasyonlar</CardDescription>
+          <CardTitle className="text-base">{t('reports.tabs.title', {}, 'Sekmeler')}</CardTitle>
+          <CardDescription>
+            {t('reports.tabs.description', {}, 'KPI • Kaynak Performansı • Lokasyonlar')}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={tab} onValueChange={(v) => apply({ tab: v as TabKey })}>
             <TabsList className="flex flex-wrap">
               <TabsTrigger value="kpi" className="gap-2">
                 <BarChart3 className="size-4" />
-                KPI
+                {t('reports.tabs.kpi', {}, 'KPI')}
               </TabsTrigger>
               <TabsTrigger value="users" className="gap-2">
                 <Users className="size-4" />
-                Kullanıcılar
+                {t('reports.tabs.users', {}, 'Kaynaklar')}
               </TabsTrigger>
               <TabsTrigger value="locations" className="gap-2">
                 <MapPin className="size-4" />
-                Lokasyonlar
+                {t('reports.tabs.locations', {}, 'Lokasyonlar')}
               </TabsTrigger>
             </TabsList>
 
@@ -273,13 +271,15 @@ export default function AdminReportsClient() {
             <div className="mt-4">
               <Card className="border-dashed">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">Filtre</CardTitle>
-                  <CardDescription>Tarih aralığı (from/to) ve kullanıcı rolü.</CardDescription>
+                  <CardTitle className="text-sm">{t('reports.filter.title', {}, 'Filtre')}</CardTitle>
+                  <CardDescription>
+                    {t('reports.filter.description', {}, 'Tarih aralığı (başlangıç/bitiş) ve kaynak seçimi.')}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={onSubmitFilters} className="grid gap-3 lg:grid-cols-12">
                     <div className="space-y-2 lg:col-span-4">
-                      <Label htmlFor="from">from</Label>
+                      <Label htmlFor="from">{t('reports.filter.from', {}, 'Başlangıç')}</Label>
                       <div className="relative">
                         <Calendar className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -294,7 +294,7 @@ export default function AdminReportsClient() {
                     </div>
 
                     <div className="space-y-2 lg:col-span-4">
-                      <Label htmlFor="to">to</Label>
+                      <Label htmlFor="to">{t('reports.filter.to', {}, 'Bitiş')}</Label>
                       <div className="relative">
                         <Calendar className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
@@ -308,35 +308,16 @@ export default function AdminReportsClient() {
                       </div>
                     </div>
 
-                    <div className={cn('space-y-2 lg:col-span-3', tab !== 'users' && 'opacity-60')}>
-                      <Label>role</Label>
-                      <Select
-                        value={roleSel}
-                        onValueChange={(v) => setRoleSel(v as ReportRole)}
-                        disabled={busy || tab !== 'users'}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Rol" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="seller">seller</SelectItem>
-                          <SelectItem value="driver">driver</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground">
-                        Sadece “Kullanıcılar” sekmesinde kullanılır.
-                      </p>
-                    </div>
 
                     <div className="flex gap-2 lg:col-span-1 lg:items-end">
                       <Button type="submit" disabled={busy} className="w-full">
-                        Uygula
+                        {t('reports.filter.apply', {}, 'Uygula')}
                       </Button>
                     </div>
 
                     <div className="flex gap-2 lg:col-span-12">
                       <Button type="button" variant="outline" onClick={onReset} disabled={busy}>
-                        Sıfırla
+                        {t('reports.filter.reset', {}, 'Sıfırla')}
                       </Button>
                     </div>
                   </form>
@@ -350,19 +331,31 @@ export default function AdminReportsClient() {
             <TabsContent value="kpi" className="space-y-4">
               {kpiQ.isError ? (
                 <div className="rounded-md border p-4 text-sm">
-                  KPI yüklenemedi.{' '}
+                  {t('reports.kpi.loadingError', {}, 'KPI yüklenemedi.')}{' '}
                   <Button variant="link" className="px-1" onClick={() => kpiQ.refetch()}>
-                    Yeniden dene
+                    {t('reports.retry', {}, 'Yeniden dene')}
                   </Button>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {getErrMessage(kpiQ.error)}
+                    {getErrMessage(kpiQ.error, t)}
                   </div>
                 </div>
               ) : (
                 <div className="grid gap-4 lg:grid-cols-3">
-                  <KpiTable title="Günlük" rows={kpiDay} />
-                  <KpiTable title="Haftalık" rows={kpiWeek} />
-                  <KpiTable title="Aylık" rows={kpiMonth} />
+                  <KpiTable
+                    title={t('reports.kpi.daily', {}, 'Günlük')}
+                    rows={kpiDay}
+                    t={t}
+                  />
+                  <KpiTable
+                    title={t('reports.kpi.weekly', {}, 'Haftalık')}
+                    rows={kpiWeek}
+                    t={t}
+                  />
+                  <KpiTable
+                    title={t('reports.kpi.monthly', {}, 'Aylık')}
+                    rows={kpiMonth}
+                    t={t}
+                  />
                 </div>
               )}
             </TabsContent>
@@ -371,20 +364,22 @@ export default function AdminReportsClient() {
             <TabsContent value="users" className="space-y-4">
               {usersQ.isError ? (
                 <div className="rounded-md border p-4 text-sm">
-                  Kullanıcı performansı yüklenemedi.{' '}
+                  {t('reports.users.loadingError', {}, 'Performans raporu yüklenemedi.')}{' '}
                   <Button variant="link" className="px-1" onClick={() => usersQ.refetch()}>
-                    Yeniden dene
+                    {t('reports.retry', {}, 'Yeniden dene')}
                   </Button>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {getErrMessage(usersQ.error)}
+                    {getErrMessage(usersQ.error, t)}
                   </div>
                 </div>
               ) : (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Kullanıcı Performansı</CardTitle>
+                    <CardTitle className="text-base">
+                      {t('reports.users.title', {}, 'Kaynak Performansı')}
+                    </CardTitle>
                     <CardDescription>
-                      role={role} • kayıt: {usersQ.isFetching ? '—' : userRows.length}
+                      {t('reports.users.description', { count: usersQ.isFetching ? '—' : userRows.length }, `kayıt: ${usersQ.isFetching ? '—' : userRows.length}`)}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -392,13 +387,11 @@ export default function AdminReportsClient() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>User</TableHead>
-                            <TableHead className="text-right">Orders</TableHead>
-                            <TableHead className="text-right">Delivered</TableHead>
-                            <TableHead className="text-right">Cancelled</TableHead>
-                            <TableHead className="text-right">Chickens</TableHead>
-                            <TableHead className="text-right">Success</TableHead>
-                            <TableHead className="text-right">Incentive</TableHead>
+                            <TableHead>{t('reports.users.table.user', {}, 'Kaynak')}</TableHead>
+                            <TableHead className="text-right">{t('reports.users.table.total', {}, 'Rezervasyon')}</TableHead>
+                            <TableHead className="text-right">{t('reports.users.table.completed', {}, 'Tamamlanan')}</TableHead>
+                            <TableHead className="text-right">{t('reports.users.table.cancelled', {}, 'İptal')}</TableHead>
+                            <TableHead className="text-right">{t('reports.users.table.success', {}, 'Başarı')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -407,7 +400,11 @@ export default function AdminReportsClient() {
                               <TableCell className="font-medium">
                                 <div className="flex flex-col">
                                   <span className="truncate">{r.user_id}</span>
-                                  <span className="text-xs text-muted-foreground">{r.role}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {r.role === 'resource'
+                                        ? t('reports.tabs.users', {}, 'Kaynak') // Singular fallback if needed, but 'Kaynaklar' is closest
+                                        : r.role}
+                                  </span>
                                 </div>
                               </TableCell>
                               <TableCell className="text-right">{fmtNum(r.orders_total)}</TableCell>
@@ -418,21 +415,7 @@ export default function AdminReportsClient() {
                                 {fmtNum(r.cancelled_orders)}
                               </TableCell>
                               <TableCell className="text-right">
-                                {fmtNum(r.chickens_delivered)}
-                              </TableCell>
-                              <TableCell className="text-right">
                                 {fmtRate(r.success_rate)}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex flex-col items-end">
-                                  <span className="font-medium">
-                                    {fmtMoneyTry(r.incentive_amount_total)}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    del:{fmtNum(r.incentive_deliveries_count)} • ck:
-                                    {fmtNum(r.incentive_chickens_count)}
-                                  </span>
-                                </div>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -459,20 +442,22 @@ export default function AdminReportsClient() {
             <TabsContent value="locations" className="space-y-4">
               {locQ.isError ? (
                 <div className="rounded-md border p-4 text-sm">
-                  Lokasyon raporu yüklenemedi.{' '}
+                  {t('reports.locations.loadingError', {}, 'Lokasyon raporu yüklenemedi.')}{' '}
                   <Button variant="link" className="px-1" onClick={() => locQ.refetch()}>
-                    Yeniden dene
+                    {t('reports.retry', {}, 'Yeniden dene')}
                   </Button>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {getErrMessage(locQ.error)}
+                    {getErrMessage(locQ.error, t)}
                   </div>
                 </div>
               ) : (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Lokasyon Kırılımı</CardTitle>
+                    <CardTitle className="text-base">
+                      {t('reports.locations.title', {}, 'Lokasyon (Dil) Kırılımı')}
+                    </CardTitle>
                     <CardDescription>
-                      kayıt: {locQ.isFetching ? '—' : locRows.length}
+                      {t('reports.locations.description', { count: locQ.isFetching ? '—' : locRows.length }, `kayıt: ${locQ.isFetching ? '—' : locRows.length}`)}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -480,13 +465,12 @@ export default function AdminReportsClient() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Şehir</TableHead>
-                            <TableHead>İlçe</TableHead>
-                            <TableHead className="text-right">Orders</TableHead>
-                            <TableHead className="text-right">Delivered</TableHead>
-                            <TableHead className="text-right">Cancelled</TableHead>
-                            <TableHead className="text-right">Chickens</TableHead>
-                            <TableHead className="text-right">Success</TableHead>
+                            <TableHead>{t('reports.locations.table.city', {}, 'Dil / Bölge')}</TableHead>
+                            <TableHead>{t('reports.locations.table.district', {}, 'Alt Bölge')}</TableHead>
+                            <TableHead className="text-right">{t('reports.locations.table.total', {}, 'Rezervasyon')}</TableHead>
+                            <TableHead className="text-right">{t('reports.locations.table.completed', {}, 'Tamamlanan')}</TableHead>
+                            <TableHead className="text-right">{t('reports.locations.table.cancelled', {}, 'İptal')}</TableHead>
+                            <TableHead className="text-right">{t('reports.locations.table.success', {}, 'Başarı')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -516,9 +500,6 @@ export default function AdminReportsClient() {
                               </TableCell>
                               <TableCell className="text-right">
                                 {fmtNum(r.cancelled_orders)}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                {fmtNum(r.chickens_delivered)}
                               </TableCell>
                               <TableCell className="text-right">
                                 {fmtRate(r.success_rate)}
@@ -552,25 +533,30 @@ export default function AdminReportsClient() {
 
 /* ----------------------------- KPI table ----------------------------- */
 
-function KpiTable(props: { title: string; rows: KpiRow[] }) {
-  const { title, rows } = props;
+function KpiTable(props: {
+  title: string;
+  rows: KpiRow[];
+  t: (k: string, p?: any, fb?: string) => string;
+}) {
+  const { title, rows, t } = props;
 
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-sm">{title}</CardTitle>
-        <CardDescription>Kayıt: {rows.length}</CardDescription>
+        <CardDescription>
+          {t('reports.kpi.count', { count: rows.length }, `Kayıt: ${rows.length}`)}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Bucket</TableHead>
-                <TableHead className="text-right">Orders</TableHead>
-                <TableHead className="text-right">Delivered</TableHead>
-                <TableHead className="text-right">Chickens</TableHead>
-                <TableHead className="text-right">Success</TableHead>
+                <TableHead>{t('reports.kpi.bucket', {}, 'Dönem')}</TableHead>
+                <TableHead className="text-right">{t('reports.kpi.total', {}, 'Toplam')}</TableHead>
+                <TableHead className="text-right">{t('reports.kpi.completed', {}, 'Tamamlanan')}</TableHead>
+                <TableHead className="text-right">{t('reports.kpi.success', {}, 'Başarı')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -579,15 +565,14 @@ function KpiTable(props: { title: string; rows: KpiRow[] }) {
                   <TableCell className="font-medium">{r.bucket}</TableCell>
                   <TableCell className="text-right">{fmtNum(r.orders_total)}</TableCell>
                   <TableCell className="text-right">{fmtNum(r.delivered_orders)}</TableCell>
-                  <TableCell className="text-right">{fmtNum(r.chickens_delivered)}</TableCell>
                   <TableCell className="text-right">{fmtRate(r.success_rate)}</TableCell>
                 </TableRow>
               ))}
 
               {rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
-                    Kayıt yok.
+                  <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
+                    {t('reports.kpi.noData', {}, 'Kayıt yok.')}
                   </TableCell>
                 </TableRow>
               ) : null}

@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/icons';
 
 import { useListMenuItemsQuery, useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
-import type { PublicMenuItemDto } from '@/integrations/types';
+import type { PublicMenuItemDto } from '@/integrations/shared';
 import { useUiSection } from '@/i18n/uiDb';
 
 export type SimpleBrand = {
@@ -52,7 +52,12 @@ type MenuItemWithChildren = PublicMenuItemDto & {
   children?: MenuItemWithChildren[];
 };
 
-const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand, locale: localeProp }) => {
+const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({
+  open,
+  onClose,
+  brand,
+  locale: localeProp,
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -166,8 +171,8 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
     const list: MenuItemWithChildren[] = Array.isArray(raw)
       ? raw
       : Array.isArray(raw?.items)
-      ? raw.items
-      : [];
+        ? raw.items
+        : [];
 
     const sortRecursive = (items: MenuItemWithChildren[]): MenuItemWithChildren[] =>
       items
@@ -213,7 +218,11 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
     if (!hasChildren) {
       return (
         <li key={id} className={`border-b border-gray-100 last:border-0 ${depthClass}`}>
-          <Link href={href} onClick={onClose} className="block py-3 text-slate-700 hover:text-primary font-medium transition-colors">
+          <Link
+            href={href}
+            onClick={onClose}
+            className="block py-3 text-slate-700 hover:text-primary font-medium transition-colors"
+          >
             {item.title || rawUrl}
           </Link>
         </li>
@@ -221,10 +230,7 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
     }
 
     return (
-      <li
-        key={id}
-        className={`border-b border-gray-100 last:border-0 ${depthClass}`}
-      >
+      <li key={id} className={`border-b border-gray-100 last:border-0 ${depthClass}`}>
         <button
           type="button"
           className={`flex items-center justify-between w-full py-3 text-left font-medium transition-colors ${isOpen ? 'text-primary' : 'text-slate-800 hover:text-primary'}`}
@@ -233,12 +239,27 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
           aria-controls={submenuId}
         >
           <span>{item.title || rawUrl}</span>
-          <span className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true">
-             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+          <span
+            className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
           </span>
         </button>
 
-        <ul id={submenuId} className={`${isOpen ? 'block' : 'hidden'} pl-4 border-l border-gray-100 mb-2`}>
+        <ul
+          id={submenuId}
+          className={`${isOpen ? 'block' : 'hidden'} pl-4 border-l border-gray-100 mb-2`}
+        >
           {item.children!.map((child) => renderMobileMenuItem(child, depth + 1))}
         </ul>
       </li>
@@ -251,9 +272,9 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
   return (
     <>
       {/* Overlay (always below offcanvas) */}
-      <div 
-        className={`fixed inset-0 bg-black/60 z-10000 transition-opacity duration-300 ${open ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`} 
-        onClick={onClose} 
+      <div
+        className={`fixed inset-0 bg-black/60 z-10000 transition-opacity duration-300 ${open ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
+        onClick={onClose}
         aria-hidden="true"
       />
       {/* Offcanvas (always above overlay) */}
@@ -264,15 +285,13 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
         role="dialog"
         aria-labelledby={dialogTitleId}
       >
-          <div className="h-full overflow-y-auto p-6 md:p-8">
+        <div className="h-full overflow-y-auto p-6 md:p-8">
           <div className="flex flex-col h-full">
             <p id={dialogTitleId} className="sr-only">
               {ui('ui_header_open_menu', 'Menu')}
             </p>
             <div className="flex justify-between items-center mb-8">
-              <SiteLogo
-                alt={effectiveBrand.name}
-              />
+              <SiteLogo alt={effectiveBrand.name} />
 
               <div className="ml-4">
                 <button
@@ -295,7 +314,8 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
                 htmlFor="lang-any"
                 className="flex items-center gap-2 text-sm font-bold text-slate-800"
               >
-                <IconGlobe className="text-primary" size={18} /> <span>{ui('ui_header_language', 'Language')}</span>
+                <IconGlobe className="text-primary" size={18} />{' '}
+                <span>{ui('ui_header_language', 'Language')}</span>
               </label>
 
               <div className="relative">
@@ -313,7 +333,16 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
                   ))}
                 </select>
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
                 </div>
               </div>
             </div>
@@ -328,7 +357,11 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
                   aria-label={ui('ui_header_search', 'Search')}
                   className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:bg-white transition-colors"
                 />
-                <button type="submit" aria-label={ui('ui_header_search', 'Search')} className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+                <button
+                  type="submit"
+                  aria-label={ui('ui_header_search', 'Search')}
+                  className="absolute right-0 top-0 h-full w-12 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                >
                   <IconSearch size={18} />
                 </button>
               </form>
@@ -355,16 +388,16 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
 
             {/* Auth Buttons */}
             <div className="grid grid-cols-2 gap-3 mb-8">
-              <Link 
-                href={loginHref} 
+              <Link
+                href={loginHref}
                 className="flex items-center justify-center gap-2 px-4 py-3 border border-sand-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-sand-50 hover:text-brand-primary transition-all"
                 onClick={onClose}
               >
                 <IconLogIn className="text-lg" size={18} />
                 <span>{ui('ui_header_login', 'Login')}</span>
               </Link>
-              <Link 
-                href={registerHref} 
+              <Link
+                href={registerHref}
                 className="flex items-center justify-center gap-2 px-4 py-3 bg-brand-primary text-white rounded-lg text-sm font-bold hover:bg-brand-dark transition-all shadow-sm"
                 onClick={onClose}
               >
@@ -384,7 +417,11 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
                     <IconGlobe size={18} />
                   </div>
                   <div className="text-sm font-medium text-slate-600">
-                    <Link target="_blank" href={effectiveBrand.website || '/'} className="hover:text-primary transition-colors">
+                    <Link
+                      target="_blank"
+                      href={effectiveBrand.website || '/'}
+                      className="hover:text-primary transition-colors"
+                    >
                       {webHost}
                     </Link>
                   </div>
@@ -433,9 +470,9 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
       </div>
 
       {/* Overlay */}
-      <div 
-        className={`fixed inset-0 bg-black/60 z-9999 transition-opacity duration-300 ${open ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`} 
-        onClick={onClose} 
+      <div
+        className={`fixed inset-0 bg-black/60 z-9999 transition-opacity duration-300 ${open ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
+        onClick={onClose}
         aria-hidden="true"
       />
     </>

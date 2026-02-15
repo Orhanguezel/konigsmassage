@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 
 import { useListServicesPublicQuery } from '@/integrations/rtk/hooks';
-import type { ServiceDto } from '@/integrations/types';
+import type { ServiceDto } from '@/integrations/shared';
 
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
@@ -55,12 +55,17 @@ export default function OtherServicesSidebar({
   if (!isLoading && items.length === 0) return null;
 
   return (
-    <aside className={`bg-bg-secondary p-6 rounded-xl shadow-soft border border-border-light ${className}`}>
+    <aside
+      className={`bg-bg-secondary p-6 rounded-xl shadow-soft border border-border-light ${className}`}
+    >
       <div className="flex items-baseline justify-between gap-3 mb-6 border-b border-border-light pb-2">
         <h3 className="text-xl font-bold font-serif text-text-primary">
           {ui('ui_services_other_title', 'Other services')}
         </h3>
-        <Link href={listHref} className="text-xs font-bold uppercase tracking-wide text-brand-primary hover:underline">
+        <Link
+          href={listHref}
+          className="text-xs font-bold uppercase tracking-wide text-brand-primary hover:underline"
+        >
           {ui('ui_services_view_all', 'View all')}
         </Link>
       </div>
@@ -76,7 +81,9 @@ export default function OtherServicesSidebar({
                 safeStr(s?.name) ||
                 safeStr((s as any)?.title) ||
                 ui('ui_services_placeholder_title', 'Service');
-              const href = slug ? localizePath(locale, `/services/${encodeURIComponent(slug)}`) : listHref;
+              const href = slug
+                ? localizePath(locale, `/services/${encodeURIComponent(slug)}`)
+                : listHref;
 
               return (
                 <li key={safeStr(s?.id) || slug || title}>
@@ -85,7 +92,9 @@ export default function OtherServicesSidebar({
                     className="group flex items-start justify-between gap-3 text-sm text-text-primary hover:text-brand-primary transition-colors"
                   >
                     <span className="font-medium leading-snug">{title}</span>
-                    <span className="text-text-muted group-hover:text-brand-primary transition-colors">→</span>
+                    <span className="text-text-muted group-hover:text-brand-primary transition-colors">
+                      →
+                    </span>
                   </Link>
                 </li>
               );

@@ -112,12 +112,11 @@ export default function AdminCustomPagesClient() {
   );
 
   const items: CustomPageDto[] = React.useMemo(() => {
-    return ((pagesQ.data as any)?.items ?? []) as CustomPageDto[];
+    return pagesQ.data?.items ?? [];
   }, [pagesQ.data]);
 
   const total: number = React.useMemo(() => {
-    const t = (pagesQ.data as any)?.total;
-    return typeof t === 'number' ? t : items.length;
+    return pagesQ.data?.total ?? items.length;
   }, [pagesQ.data, items.length]);
 
   const [rows, setRows] = React.useState<CustomPageDto[]>([]);
@@ -126,7 +125,7 @@ export default function AdminCustomPagesClient() {
   const moduleOptions: ModuleOption[] = React.useMemo(() => {
     const set = new Set<string>();
     for (const it of items) {
-      const key = String((it as any).module_key ?? '').trim();
+      const key = String(it.module_key ?? '').trim();
       if (key) set.add(key);
     }
     if (filters.moduleKey && !set.has(filters.moduleKey)) set.add(filters.moduleKey);
@@ -182,12 +181,12 @@ export default function AdminCustomPagesClient() {
       toast.success(t('admin.common.updated', { item: t('admin.customPage.list.saveOrder') }));
       pagesQ.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Sıralama kaydedilemedi.');
+      toast.error(err?.data?.error?.message || err?.message || t('admin.customPage.list.deleteError'));
     }
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-w-0 w-full max-w-full overflow-hidden space-y-4">
       <CustomPageHeader
         filters={headerFilters}
         total={total}

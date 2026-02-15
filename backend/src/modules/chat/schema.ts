@@ -8,6 +8,8 @@ import {
   mysqlTable,
   varchar,
   text,
+  tinyint,
+  int,
   datetime,
   index,
   uniqueIndex,
@@ -20,6 +22,12 @@ export const chat_threads = mysqlTable(
 
     context_type: varchar("context_type", { length: 20 }).notNull(), // job | request
     context_id: varchar("context_id", { length: 36 }).notNull(),
+    handoff_mode: varchar("handoff_mode", { length: 20 }).notNull().default("ai"), // ai | admin
+    ai_provider_preference: varchar("ai_provider_preference", { length: 20 })
+      .notNull()
+      .default("auto"), // auto | openai | anthropic | grok
+    preferred_locale: varchar("preferred_locale", { length: 10 }).notNull().default("tr"),
+    assigned_admin_user_id: varchar("assigned_admin_user_id", { length: 36 }),
 
     created_by_user_id: varchar("created_by_user_id", { length: 36 }),
     created_at: datetime("created_at", { mode: "date" }).notNull(),
@@ -29,6 +37,29 @@ export const chat_threads = mysqlTable(
     uq_ctx: uniqueIndex("uq_chat_threads_ctx").on(t.context_type, t.context_id),
     ix_ctx: index("ix_chat_threads_ctx").on(t.context_type, t.context_id),
     ix_updated: index("ix_chat_threads_updated").on(t.updated_at),
+  }),
+);
+
+export const chat_ai_knowledge = mysqlTable(
+  "chat_ai_knowledge",
+  {
+    id: varchar("id", { length: 36 }).primaryKey(),
+    locale: varchar("locale", { length: 10 }).notNull(),
+    title: varchar("title", { length: 160 }).notNull(),
+    content: text("content").notNull(),
+    tags: varchar("tags", { length: 500 }),
+    is_active: tinyint("is_active").notNull().default(1),
+    priority: int("priority").notNull().default(100),
+    created_at: datetime("created_at", { mode: "date" }).notNull(),
+    updated_at: datetime("updated_at", { mode: "date" }).notNull(),
+  },
+  (t) => ({
+    ix_locale_active_priority: index("ix_chat_ai_knowledge_locale_active_priority").on(
+      t.locale,
+      t.is_active,
+      t.priority,
+    ),
+    ix_updated: index("ix_chat_ai_knowledge_updated").on(t.updated_at),
   }),
 );
 
@@ -80,7 +111,9 @@ export const chat_messages = mysqlTable(
 export type ChatThread = typeof chat_threads.$inferSelect;
 export type ChatParticipant = typeof chat_participants.$inferSelect;
 export type ChatMessage = typeof chat_messages.$inferSelect;
+export type ChatAiKnowledge = typeof chat_ai_knowledge.$inferSelect;
 
 export type ChatThreadInsert = typeof chat_threads.$inferInsert;
 export type ChatParticipantInsert = typeof chat_participants.$inferInsert;
 export type ChatMessageInsert = typeof chat_messages.$inferInsert;
+export type ChatAiKnowledgeInsert = typeof chat_ai_knowledge.$inferInsert;

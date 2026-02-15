@@ -68,125 +68,101 @@ export const AvailabilityHeader: React.FC<AvailabilityHeaderProps> = ({
   return (
     <Card>
       <CardHeader className="gap-2">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-base">
-              {t('admin.availability.header.title', undefined, 'Müsaitlik Yönetimi')}
-            </CardTitle>
-            <CardDescription>
-              {t(
-                'admin.availability.header.description',
-                undefined,
-                'Kaynakları (therapist/oda/masa vb.) ve haftalık çalışma saatlerini yönet.',
-              )}
-            </CardDescription>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-base">{t('availability.header.title')}</CardTitle>
+              <CardDescription>{t('availability.header.description')}</CardDescription>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="text-sm text-muted-foreground">
+                {t('availability.header.totalLabel')}{' '}
+                <span className="font-medium text-foreground">{total}</span>
+              </div>
+              {loading ? (
+                <Badge variant="secondary">{t('availability.list.loading')}</Badge>
+              ) : null}
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="avail-q">{t('availability.filters.searchLabel')}</Label>
+              <Input
+                id="avail-q"
+                type="search"
+                placeholder={t('availability.filters.searchPlaceholder')}
+                value={filters.q}
+                onChange={(e) => onFiltersChange({ ...filters, q: e.target.value })}
+                disabled={loading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('availability.filters.typeLabel')}</Label>
+              <Select
+                value={filters.type || ALL}
+                onValueChange={handleTypeChange}
+                disabled={loading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('availability.filters.typeAll')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>{t('availability.filters.typeAll')}</SelectItem>
+                  {RESOURCE_TYPE_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('availability.filters.statusLabel')}</Label>
+              <Select
+                value={filters.status === 'all' ? ALL : filters.status}
+                onValueChange={handleStatusChange}
+                disabled={loading}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>{t('availability.filters.statusOptions.all')}</SelectItem>
+                  <SelectItem value="active">
+                    {t('availability.filters.statusOptions.active')}
+                  </SelectItem>
+                  <SelectItem value="inactive">
+                    {t('availability.filters.statusOptions.inactive')}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="text-sm text-muted-foreground">
-              {t('admin.availability.header.totalLabel', undefined, 'Toplam:')}{' '}
-              <span className="font-medium text-foreground">{total}</span>
-            </div>
-            {loading ? (
-              <Badge variant="secondary">
-                {t('admin.availability.common.loading', undefined, 'Yükleniyor...')}
-              </Badge>
+            <Button variant="outline" onClick={handleReset} disabled={loading}>
+              {t('availability.filters.clear')}
+            </Button>
+
+            {onRefresh ? (
+              <Button variant="outline" onClick={onRefresh} disabled={loading}>
+                {t('availability.header.actions.refresh')}
+              </Button>
             ) : null}
+
+            <div className="ml-auto">
+              <Button asChild>
+                <Link href="/admin/availability/new">
+                  {t('availability.header.actions.create')}
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="space-y-2">
-            <Label htmlFor="avail-q">
-              {t('admin.availability.filters.searchLabel', undefined, 'Ara (ad / referans)')}
-            </Label>
-            <Input
-              id="avail-q"
-              type="search"
-              placeholder={t(
-                'admin.availability.filters.searchPlaceholder',
-                undefined,
-                'Örn: Anna, ref:room-2',
-              )}
-              value={filters.q}
-              onChange={(e) => onFiltersChange({ ...filters, q: e.target.value })}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>
-              {t('admin.availability.filters.typeLabel', undefined, 'Tür')}
-            </Label>
-            <Select
-              value={filters.type || ALL}
-              onValueChange={handleTypeChange}
-              disabled={loading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t('admin.availability.filters.typeAll', undefined, 'Tümü')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL}>
-                  {t('admin.availability.filters.typeAll', undefined, 'Tümü')}
-                </SelectItem>
-                {RESOURCE_TYPE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>
-              {t('admin.availability.filters.statusLabel', undefined, 'Durum')}
-            </Label>
-            <Select
-              value={filters.status === 'all' ? ALL : filters.status}
-              onValueChange={handleStatusChange}
-              disabled={loading}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL}>
-                  {t('admin.availability.filters.statusOptions.all', undefined, 'Hepsi')}
-                </SelectItem>
-                <SelectItem value="active">
-                  {t('admin.availability.filters.statusOptions.active', undefined, 'Aktif')}
-                </SelectItem>
-                <SelectItem value="inactive">
-                  {t('admin.availability.filters.statusOptions.inactive', undefined, 'Pasif')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" onClick={handleReset} disabled={loading}>
-            {t('admin.availability.filters.clearFilters', undefined, 'Filtreleri Temizle')}
-          </Button>
-
-          {onRefresh ? (
-            <Button variant="outline" onClick={onRefresh} disabled={loading}>
-              {t('admin.availability.header.actions.refresh', undefined, 'Yenile')}
-            </Button>
-          ) : null}
-
-          <div className="ml-auto">
-            <Button asChild>
-              <Link href="/admin/availability/new">
-                {t('admin.availability.header.actions.create', undefined, 'Yeni Kaynak')}
-              </Link>
-            </Button>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );

@@ -9,7 +9,7 @@ import type {
   ReviewListQueryParams,
   ReviewCreatePayload,
   ReviewReactionPayload,
-} from '@/integrations/types';
+} from '@/integrations/shared';
 
 export const reviewsPublicEndpoints = baseApi.injectEndpoints({
   endpoints: (build) => ({

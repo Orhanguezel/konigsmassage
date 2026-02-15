@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 import { useListSiteSettingsAdminQuery } from '@/integrations/hooks';
 import type { AdminUiCopy } from '@/integrations/shared';
 import { normalizeAdminUiCopy } from '@/integrations/shared';
+import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 type UseAdminUiCopyResult = {
   copy: AdminUiCopy;
@@ -19,8 +20,11 @@ type UseAdminUiCopyResult = {
 };
 
 export function useAdminUiCopy(): UseAdminUiCopyResult {
+  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+
   const q = useListSiteSettingsAdminQuery({
     keys: ['ui_admin'],
+    locale: adminLocale,
     limit: 1,
     sort: 'updated_at',
     order: 'desc',

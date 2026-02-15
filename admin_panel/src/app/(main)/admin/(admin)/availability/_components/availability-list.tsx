@@ -8,6 +8,8 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,6 +48,7 @@ const shortRef = (v: string, head = 8, tail = 4) => {
 };
 
 export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loading }) => {
+  const t = useAdminT();
   const rows = useMemo(() => items ?? [], [items]);
   const hasData = rows.length > 0;
 
@@ -53,34 +56,32 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
   const busy = loading || isDeleting;
 
   const handleDelete = async (r: ResourceAdminListItemDto) => {
-    const ok = window.confirm(
-      `Bu kaynağı silmek üzeresin.\n\n` +
-        `Ad: ${r.title ?? '(ad yok)'}\n` +
-        `Tür: ${resourceTypeLabel(r.type as any)}\n` +
-        `Referans: ${r.external_ref_id ? String(r.external_ref_id) : '-'}\n\n` +
-        `Devam etmek istiyor musun?`,
-    );
+    const msg = t('availability.list.deleteConfirm.description')
+      .replace('{name}', r.title ?? t('availability.common.noName'))
+      .replace('{type}', resourceTypeLabel(r.type as any))
+      .replace('{ref}', r.external_ref_id ? String(r.external_ref_id) : '-');
+    const ok = window.confirm(msg);
     if (!ok) return;
 
     try {
       await deleteResource(r.id).unwrap();
-      toast.success('Kaynak silindi.');
+      toast.success(t('availability.form.messages.deleteSuccess'));
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Silme sırasında hata oluştu.');
+      toast.error(err?.data?.error?.message || err?.message || t('availability.list.loading'));
     }
   };
 
   const renderEmptyOrLoading = () => {
-    if (loading) return <div className="text-sm text-muted-foreground">Yükleniyor...</div>;
-    return <div className="text-sm text-muted-foreground">Henüz kayıt yok.</div>;
+    if (loading) return <div className="text-sm text-muted-foreground">{t('availability.list.loading')}</div>;
+    return <div className="text-sm text-muted-foreground">{t('availability.list.empty')}</div>;
   };
 
   const statusBadge = (r: ResourceAdminListItemDto) => {
     const active = toActiveBool((r as any).is_active);
     return active ? (
-      <Badge className="bg-emerald-100 text-emerald-700">Aktif</Badge>
+      <Badge className="bg-emerald-100 text-emerald-700">{t('availability.filters.statusActive')}</Badge>
     ) : (
-      <Badge variant="secondary">Pasif</Badge>
+      <Badge variant="secondary">{t('availability.filters.statusInactive')}</Badge>
     );
   };
 
@@ -100,14 +101,14 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Kaynaklar</CardTitle>
+        <CardTitle className="text-base">{t('availability.list.title')}</CardTitle>
         <div className="flex items-center gap-2">
           {busy ? (
             <Badge variant="secondary" className="text-xs">
-              İşlem yapılıyor...
+              {t('availability.list.loading')}
             </Badge>
           ) : null}
-          <Badge variant="outline">Toplam: {rows.length}</Badge>
+          <Badge variant="outline">{t('availability.list.total').replace('{count}', String(rows.length))}</Badge>
         </div>
       </CardHeader>
 
@@ -127,15 +128,15 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
                   <div className="min-w-0">
                     <div className="text-xs text-muted-foreground">#{idx + 1}</div>
                     <div className="text-sm font-semibold truncate" title={safeText(r.title)}>
-                      {r.title || <span className="text-muted-foreground">(ad yok)</span>}
+                      {r.title || <span className="text-muted-foreground">{t('availability.common.noName')}</span>}
                     </div>
 
                     {r._refFull ? (
                       <div className="text-xs text-muted-foreground truncate" title={r._refFull}>
-                        Referans: <code>{r._refShort}</code>
+                        {t('availability.list.columns.ref')}: <code>{r._refShort}</code>
                       </div>
                     ) : (
-                      <div className="text-xs text-muted-foreground">(referans yok)</div>
+                      <div className="text-xs text-muted-foreground">{t('availability.common.noRef')}</div>
                     )}
 
                     <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -144,14 +145,14 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
                     </div>
 
                     <div className="mt-2 text-xs text-muted-foreground">
-                      <div>Güncellendi: {r._updated}</div>
-                      <div>Oluşturma: {r._created}</div>
+                      <div>{t('availability.list.columns.updated')}: {r._updated}</div>
+                      <div>{t('availability.list.columns.created')}: {r._created}</div>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-2">
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/admin/availability/${encodeURIComponent(r.id)}`}>Yönet</Link>
+                      <Link href={`/admin/availability/${encodeURIComponent(r.id)}`}>{t('availability.list.actions.manage')}</Link>
                     </Button>
                     <Button
                       type="button"
@@ -160,7 +161,7 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
                       disabled={busy}
                       onClick={() => handleDelete(r)}
                     >
-                      Sil
+                      {t('availability.list.actions.delete')}
                     </Button>
                   </div>
                 </div>
@@ -177,11 +178,11 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[56px]">#</TableHead>
-                    <TableHead>Ad</TableHead>
-                    <TableHead>Tür</TableHead>
-                    <TableHead>Durum</TableHead>
-                    <TableHead>Güncellendi</TableHead>
-                    <TableHead className="text-right">İşlemler</TableHead>
+                    <TableHead>{t('availability.list.columns.name')}</TableHead>
+                    <TableHead>{t('availability.list.columns.type')}</TableHead>
+                    <TableHead>{t('availability.list.columns.status')}</TableHead>
+                    <TableHead>{t('availability.list.columns.updated')}</TableHead>
+                    <TableHead className="text-right">{t('availability.list.columns.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -190,7 +191,7 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
                       <TableCell className="text-muted-foreground">{idx + 1}</TableCell>
                       <TableCell className="min-w-[220px]">
                         <div className="text-sm font-semibold truncate" title={safeText(r.title)}>
-                          {r.title || <span className="text-muted-foreground">(ad yok)</span>}
+                          {r.title || <span className="text-muted-foreground">{t('availability.common.noName')}</span>}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -199,12 +200,12 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
                       <TableCell>{statusBadge(r)}</TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         <div title={r._updated}>{r._updated}</div>
-                        <div title={r._created}>Oluşturma: {r._created}</div>
+                        <div title={r._created}>{t('availability.list.columns.created')}: {r._created}</div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="inline-flex gap-2">
                           <Button asChild variant="outline" size="sm">
-                            <Link href={`/admin/availability/${encodeURIComponent(r.id)}`}>Yönet</Link>
+                            <Link href={`/admin/availability/${encodeURIComponent(r.id)}`}>{t('availability.list.actions.manage')}</Link>
                           </Button>
                           <Button
                             type="button"
@@ -213,7 +214,7 @@ export const AvailabilityList: React.FC<AvailabilityListProps> = ({ items, loadi
                             disabled={busy}
                             onClick={() => handleDelete(r)}
                           >
-                            Sil
+                            {t('availability.list.actions.delete')}
                           </Button>
                         </div>
                       </TableCell>

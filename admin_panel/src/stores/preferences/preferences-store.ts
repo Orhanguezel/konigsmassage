@@ -63,13 +63,13 @@ export type PreferencesInit = Partial<
 
 export const createPreferencesStore = (init?: PreferencesInit) =>
   createStore<PreferencesState>()((set) => ({
-    themeMode: init?.themeMode ?? PREFERENCE_DEFAULTS.theme_mode,
-    themePreset: init?.themePreset ?? PREFERENCE_DEFAULTS.theme_preset,
-    font: init?.font ?? PREFERENCE_DEFAULTS.font,
-    contentLayout: init?.contentLayout ?? PREFERENCE_DEFAULTS.content_layout,
-    navbarStyle: init?.navbarStyle ?? PREFERENCE_DEFAULTS.navbar_style,
-    sidebarVariant: init?.sidebarVariant ?? PREFERENCE_DEFAULTS.sidebar_variant,
-    sidebarCollapsible: init?.sidebarCollapsible ?? PREFERENCE_DEFAULTS.sidebar_collapsible,
+    themeMode: (init?.themeMode ?? (readCookieValue('theme_mode') as ThemeMode)) || PREFERENCE_DEFAULTS.theme_mode,
+    themePreset: (init?.themePreset ?? (readCookieValue('theme_preset') as ThemePreset)) || PREFERENCE_DEFAULTS.theme_preset,
+    font: (init?.font ?? (readCookieValue('font') as FontKey)) || PREFERENCE_DEFAULTS.font,
+    contentLayout: (init?.contentLayout ?? (readCookieValue('content_layout') as ContentLayout)) || PREFERENCE_DEFAULTS.content_layout,
+    navbarStyle: (init?.navbarStyle ?? (readCookieValue('navbar_style') as NavbarStyle)) || PREFERENCE_DEFAULTS.navbar_style,
+    sidebarVariant: (init?.sidebarVariant ?? (readCookieValue('sidebar_variant') as SidebarVariant)) || PREFERENCE_DEFAULTS.sidebar_variant,
+    sidebarCollapsible: (init?.sidebarCollapsible ?? (readCookieValue('sidebar_collapsible') as SidebarCollapsible)) || PREFERENCE_DEFAULTS.sidebar_collapsible,
     adminLocale: init?.adminLocale || readCookieValue('admin_locale') || PREFERENCE_DEFAULTS.admin_locale,
 
     setThemeMode: (mode) => set({ themeMode: mode }),

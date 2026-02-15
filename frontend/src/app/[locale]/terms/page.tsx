@@ -7,7 +7,7 @@ import { LayoutSeoBridge } from '@/seo';
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 import { isValidUiText } from '@/i18n/uiText';
-import { safeStr} from '@/integrations/types';
+import { safeStr } from '@/integrations/shared';
 
 export default function TermsPage() {
   const locale = useLocaleShort();
@@ -27,13 +27,10 @@ export default function TermsPage() {
 
   return (
     <>
-      <LayoutSeoBridge
-        title={pageTitle}
-        noindex={false}
-      />
+      <LayoutSeoBridge title={pageTitle} noindex={false} />
 
       <Banner title={bannerTitle} />
-      
+
       <section className="container mx-auto py-16 px-4 bg-bg-primary">
         <TermsPageContent />
       </section>

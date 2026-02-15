@@ -90,22 +90,22 @@ function toSearchParams(p: AdminUsersListParams): string {
 export default function UsersListClient() {
   const router = useRouter();
   const sp = useSearchParams();
-  const t = useAdminT();
+  const t = useAdminT('admin.users');
 
   function roleLabel(r: UserRoleName) {
-    if (r === 'admin') return t('admin.users.roles.admin');
-    if (r === 'moderator') return t('admin.users.roles.moderator');
-    return t('admin.users.roles.user');
+    if (r === 'admin') return t('roles.admin');
+    if (r === 'moderator') return t('roles.moderator');
+    return t('roles.user');
   }
 
   function statusBadge(u: AdminUserView) {
-    if (!u.is_active) return <Badge variant="destructive">{t('admin.users.list.table.statusInactive')}</Badge>;
-    return <Badge variant="secondary">{t('admin.users.list.table.statusActive')}</Badge>;
+    if (!u.is_active) return <Badge variant="destructive">{t('list.table.statusInactive')}</Badge>;
+    return <Badge variant="secondary">{t('list.table.statusActive')}</Badge>;
   }
 
   function displayName(u: Pick<AdminUserView, 'full_name'>) {
     const n = String(u.full_name ?? '').trim();
-    return n || t('admin.users.list.table.unknownUser');
+    return n || t('list.table.unknownUser');
   }
 
   const params = React.useMemo(() => pickQuery(sp), [sp]);
@@ -155,36 +155,36 @@ export default function UsersListClient() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-lg font-semibold">{t('admin.users.list.title')}</h1>
+        <h1 className="text-lg font-semibold">{t('list.title')}</h1>
         <p className="text-sm text-muted-foreground">
-          {t('admin.users.list.description')}
+          {t('list.description')}
         </p>
       </div>
 
       <Card>
         <CardHeader className="gap-2">
-          <CardTitle className="text-base">{t('admin.users.list.filters.title')}</CardTitle>
-          <CardDescription>{t('admin.users.list.filters.description')}</CardDescription>
+          <CardTitle className="text-base">{t('list.filters.title')}</CardTitle>
+          <CardDescription>{t('list.filters.description')}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <form onSubmit={onSearchSubmit} className="flex flex-col gap-3 lg:flex-row lg:items-end">
             <div className="flex-1 space-y-2">
-              <Label htmlFor="q">{t('admin.users.list.filters.searchLabel')}</Label>
+              <Label htmlFor="q">{t('list.filters.searchLabel')}</Label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="q"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder={t('admin.users.list.filters.searchPlaceholder')}
+                  placeholder={t('list.filters.searchPlaceholder')}
                   className="pl-9"
                 />
               </div>
             </div>
 
             <div className="w-full space-y-2 lg:w-56">
-              <Label>{t('admin.users.list.filters.roleLabel')}</Label>
+              <Label>{t('list.filters.roleLabel')}</Label>
               <Select
                 value={role}
                 onValueChange={(v) => {
@@ -194,20 +194,20 @@ export default function UsersListClient() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('admin.users.list.filters.rolePlaceholder')} />
+                  <SelectValue placeholder={t('list.filters.rolePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('admin.users.roles.all')}</SelectItem>
-                  <SelectItem value="admin">{t('admin.users.roles.admin')}</SelectItem>
-                  <SelectItem value="moderator">{t('admin.users.roles.moderator')}</SelectItem>
-                  <SelectItem value="user">{t('admin.users.roles.user')}</SelectItem>
+                  <SelectItem value="all">{t('roles.all')}</SelectItem>
+                  <SelectItem value="admin">{t('roles.admin')}</SelectItem>
+                  <SelectItem value="moderator">{t('roles.moderator')}</SelectItem>
+                  <SelectItem value="user">{t('roles.user')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="flex items-center gap-2">
               <Filter className="size-4 text-muted-foreground" />
-              <Label className="text-sm">{t('admin.users.list.filters.onlyActive')}</Label>
+              <Label className="text-sm">{t('list.filters.onlyActive')}</Label>
               <Switch
                 checked={onlyActive === true}
                 onCheckedChange={(v) => {
@@ -220,7 +220,7 @@ export default function UsersListClient() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={usersQ.isFetching}>
-                {t('admin.users.list.filters.searchButton')}
+                {t('list.filters.searchButton')}
               </Button>
               <Button
                 type="button"
@@ -233,14 +233,14 @@ export default function UsersListClient() {
                 }}
                 disabled={usersQ.isFetching}
               >
-                {t('admin.users.list.filters.resetButton')}
+                {t('list.filters.resetButton')}
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => usersQ.refetch()}
                 disabled={usersQ.isFetching}
-                title={t('admin.users.list.filters.refreshButton')}
+                title={t('list.filters.refreshButton')}
               >
                 <RefreshCcw className="size-4" />
               </Button>
@@ -251,27 +251,27 @@ export default function UsersListClient() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t('admin.users.list.table.title')}</CardTitle>
+          <CardTitle className="text-base">{t('list.table.title')}</CardTitle>
           <CardDescription>
             {usersQ.isFetching
-              ? t('admin.users.list.table.loading')
-              : t('admin.users.list.table.totalRecords', { count: usersQ.data?.length ?? 0 })}
+              ? t('list.table.loading')
+              : t('list.table.totalRecords', { count: usersQ.data?.length ?? 0 })}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           {usersQ.isError ? (
             <div className="rounded-md border p-4 text-sm">
-              {t('admin.users.list.table.loadError')}{' '}
+              {t('list.table.loadError')}{' '}
               <Button
                 variant="link"
                 className="px-1"
                 onClick={() => {
-                  toast.error(t('admin.users.list.table.loadError'));
+                  toast.error(t('list.table.loadError'));
                   usersQ.refetch();
                 }}
               >
-                {t('admin.users.list.table.retryButton')}
+                {t('list.table.retryButton')}
               </Button>
             </div>
           ) : null}
@@ -280,12 +280,12 @@ export default function UsersListClient() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('admin.users.list.table.fullName')}</TableHead>
-                  <TableHead>{t('admin.users.list.table.email')}</TableHead>
-                  <TableHead>{t('admin.users.list.table.phone')}</TableHead>
-                  <TableHead>{t('admin.users.list.table.status')}</TableHead>
-                  <TableHead>{t('admin.users.list.table.role')}</TableHead>
-                  <TableHead className="text-right">{t('admin.users.list.table.actions')}</TableHead>
+                  <TableHead>{t('list.table.fullName')}</TableHead>
+                  <TableHead>{t('list.table.email')}</TableHead>
+                  <TableHead>{t('list.table.phone')}</TableHead>
+                  <TableHead>{t('list.table.status')}</TableHead>
+                  <TableHead>{t('list.table.role')}</TableHead>
+                  <TableHead className="text-right">{t('list.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -304,7 +304,7 @@ export default function UsersListClient() {
                     <TableCell className="text-right">
                       <Button asChild variant="outline" size="sm">
                         <Link prefetch={false} href={`/admin/users/${encodeURIComponent(u.id)}`}>
-                          {t('admin.users.list.table.viewButton')}
+                          {t('list.table.viewButton')}
                         </Link>
                       </Button>
                     </TableCell>
@@ -314,7 +314,7 @@ export default function UsersListClient() {
                 {!usersQ.isFetching && (usersQ.data?.length ?? 0) === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
-                      {t('admin.users.list.table.noRecords')}
+                      {t('list.table.noRecords')}
                     </TableCell>
                   </TableRow>
                 ) : null}
@@ -324,7 +324,7 @@ export default function UsersListClient() {
 
           <div className="flex items-center justify-between">
             <div className="text-xs text-muted-foreground">
-              {t('admin.users.list.pagination.offset', { offset })} • {t('admin.users.list.pagination.limit', { limit })}
+              {t('list.pagination.offset', { offset })} • {t('list.pagination.limit', { limit })}
             </div>
 
             <div className="flex gap-2">
@@ -335,7 +335,7 @@ export default function UsersListClient() {
                 onClick={() => apply({ offset: Math.max(0, offset - limit) })}
               >
                 <ChevronLeft className="mr-1 size-4" />
-                {t('admin.users.list.pagination.previous')}
+                {t('list.pagination.previous')}
               </Button>
               <Button
                 variant="outline"
@@ -343,7 +343,7 @@ export default function UsersListClient() {
                 disabled={!canNext || usersQ.isFetching}
                 onClick={() => apply({ offset: offset + limit })}
               >
-                {t('admin.users.list.pagination.next')}
+                {t('list.pagination.next')}
                 <ChevronRight className="ml-1 size-4" />
               </Button>
             </div>

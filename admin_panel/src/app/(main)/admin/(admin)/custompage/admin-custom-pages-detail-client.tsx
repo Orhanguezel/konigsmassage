@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { resolveAdminApiLocale } from '@/i18n/adminLocale';
 import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import type { CustomPageDto } from '@/integrations/shared';
 import type { CustomPageCreatePayload, CustomPageUpdatePayload } from '@/integrations/shared';
@@ -33,7 +34,7 @@ function isUuidLike(v?: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 }
 
-function getErrMessage(err: unknown): string {
+function getErrMessage(err: unknown, t: any): string {
   const anyErr = err as any;
   const m1 = anyErr?.data?.error?.message;
   if (typeof m1 === 'string' && m1.trim()) return m1;
@@ -41,11 +42,12 @@ function getErrMessage(err: unknown): string {
   if (typeof m2 === 'string' && m2.trim()) return m2;
   const m3 = anyErr?.error;
   if (typeof m3 === 'string' && m3.trim()) return m3;
-  return 'İşlem başarısız. Lütfen tekrar deneyin.';
+  return t('admin.customPage.detail.operationFailed');
 }
 
 export default function AdminCustomPageDetailClient({ id }: { id: string }) {
   const router = useRouter();
+  const t = useAdminT();
   const isCreateMode = String(id) === 'new';
 
   const {
@@ -105,9 +107,9 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
       if (!isUuidLike(routeId)) return;
 
       try {
-        const res = await triggerGetById({ id: routeId, locale: queryLocale } as any).unwrap();
+        const res = await triggerGetById({ id: routeId, locale: queryLocale }).unwrap();
         if (!alive) return;
-        setPage(res as any);
+        setPage(res);
       } catch {
         if (!alive) return;
         setPage(undefined);
@@ -143,7 +145,7 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
       const loc = localeShortClientOr(values.locale || queryLocale || apiLocaleFromDb, 'tr');
 
       if (localeSet.size > 0 && !localeSet.has(localeShortClient(loc))) {
-        toast.error('Geçerli bir locale seçilmedi. app_locales ve default_locale kontrol edin.');
+        toast.error(t('admin.customPage.detail.invalidLocale'));
         return;
       }
 
@@ -154,6 +156,7 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
           slug: values.slug.trim(),
           content: values.content ?? '',
           is_published: !!values.is_published,
+          featured: !!values.featured,
 
           summary: values.summary.trim() || null,
           tags: values.tags.trim() || null,
@@ -170,17 +173,17 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
           storage_image_ids: Array.isArray(values.storage_image_ids)
             ? values.storage_image_ids
             : [],
-        } as any;
+        };
 
-        const created = await createCustomPage(payload as any).unwrap();
-        const nextId = String((created as any)?.id ?? '').trim();
+        const created = await createCustomPage(payload).unwrap();
+        const nextId = String(created?.id ?? '').trim();
 
         if (!nextId || !isUuidLike(nextId)) {
-          toast.error("Oluşturuldu ama id dönmedi/UUID değil. Backend response'u kontrol et.");
+          toast.error(t('admin.customPage.detail.createIdError'));
           return;
         }
 
-        toast.success('Sayfa başarıyla oluşturuldu.');
+        toast.success(t('admin.customPage.detail.createSuccess'));
         router.replace(`/admin/custompage/${encodeURIComponent(nextId)}`);
         router.refresh();
         return;
@@ -188,7 +191,7 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
 
       const baseId = page?.id || values.page_id || id;
       if (!baseId || !isUuidLike(String(baseId))) {
-        toast.error('Sayfa verisi yüklenemedi (id yok).');
+        toast.error(t('admin.customPage.detail.noPageId'));
         return;
       }
 
@@ -198,6 +201,7 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
         slug: values.slug.trim(),
         content: values.content ?? '',
         is_published: !!values.is_published,
+        featured: !!values.featured,
 
         summary: values.summary.trim() || null,
         tags: values.tags.trim() || null,
@@ -211,14 +215,14 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
 
         images: Array.isArray(values.images) ? values.images : [],
         storage_image_ids: Array.isArray(values.storage_image_ids) ? values.storage_image_ids : [],
-      } as any;
+      };
 
-      await updateCustomPage({ id: baseId, patch } as any).unwrap();
-      toast.success('Sayfa güncellendi.');
+      await updateCustomPage({ id: baseId, patch }).unwrap();
+      toast.success(t('admin.customPage.detail.updateSuccess'));
 
       if (loc !== queryLocale) setActiveLocale(loc);
     } catch (err) {
-      toast.error(getErrMessage(err));
+      toast.error(getErrMessage(err, t));
     }
   };
 
@@ -226,10 +230,9 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
   if (localesReady && !hasLocales) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <div className="text-sm font-semibold">Dil listesi bulunamadı</div>
+        <div className="text-sm font-semibold">{t('admin.customPage.detail.noLocales')}</div>
         <div className="mt-1 text-sm text-muted-foreground">
-          <code>site_settings.app_locales</code> boş veya geçersiz. Önce Site Settings’ten dilleri
-          ayarlayın.
+          <code>site_settings.app_locales</code> {t('admin.customPage.detail.noLocalesDesc')}
         </div>
       </div>
     );
@@ -238,13 +241,13 @@ export default function AdminCustomPageDetailClient({ id }: { id: string }) {
   if (!isCreateMode && !isUuidLike(String(id || ''))) {
     return (
       <div className="rounded-lg border bg-card p-4">
-        <div className="text-sm font-semibold">Geçersiz ID</div>
+        <div className="text-sm font-semibold">{t('admin.customPage.detail.invalidId')}</div>
         <div className="mt-1 text-sm text-muted-foreground">
-          UUID değil: <code>{String(id || '-')}</code>
+          {t('admin.customPage.detail.invalidIdDesc')} <code>{String(id || '-')}</code>
         </div>
         <div className="mt-3">
           <button className="rounded-md border px-3 py-2 text-xs" onClick={onCancel}>
-            Listeye dön
+            {t('admin.customPage.detail.returnToList')}
           </button>
         </div>
       </div>

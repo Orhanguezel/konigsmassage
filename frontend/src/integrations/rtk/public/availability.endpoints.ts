@@ -5,74 +5,34 @@
 //  - /availability (final check)
 //  - /availability/working-hours
 //  - /availability/weekly-plan
-//  + (NEW) listAvailabilitySlotsByResourcesPublic (fan-out, no manual fetch)
+//  + listAvailabilitySlotsByResourcesPublic (fan-out, no manual fetch)
 // =============================================================
 
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { baseApi } from '@/integrations/rtk/baseApi';
-
 import type {
   AvailabilityGetQuery,
   AvailabilitySlotsQuery,
+  AvailabilitySlotsByResourcesQuery,
+  AvailabilitySlotsByResourcesResult,
   ResourceSlotDto,
   SlotAvailabilityDto,
   WeeklyPlanDayDto,
   WeeklyPlanQuery,
   PublicWorkingHoursQuery,
   ResourceWorkingHourDto,
-
-  // ✅ type-safe query for the new endpoint
   UUID36,
   Ymd,
-} from '@/integrations/types';
+  BaseQueryOk,
+} from '@/integrations/shared';
+import {
+  isUuid36,
+  isYmd,
+  asSlotArray,
+  EMPTY_SLOTS,
+  parseBaseQueryResult,
+} from '@/integrations/shared';
 
 const BASE = '/availability';
-
-/* -------------------- NEW: multi-resource query types -------------------- */
-
-export type AvailabilitySlotsByResourcesQuery = {
-  resource_ids: UUID36[];
-  date: Ymd; // YYYY-MM-DD
-};
-
-export type AvailabilitySlotsByResourcesResult = Record<UUID36, ResourceSlotDto[]>;
-
-/* -------------------- small type guards -------------------- */
-
-function isRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null && !Array.isArray(v);
-}
-
-function isUuid36(v: unknown): v is UUID36 {
-  return typeof v === 'string' && v.length === 36;
-}
-
-function isYmd(v: unknown): v is Ymd {
-  return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
-}
-
-function asSlotArray(v: unknown): ResourceSlotDto[] {
-  return Array.isArray(v) ? (v as ResourceSlotDto[]) : [];
-}
-
-const EMPTY_SLOTS: ResourceSlotDto[] = [];
-
-
-/**
- * RTK baseQuery result is typically:
- *  - { data: unknown } or { error: FetchBaseQueryError }
- * But baseQuery is typed loosely in queryFn, so we safely narrow.
- */
-type BaseQueryOk = { data: unknown };
-type BaseQueryErr = { error: FetchBaseQueryError | unknown };
-type BaseQueryResult = BaseQueryOk | BaseQueryErr;
-
-function parseBaseQueryResult(x: unknown): BaseQueryResult | null {
-  if (!isRecord(x)) return null;
-  if ('error' in x) return { error: (x as Record<string, unknown>).error };
-  if ('data' in x) return { data: (x as Record<string, unknown>).data };
-  return null;
-}
 
 export const availabilityPublicApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -99,19 +59,14 @@ export const availabilityPublicApi = baseApi.injectEndpoints({
     }),
 
     /**
-     * PUBLIC (NEW) — Fan-out slots for multiple resources (no manual fetch in UI)
+     * PUBLIC — Fan-out slots for multiple resources (no manual fetch in UI)
      * Returns: { [resource_id]: ResourceSlotDto[] }
-     *
-     * Internally calls:
-     *   GET /availability/slots?resource_id=RID&date=YYYY-MM-DD
-     * for each RID via baseQuery (✅ single-arg call, per your baseApi signature)
      */
     listAvailabilitySlotsByResourcesPublic: build.query<
       AvailabilitySlotsByResourcesResult,
       AvailabilitySlotsByResourcesQuery
     >({
       async queryFn(arg, _api, _extraOptions, baseQuery) {
-        // sanitize inputs strictly by your app types
         const ids: UUID36[] = Array.isArray(arg?.resource_ids)
           ? arg.resource_ids.filter(isUuid36)
           : [];
@@ -140,7 +95,6 @@ export const availabilityPublicApi = baseApi.injectEndpoints({
             return [rid, asSlotArray((res as BaseQueryOk).data)] as const;
           }),
         );
-
 
         const map: AvailabilitySlotsByResourcesResult = {} as AvailabilitySlotsByResourcesResult;
         for (const [rid, arr] of pairs) {

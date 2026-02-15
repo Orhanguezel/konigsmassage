@@ -7,7 +7,6 @@ import type {
   SqlImportFileParams,
   SqlImportTextParams,
   SqlImportUrlParams,
-  SqlImportParams,
   DbSnapshot,
   CreateDbSnapshotBody,
   DeleteSnapshotResponse,
@@ -80,27 +79,6 @@ export const dbAdminApi = baseApi.injectEndpoints({
       },
     }),
 
-    /* ---------------------------------------------------------
-     * (GERİYE DÖNÜK ALIAS)
-     * importSql: eski kullanımda file upload bekliyordu.
-     * İçeride /admin/db/import-file'a yönlendiriyoruz.
-     * --------------------------------------------------------- */
-    importSql: b.mutation<DbImportResponse, { file: File } & Partial<SqlImportParams>>({
-      query: ({ file, truncate_before_import }) => {
-        const form = new FormData();
-        form.append('file', file, file.name);
-        if (typeof truncate_before_import !== 'undefined') {
-          form.append('truncateBefore', String(!!truncate_before_import));
-          form.append('truncate_before_import', String(!!truncate_before_import));
-        }
-        return {
-          url: `${ADMIN_BASE}/import-file`,
-          method: 'POST',
-          body: form,
-          credentials: 'include',
-        };
-      },
-    }),
 
     /* ---------------------------------------------------------
      * SNAPSHOT LİSTESİ: GET /admin/db/snapshots
@@ -165,8 +143,6 @@ export const {
   useImportSqlTextMutation,
   useImportSqlUrlMutation,
   useImportSqlFileMutation,
-  // geriye dönük:
-  useImportSqlMutation,
   // snapshot hooks:
   useListDbSnapshotsQuery,
   useCreateDbSnapshotMutation,

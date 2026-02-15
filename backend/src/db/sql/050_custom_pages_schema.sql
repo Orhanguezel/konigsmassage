@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `custom_pages` (
 
   `module_key`               VARCHAR(100)  NOT NULL DEFAULT '',
   `is_published`             TINYINT(1)    NOT NULL DEFAULT 0,
+  `featured`                 TINYINT(1)    NOT NULL DEFAULT 0,
 
   `display_order`            INT           NOT NULL DEFAULT 0,
   `order_num`                INT           NOT NULL DEFAULT 0,
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `custom_pages` (
 
   KEY `custom_pages_module_key_idx`     (`module_key`),
   KEY `custom_pages_is_published_idx`   (`is_published`),
+  KEY `custom_pages_featured_idx`       (`featured`),
   KEY `custom_pages_display_order_idx`  (`display_order`),
   KEY `custom_pages_order_num_idx`      (`order_num`),
   KEY `custom_pages_featured_asset_idx` (`featured_image_asset_id`),

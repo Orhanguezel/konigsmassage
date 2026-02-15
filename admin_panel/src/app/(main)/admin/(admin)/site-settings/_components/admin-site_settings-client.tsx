@@ -39,6 +39,7 @@ import { CloudinarySettingsTab } from '../tabs/cloudinary-settings-tab';
 import { BrandMediaTab } from '../tabs/brand-media-tab';
 import { ApiSettingsTab } from '../tabs/api-settings-tab';
 import { LocalesSettingsTab } from '../tabs/locales-settings-tab';
+import { BrandingSettingsTab } from '../tabs/branding-settings-tab';
 
 import type { SiteSetting } from '@/integrations/shared';
 import {
@@ -59,7 +60,8 @@ type SettingsTab =
   | 'cloudinary'
   | 'brand_media'
   | 'api'
-  | 'locales';
+  | 'locales'
+  | 'branding';
 
 type LocaleOption = { value: string; label: string; isDefault?: boolean; isActive?: boolean };
 
@@ -237,7 +239,7 @@ export default function AdminSiteSettingsClient() {
   };
 
   const localeReady = Boolean(locale && locale.trim());
-  const isGlobalTab = tab === 'global_list' || tab === 'smtp' || tab === 'brand_media' || tab === 'locales';
+  const isGlobalTab = tab === 'global_list' || tab === 'smtp' || tab === 'brand_media' || tab === 'locales' || tab === 'branding';
 
   return (
     <div className="w-full max-w-full space-y-6 overflow-x-hidden px-2 pb-6 md:px-0 md:pb-0">
@@ -358,6 +360,7 @@ export default function AdminSiteSettingsClient() {
                 {tab === 'brand_media' ? t('admin.siteSettings.brandMedia.title') : null}
                 {tab === 'api' ? t('admin.siteSettings.api.title') : null}
                 {tab === 'locales' ? t('admin.siteSettings.locales.title') : null}
+                {tab === 'branding' ? t('admin.siteSettings.branding.title') : null}
               </CardDescription>
             </div>
 
@@ -405,6 +408,9 @@ export default function AdminSiteSettingsClient() {
                   <TabsTrigger value="locales" className="whitespace-nowrap">
                     {t('admin.siteSettings.tabs.locales')}
                   </TabsTrigger>
+                  <TabsTrigger value="branding" className="whitespace-nowrap">
+                    {t('admin.siteSettings.tabs.branding')}
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
@@ -442,6 +448,10 @@ export default function AdminSiteSettingsClient() {
 
               <TabsContent value="locales" className="mt-4">
                 <LocalesSettingsTab />
+              </TabsContent>
+
+              <TabsContent value="branding" className="mt-4">
+                <BrandingSettingsTab />
               </TabsContent>
             </Tabs>
           )}

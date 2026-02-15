@@ -1,17 +1,15 @@
-
 // -------------------------------------------------------------
 // FILE: src/integrations/rtk/endpoints/health.endpoints.ts
 // -------------------------------------------------------------
 import { baseApi } from '@/integrations/rtk/baseApi';
-
-export type Health = { ok: true; version?: string; time?: string } | { ok: false; error: string };
+import type { HealthStatus } from '@/integrations/shared';
 
 export const healthApi = baseApi.injectEndpoints({
   endpoints: (b) => ({
-    getHealth: b.query<Health, void>({
-      query: () => ({ url: "/__health" }),
-      transformResponse: (res: unknown): Health => res as Health,
-      providesTags: [{ type: "Health" as const, id: "SVC" }],
+    getHealth: b.query<HealthStatus, void>({
+      query: () => ({ url: '/__health' }),
+      transformResponse: (res: unknown): HealthStatus => res as HealthStatus,
+      providesTags: [{ type: 'Health' as const, id: 'SVC' }],
       keepUnusedDataFor: 10,
     }),
   }),

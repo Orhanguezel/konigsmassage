@@ -12,13 +12,15 @@ import {
   auditAuthEventsListQuerySchema,
   auditRequestLogsListQuerySchema,
   auditMetricsDailyQuerySchema,
+  auditGeoStatsQuerySchema,
+  auditClearQuerySchema,
   type AuditAuthEventsListQuery,
   type AuditRequestLogsListQuery,
   type AuditMetricsDailyQuery,
   isTruthyBoolLike,
 } from './validation';
 
-import { listAuditAuthEvents, listAuditRequestLogs, getAuditMetricsDaily } from './repository';
+import { listAuditAuthEvents, listAuditRequestLogs, getAuditMetricsDaily, getAuditGeoStats, clearAuditLogs } from './repository';
 import { setContentRange } from '@/common/utils/contentRange';
 
 type ListResponse<T> = { items: T[]; total: number };
@@ -115,4 +117,38 @@ export const getAuditMetricsDailyAdmin: RouteHandler = async (req, reply) => {
     : [];
 
   return reply.send({ days });
+};
+
+export const clearAuditLogsAdmin: RouteHandler = async (req, reply) => {
+  const parsed = auditClearQuerySchema.safeParse(req.query ?? {});
+  if (!parsed.success) {
+    return reply
+      .code(400)
+      .send({ error: { message: 'invalid_query', issues: parsed.error.flatten() } });
+  }
+
+  const { target } = parsed.data;
+  const result = await clearAuditLogs(target);
+  return reply.send({ ok: true, ...result });
+};
+
+export const getAuditGeoStatsAdmin: RouteHandler = async (req, reply) => {
+  const parsed = auditGeoStatsQuerySchema.safeParse(req.query ?? {});
+  if (!parsed.success) {
+    return reply
+      .code(400)
+      .send({ error: { message: 'invalid_query', issues: parsed.error.flatten() } });
+  }
+
+  const q = parsed.data;
+  const onlyAdmin =
+    typeof q.only_admin === 'undefined' ? undefined : isTruthyBoolLike(q.only_admin);
+
+  const rows = await getAuditGeoStats({
+    days: q.days,
+    only_admin: onlyAdmin,
+    source: q.source,
+  });
+
+  return reply.send({ items: rows });
 };

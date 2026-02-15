@@ -4,8 +4,7 @@
 // =============================================================
 
 import { z } from 'zod';
-import { boolLike } from '@/modules/_shared/common';
-import { bookingStatusEnum, safeTrim, uuid36Schema } from '@/modules/_shared';
+import { bookingStatusEnum, safeTrim, uuid36Schema, boolLike } from '@/modules/_shared';
 
 export const LOCALE_SCHEMA = z
   .string()

@@ -22,6 +22,7 @@ import type { DashboardSummaryItem } from '@/integrations/shared';
 
 import { useAdminUiCopy } from '@/app/(main)/admin/_components/common/useAdminUiCopy';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+import { useAdminSettings } from './admin-settings-provider';
 
 // dashboard key → admin route
 const ROUTE_MAP: Record<string, string> = {
@@ -71,6 +72,9 @@ export default function AdminDashboardClient() {
   const t = useAdminT();
   const page = copy.pages?.dashboard ?? {};
 
+  const { pageMeta } = useAdminSettings();
+  const dashboardMeta = pageMeta?.dashboard;
+
   const q = useGetDashboardSummaryAdminQuery();
 
   React.useEffect(() => {
@@ -79,7 +83,11 @@ export default function AdminDashboardClient() {
   }, [q.isError, q.error, copy.common?.states?.error, t]);
 
   const items = React.useMemo(() => {
-    const data = (q.data?.items ?? []) as DashboardSummaryItem[];
+    let data = (q.data?.items ?? []) as DashboardSummaryItem[];
+    if (dashboardMeta?.metrics && Array.isArray(dashboardMeta.metrics)) {
+      data = data.filter((m) => dashboardMeta!.metrics!.includes(m.key));
+    }
+
     const nav = copy.nav?.items ?? ({} as Record<string, string>);
 
     return data.map((item) => ({
@@ -88,18 +96,19 @@ export default function AdminDashboardClient() {
         (nav as Record<string, string>)[item.key] ||
         page[`label_${item.key}`] ||
         page[item.key] ||
+        t(`admin.dashboard.items.${item.key}` as any) ||
         item.label ||
         item.key.replace(/_/g, ' '),
       href: ROUTE_MAP[item.key] ?? null,
     }));
-  }, [q.data, copy.nav?.items, page]);
+  }, [q.data, copy.nav?.items, page, t, dashboardMeta]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-lg font-semibold">
-            {page?.title || t('admin.dashboard.title')}
+            {dashboardMeta?.title || page?.title || t('admin.dashboard.title')}
           </h1>
           <p className="text-sm text-muted-foreground">
             {page?.subtitle || t('admin.dashboard.subtitle')}

@@ -24,6 +24,7 @@ import { WeeklyWorkingHoursTab } from './weekly-working-hours-tab';
 import { toStr } from './availability-utils';
 import { DailyPlanTab } from '../tabs/daily-plan-tab';
 import { ResourceTab } from '../tabs/resource-tab';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 export type AvailabilityFormProps = {
   mode: 'create' | 'edit';
@@ -44,6 +45,7 @@ export const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
 }) => {
   const resourceId = toStr(initialData?.id);
   const hasResourceId = isUuidLike(resourceId);
+  const t = useAdminT();
 
   const [activeTab, setActiveTab] = useState<'resource' | 'weekly' | 'daily'>('resource');
 
@@ -93,30 +95,30 @@ export const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
       <CardHeader>
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <CardTitle>{mode === 'create' ? 'Yeni Kaynak' : 'Kaynak Yönetimi'}</CardTitle>
-            <CardDescription>Kaynak bilgileri + haftalık plan + günlük plan.</CardDescription>
+            <CardTitle>{mode === 'create' ? t('availability.form.createTitle') : t('availability.form.editTitle')}</CardTitle>
+            <CardDescription>{t('availability.form.description')}</CardDescription>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             {onCancel ? (
               <Button variant="outline" size="sm" onClick={onCancel} disabled={disabled}>
-                Geri
+                {t('availability.form.buttons.back')}
               </Button>
             ) : null}
 
             <Button size="sm" onClick={() => void submitResource()} disabled={disabled}>
               {saving
                 ? mode === 'create'
-                  ? 'Oluşturuluyor...'
-                  : 'Kaydediliyor...'
+                  ? t('availability.form.buttons.creating')
+                  : t('availability.form.buttons.saving')
                 : mode === 'create'
-                  ? 'Oluştur'
-                  : 'Kaydet'}
+                  ? t('availability.form.buttons.create')
+                  : t('availability.form.buttons.save')}
             </Button>
 
             {loading ? (
               <Badge variant="secondary" className="text-xs">
-                Yükleniyor...
+                {t('availability.common.loading')}
               </Badge>
             ) : null}
           </div>
@@ -130,21 +132,21 @@ export const AvailabilityForm: React.FC<AvailabilityFormProps> = ({
         >
           <TabsList className="mb-4">
             <TabsTrigger value="resource" disabled={disabled}>
-              Kaynak
+              {t('availability.form.tabs.resource')}
             </TabsTrigger>
             <TabsTrigger
               value="weekly"
               disabled={disabled || !hasResourceId}
-              title={!hasResourceId ? 'Önce kaynak oluştur.' : undefined}
+              title={!hasResourceId ? t('availability.form.buttons.create') : undefined}
             >
-              Haftalık Plan
+              {t('availability.form.tabs.weekly')}
             </TabsTrigger>
             <TabsTrigger
               value="daily"
               disabled={disabled || !hasResourceId}
-              title={!hasResourceId ? 'Önce kaynak oluştur.' : undefined}
+              title={!hasResourceId ? t('availability.form.buttons.create') : undefined}
             >
-              Günlük Plan
+              {t('availability.form.tabs.daily')}
             </TabsTrigger>
           </TabsList>
 

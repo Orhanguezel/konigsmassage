@@ -12,7 +12,7 @@ import type {
   SendTestMailPayload,
   OrderCreatedMailPayload,
   MailOkResponse,
-} from '@/integrations/types';
+} from '@/integrations/shared';
 
 export const mailApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

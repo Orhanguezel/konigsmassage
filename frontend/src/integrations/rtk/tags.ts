@@ -63,6 +63,9 @@ export const metahubTags = [
   'WorkingHours',
   'WorkingHour',
   'WeeklyPlan',
+  'ChatThreads',
+  'ChatMessages',
+  'ChatKnowledge',
 ] as const;
 
 export type MetahubTag = (typeof metahubTags)[number];

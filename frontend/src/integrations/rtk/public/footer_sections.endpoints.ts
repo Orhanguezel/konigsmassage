@@ -8,26 +8,8 @@ import type {
   ApiFooterSection,
   FooterSectionDto,
   FooterSectionListQueryParams,
-} from '@/integrations/types';
-
-const asStr = (v: unknown): string => (typeof v === 'string' ? v : String(v ?? ''));
-
-const isTrue = (v: unknown): boolean => v === true || v === 1 || v === '1' || v === 'true';
-
-/**
- * Backend'den gelen merged row'u frontend DTO'ya çevir
- */
-const normalizeFooterSection = (r: ApiFooterSection): FooterSectionDto => ({
-  id: asStr(r.id),
-  is_active: isTrue(r.is_active),
-  display_order: typeof r.display_order === 'number' ? r.display_order : 0,
-  created_at: asStr(r.created_at),
-  updated_at: asStr(r.updated_at),
-  title: r.title ?? '',
-  slug: r.slug ?? '',
-  description: r.description ?? null,
-  locale: r.locale_resolved ?? null,
-});
+} from '@/integrations/shared';
+import { normalizeFooterSection } from '@/integrations/shared';
 
 export const footerSectionsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

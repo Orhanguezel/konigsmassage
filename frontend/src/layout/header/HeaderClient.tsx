@@ -9,7 +9,7 @@ import HeaderOffcanvas from './HeaderOffcanvas';
 import { SiteLogo } from '@/layout/SiteLogo';
 
 import { useListMenuItemsQuery, useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
-import type { PublicMenuItemDto } from '@/integrations/types';
+import type { PublicMenuItemDto } from '@/integrations/shared';
 
 import { localizePath } from '@/i18n/url';
 import { useLocaleShort } from '@/i18n/useLocaleShort';
@@ -133,8 +133,8 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
     const list: MenuItemWithChildren[] = Array.isArray(raw)
       ? raw
       : Array.isArray(raw?.items)
-      ? raw.items
-      : [];
+        ? raw.items
+        : [];
 
     const sortRecursive = (items: MenuItemWithChildren[]): MenuItemWithChildren[] =>
       items
@@ -277,10 +277,7 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
     if (!hasChildren) {
       return (
         <li key={String(item.id ?? rawUrl)}>
-          <Link
-            href={href}
-            className={topLinkClass}
-          >
+          <Link href={href} className={topLinkClass}>
             {label}
           </Link>
         </li>
@@ -290,10 +287,7 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
     return (
       <li key={String(item.id ?? rawUrl)} className="group relative">
         {/* ✅ FIX: block + flex conflict kaldırıldı */}
-        <Link
-          href={href}
-          className={topLinkClassFlex}
-        >
+        <Link href={href} className={topLinkClassFlex}>
           {label}
         </Link>
 
@@ -341,7 +335,12 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
 
   return (
     <Fragment>
-      <HeaderOffcanvas open={open} onClose={() => setOpen(false)} brand={resolvedBrand} locale={locale} />
+      <HeaderOffcanvas
+        open={open}
+        onClose={() => setOpen(false)}
+        brand={resolvedBrand}
+        locale={locale}
+      />
 
       <header>
         <div
@@ -350,8 +349,8 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
             scrolled
               ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-md shadow-lg text-slate-800 h-[90px]'
               : !scrolled && overlayDark
-              ? 'absolute top-0 left-0 bg-transparent text-white h-[120px]'
-              : 'absolute top-0 left-0 bg-white/95 backdrop-blur-md shadow-sm text-slate-800 h-[120px]'
+                ? 'absolute top-0 left-0 bg-transparent text-white h-[120px]'
+                : 'absolute top-0 left-0 bg-white/95 backdrop-blur-md shadow-sm text-slate-800 h-[120px]'
           }`}
         >
           <div className="container mx-auto px-4">

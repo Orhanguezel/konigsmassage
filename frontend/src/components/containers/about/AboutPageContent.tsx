@@ -6,6 +6,7 @@
 // - ✅ FIX: ui() missing-key returns key itself => treat as empty/fallback
 // - ✅ Pattern: t(key, fb) wrapper
 // - ✅ REPLACE: Legacy Bootstrap/Template classes with Tailwind v4
+// - ✅ Uses typed CustomPageDto (no `as any` casts)
 // =============================================================
 
 'use client';
@@ -15,33 +16,18 @@ import Image from 'next/image';
 
 // RTK – Custom Pages Public
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
-import type { CustomPageDto } from '@/integrations/types';
-import { downgradeH1ToH2, extractHtmlFromAny, isRemoteUrl } from '@/integrations/types';
+import type { CustomPageDto } from '@/integrations/shared';
+import { downgradeH1ToH2, isRemoteUrl } from '@/integrations/shared';
 
 // Helpers
 import { toCdnSrc } from '@/shared/media';
 import { useLocaleShort } from '@/i18n/useLocaleShort';
 import { useUiSection } from '@/i18n/uiDb';
 
-function pickFirstPublished(items: any): CustomPageDto | null {
-  const arr: CustomPageDto[] = Array.isArray(items) ? (items as any) : [];
-  const published = arr.filter((p) => !!p?.is_published);
-  return published[0] ?? null;
-}
-
-function safeJsonArray(v: unknown): string[] {
-  if (Array.isArray(v)) return v.map((x) => String(x || '').trim()).filter(Boolean);
-  if (typeof v === 'string') {
-    const s = v.trim();
-    if (!s) return [];
-    try {
-      const parsed = JSON.parse(s);
-      return Array.isArray(parsed) ? parsed.map((x) => String(x || '').trim()).filter(Boolean) : [];
-    } catch {
-      return [];
-    }
-  }
-  return [];
+/** Featured olanı tercih et, yoksa ilk published'i al */
+function pickPage(items: CustomPageDto[]): CustomPageDto | null {
+  const published = items.filter((p) => p.is_published);
+  return published.find((p) => p.featured) ?? published[0] ?? null;
 }
 
 const AboutPageContent: React.FC = () => {
@@ -76,7 +62,7 @@ const AboutPageContent: React.FC = () => {
   });
 
   const page = useMemo<CustomPageDto | null>(
-    () => pickFirstPublished((data as any)?.items),
+    () => pickPage(data?.items ?? []),
     [data],
   );
 
@@ -103,15 +89,14 @@ const AboutPageContent: React.FC = () => {
 
   // CMS html (DB)
   const html = useMemo(() => {
-    const raw =
-      String((page as any)?.content_html ?? '').trim() ||
-      extractHtmlFromAny((page as any)?.content) ||
-      extractHtmlFromAny((page as any)?.content_json);
-
+    const raw = page?.content_html || page?.content || '';
     return raw ? downgradeH1ToH2(raw) : '';
   }, [page]);
 
-  const featuredImageRaw = useMemo(() => String((page as any)?.featured_image ?? '').trim(), [page]);
+  const featuredImageRaw = useMemo(
+    () => (page?.featured_image ?? '').trim(),
+    [page],
+  );
 
   // Featured image
   const imgSrc = useMemo(() => {
@@ -122,21 +107,15 @@ const AboutPageContent: React.FC = () => {
   }, [featuredImageRaw]);
 
   const imgAlt = useMemo(() => {
-    const alt = String((page as any)?.featured_image_alt ?? '').trim();
+    const alt = (page?.featured_image_alt ?? '').trim();
     return alt || 'about image';
   }, [page]);
 
-  const gallery = useMemo(() => {
-    const raw = (page as any)?.images;
-    const list = safeJsonArray(raw);
-    const unique = Array.from(new Set(list));
-    return unique.filter(Boolean);
-  }, [page]);
-
   const galleryThumbs = useMemo(() => {
-    const list = gallery.filter((x) => x && x !== featuredImageRaw);
-    return list.slice(0, 3);
-  }, [gallery, featuredImageRaw]);
+    const images = page?.images ?? [];
+    const unique = Array.from(new Set(images.filter(Boolean)));
+    return unique.filter((x) => x !== featuredImageRaw).slice(0, 3);
+  }, [page, featuredImageRaw]);
 
   return (
     <section className="relative py-20 z-10 bg-bg-primary text-text-primary">
@@ -153,7 +132,9 @@ const AboutPageContent: React.FC = () => {
               {headerTitle}
             </h2>
 
-            {headerLead ? <p className="mt-4 mb-0 text-text-secondary max-w-2xl mx-auto">{headerLead}</p> : null}
+            {headerLead ? (
+              <p className="mt-4 mb-0 text-text-secondary max-w-2xl mx-auto">{headerLead}</p>
+            ) : null}
           </div>
         </div>
 
@@ -176,7 +157,11 @@ const AboutPageContent: React.FC = () => {
         )}
 
         {!!page && !isLoading && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12" data-aos="fade-up" data-aos-delay={150}>
+          <div
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12"
+            data-aos="fade-up"
+            data-aos-delay={150}
+          >
             {/* Image LEFT */}
             <div className="w-full">
               <div className="rounded-2xl overflow-hidden shadow-medium bg-bg-secondary border border-border-light">
@@ -197,7 +182,10 @@ const AboutPageContent: React.FC = () => {
               {galleryThumbs.length ? (
                 <div className="mt-4 grid grid-cols-3 gap-3">
                   {galleryThumbs.map((src) => (
-                    <div key={src} className="relative aspect-square rounded-xl overflow-hidden border border-border-light bg-bg-secondary shadow-soft">
+                    <div
+                      key={src}
+                      className="relative aspect-square rounded-xl overflow-hidden border border-border-light bg-bg-secondary shadow-soft"
+                    >
                       <Image
                         src={src}
                         alt={imgAlt}

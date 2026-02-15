@@ -4,7 +4,7 @@
 // ===================================================================
 
 import { db } from '@/db/client';
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 
 import { resources } from '@/modules/resources/schema';
 import { services } from '@/modules/services/schema';
@@ -19,6 +19,13 @@ import { footerSections } from '@/modules/footerSections/schema';
 import { reviews } from '@/modules/review/schema';
 import { users } from '@/modules/auth/schema';
 import { storageAssets } from '@/modules/storage/schema';
+import { bookings } from '@/modules/bookings/schema';
+import { notifications } from '@/modules/notifications/schema';
+import { auditRequestLogs } from '@/modules/audit/schema';
+import { resourceSlots } from '@/modules/availability/schema';
+
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 export async function getModuleCounts() {
   const [
@@ -35,6 +42,10 @@ export async function getModuleCounts() {
     users_total_row,
     storage_assets_total_row,
     contact_total_row,
+    bookings_total_row,
+    notifications_total_row,
+    audit_logs_total_row,
+    slots_total_row,
   ] = await Promise.all([
     db
       .select({ c: sql<number>`COUNT(*)` })
@@ -88,7 +99,36 @@ export async function getModuleCounts() {
       .select({ c: sql<number>`COUNT(*)` })
       .from(contact_messages)
       .limit(1),
+    db
+      .select({ c: sql<number>`COUNT(*)` })
+      .from(bookings)
+      .limit(1),
+    db
+      .select({ c: sql<number>`COUNT(*)` })
+      .from(notifications)
+      .limit(1),
+    db
+      .select({ c: sql<number>`COUNT(*)` })
+      .from(auditRequestLogs)
+      .limit(1),
+    db
+      .select({ c: sql<number>`COUNT(*)` })
+      .from(resourceSlots)
+      .limit(1),
   ]);
+
+  // DB Snapshot count (reads from filesystem index)
+  let db_snapshots_total = 0;
+  try {
+    const SNAPSHOT_INDEX_FILE = join(process.cwd(), 'uploads', 'db_snapshots', 'index.json');
+    if (existsSync(SNAPSHOT_INDEX_FILE)) {
+      const raw = readFileSync(SNAPSHOT_INDEX_FILE, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) db_snapshots_total = parsed.length;
+    }
+  } catch {
+    // ignore
+  }
 
   return {
     resources_total: Number(resources_total_row?.[0]?.c ?? 0) || 0,
@@ -104,6 +144,11 @@ export async function getModuleCounts() {
     users_total: Number(users_total_row?.[0]?.c ?? 0) || 0,
     storage_assets_total: Number(storage_assets_total_row?.[0]?.c ?? 0) || 0,
     contact_messages_total: Number(contact_total_row?.[0]?.c ?? 0) || 0,
+    bookings_total: Number(bookings_total_row?.[0]?.c ?? 0) || 0,
+    notifications_total: Number(notifications_total_row?.[0]?.c ?? 0) || 0,
+    audit_logs_total: Number(audit_logs_total_row?.[0]?.c ?? 0) || 0,
+    availability_total: Number(slots_total_row?.[0]?.c ?? 0) || 0,
+    db_snapshots_total,
   };
 }
 
@@ -115,12 +160,7 @@ export async function getUnreadContactCount() {
       c: sql<number>`COUNT(*)`,
     })
     .from(contact_messages)
-    .where(
-      sql`(
-        (${(contact_messages as any).is_read} = 0)
-        OR (${(contact_messages as any).read_at} IS NULL)
-      )`,
-    )
+    .where(eq(contact_messages.status, 'new'))
     .limit(1);
 
   return Number(row?.c ?? 0) || 0;

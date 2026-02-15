@@ -71,16 +71,16 @@ export const CustomPageSidebarColumn: React.FC<Props> = ({
           onChange={(e) => setContentImageSize(e.target.value as ContentImageSize)}
           disabled={disabled}
         >
-          <option value="sm">Küçük (1/2)</option>
-          <option value="md">Orta (3/4)</option>
-          <option value="lg">Büyük (varsayılan)</option>
-          <option value="full">Tam genişlik</option>
+          <option value="sm">{t('admin.customPage.form.imageSizeSm')}</option>
+          <option value="md">{t('admin.customPage.form.imageSizeMd')}</option>
+          <option value="lg">{t('admin.customPage.form.imageSizeLg')}</option>
+          <option value="full">{t('admin.customPage.form.imageSizeFull')}</option>
         </select>
       </div>
 
       <AdminImageUploadField
         label={t('admin.customPage.form.content') + ' ' + t('admin.common.upload')}
-        helperText={<>Yüklenen görsel içerik alanının sonuna blok olarak eklenir.</>}
+        helperText={<>{t('admin.customPage.form.uploadHelperText')}</>}
         bucket="public"
         folder="custom_pages/content"
         metadata={{ ...(imageMetadata || {}), section: 'content' }}
@@ -98,7 +98,7 @@ export const CustomPageSidebarColumn: React.FC<Props> = ({
         <input
           type="url"
           className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          placeholder="https://... (görsel URL'i)"
+          placeholder="https://..."
           value={manualImageUrl}
           onChange={(e) => setManualImageUrl(e.target.value)}
           disabled={disabled}
@@ -106,7 +106,7 @@ export const CustomPageSidebarColumn: React.FC<Props> = ({
         <input
           type="text"
           className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          placeholder="Alt metin (opsiyonel)"
+          placeholder={t('admin.customPage.form.altTextPlaceholder')}
           value={manualImageAlt}
           onChange={(e) => setManualImageAlt(e.target.value)}
           disabled={disabled}
@@ -117,12 +117,12 @@ export const CustomPageSidebarColumn: React.FC<Props> = ({
           onClick={handleAddManualImage}
           disabled={disabled}
         >
-          Serbest URL&apos;yi İçeriğe Ekle
+          {t('admin.customPage.form.addManualUrl')}
         </button>
       </div>
 
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">Meta Title</label>
+        <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.form.metaTitle')}</label>
         <input
           type="text"
           className="w-full rounded-md border bg-background px-3 py-2 text-sm"
@@ -133,7 +133,7 @@ export const CustomPageSidebarColumn: React.FC<Props> = ({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">Meta Description</label>
+        <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.form.metaDescription')}</label>
         <textarea
           className="w-full rounded-md border bg-background px-3 py-2 text-sm"
           rows={3}
