@@ -2,6 +2,7 @@
 
 import { CircleUser, CreditCard, EllipsisVertical, LogOut, MessageSquareDot } from "lucide-react";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -16,6 +17,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
 import { useAdminT } from "@/app/(main)/admin/_components/common/useAdminT";
+import { useLogoutMutation } from '@/integrations/hooks';
 
 export function NavUser({
   user,
@@ -28,6 +30,19 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const t = useAdminT();
+  const router = useRouter();
+  const [logout, { isLoading }] = useLogoutMutation();
+
+  async function onLogout() {
+    try {
+      await logout().unwrap();
+    } catch {
+      // logout fail olsa bile login'e gönder
+    } finally {
+      router.replace('/auth/login');
+      router.refresh();
+    }
+  }
 
   return (
     <SidebarMenu>
@@ -85,7 +100,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout} disabled={isLoading}>
               <LogOut />
               {t('admin.sidebar.user.logout')}
             </DropdownMenuItem>
