@@ -13,6 +13,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 
 import { useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
+import { useLocaleShort } from '@/i18n';
 
 
 type Props = {
@@ -87,26 +88,35 @@ const ContactCtaCard: React.FC<Props> = ({
 
   contactHref = '/contact',
 }) => {
-  const phoneDisplayQ = useGetSiteSettingByKeyQuery({ key: 'contact_phone_display' });
-  const phoneTelQ = useGetSiteSettingByKeyQuery({ key: 'contact_phone_tel' });
-  const waLinkQ = useGetSiteSettingByKeyQuery({ key: 'contact_whatsapp_link' });
+  const locale = useLocaleShort();
+  const { data: contactRow } = useGetSiteSettingByKeyQuery({ key: 'contact_info', locale: locale as any });
+
+  const contactData = useMemo(() => {
+    const val = (contactRow as any)?.value;
+    if (!val) return null;
+    try {
+      if (typeof val === 'string') return JSON.parse(val);
+      return val;
+    } catch {
+      return null;
+    }
+  }, [contactRow]);
 
   const phoneDisplay = useMemo(() => {
-    const s = safeSettingString((phoneDisplayQ.data as any)?.value);
-    return s;
-  }, [phoneDisplayQ.data]);
+    return safeSettingString(contactData?.phones?.[0] || contactData?.phone || '');
+  }, [contactData]);
 
   const phoneRaw = useMemo(() => {
-    const s = safeSettingString((phoneTelQ.data as any)?.value);
-    return s || phoneDisplay;
-  }, [phoneTelQ.data, phoneDisplay]);
+    return safeSettingString(contactData?.phones?.[0] || contactData?.phone || '');
+  }, [contactData]);
 
   const telHref = useMemo(() => buildTelHref(phoneRaw), [phoneRaw]);
 
   const waHref = useMemo(() => {
-    const explicit = safeSettingString((waLinkQ.data as any)?.value);
-    return explicit || buildWhatsappHref(phoneRaw);
-  }, [waLinkQ.data, phoneRaw]);
+    const wa = contactData?.whatsappNumber || contactData?.whatsapp;
+    if (wa) return buildWhatsappHref(safeSettingString(wa));
+    return buildWhatsappHref(phoneRaw);
+  }, [contactData, phoneRaw]);
 
   const hasAny = !!phoneDisplay || !!telHref || !!waHref || !!contactHref || !!description;
 
