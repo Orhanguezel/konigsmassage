@@ -45,8 +45,25 @@ CREATE TABLE IF NOT EXISTS `chat_messages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Existing installations: add new routing fields if table already existed.
-ALTER TABLE `chat_threads`
-  ADD COLUMN IF NOT EXISTS `handoff_mode` varchar(20) NOT NULL DEFAULT 'ai',
-  ADD COLUMN IF NOT EXISTS `ai_provider_preference` varchar(20) NOT NULL DEFAULT 'auto',
-  ADD COLUMN IF NOT EXISTS `preferred_locale` varchar(10) NOT NULL DEFAULT 'tr',
-  ADD COLUMN IF NOT EXISTS `assigned_admin_user_id` varchar(36) DEFAULT NULL;
+-- Safe column addition for existing installations
+SET @col_exists := (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'chat_threads' AND COLUMN_NAME = 'handoff_mode');
+SET @add_col_sql := IF(@col_exists = 0, 'ALTER TABLE `chat_threads` ADD COLUMN `handoff_mode` varchar(20) NOT NULL DEFAULT \'ai\'', 'SELECT 1');
+PREPARE stmt FROM @add_col_sql;
+EXECUTE stmt;
+
+SET @col_exists := (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'chat_threads' AND COLUMN_NAME = 'ai_provider_preference');
+SET @add_col_sql := IF(@col_exists = 0, 'ALTER TABLE `chat_threads` ADD COLUMN `ai_provider_preference` varchar(20) NOT NULL DEFAULT \'auto\'', 'SELECT 1');
+PREPARE stmt FROM @add_col_sql;
+EXECUTE stmt;
+
+SET @col_exists := (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'chat_threads' AND COLUMN_NAME = 'preferred_locale');
+SET @add_col_sql := IF(@col_exists = 0, 'ALTER TABLE `chat_threads` ADD COLUMN `preferred_locale` varchar(10) NOT NULL DEFAULT \'tr\'', 'SELECT 1');
+PREPARE stmt FROM @add_col_sql;
+EXECUTE stmt;
+
+SET @col_exists := (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'chat_threads' AND COLUMN_NAME = 'assigned_admin_user_id');
+SET @add_col_sql := IF(@col_exists = 0, 'ALTER TABLE `chat_threads` ADD COLUMN `assigned_admin_user_id` varchar(36) DEFAULT NULL', 'SELECT 1');
+PREPARE stmt FROM @add_col_sql;
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
