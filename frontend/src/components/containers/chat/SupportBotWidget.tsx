@@ -207,7 +207,7 @@ export default function SupportBotWidget() {
       const seen = Number(seenByThreadRef.current[th.id] ?? 0);
       return acc + (updated > seen ? 1 : 0);
     }, 0);
-  }, [filteredAdminThreads, adminThreadsQuery.data?.items]);
+  }, [filteredAdminThreads]);
 
   useEffect(() => {
     if (!open || !isAuthenticated || !isAdmin) return;
@@ -374,7 +374,6 @@ export default function SupportBotWidget() {
           overflow: "hidden",
           cursor: "pointer",
           transition: "transform 0.2s, box-shadow 0.2s",
-          position: "fixed",
         }}
       >
         {open ? (
