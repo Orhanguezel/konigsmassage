@@ -163,8 +163,8 @@ const Hero: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
                   src={heroSrc}
                   alt={heroAlt}
                   fill
-                  priority={activeIdx === 0}
-                  fetchPriority={activeIdx === 0 ? 'high' : 'auto'}
+                  priority={hasSlides && activeIdx === 0}
+                  fetchPriority={hasSlides && activeIdx === 0 ? 'high' : 'auto'}
                   unoptimized
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
@@ -183,8 +183,8 @@ const Hero: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
                 src={heroSrc}
                 alt={heroAlt}
                 fill
-                priority={activeIdx === 0}
-                fetchPriority={activeIdx === 0 ? 'high' : 'auto'}
+                priority={hasSlides && activeIdx === 0}
+                fetchPriority={hasSlides && activeIdx === 0 ? 'high' : 'auto'}
                 unoptimized
                 sizes="100vw"
                 className="object-cover"
