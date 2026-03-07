@@ -340,7 +340,7 @@ function PurchaseModal({
             personal_message: form.personal_message.trim() || null,
           };
 
-      const res = await purchase(body).unwrap();
+      const res = await purchase({ ...body, locale }).unwrap();
 
       if (res.paypal?.approve_url) {
         window.location.href = res.paypal.approve_url;

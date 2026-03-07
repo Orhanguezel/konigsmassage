@@ -210,13 +210,13 @@ export function PaymentSettingsClient() {
               <CardTitle className="text-base">{t('paypal.title', {}, 'PayPal')}</CardTitle>
             </div>
             <Button type="button" variant="outline" size="sm" onClick={refetch} disabled={busy}>
-              Yenile
+              {t('refresh', {}, 'Refresh')}
             </Button>
           </div>
         </CardHeader>
 
         <CardContent className="space-y-5">
-          {loading && <Badge variant="secondary">Yükleniyor...</Badge>}
+          {loading && <Badge variant="secondary">{t('loading', {}, 'Loading…')}</Badge>}
 
           <div className="flex items-center gap-3">
             <Switch
@@ -355,7 +355,7 @@ export function PaymentSettingsClient() {
 
       <div className="flex justify-end">
         <Button type="button" disabled={busy} onClick={handleSave}>
-          {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
+          {isSaving ? t('saving', {}, 'Saving…') : t('save', {}, 'Save')}
         </Button>
       </div>
     </div>

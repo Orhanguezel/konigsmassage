@@ -2122,7 +2122,11 @@
           "inactiveNote": "Pasif: Randevu onay e-postaları yalnızca randevuyu onaylar, ödeme bağlantısı içermez."
         },
         "saved": "Ödeme ayarları kaydedildi.",
-        "saveError": "Ayarlar kaydedilemedi."
+        "saveError": "Ayarlar kaydedilemedi.",
+        "refresh": "Yenile",
+        "loading": "Yükleniyor…",
+        "saving": "Kaydediliyor…",
+        "save": "Kaydet"
       },
       "filters": {
         "title": "Filtreler",
@@ -3345,7 +3349,12 @@
       },
       "filters": {
         "search": "Başlık veya içerik ara",
+        "localeLabel": "Dil",
+        "localePlaceholder": "Dil seçin",
+        "activeLocale": "Dil",
+        "typeLabel": "Tip",
         "typeAll": "Tüm Tipler",
+        "statusLabel": "Durum",
         "statusAll": "Tümü",
         "statusActive": "Aktif",
         "statusPassive": "Pasif"
@@ -3376,12 +3385,16 @@
       "table": {
         "title": "Başlık",
         "type": "Tip",
+        "targets": "Hedef",
+        "allPages": "Tüm sayfalar",
         "order": "Sıra",
         "active": "Durum",
         "actions": "Aksiyon"
       },
       "states": {
-        "empty": "Kayıt bulunamadı"
+        "empty": "Kayıt bulunamadı",
+        "loading": "Yükleniyor...",
+        "loadError": "Popup yüklenemedi."
       },
       "actions": {
         "refresh": "Yenile",
@@ -3391,7 +3404,8 @@
         "prev": "Önceki",
         "next": "Sonraki",
         "cancel": "İptal",
-        "save": "Kaydet"
+        "save": "Kaydet",
+        "back": "Geri"
       },
       "labels": {
         "page": "Sayfa {page}"
@@ -3417,6 +3431,7 @@
         "order": "Sıra",
         "buttonText": "Buton Metni",
         "linkUrl": "Bağlantı",
+        "targetPaths": "Hedef sayfalar",
         "linkTarget": "Link Hedefi",
         "textBehavior": "Metin Davranışı",
         "scrollSpeed": "Kaydırma Hızı",
@@ -3432,7 +3447,19 @@
         "end": "Bitiş",
         "delay": "Gecikme (sn)",
         "active": "Aktif",
-        "closeable": "Kapatılabilir"
+        "closeable": "Kapatılabilir",
+        "newDesc": "Yeni popup oluştur",
+        "editDesc": "Popup içerik ve ayarlarını düzenle",
+        "sectionContent": "İçerik",
+        "sectionContentDesc": "Başlık, metin ve dil",
+        "sectionDisplay": "Görüntüleme",
+        "sectionDisplayDesc": "Tip, davranış ve sıralama",
+        "sectionSchedule": "Zamanlama",
+        "sectionScheduleDesc": "Başlangıç ve bitiş tarihi",
+        "sectionImage": "Görsel",
+        "sectionImageDesc": "Görsel URL veya asset",
+        "sectionColors": "Renkler",
+        "sectionColorsDesc": "Arkaplan, metin ve buton renkleri"
       }
     },
     "gutschein": {
@@ -3448,6 +3475,8 @@
       "filters": {
         "searchLabel": "Ara (kod / e-posta / isim)",
         "searchPlaceholder": "KM-XXXX-XXXX veya e-posta...",
+        "localeLabel": "Dil",
+        "localePlaceholder": "Dil seçin",
         "statusLabel": "Durum",
         "all": "Tümü"
       },
@@ -3484,6 +3513,8 @@
         "purchaserEmail": "Satın Alan E-posta",
         "note": "Dahili Not",
         "notePlaceholder": "Opsiyonel dahili not...",
+        "personalMessage": "Kişisel Mesaj",
+        "status": "Durum",
         "submit": "Hediye Kartı Oluştur",
         "cancel": "İptal"
       },
@@ -3493,6 +3524,35 @@
         "confirm": "Kartı İptal Et",
         "keep": "Vazgeç"
       },
+      "status": {
+        "pending": "Beklemede",
+        "active": "Aktif",
+        "redeemed": "Kullanıldı",
+        "expired": "Süresi Doldu",
+        "cancelled": "İptal Edildi"
+      },
+      "paymentStatus": {
+        "pending": "Beklemede",
+        "paid": "Ödendi",
+        "failed": "Başarısız",
+        "refunded": "İade Edildi"
+      },
+      "detail": {
+        "purchaser": "Satın Alan",
+        "purchaserEmail": "Satın Alan E-posta",
+        "paymentStatus": "Ödeme Durumu",
+        "orderRef": "Sipariş Ref",
+        "redeemedAt": "Kullanım Tarihi",
+        "personalMessage": "Kişisel Mesaj",
+        "editTitle": "Düzenle",
+        "status": "Durum",
+        "recipientName": "Alıcı Adı",
+        "recipientEmail": "Alıcı E-posta",
+        "expiresAt": "Son Geçerlilik Tarihi",
+        "internalNote": "Dahili Not",
+        "close": "Kapat",
+        "saveChanges": "Değişiklikleri Kaydet"
+      },
       "messages": {
         "created": "Hediye kartı oluşturuldu.",
         "cancelled": "Hediye kartı iptal edildi.",
@@ -3501,8 +3561,10 @@
         "cancelError": "İptal işlemi başarısız.",
         "activateError": "Etkinleştirme başarısız.",
         "valueRequired": "Lütfen geçerli bir değer girin.",
+        "purchaserRequired": "Satın alan adı ve e-posta zorunludur.",
         "updated": "Hediye kartı güncellendi.",
-        "updateError": "Hediye kartı güncellenemedi."
+        "updateError": "Hediye kartı güncellenemedi.",
+        "noChanges": "Değişiklik yok."
       },
       "products": {
         "title": "Hediye Kartı Ürünleri",

@@ -113,12 +113,18 @@ export async function registerAuditStream(app: FastifyInstance) {
   app.get(`${BASE}/stream`, ph, async (req, reply) => {
     ensureBusSubscribed();
 
-    // SSE headers
+    const origin = req.headers.origin;
+
+    // SSE headers (include CORS since writeHead bypasses Fastify's CORS plugin)
     reply.raw.writeHead(200, {
       'Content-Type': 'text/event-stream; charset=utf-8',
       'Cache-Control': 'no-cache, no-transform',
       Connection: 'keep-alive',
       'X-Accel-Buffering': 'no',
+      ...(origin ? {
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Credentials': 'true',
+      } : {}),
     });
 
     const client: SseClient = { id: String((req as any).id ?? Date.now()), reply };

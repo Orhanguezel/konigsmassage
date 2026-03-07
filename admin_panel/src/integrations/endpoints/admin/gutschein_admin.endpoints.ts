@@ -96,7 +96,7 @@ export const gutscheinAdminApi = baseApi.injectEndpoints({
 
     createGutscheinAdmin: b.mutation<GutscheinDto, GutscheinAdminCreateBody>({
       query: (body) => ({ url: BASE_GUTSCHEINS, method: 'POST', body }),
-      transformResponse: (res: unknown) => normalizeGutschein((res as any)?.gutschein ?? res),
+      transformResponse: (res: unknown) => normalizeGutschein(res),
       invalidatesTags: [{ type: 'Gutscheins' as const, id: 'LIST' }],
     }),
 

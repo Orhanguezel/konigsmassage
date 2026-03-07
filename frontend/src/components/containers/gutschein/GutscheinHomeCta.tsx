@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLocaleShort } from '@/i18n';
 import { localizePath } from '@/integrations/shared';
@@ -32,8 +32,10 @@ const COPY: Record<string, { title: string; desc: string; customLabel: string; c
 export default function GutscheinHomeCta({ locale: explicitLocale }: Props) {
   const locale = useLocaleShort(explicitLocale) || 'de';
   const copy = COPY[locale] ?? COPY['de'];
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  const { data: products } = useListGutscheinProductsQuery();
+  const { data: products } = useListGutscheinProductsQuery(undefined, { skip: !mounted });
   const activeProducts = (products ?? []).filter((p) => p.is_active);
 
   // Build chips from DB products (sorted by value), then append custom-amount chip

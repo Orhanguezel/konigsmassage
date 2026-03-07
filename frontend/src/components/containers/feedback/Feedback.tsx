@@ -26,6 +26,8 @@ const TARGET_ID = 'konigsmassage';
 const Feedback: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
   const locale = useResolvedLocale(explicitLocale);
   const { ui } = useUiSection('ui_feedback', locale);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const { data, isLoading } = useListReviewsPublicQuery({
     minRating: 1,
@@ -37,7 +39,7 @@ const Feedback: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => 
     active: 1,
     target_type: TARGET_TYPE,
     target_id: TARGET_ID,
-  });
+  }, { skip: !mounted });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);

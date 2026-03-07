@@ -8,7 +8,7 @@
 
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -25,6 +25,8 @@ const CARD_H = 560;
 export default function BlogHomeSection({ locale: explicitLocale }: { locale?: string }) {
   const locale = useLocaleShort(explicitLocale);
   const { ui } = useUiSection('ui_blog', locale as any);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const { data, isLoading } = useListCustomPagesPublicQuery({
     module_key: 'blog',
@@ -33,7 +35,7 @@ export default function BlogHomeSection({ locale: explicitLocale }: { locale?: s
     featured: 1,
     limit: 2,
     order: 'display_order.asc',
-  });
+  }, { skip: !mounted });
 
   const posts = useMemo(() => {
     const raw = (data as any)?.items ?? [];

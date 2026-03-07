@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -24,12 +24,14 @@ import { IconArrowRight } from '@/components/ui/icons';
 const Service: React.FC = () => {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_services', locale as any);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const { data, isLoading } = useListServicesPublicQuery({
     locale,
     limit: 12, // More items for the main page
     order: 'display_order.asc',
-  } as any);
+  } as any, { skip: !mounted });
 
   const cards = useMemo<ServiceCardVM[]>(() => {
     const items = Array.isArray((data as any)?.items) ? ((data as any).items as any[]) : [];
@@ -94,7 +96,7 @@ const Service: React.FC = () => {
 
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up">
-            {isLoading && cards.length === 0 ? (
+        {(!mounted || (isLoading && cards.length === 0)) ? (
                  Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="flex w-full flex-col bg-white rounded-2xl border border-sand-200 overflow-hidden h-112.5">
                         <div className="h-56 bg-sand-100 animate-pulse" />

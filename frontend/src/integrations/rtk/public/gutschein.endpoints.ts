@@ -18,8 +18,13 @@ export const gutscheinPublicApi = baseApi.injectEndpoints({
       query: () => ({ url: `${BASE}/products`, method: 'GET' }),
     }),
 
-    purchaseGutschein: build.mutation<PurchaseGutscheinResp, PurchaseGutscheinBody>({
-      query: (body) => ({ url: `${BASE}/purchase`, method: 'POST', body }),
+    purchaseGutschein: build.mutation<PurchaseGutscheinResp, PurchaseGutscheinBody & { locale?: string }>({
+      query: ({ locale, ...body }) => ({
+        url: `${BASE}/purchase`,
+        method: 'POST',
+        body,
+        headers: locale ? { 'x-locale': locale } : undefined,
+      }),
     }),
 
     captureGutscheinPaypal: build.mutation<CaptureGutscheinPaypalResp, { id: string; order_id: string }>({

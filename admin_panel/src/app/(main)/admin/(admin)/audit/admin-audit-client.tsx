@@ -559,14 +559,9 @@ export default function AdminAuditClient() {
     { skip: tab !== 'map', refetchOnFocus: true } as any,
   ) as any;
 
-  const reqData = (reqQ.data as AuditListResponse<AuditRequestLogDto> | undefined) ?? {
-    items: [],
-    total: 0,
-  };
-  const authData = (authQ.data as AuditListResponse<AuditAuthEventDto> | undefined) ?? {
-    items: [],
-    total: 0,
-  };
+  const EMPTY_LIST = React.useMemo(() => ({ items: [] as any[], total: 0 }), []);
+  const reqData = (reqQ.data as AuditListResponse<AuditRequestLogDto> | undefined) ?? EMPTY_LIST;
+  const authData = (authQ.data as AuditListResponse<AuditAuthEventDto> | undefined) ?? EMPTY_LIST;
   const metricsData = (metricsQ.data as AuditMetricsDailyResponseDto | undefined) ?? { days: [] };
   const geoData = (geoQ.data as AuditGeoStatsResponseDto | undefined) ?? { items: [] };
 
@@ -591,11 +586,14 @@ export default function AdminAuditClient() {
     });
   }, [compareLeft?.body_snapshot, compareRight?.body_snapshot]);
 
+  const reqItems = reqData.items;
   React.useEffect(() => {
-    setCompareIds((prev) =>
-      prev.filter((id) => reqData.items.some((item) => Number(item.id) === Number(id))).slice(0, 2),
-    );
-  }, [reqData.items]);
+    setCompareIds((prev) => {
+      if (prev.length === 0) return prev;
+      const next = prev.filter((id) => reqItems.some((item) => Number(item.id) === Number(id))).slice(0, 2);
+      return next.length === prev.length ? prev : next;
+    });
+  }, [reqItems]);
 
   const canPrev = offset > 0;
   const canNextReq = offset + limit < reqTotal;

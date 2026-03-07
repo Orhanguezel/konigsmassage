@@ -9,10 +9,9 @@
 // =============================================================
 'use client';
 
-import { useMemo, useSyncExternalStore } from 'react';
-import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
+import { useParams, usePathname } from 'next/navigation';
 import { FALLBACK_LOCALE, normLocaleTag, normalizeLocales, resolveDefaultLocale } from '@/integrations/shared';
-import { ensureLocationEventsPatched } from '@/i18n';
 import {
   useGetAppLocalesPublicQuery,
   useGetDefaultLocalePublicQuery,
@@ -53,37 +52,15 @@ function computeActiveLocales(meta: any[] | undefined): string[] {
   return normalized.length ? normalized : [fb];
 }
 
-/** External store snapshot (pathname) */
-function getPathnameSnapshot(): string {
-  if (typeof window === 'undefined') return '/';
-  return window.location.pathname || '/';
-}
 
-/** Subscribe to navigation-ish changes without calling setState ourselves */
-function subscribePathname(onStoreChange: () => void): () => void {
-  if (typeof window === 'undefined') return () => {};
-
-  // Patch pushState/replaceState to emit 'locationchange'
-  ensureLocationEventsPatched();
-
-  window.addEventListener('locationchange', onStoreChange);
-  window.addEventListener('popstate', onStoreChange);
-  window.addEventListener('hashchange', onStoreChange);
-
-  return () => {
-    window.removeEventListener('locationchange', onStoreChange);
-    window.removeEventListener('popstate', onStoreChange);
-    window.removeEventListener('hashchange', onStoreChange);
-  };
-}
 
 export function useResolvedLocale(explicitLocale?: string | null): string {
   // ✅ Next.js route param — SSR'da da doğru locale verir (hydration fix)
   const params = useParams();
   const routeLocale = typeof params?.locale === 'string' ? normLocaleTag(params.locale) : '';
 
-  // ✅ No setState in listeners -> no "useInsertionEffect must not schedule updates"
-  const pathname = useSyncExternalStore(subscribePathname, getPathnameSnapshot, () => '/');
+  // ✅ usePathname() — Next.js App Router native, no history patching needed
+  const pathname = usePathname() ?? '/';
 
   // ✅ RTK Query: tüm component'ler aynı cache'i paylaşır, duplicate istek yok
   const { data: appLocalesData } = useGetAppLocalesPublicQuery();

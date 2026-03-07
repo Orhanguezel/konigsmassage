@@ -45,12 +45,6 @@ VALUES
  JSON_ARRAY('user_name','user_email','site_name'),
  1, '2025-10-09 19:38:58.000', '2025-10-13 15:06:38.000'),
 
--- offers (example)
-('3333cccc-2222-3333-4444-555566667777',
- 'offer_request_received_admin',
- JSON_ARRAY('customer_name','company_name','email','phone','offer_id','message'),
- 1, '2025-10-10 10:00:00.000', '2025-10-10 10:00:00.000'),
-
 -- bookings
 ('b0c0a111-1111-4111-8111-111111111111',
  'booking_created_customer',

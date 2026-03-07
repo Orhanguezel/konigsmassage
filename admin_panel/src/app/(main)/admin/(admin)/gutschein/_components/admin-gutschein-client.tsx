@@ -6,14 +6,14 @@
 // =============================================================
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import {
   Gift, Loader2, Plus, RefreshCcw, Search, CheckCircle2, Ban, Eye,
 } from 'lucide-react';
 
+import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
-import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -96,10 +96,10 @@ const STATUS_BADGE_MAP: Record<GutscheinStatus, string> = {
   cancelled: 'bg-red-100 text-red-700',
 };
 
-function StatusBadge({ status }: { status: GutscheinStatus }) {
+function StatusBadge({ status, label }: { status: GutscheinStatus; label?: string }) {
   return (
     <span className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium', STATUS_BADGE_MAP[status] ?? 'bg-gray-100 text-gray-600')}>
-      {status}
+      {label || status}
     </span>
   );
 }
@@ -119,13 +119,15 @@ function InfoRow({ label, value, mono }: { label: string; value: React.ReactNode
 type CreateForm = {
   product_id: string; value: string; currency: string; validity_days: string;
   recipient_name: string; recipient_email: string;
-  purchaser_name: string; purchaser_email: string; note: string;
+  purchaser_name: string; purchaser_email: string; admin_note: string;
+  status: string; personal_message: string;
 };
 
 const EMPTY_CREATE: CreateForm = {
   product_id: '', value: '', currency: 'EUR', validity_days: '365',
   recipient_name: '', recipient_email: '',
-  purchaser_name: '', purchaser_email: '', note: '',
+  purchaser_name: '', purchaser_email: '', admin_note: '',
+  status: 'active', personal_message: '',
 };
 
 type EditForm = {
@@ -133,7 +135,7 @@ type EditForm = {
   recipient_name: string;
   recipient_email: string;
   expires_at: string;
-  note: string;
+  admin_note: string;
 };
 
 function itemToEditForm(item: GutscheinDto): EditForm {
@@ -142,16 +144,55 @@ function itemToEditForm(item: GutscheinDto): EditForm {
     recipient_name:  item.recipient_name ?? '',
     recipient_email: item.recipient_email ?? '',
     expires_at:      toDateInputValue(item.expires_at),
-    note:            item.note ?? '',
+    admin_note:      item.note ?? '',
   };
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export default function AdminGutscheinClient() {
-  const router        = useRouter();
-  const t             = useAdminT('admin.gutschein');
-  const adminUiLocale = usePreferencesStore((s) => s.adminLocale);
+  const router = useRouter();
+  const sp = useSearchParams();
+  const t = useAdminT('admin.gutschein');
+
+  const { localeOptions, defaultLocaleFromDb, loading: localesLoading } = useAdminLocales();
+
+  // --- Locale state synced with URL ---
+  const urlLocale = React.useMemo(() => {
+    return sp?.get('locale')?.trim().toLowerCase() || '';
+  }, [sp]);
+
+  const [selectedLocale, setSelectedLocale] = React.useState('');
+
+  const effectiveLocale = React.useMemo(() => {
+    if (selectedLocale && localeOptions.some((o: any) => o.value === selectedLocale)) return selectedLocale;
+    if (defaultLocaleFromDb) return defaultLocaleFromDb;
+    return localeOptions[0]?.value || 'de';
+  }, [selectedLocale, localeOptions, defaultLocaleFromDb]);
+
+  React.useEffect(() => {
+    if (localesLoading || localeOptions.length === 0) return;
+    if (selectedLocale) return;
+
+    const canUse = (l: string) => !!l && localeOptions.some((o: any) => o.value === l);
+
+    if (urlLocale && canUse(urlLocale)) {
+      setSelectedLocale(urlLocale);
+    } else if (defaultLocaleFromDb && canUse(defaultLocaleFromDb)) {
+      setSelectedLocale(defaultLocaleFromDb);
+    } else if (localeOptions.length > 0) {
+      setSelectedLocale(localeOptions[0].value);
+    }
+  }, [localesLoading, localeOptions, urlLocale, defaultLocaleFromDb, selectedLocale]);
+
+  React.useEffect(() => {
+    if (!effectiveLocale) return;
+    if (effectiveLocale === urlLocale) return;
+
+    const params = new URLSearchParams(sp?.toString() || '');
+    params.set('locale', effectiveLocale);
+    router.replace(`/admin/gutschein?${params.toString()}`);
+  }, [effectiveLocale, urlLocale, sp, router]);
 
   const [statusFilter, setStatusFilter] = React.useState<string>('all');
   const [search, setSearch]             = React.useState('');
@@ -231,17 +272,23 @@ export default function AdminGutscheinClient() {
       toast.error(t('messages.valueRequired', {}, 'Please enter a valid value.'));
       return;
     }
+    if (!createForm.purchaser_name.trim() || !createForm.purchaser_email.trim()) {
+      toast.error(t('messages.purchaserRequired', {}, 'Purchaser name and email are required.'));
+      return;
+    }
     try {
       await createGutschein({
-        product_id:      createForm.product_id || undefined,
+        product_id:       createForm.product_id || undefined,
         value,
-        currency:        createForm.currency || 'EUR',
-        validity_days:   parseInt(createForm.validity_days) || 365,
-        recipient_name:  createForm.recipient_name || undefined,
-        recipient_email: createForm.recipient_email || undefined,
-        purchaser_name:  createForm.purchaser_name || undefined,
-        purchaser_email: createForm.purchaser_email || undefined,
-        note:            createForm.note || undefined,
+        currency:         createForm.currency || 'EUR',
+        validity_days:    parseInt(createForm.validity_days) || 365,
+        recipient_name:   createForm.recipient_name || undefined,
+        recipient_email:  createForm.recipient_email || undefined,
+        purchaser_name:   createForm.purchaser_name,
+        purchaser_email:  createForm.purchaser_email,
+        personal_message: createForm.personal_message || undefined,
+        status:           (createForm.status as any) || 'active',
+        admin_note:       createForm.admin_note || undefined,
       }).unwrap();
       toast.success(t('messages.created', {}, 'Gift card created.'));
       setCreateDialogOpen(false);
@@ -268,11 +315,11 @@ export default function AdminGutscheinClient() {
       body.recipient_email = editForm.recipient_email || null;
     if (editForm.expires_at !== toDateInputValue(detailItem.expires_at))
       body.expires_at = editForm.expires_at || null;
-    if ((editForm.note || null) !== detailItem.note)
-      body.admin_note = editForm.note || null;
+    if ((editForm.admin_note || null) !== detailItem.note)
+      body.admin_note = editForm.admin_note || null;
 
     if (Object.keys(body).length === 0) {
-      toast.info('No changes.');
+      toast.info(t('messages.noChanges', {}, 'No changes.'));
       return;
     }
     try {
@@ -298,7 +345,12 @@ export default function AdminGutscheinClient() {
                   <Gift className="size-5" />
                   {t('title', {}, 'Gift Cards')}
                 </CardTitle>
-                <CardDescription>{t('description', {}, 'Manage gift cards.')}</CardDescription>
+                <CardDescription>
+                  {t('description', {}, 'Manage gift cards.')}
+                  {' '}&bull;{' '}
+                  {t('filters.localeLabel', {}, 'Sprache')}{' '}
+                  <Badge variant="secondary">{effectiveLocale?.toUpperCase() || '—'}</Badge>
+                </CardDescription>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => router.push('/admin/gutschein/products')} disabled={busy}>
@@ -313,7 +365,7 @@ export default function AdminGutscheinClient() {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="search" className="text-sm">{t('filters.searchLabel', {}, 'Search')}</Label>
                 <div className="relative">
@@ -328,13 +380,33 @@ export default function AdminGutscheinClient() {
               </div>
 
               <div className="space-y-2">
+                <Label className="text-sm">{t('filters.localeLabel', {}, 'Sprache')}</Label>
+                <Select
+                  value={effectiveLocale}
+                  onValueChange={(v) => setSelectedLocale(v)}
+                  disabled={busy || localesLoading || localeOptions.length === 0}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('filters.localePlaceholder', {}, 'Sprache wählen')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {localeOptions.map((opt: any) => (
+                      <SelectItem key={opt.value} value={String(opt.value)}>
+                        {String(opt.label ?? opt.value)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="statusFilter" className="text-sm">{t('filters.statusLabel', {}, 'Status')}</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter} disabled={busy}>
                   <SelectTrigger id="statusFilter"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t('filters.all', {}, 'All')}</SelectItem>
                     {(['pending','active','redeemed','expired','cancelled'] as const).map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                      <SelectItem key={s} value={s}>{t(`status.${s}`, {}, s)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -392,9 +464,9 @@ export default function AdminGutscheinClient() {
                         {item.is_admin_created && <Badge variant="outline" className="ml-2 text-xs">Admin</Badge>}
                       </TableCell>
                       <TableCell className="font-medium whitespace-nowrap">{item.value} {item.currency}</TableCell>
-                      <TableCell><StatusBadge status={item.status} /></TableCell>
+                      <TableCell><StatusBadge status={item.status} label={t(`status.${item.status}`, {}, item.status)} /></TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-xs">{item.payment_status}</Badge>
+                        <Badge variant="outline" className="text-xs">{t(`paymentStatus.${item.payment_status}`, {}, item.payment_status)}</Badge>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">{item.purchaser_name || '-'}</div>
@@ -405,20 +477,20 @@ export default function AdminGutscheinClient() {
                         <div className="text-xs text-muted-foreground">{item.recipient_email || ''}</div>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                        {fmtDateShort(item.expires_at, adminUiLocale)}
+                        {fmtDateShort(item.expires_at, effectiveLocale)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon-sm" title="Details" onClick={() => openDetail(item)} disabled={busy}>
+                          <Button variant="ghost" size="icon-sm" title={t('actions.edit', {}, 'Details')} onClick={() => openDetail(item)} disabled={busy}>
                             <Eye className="size-4" />
                           </Button>
                           {item.status === 'pending' && (
-                            <Button variant="ghost" size="icon-sm" title="Activate" onClick={() => handleActivate(item)} disabled={busy}>
+                            <Button variant="ghost" size="icon-sm" title={t('actions.activate', {}, 'Activate')} onClick={() => handleActivate(item)} disabled={busy}>
                               <CheckCircle2 className="size-4 text-green-600" />
                             </Button>
                           )}
                           {(item.status === 'pending' || item.status === 'active') && (
-                            <Button variant="ghost" size="icon-sm" title="Cancel" onClick={() => handleCancelClick(item)} disabled={busy}>
+                            <Button variant="ghost" size="icon-sm" title={t('actions.cancel', {}, 'Cancel')} onClick={() => handleCancelClick(item)} disabled={busy}>
                               <Ban className="size-4 text-destructive" />
                             </Button>
                           )}
@@ -446,13 +518,13 @@ export default function AdminGutscheinClient() {
                     <div className="space-y-1">
                       <div className="font-mono text-sm font-semibold">{item.code}</div>
                       <div className="flex items-center gap-2">
-                        <StatusBadge status={item.status} />
+                        <StatusBadge status={item.status} label={t(`status.${item.status}`, {}, item.status)} />
                         {item.is_admin_created && <Badge variant="outline" className="text-xs">Admin</Badge>}
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">{item.value} {item.currency}</div>
-                      <Badge variant="outline" className="text-xs">{item.payment_status}</Badge>
+                      <Badge variant="outline" className="text-xs">{t(`paymentStatus.${item.payment_status}`, {}, item.payment_status)}</Badge>
                     </div>
                   </div>
 
@@ -470,7 +542,7 @@ export default function AdminGutscheinClient() {
                   </div>
 
                   <p className="text-xs text-muted-foreground">
-                    {t('labels.expires', {}, 'Expires')}: {fmtDateShort(item.expires_at, adminUiLocale)}
+                    {t('labels.expires', {}, 'Expires')}: {fmtDateShort(item.expires_at, effectiveLocale)}
                   </p>
 
                   <div className="flex gap-2 flex-wrap">
@@ -525,9 +597,9 @@ export default function AdminGutscheinClient() {
             <div className="space-y-2">
               <Label>{t('create.template', {}, 'Template (optional)')}</Label>
               <Select value={createForm.product_id} onValueChange={(v) => setCreateForm((prev) => ({ ...prev, product_id: v }))}>
-                <SelectTrigger><SelectValue placeholder="Select product..." /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t('create.templatePlaceholder', {}, 'Select product...')} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">— Custom —</SelectItem>
+                  <SelectItem value="">{t('create.templateNone', {}, '— Custom —')}</SelectItem>
                   {products.map((p) => (
                     <SelectItem key={p.id} value={p.id}>{p.name} ({p.value} {p.currency})</SelectItem>
                   ))}
@@ -562,12 +634,12 @@ export default function AdminGutscheinClient() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t('create.purchaserName', {}, 'Purchaser Name')}</Label>
+                <Label>{t('create.purchaserName', {}, 'Purchaser Name')} *</Label>
                 <Input placeholder="John Doe" value={createForm.purchaser_name}
                   onChange={(e) => setCreateForm((prev) => ({ ...prev, purchaser_name: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>{t('create.purchaserEmail', {}, 'Purchaser Email')}</Label>
+                <Label>{t('create.purchaserEmail', {}, 'Purchaser Email')} *</Label>
                 <Input type="email" placeholder="john@example.com" value={createForm.purchaser_email}
                   onChange={(e) => setCreateForm((prev) => ({ ...prev, purchaser_email: e.target.value }))} />
               </div>
@@ -587,9 +659,27 @@ export default function AdminGutscheinClient() {
             </div>
 
             <div className="space-y-2">
+              <Label>{t('create.personalMessage', {}, 'Personal Message')}</Label>
+              <Textarea rows={2} placeholder="Optional..." value={createForm.personal_message}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, personal_message: e.target.value }))} />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('create.status', {}, 'Status')}</Label>
+              <Select value={createForm.status} onValueChange={(v) => setCreateForm((prev) => ({ ...prev, status: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {(['active', 'pending'] as const).map((s) => (
+                    <SelectItem key={s} value={s}>{t(`status.${s}`, {}, s)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
               <Label>{t('create.note', {}, 'Internal Note')}</Label>
-              <Textarea rows={2} placeholder="Optional..." value={createForm.note}
-                onChange={(e) => setCreateForm((prev) => ({ ...prev, note: e.target.value }))} />
+              <Textarea rows={2} placeholder="Optional..." value={createForm.admin_note}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, admin_note: e.target.value }))} />
             </div>
           </div>
 
@@ -612,25 +702,25 @@ export default function AdminGutscheinClient() {
                 <DialogTitle className="flex flex-wrap items-center gap-2">
                   <Gift className="size-4 shrink-0" />
                   <span className="font-mono">{detailItem.code}</span>
-                  <StatusBadge status={detailItem.status} />
+                  <StatusBadge status={detailItem.status} label={t(`status.${detailItem.status}`, {}, detailItem.status)} />
                 </DialogTitle>
                 <DialogDescription>
                   {detailItem.value} {detailItem.currency}
-                  {detailItem.created_at && ` · ${fmtDate(detailItem.created_at, adminUiLocale)}`}
+                  {detailItem.created_at && ` · ${fmtDate(detailItem.created_at, effectiveLocale)}`}
                 </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-5 py-2">
                 {/* Read-only info */}
                 <div className="rounded-lg border border-border bg-muted/40 p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <InfoRow label="Purchaser" value={detailItem.purchaser_name} />
-                  <InfoRow label="Purchaser Email" value={detailItem.purchaser_email} />
-                  <InfoRow label="Payment Status" value={<Badge variant="outline" className="text-xs">{detailItem.payment_status}</Badge>} />
-                  <InfoRow label="Order Ref" value={detailItem.order_ref} mono />
-                  {detailItem.redeemed_at && <InfoRow label="Redeemed At" value={fmtDate(detailItem.redeemed_at, adminUiLocale)} />}
+                  <InfoRow label={t('detail.purchaser', {}, 'Purchaser')} value={detailItem.purchaser_name} />
+                  <InfoRow label={t('detail.purchaserEmail', {}, 'Purchaser Email')} value={detailItem.purchaser_email} />
+                  <InfoRow label={t('detail.paymentStatus', {}, 'Payment Status')} value={<Badge variant="outline" className="text-xs">{t(`paymentStatus.${detailItem.payment_status}`, {}, detailItem.payment_status)}</Badge>} />
+                  <InfoRow label={t('detail.orderRef', {}, 'Order Ref')} value={detailItem.order_ref} mono />
+                  {detailItem.redeemed_at && <InfoRow label={t('detail.redeemedAt', {}, 'Redeemed At')} value={fmtDate(detailItem.redeemed_at, effectiveLocale)} />}
                   {detailItem.personal_message && (
                     <div className="sm:col-span-2">
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Personal Message</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-1">{t('detail.personalMessage', {}, 'Personal Message')}</p>
                       <p className="rounded bg-background border border-border p-2 text-sm italic">{detailItem.personal_message}</p>
                     </div>
                   )}
@@ -640,15 +730,15 @@ export default function AdminGutscheinClient() {
 
                 {/* Editable fields */}
                 <div className="space-y-4">
-                  <p className="text-sm font-semibold">Edit</p>
+                  <p className="text-sm font-semibold">{t('detail.editTitle', {}, 'Edit')}</p>
 
                   <div className="space-y-2">
-                    <Label>Status</Label>
+                    <Label>{t('detail.status', {}, 'Status')}</Label>
                     <Select value={editForm.status} onValueChange={(v) => setEditForm((prev) => prev && ({ ...prev, status: v as GutscheinStatus }))}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {(['pending','active','redeemed','expired','cancelled'] as GutscheinStatus[]).map((s) => (
-                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                          <SelectItem key={s} value={s}>{t(`status.${s}`, {}, s)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -656,36 +746,36 @@ export default function AdminGutscheinClient() {
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label>Recipient Name</Label>
+                      <Label>{t('detail.recipientName', {}, 'Recipient Name')}</Label>
                       <Input value={editForm.recipient_name}
                         onChange={(e) => setEditForm((prev) => prev && ({ ...prev, recipient_name: e.target.value }))} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Recipient Email</Label>
+                      <Label>{t('detail.recipientEmail', {}, 'Recipient Email')}</Label>
                       <Input type="email" value={editForm.recipient_email}
                         onChange={(e) => setEditForm((prev) => prev && ({ ...prev, recipient_email: e.target.value }))} />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Expires At</Label>
+                    <Label>{t('detail.expiresAt', {}, 'Expires At')}</Label>
                     <Input type="date" value={editForm.expires_at}
                       onChange={(e) => setEditForm((prev) => prev && ({ ...prev, expires_at: e.target.value }))} />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Internal Note</Label>
-                    <Textarea rows={2} value={editForm.note} placeholder="Optional..."
-                      onChange={(e) => setEditForm((prev) => prev && ({ ...prev, note: e.target.value }))} />
+                    <Label>{t('detail.internalNote', {}, 'Internal Note')}</Label>
+                    <Textarea rows={2} value={editForm.admin_note} placeholder="Optional..."
+                      onChange={(e) => setEditForm((prev) => prev && ({ ...prev, admin_note: e.target.value }))} />
                   </div>
                 </div>
               </div>
 
               <DialogFooter>
-                <Button variant="outline" onClick={() => { setDetailItem(null); setEditForm(null); }} disabled={updating}>Close</Button>
+                <Button variant="outline" onClick={() => { setDetailItem(null); setEditForm(null); }} disabled={updating}>{t('detail.close', {}, 'Close')}</Button>
                 <Button onClick={handleSaveEdit} disabled={updating} className="gap-2">
                   {updating && <Loader2 className="size-4 animate-spin" />}
-                  Save Changes
+                  {t('detail.saveChanges', {}, 'Save Changes')}
                 </Button>
               </DialogFooter>
             </>

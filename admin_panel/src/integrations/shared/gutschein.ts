@@ -92,11 +92,13 @@ export type GutscheinAdminCreateBody = {
   value: number;
   currency?: string;
   validity_days?: number;
+  purchaser_name: string;
+  purchaser_email: string;
   recipient_name?: string;
   recipient_email?: string;
-  purchaser_name?: string;
-  purchaser_email?: string;
-  note?: string;
+  personal_message?: string;
+  status?: GutscheinStatus;
+  admin_note?: string;
 };
 
 export type GutscheinAdminUpdateBody = {

@@ -1,6 +1,6 @@
 -- ============================================================
 -- 221_gutschein.seed.sql
--- Gutschein Produkt-Vorlagen (Beispieldaten)
+-- Gutschein Produkt-Vorlagen (100 € / 200 €)
 -- ============================================================
 
 INSERT INTO `gutschein_products`
@@ -8,8 +8,8 @@ INSERT INTO `gutschein_products`
 VALUES
   (
     UUID(),
-    'Gutschein 25 €',
-    25.00,
+    'Gutschein 100 €',
+    100.00,
     'EUR',
     365,
     'Verschenken Sie Entspannung – einlösbar für alle Massageleistungen.',
@@ -18,21 +18,11 @@ VALUES
   ),
   (
     UUID(),
-    'Gutschein 50 €',
-    50.00,
-    'EUR',
-    365,
-    'Das perfekte Geschenk für besondere Anlässe.',
-    1,
-    20
-  ),
-  (
-    UUID(),
-    'Gutschein 100 €',
-    100.00,
+    'Gutschein 200 €',
+    200.00,
     'EUR',
     365,
     'Verwöhnen Sie Ihre Liebsten mit einem Premium-Wellnesserlebnis.',
     1,
-    30
+    20
   );

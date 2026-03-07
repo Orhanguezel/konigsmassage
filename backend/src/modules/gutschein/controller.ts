@@ -149,9 +149,11 @@ export const purchaseGutschein: RouteHandler = async (req, reply) => {
   // ── PayPal Zahlungsintegration ────────────────────────────────────────────
   const cfg = await getPaymentConfig();
   if (cfg.paypal.enabled && cfg.paypal.clientId && cfg.paypal.clientSecret) {
-    const defaultFront = env.FRONTEND_URL || 'http://localhost:3055';
-    const returnUrl = `${defaultFront}/gutschein/success?id=${id}`;
-    const cancelUrl = `${defaultFront}/gutschein?cancelled=1`;
+    const defaultFront = env.FRONTEND_URL || 'http://localhost:3000';
+    const reqLocale = (req.query as any)?.locale || req.headers['x-locale'] || 'de';
+    const localePrefix = `/${reqLocale}`;
+    const returnUrl = `${defaultFront}${localePrefix}/gutschein/success?id=${id}`;
+    const cancelUrl = `${defaultFront}${localePrefix}/gutschein?cancelled=1`;
 
     const ppCredentials: PaypalCredentials = {
       clientId: cfg.paypal.clientId,
@@ -188,8 +190,13 @@ export const purchaseGutschein: RouteHandler = async (req, reply) => {
           approve_url: pp.approveUrl,
         },
       });
-    } catch {
-      // PayPal hatası → pending olarak döndür, kullanıcı tekrar deneyebilir
+    } catch (err: any) {
+      req.log.error({ err: err?.message ?? err }, 'PayPal order creation failed');
+      return reply.code(500).send({
+        success: false,
+        error: 'paypal_order_failed',
+        message: err?.message ?? 'PayPal order could not be created',
+      });
     }
   }
 

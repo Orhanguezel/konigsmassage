@@ -2122,7 +2122,11 @@
           "inactiveNote": "Inaktiv: Terminbestätigungs-E-Mails bestätigen nur den Termin ohne Zahlungslink."
         },
         "saved": "Zahlungseinstellungen gespeichert.",
-        "saveError": "Fehler beim Speichern."
+        "saveError": "Fehler beim Speichern.",
+        "refresh": "Aktualisieren",
+        "loading": "Wird geladen…",
+        "saving": "Wird gespeichert…",
+        "save": "Speichern"
       },
       "filters": {
         "title": "Filter",
@@ -3159,7 +3163,12 @@
       },
       "filters": {
         "search": "Titel oder Inhalt suchen",
+        "localeLabel": "Sprache",
+        "localePlaceholder": "Sprache wählen",
+        "activeLocale": "Sprache",
+        "typeLabel": "Typ",
         "typeAll": "Alle Typen",
+        "statusLabel": "Status",
         "statusAll": "Alle",
         "statusActive": "Aktiv",
         "statusPassive": "Passiv"
@@ -3190,12 +3199,16 @@
       "table": {
         "title": "Titel",
         "type": "Typ",
+        "targets": "Ziel",
+        "allPages": "Alle Seiten",
         "order": "Reihenfolge",
         "active": "Status",
         "actions": "Aktionen"
       },
       "states": {
-        "empty": "Keine Einträge gefunden"
+        "empty": "Keine Einträge gefunden",
+        "loading": "Laden...",
+        "loadError": "Popup konnte nicht geladen werden."
       },
       "actions": {
         "refresh": "Aktualisieren",
@@ -3205,7 +3218,8 @@
         "prev": "Zurück",
         "next": "Weiter",
         "cancel": "Abbrechen",
-        "save": "Speichern"
+        "save": "Speichern",
+        "back": "Zurück"
       },
       "labels": {
         "page": "Seite {page}"
@@ -3231,6 +3245,7 @@
         "order": "Reihenfolge",
         "buttonText": "Button-Text",
         "linkUrl": "Link",
+        "targetPaths": "Zielseiten",
         "linkTarget": "Link-Ziel",
         "textBehavior": "Textverhalten",
         "scrollSpeed": "Scroll-Geschwindigkeit",
@@ -3246,7 +3261,19 @@
         "end": "Ende",
         "delay": "Verzögerung (Sek.)",
         "active": "Aktiv",
-        "closeable": "Schließbar"
+        "closeable": "Schließbar",
+        "newDesc": "Neues Popup erstellen",
+        "editDesc": "Popup-Inhalt und Einstellungen bearbeiten",
+        "sectionContent": "Inhalt",
+        "sectionContentDesc": "Titel, Text und Sprache",
+        "sectionDisplay": "Anzeige",
+        "sectionDisplayDesc": "Typ, Verhalten und Reihenfolge",
+        "sectionSchedule": "Zeitplan",
+        "sectionScheduleDesc": "Start- und Enddatum",
+        "sectionImage": "Bild",
+        "sectionImageDesc": "Bild-URL oder Asset",
+        "sectionColors": "Farben",
+        "sectionColorsDesc": "Hintergrund-, Text- und Button-Farben"
       }
     },
     "gutschein": {
@@ -3262,6 +3289,8 @@
       "filters": {
         "searchLabel": "Suche (Code / E-Mail / Name)",
         "searchPlaceholder": "KM-XXXX-XXXX oder E-Mail...",
+        "localeLabel": "Sprache",
+        "localePlaceholder": "Sprache wählen",
         "statusLabel": "Status",
         "all": "Alle"
       },
@@ -3298,6 +3327,8 @@
         "purchaserEmail": "Käufer-E-Mail",
         "note": "Interne Notiz",
         "notePlaceholder": "Optionale interne Notiz...",
+        "personalMessage": "Persönliche Nachricht",
+        "status": "Status",
         "submit": "Gutschein erstellen",
         "cancel": "Abbrechen"
       },
@@ -3307,6 +3338,35 @@
         "confirm": "Karte stornieren",
         "keep": "Behalten"
       },
+      "status": {
+        "pending": "Ausstehend",
+        "active": "Aktiv",
+        "redeemed": "Eingelöst",
+        "expired": "Abgelaufen",
+        "cancelled": "Storniert"
+      },
+      "paymentStatus": {
+        "pending": "Ausstehend",
+        "paid": "Bezahlt",
+        "failed": "Fehlgeschlagen",
+        "refunded": "Erstattet"
+      },
+      "detail": {
+        "purchaser": "Käufer",
+        "purchaserEmail": "Käufer-E-Mail",
+        "paymentStatus": "Zahlungsstatus",
+        "orderRef": "Bestellnummer",
+        "redeemedAt": "Eingelöst am",
+        "personalMessage": "Persönliche Nachricht",
+        "editTitle": "Bearbeiten",
+        "status": "Status",
+        "recipientName": "Empfängername",
+        "recipientEmail": "Empfänger-E-Mail",
+        "expiresAt": "Ablaufdatum",
+        "internalNote": "Interne Notiz",
+        "close": "Schließen",
+        "saveChanges": "Änderungen speichern"
+      },
       "messages": {
         "created": "Gutschein erstellt.",
         "cancelled": "Gutschein storniert.",
@@ -3315,8 +3375,10 @@
         "cancelError": "Stornierung fehlgeschlagen.",
         "activateError": "Aktivierung fehlgeschlagen.",
         "valueRequired": "Bitte einen gültigen Wert eingeben.",
+        "purchaserRequired": "Käufername und E-Mail sind erforderlich.",
         "updated": "Gutschein aktualisiert.",
-        "updateError": "Gutschein konnte nicht aktualisiert werden."
+        "updateError": "Gutschein konnte nicht aktualisiert werden.",
+        "noChanges": "Keine Änderungen."
       },
       "products": {
         "title": "Gutschein-Produkte",

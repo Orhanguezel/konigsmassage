@@ -3,7 +3,7 @@
 // =============================================================
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 import HtmlLangSync from './HtmlLangSync';
@@ -24,9 +24,11 @@ function readLocaleFromPath(asPath?: string | null): string {
 
 export default function LangBoot() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  const { data: appLocalesMeta } = useGetAppLocalesPublicQuery();
-  const { data: defaultLocaleMeta } = useGetDefaultLocalePublicQuery();
+  const { data: appLocalesMeta } = useGetAppLocalesPublicQuery(undefined, { skip: !mounted });
+  const { data: defaultLocaleMeta } = useGetDefaultLocalePublicQuery(undefined, { skip: !mounted });
 
   const activeLocales = useMemo(
     () => {

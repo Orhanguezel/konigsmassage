@@ -2011,7 +2011,11 @@
           "inactiveNote": "Inactive: Booking confirmation emails will only confirm the appointment without a payment link."
         },
         "saved": "Payment settings saved.",
-        "saveError": "Failed to save settings."
+        "saveError": "Failed to save settings.",
+        "refresh": "Refresh",
+        "loading": "Loading…",
+        "saving": "Saving…",
+        "save": "Save"
       },
       "filters": {
         "title": "Filters",
@@ -3366,7 +3370,12 @@
       },
       "filters": {
         "search": "Search title or content",
+        "localeLabel": "Language",
+        "localePlaceholder": "Select language",
+        "activeLocale": "Language",
+        "typeLabel": "Type",
         "typeAll": "All Types",
+        "statusLabel": "Status",
         "statusAll": "All",
         "statusActive": "Active",
         "statusPassive": "Passive"
@@ -3397,12 +3406,16 @@
       "table": {
         "title": "Title",
         "type": "Type",
+        "targets": "Target",
+        "allPages": "All pages",
         "order": "Order",
         "active": "Status",
         "actions": "Actions"
       },
       "states": {
-        "empty": "No records found"
+        "empty": "No records found",
+        "loading": "Loading...",
+        "loadError": "Failed to load popup."
       },
       "actions": {
         "refresh": "Refresh",
@@ -3412,7 +3425,8 @@
         "prev": "Previous",
         "next": "Next",
         "cancel": "Cancel",
-        "save": "Save"
+        "save": "Save",
+        "back": "Back"
       },
       "labels": {
         "page": "Page {page}"
@@ -3438,6 +3452,7 @@
         "order": "Order",
         "buttonText": "Button Text",
         "linkUrl": "Link",
+        "targetPaths": "Target pages",
         "linkTarget": "Link Target",
         "textBehavior": "Text Behavior",
         "scrollSpeed": "Scroll Speed",
@@ -3453,7 +3468,19 @@
         "end": "End",
         "delay": "Delay (sec)",
         "active": "Active",
-        "closeable": "Closeable"
+        "closeable": "Closeable",
+        "newDesc": "Create a new popup",
+        "editDesc": "Edit popup content and settings",
+        "sectionContent": "Content",
+        "sectionContentDesc": "Title, text and language",
+        "sectionDisplay": "Display",
+        "sectionDisplayDesc": "Type, behavior and order",
+        "sectionSchedule": "Schedule",
+        "sectionScheduleDesc": "Start and end date",
+        "sectionImage": "Image",
+        "sectionImageDesc": "Image URL or asset",
+        "sectionColors": "Colors",
+        "sectionColorsDesc": "Background, text and button colors"
       }
     },
     "gutschein": {
@@ -3469,6 +3496,8 @@
       "filters": {
         "searchLabel": "Search (code / email / name)",
         "searchPlaceholder": "KM-XXXX-XXXX or email...",
+        "localeLabel": "Language",
+        "localePlaceholder": "Select language",
         "statusLabel": "Status",
         "all": "All"
       },
@@ -3505,6 +3534,8 @@
         "purchaserEmail": "Purchaser Email",
         "note": "Internal Note",
         "notePlaceholder": "Optional internal note...",
+        "personalMessage": "Personal Message",
+        "status": "Status",
         "submit": "Create Gift Card",
         "cancel": "Cancel"
       },
@@ -3514,6 +3545,35 @@
         "confirm": "Cancel Card",
         "keep": "Keep"
       },
+      "status": {
+        "pending": "Pending",
+        "active": "Active",
+        "redeemed": "Redeemed",
+        "expired": "Expired",
+        "cancelled": "Cancelled"
+      },
+      "paymentStatus": {
+        "pending": "Pending",
+        "paid": "Paid",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      },
+      "detail": {
+        "purchaser": "Purchaser",
+        "purchaserEmail": "Purchaser Email",
+        "paymentStatus": "Payment Status",
+        "orderRef": "Order Ref",
+        "redeemedAt": "Redeemed At",
+        "personalMessage": "Personal Message",
+        "editTitle": "Edit",
+        "status": "Status",
+        "recipientName": "Recipient Name",
+        "recipientEmail": "Recipient Email",
+        "expiresAt": "Expires At",
+        "internalNote": "Internal Note",
+        "close": "Close",
+        "saveChanges": "Save Changes"
+      },
       "messages": {
         "created": "Gift card created.",
         "cancelled": "Gift card cancelled.",
@@ -3522,8 +3582,10 @@
         "cancelError": "Failed to cancel gift card.",
         "activateError": "Failed to activate gift card.",
         "valueRequired": "Please enter a valid value.",
+        "purchaserRequired": "Purchaser name and email are required.",
         "updated": "Gift card updated.",
-        "updateError": "Failed to update gift card."
+        "updateError": "Failed to update gift card.",
+        "noChanges": "No changes."
       },
       "products": {
         "title": "Gift Card Products",

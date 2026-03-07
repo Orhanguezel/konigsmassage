@@ -84,7 +84,13 @@ export const createProductAdmin: RouteHandler = async (req, reply) => {
     display_order: d.display_order,
   } as any);
 
-  return reply.code(201).send({ success: true, id });
+  const [created] = await db
+    .select()
+    .from(gutscheinProducts)
+    .where(eq(gutscheinProducts.id, id))
+    .limit(1);
+
+  return reply.code(201).send(created);
 };
 
 export const updateProductAdmin: RouteHandler = async (req, reply) => {
@@ -107,7 +113,14 @@ export const updateProductAdmin: RouteHandler = async (req, reply) => {
     return reply.code(400).send({ error: 'no_fields_to_update' });
 
   await db.update(gutscheinProducts).set(updates).where(eq(gutscheinProducts.id, id));
-  return reply.send({ success: true });
+
+  const [updated] = await db
+    .select()
+    .from(gutscheinProducts)
+    .where(eq(gutscheinProducts.id, id))
+    .limit(1);
+
+  return reply.send(updated);
 };
 
 export const deleteProductAdmin: RouteHandler = async (req, reply) => {
@@ -246,7 +259,13 @@ export const createGutscheinAdmin: RouteHandler = async (req, reply) => {
     admin_note: admin_note ?? null,
   } as any);
 
-  return reply.code(201).send({ success: true, id, code });
+  const [created] = await db
+    .select()
+    .from(gutscheins)
+    .where(eq(gutscheins.id, id))
+    .limit(1);
+
+  return reply.code(201).send(created);
 };
 
 export const updateGutscheinAdmin: RouteHandler = async (req, reply) => {
@@ -269,7 +288,14 @@ export const updateGutscheinAdmin: RouteHandler = async (req, reply) => {
     return reply.code(400).send({ error: 'no_fields_to_update' });
 
   await db.update(gutscheins).set(updates).where(eq(gutscheins.id, id));
-  return reply.send({ success: true });
+
+  const [updated] = await db
+    .select()
+    .from(gutscheins)
+    .where(eq(gutscheins.id, id))
+    .limit(1);
+
+  return reply.send(updated);
 };
 
 export const cancelGutscheinAdmin: RouteHandler = async (req, reply) => {
