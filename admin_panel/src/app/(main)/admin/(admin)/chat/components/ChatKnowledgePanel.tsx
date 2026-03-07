@@ -1,7 +1,7 @@
 // =============================================================
 // FILE: src/app/(main)/admin/(admin)/chat/components/ChatKnowledgePanel.tsx
 // AI Knowledge Base CRUD panel
-// König Energetik
+// Energetische Massage
 // =============================================================
 
 'use client';

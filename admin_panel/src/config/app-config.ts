@@ -35,11 +35,11 @@ export const DEFAULT_BRANDING: AdminBrandingConfig = {
   favicon_32: '/favicon/favicon-32.svg',
   apple_touch_icon: '/favicon/apple-touch-icon.svg',
   meta: {
-    title: 'König Energetik - Energetische Massage Berlin | Anastasia König',
+    title: 'Energetische Massage - Energetische Massage Berlin | Anastasia König',
     description:
-      'König Energetik: Ganzheitliche energetische Massage in Berlin. Anastasia König bietet mobile Körperarbeit bei Ihnen zu Hause. Heilende Berührung mit Herz.',
+      'Energetische Massage: Ganzheitliche energetische Massage in Berlin. Anastasia König bietet mobile Körperarbeit bei Ihnen zu Hause. Heilende Berührung mit Herz.',
     og_url: 'https://koenig-energetik.de/',
-    og_title: 'König Energetik - Energetische Massage Berlin',
+    og_title: 'Energetische Massage - Energetische Massage Berlin',
     og_description:
       'Ganzheitliche energetische Massage in Berlin. Heilende Berührung mit Herz. Mobile Körperarbeit von Anastasia König.',
     og_image: '/logo/koenig-energetik-icon.svg',

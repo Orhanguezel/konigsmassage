@@ -105,7 +105,7 @@ function buildAppointmentLinkReply(locale: string, appointmentUrl: string) {
 function getSupportSystemPrompt(knowledgeText: string, sourcesCount: number) {
   const fromEnv = (process.env.AI_SUPPORT_SYSTEM_PROMPT || "").trim();
   const base = fromEnv || [
-    "You are an AI customer support assistant for König Energetik, a massage and wellness studio.",
+    "You are an AI customer support assistant for Energetische Massage, a massage and wellness studio.",
     "Always provide short, practical, safe support answers in the same language as the user.",
     "If uncertainty is high, ask a clarifying question.",
     "If the issue is operationally risky or urgent, suggest escalating to a human admin."

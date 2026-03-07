@@ -23,15 +23,15 @@ VALUES
     'ui_appointment_page_lead',          'Terapist seçin, tarih ve saat belirleyin, ardından formu gönderin.',
     'ui_appointment_title',              'Randevu Al',
     'ui_appointment_desc',               'Size uygun terapisti ve saati seçerek kolayca randevu oluşturabilirsiniz.',
-    'ui_appointment_meta_title',         'Randevu Al | KÖNIG ENERGETIK',
-    'ui_appointment_meta_description',   'KÖNIG ENERGETIK üzerinden randevu talebi oluşturun. Seanslar ön görüşme ve onay ile planlanır.',
+    'ui_appointment_meta_title',         'Randevu Al | Energetische Massage',
+    'ui_appointment_meta_description',   'Energetische Massage üzerinden randevu talebi oluşturun. Seanslar ön görüşme ve onay ile planlanır.',
     'ui_appointment_og_image',           '',
 
-    'ui_appointment_subprefix',          'KÖNIG ENERGETIK',
+    'ui_appointment_subprefix',          'Energetische Massage',
     'ui_appointment_sublabel',           'Randevu',
 
     'ui_appointment_cover_image',        '',
-    'ui_appointment_cover_image_alt',    'KÖNIG ENERGETIK — Termin',
+    'ui_appointment_cover_image_alt',    'Energetische Massage — Termin',
 
     'ui_appointment_home_cta_title',     'Randevu Al',
     'ui_appointment_home_cta_desc',      'Size uygun zamanı seçerek kolayca randevu oluşturabilirsiniz.',
@@ -183,14 +183,14 @@ VALUES
     'ui_appointment_title',             'Book Appointment',
     'ui_appointment_desc',              'Choose a therapist and time slot to request an appointment.',
     'ui_appointment_meta_title',        'Book Appointment',
-    'ui_appointment_meta_description',  'Request an appointment at KÖNIG ENERGETIK. Sessions are arranged after a short pre-chat and consent.',
+    'ui_appointment_meta_description',  'Request an appointment at Energetische Massage. Sessions are arranged after a short pre-chat and consent.',
     'ui_appointment_og_image',          '',
 
-    'ui_appointment_subprefix',         'KÖNIG ENERGETIK',
+    'ui_appointment_subprefix',         'Energetische Massage',
     'ui_appointment_sublabel',          'Appointment',
 
     'ui_appointment_cover_image',       '',
-    'ui_appointment_cover_image_alt',   'KÖNIG ENERGETIK — Appointment',
+    'ui_appointment_cover_image_alt',   'Energetische Massage — Appointment',
 
     'ui_appointment_home_cta_title',    'Book Appointment',
     'ui_appointment_home_cta_desc',     'Choose a suitable time and send your appointment request easily.',
@@ -342,14 +342,14 @@ VALUES
     'ui_appointment_title',             'Termin buchen',
     'ui_appointment_desc',              'Therapeut und Zeitfenster wählen und eine Terminanfrage senden.',
     'ui_appointment_meta_title',        'Termin buchen',
-    'ui_appointment_meta_description',  'Terminanfrage bei KÖNIG ENERGETIK. Sitzungen nach kurzem Vorgespräch und Einverständnis.',
+    'ui_appointment_meta_description',  'Terminanfrage bei Energetische Massage. Sitzungen nach kurzem Vorgespräch und Einverständnis.',
     'ui_appointment_og_image',          '',
 
-    'ui_appointment_subprefix',         'KÖNIG ENERGETIK',
+    'ui_appointment_subprefix',         'Energetische Massage',
     'ui_appointment_sublabel',          'Termin',
 
     'ui_appointment_cover_image',       '',
-    'ui_appointment_cover_image_alt',   'KÖNIG ENERGETIK — Termin',
+    'ui_appointment_cover_image_alt',   'Energetische Massage — Termin',
 
     'ui_appointment_home_cta_title',    'Termin buchen',
     'ui_appointment_home_cta_desc',     'Wählen Sie einen passenden Zeitpunkt und senden Sie Ihre Terminanfrage einfach.',

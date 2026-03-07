@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 051.8_custom_pages_privacy_notice.seed.sql (FINAL — KÖNIG ENERGETIK, rerunnable)
--- KÖNIG ENERGETIK – Custom Page: Privacy Notice / Informationspflicht (TR/EN/DE)
+-- FILE: 051.8_custom_pages_privacy_notice.seed.sql (FINAL — Energetische Massage, rerunnable)
+-- Energetische Massage – Custom Page: Privacy Notice / Informationspflicht (TR/EN/DE)
 -- ✅ PARENT: custom_pages.module_key = 'privacy_notice'
 -- ✅ category/subcategory YOK (schema’da yok)
 -- ✅ i18n: module_key YOK
@@ -119,7 +119,7 @@ VALUES
 
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Veri Sorumlusu</h2>',
-          '<p class="text-slate-700">Veri sorumlusu KÖNIG ENERGETIK’tır.</p>',
+          '<p class="text-slate-700">Veri sorumlusu Energetische Massage’tır.</p>',
         '</div>',
 
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
@@ -169,11 +169,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Aydınlatma Metni: veri sorumlusu, işleme amaçları, hukuki sebepler, aktarım ve haklar.',
-  'KÖNIG ENERGETIK Aydınlatma Metni sayfası',
-  'Aydınlatma Metni | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK aydınlatma metni; kişisel verilerin işlenmesi, hukuki sebepler, aktarım ve ilgili kişi hakları hakkında bilgilendirir.',
-  'koenig energetik,legal,aydinlatma metni,privacy notice,kisisel veri,veri isleme',
+  'Energetische Massage Aydınlatma Metni: veri sorumlusu, işleme amaçları, hukuki sebepler, aktarım ve haklar.',
+  'Energetische Massage Aydınlatma Metni sayfası',
+  'Aydınlatma Metni | Energetische Massage',
+  'Energetische Massage aydınlatma metni; kişisel verilerin işlenmesi, hukuki sebepler, aktarım ve ilgili kişi hakları hakkında bilgilendirir.',
+  'energetische massage,legal,aydinlatma metni,privacy notice,kisisel veri,veri isleme',
   NOW(3), NOW(3)
 ),
 (
@@ -191,7 +191,7 @@ VALUES
 
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Data Controller</h2>',
-          '<p class="text-slate-700">KÖNIG ENERGETIK is the data controller.</p>',
+          '<p class="text-slate-700">Energetische Massage is the data controller.</p>',
         '</div>',
 
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
@@ -234,11 +234,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Information Notice: controller, purposes, legal grounds, transfers and rights.',
-  'KÖNIG ENERGETIK Information Notice page',
-  'Information Notice | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK information notice about personal data processing, transfers and data subject rights.',
-  'koenig energetik,legal,information notice,privacy,personal data,rights',
+  'Energetische Massage Information Notice: controller, purposes, legal grounds, transfers and rights.',
+  'Energetische Massage Information Notice page',
+  'Information Notice | Energetische Massage',
+  'Energetische Massage information notice about personal data processing, transfers and data subject rights.',
+  'energetische massage,legal,information notice,privacy,personal data,rights',
   NOW(3), NOW(3)
 ),
 (
@@ -256,7 +256,7 @@ VALUES
 
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Verantwortlicher</h2>',
-          '<p class="text-slate-700">Verantwortlicher ist KÖNIG ENERGETIK.</p>',
+          '<p class="text-slate-700">Verantwortlicher ist Energetische Massage.</p>',
         '</div>',
 
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
@@ -299,11 +299,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Informationspflicht: Zwecke, Rechtsgrundlagen, Weitergabe und Betroffenenrechte.',
-  'KÖNIG ENERGETIK Informationspflicht',
-  'Informationspflicht | KÖNIG ENERGETIK',
-  'Hinweise zur Datenverarbeitung bei KÖNIG ENERGETIK: Zwecke, Rechtsgrundlagen, Weitergabe und Rechte.',
-  'koenig energetik,legal,informationspflicht,datenschutz,personenbezogene daten',
+  'Energetische Massage Informationspflicht: Zwecke, Rechtsgrundlagen, Weitergabe und Betroffenenrechte.',
+  'Energetische Massage Informationspflicht',
+  'Informationspflicht | Energetische Massage',
+  'Hinweise zur Datenverarbeitung bei Energetische Massage: Zwecke, Rechtsgrundlagen, Weitergabe und Rechte.',
+  'energetische massage,legal,informationspflicht,datenschutz,personenbezogene daten',
   NOW(3), NOW(3)
 )
 ON DUPLICATE KEY UPDATE

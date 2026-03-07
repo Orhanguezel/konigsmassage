@@ -1,6 +1,6 @@
 -- =============================================================
--- 049_site_settings_ui_hero.sql (FINAL — KÖNIG ENERGETIK)
--- koenigsmassage – UI Hero (site_settings.ui_hero)
+-- 049_site_settings_ui_hero.sql (FINAL — Energetische Massage)
+-- energetische-massage-bonn – UI Hero (site_settings.ui_hero)
 --  - Key: ui_hero
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de

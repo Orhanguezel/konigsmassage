@@ -1,5 +1,5 @@
 -- =============================================================
--- 048_site_settings_ui_feedback.sql  (Feedback / Reviews UI strings) [FINAL — KÖNIG ENERGETIK]
+-- 048_site_settings_ui_feedback.sql  (Feedback / Reviews UI strings) [FINAL — Energetische Massage]
 --  - Key: ui_feedback
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
@@ -16,7 +16,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'tr',
   CAST(JSON_OBJECT(
     -- left block
-    'ui_feedback_subprefix',              'KÖNIG ENERGETIK',
+    'ui_feedback_subprefix',              'Energetische Massage',
     'ui_feedback_sublabel',               'Müşteri Yorumları',
     'ui_feedback_title',                  'Müşterilerimizin deneyimleri',
     'ui_feedback_paragraph',              'Geri bildirimleriniz; seans deneyimini, iletişimi ve konforu sürekli geliştirmemize yardımcı olur.',
@@ -81,7 +81,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'en',
   CAST(JSON_OBJECT(
     -- left block
-    'ui_feedback_subprefix',              'KÖNIG ENERGETIK',
+    'ui_feedback_subprefix',              'Energetische Massage',
     'ui_feedback_sublabel',               'Customer Reviews',
     'ui_feedback_title',                  'What customers say',
     'ui_feedback_paragraph',              'Your feedback helps us continuously improve service quality, comfort, and the appointment experience.',
@@ -146,7 +146,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   'de',
   CAST(JSON_OBJECT(
     -- left block
-    'ui_feedback_subprefix',              'KÖNIG ENERGETIK',
+    'ui_feedback_subprefix',              'Energetische Massage',
     'ui_feedback_sublabel',               'Kundenbewertungen',
     'ui_feedback_title',                  'Was unsere Kunden sagen',
     'ui_feedback_paragraph',              'Ihr Feedback hilft uns, Servicequalität, Komfort und das Termin-Erlebnis kontinuierlich zu verbessern.',

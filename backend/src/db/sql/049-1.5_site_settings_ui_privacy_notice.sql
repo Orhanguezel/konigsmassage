@@ -29,10 +29,10 @@ VALUES
       'ui_privacy_notice_empty',             'Gizlilik bildirimi içeriği bulunamadı.',
       'ui_privacy_notice_empty_text',        'Gizlilik bildirimi içeriği yakında yayınlanacaktır.',
       'ui_privacy_notice_page_description',
-        'KÖNIG ENERGETIK gizlilik bildirimi: kişisel verilerin işlenmesi, amaçlar, saklama süreleri, güvenlik önlemleri ve haklarınız.',
-      'ui_privacy_notice_meta_title',        'Gizlilik Bildirimi | KÖNIG ENERGETIK',
+        'Energetische Massage gizlilik bildirimi: kişisel verilerin işlenmesi, amaçlar, saklama süreleri, güvenlik önlemleri ve haklarınız.',
+      'ui_privacy_notice_meta_title',        'Gizlilik Bildirimi | Energetische Massage',
       'ui_privacy_notice_meta_description',
-        'KÖNIG ENERGETIK gizlilik bildirimi: kişisel verilerin işlenmesi, amaçlar, saklama süreleri, güvenlik önlemleri ve haklarınız.'
+        'Energetische Massage gizlilik bildirimi: kişisel verilerin işlenmesi, amaçlar, saklama süreleri, güvenlik önlemleri ve haklarınız.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -50,10 +50,10 @@ VALUES
       'ui_privacy_notice_empty',             'Privacy notice content not found.',
       'ui_privacy_notice_empty_text',        'The privacy notice content will be published here soon.',
       'ui_privacy_notice_page_description',
-        'KÖNIG ENERGETIK privacy notice: how we process personal data, purposes, retention periods, security measures, and your rights.',
-      'ui_privacy_notice_meta_title',        'Privacy Notice | KÖNIG ENERGETIK',
+        'Energetische Massage privacy notice: how we process personal data, purposes, retention periods, security measures, and your rights.',
+      'ui_privacy_notice_meta_title',        'Privacy Notice | Energetische Massage',
       'ui_privacy_notice_meta_description',
-        'KÖNIG ENERGETIK privacy notice: how we process personal data, purposes, retention periods, security measures, and your rights.'
+        'Energetische Massage privacy notice: how we process personal data, purposes, retention periods, security measures, and your rights.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -71,10 +71,10 @@ VALUES
       'ui_privacy_notice_empty',             'Datenschutzhinweis nicht gefunden.',
       'ui_privacy_notice_empty_text',        'Der Datenschutzhinweis wird hier in Kürze veröffentlicht.',
       'ui_privacy_notice_page_description',
-        'KÖNIG ENERGETIK Datenschutzhinweis: Verarbeitung personenbezogener Daten, Zwecke, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.',
-      'ui_privacy_notice_meta_title',        'Datenschutzhinweis | KÖNIG ENERGETIK',
+        'Energetische Massage Datenschutzhinweis: Verarbeitung personenbezogener Daten, Zwecke, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.',
+      'ui_privacy_notice_meta_title',        'Datenschutzhinweis | Energetische Massage',
       'ui_privacy_notice_meta_description',
-        'KÖNIG ENERGETIK Datenschutzhinweis: Verarbeitung personenbezogener Daten, Zwecke, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.'
+        'Energetische Massage Datenschutzhinweis: Verarbeitung personenbezogener Daten, Zwecke, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),

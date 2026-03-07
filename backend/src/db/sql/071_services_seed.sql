@@ -1,5 +1,5 @@
 -- =============================================================
--- 071_services_seed.sql (KÖNIGSMASSAGE)
+-- 071_services_seed.sql (ENERGETISCHE MASSAGE)
 -- Single-service seed
 -- - Keeps only one public service:
 --   Energetische Entspannungsmassage
@@ -95,9 +95,9 @@ VALUES
   NULL,
   'Massageoel, Handtuecher, geschuetzter Raum, achtsame Begleitung',
   'energetische entspannungsmassage,energetische massage,bonn,achtsamkeit,ruhe,balance',
-  'Energetische Entspannungsmassage | Koenigsmassage Bonn',
+  'Energetische Entspannungsmassage | Energetische Massage Bonn',
   'Energetische Entspannungsmassage in Bonn. Achtsame Beruehrung, tiefe Entspannung, klare Grenzen und individuelle Zeit zum Ankommen.',
-  'energetische entspannungsmassage bonn,energetische massage bonn,koenigsmassage bonn,achtsame massage bonn',
+  'energetische entspannungsmassage bonn,energetische massage bonn,energetische massage bonn,achtsame massage bonn',
   '2024-01-01 00:00:00.000',
   '2024-01-01 00:00:00.000'
 )
@@ -162,9 +162,9 @@ VALUES
   NULL,
   'Masaj yagi, havlular, korunmus alan, bilingli eslik',
   'enerjetik rahatlama masaji,enerjetik masaj,bonn,farkindalik,huzur,denge',
-  'Enerjetik Rahatlama Masaji | Koenigsmassage Bonn',
+  'Enerjetik Rahatlama Masaji | Energetische Massage Bonn',
   'Bonn da enerjetik rahatlama masaji. Bilingli dokunma, derin rahatlama, net sinirlar ve varmak icin bireysel zaman.',
-  'enerjetik rahatlama masaji bonn,enerjetik masaj bonn,koenigsmassage bonn,bilingli masaj bonn',
+  'enerjetik rahatlama masaji bonn,enerjetik masaj bonn,energetische massage bonn,bilingli masaj bonn',
   '2024-01-01 00:00:00.000',
   '2024-01-01 00:00:00.000'
 )
@@ -229,9 +229,9 @@ VALUES
   NULL,
   'Massage oil, towels, protected space, mindful accompaniment',
   'energetic relaxation massage,energetic massage,bonn,mindfulness,peace,balance',
-  'Energetic Relaxation Massage | Koenigsmassage Bonn',
+  'Energetic Relaxation Massage | Energetische Massage Bonn',
   'Energetic relaxation massage in Bonn. Mindful touch, deep relaxation, clear boundaries and individual time to arrive.',
-  'energetic relaxation massage bonn,energetic massage bonn,koenigsmassage bonn,mindful massage bonn',
+  'energetic relaxation massage bonn,energetic massage bonn,energetische massage bonn,mindful massage bonn',
   '2024-01-01 00:00:00.000',
   '2024-01-01 00:00:00.000'
 )

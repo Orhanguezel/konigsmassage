@@ -68,7 +68,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'ui_contact_page_title',               'İletişim',
 
-      'ui_contact_subprefix',                'KÖNIG ENERGETIK',
+      'ui_contact_subprefix',                'Energetische Massage',
       'ui_contact_sublabel',                 'İletişim',
       'ui_contact_title_left',               'Konuşalım',
       'ui_contact_tagline',                  'Sorularınız ve randevu talepleriniz için bize yazın. Seanslar Bonn’da, ön görüşme ve onay ile planlanır.',
@@ -117,8 +117,8 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
 
       'ui_contact_map_title',                'Konum',
 
-      'ui_contact_meta_title',               'İletişim | KÖNIG ENERGETIK',
-      'ui_contact_meta_description',         'KÖNIG ENERGETIK ile iletişime geçin: Bonn’da enerjetik masaj seansları için randevu ve sorular.'
+      'ui_contact_meta_title',               'İletişim | Energetische Massage',
+      'ui_contact_meta_description',         'Energetische Massage ile iletişime geçin: Bonn’da enerjetik masaj seansları için randevu ve sorular.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -133,7 +133,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'ui_contact_page_title',               'Contact',
 
-      'ui_contact_subprefix',                'KÖNIG ENERGETIK',
+      'ui_contact_subprefix',                'Energetische Massage',
       'ui_contact_sublabel',                 'Contact',
       'ui_contact_title_left',               'Let''s Talk',
       'ui_contact_tagline',                  'For questions and appointment requests, send a message. Sessions take place in Bonn and are arranged after a short pre-chat and consent.',
@@ -182,8 +182,8 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
 
       'ui_contact_map_title',                'Location',
 
-      'ui_contact_meta_title',               'Contact | KÖNIG ENERGETIK',
-      'ui_contact_meta_description',         'Contact KÖNIG ENERGETIK: appointment requests and questions for energetic massage sessions in Bonn.'
+      'ui_contact_meta_title',               'Contact | Energetische Massage',
+      'ui_contact_meta_description',         'Contact Energetische Massage: appointment requests and questions for energetic massage sessions in Bonn.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -198,7 +198,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'ui_contact_page_title',               'Kontakt',
 
-      'ui_contact_subprefix',                'KÖNIG ENERGETIK',
+      'ui_contact_subprefix',                'Energetische Massage',
       'ui_contact_sublabel',                 'Kontakt',
       'ui_contact_title_left',               'Lassen Sie uns sprechen',
       'ui_contact_tagline',                  'Für Fragen und Terminanfragen schreiben Sie uns. Sitzungen finden in Bonn statt – nach kurzem Vorgespräch und Einverständnis.',
@@ -247,8 +247,8 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
 
       'ui_contact_map_title',                'Standort',
 
-      'ui_contact_meta_title',               'Kontakt | KÖNIG ENERGETIK',
-      'ui_contact_meta_description',         'Kontaktieren Sie KÖNIG ENERGETIK: Terminanfragen und Fragen zu energetischen Massage-Sitzungen in Bonn.'
+      'ui_contact_meta_title',               'Kontakt | Energetische Massage',
+      'ui_contact_meta_description',         'Kontaktieren Sie Energetische Massage: Terminanfragen und Fragen zu energetischen Massage-Sitzungen in Bonn.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -272,7 +272,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'title',     'Konum',
       'height',    420,
-      'query',     'KÖNIG ENERGETIK Bonn',
+      'query',     'Energetische Massage Bonn',
       'embed_url', ''
     )
     AS CHAR CHARACTER SET utf8mb4
@@ -288,7 +288,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'title',     'Location',
       'height',    420,
-      'query',     'KÖNIG ENERGETIK Bonn',
+      'query',     'Energetische Massage Bonn',
       'embed_url', ''
     )
     AS CHAR CHARACTER SET utf8mb4
@@ -304,7 +304,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     JSON_OBJECT(
       'title',     'Standort',
       'height',    420,
-      'query',     'KÖNIG ENERGETIK Bonn',
+      'query',     'Energetische Massage Bonn',
       'embed_url', ''
     )
     AS CHAR CHARACTER SET utf8mb4

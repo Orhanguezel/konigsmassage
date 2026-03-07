@@ -1,6 +1,6 @@
 -- =============================================================
 -- Chat AI knowledge base (admin managed, locale aware)
--- König Energetik — Massage & Wellness
+-- Energetische Massage — Massage & Wellness
 -- =============================================================
 
 CREATE TABLE IF NOT EXISTS `chat_ai_knowledge` (
@@ -45,7 +45,7 @@ VALUES
   'c1000000-0000-0000-0000-000000000003',
   'de',
   'Angebotene Massagearten',
-  'König Energetik bietet folgende Massagen an: Klassische Massage, Sportmassage, Tiefengewebsmassage, Aromatherapie-Massage, Hot-Stone-Massage, Reflexzonenmassage, Lymphdrainage, Schwangerschaftsmassage und Kopf-Nacken-Schulter-Massage. Für Details zu einzelnen Behandlungen verweise auf die Website.',
+  'Energetische Massage bietet folgende Massagen an: Klassische Massage, Sportmassage, Tiefengewebsmassage, Aromatherapie-Massage, Hot-Stone-Massage, Reflexzonenmassage, Lymphdrainage, Schwangerschaftsmassage und Kopf-Nacken-Schulter-Massage. Für Details zu einzelnen Behandlungen verweise auf die Website.',
   'massage,behandlung,angebot,leistung,service',
   1,
   3
@@ -72,7 +72,7 @@ VALUES
   'c1000000-0000-0000-0000-000000000006',
   'de',
   'Geschenkgutscheine',
-  'König Energetik bietet Geschenkgutscheine für alle Massagen und Wellness-Behandlungen an. Bei Interesse verweise auf die Website oder die telefonische Bestellung.',
+  'Energetische Massage bietet Geschenkgutscheine für alle Massagen und Wellness-Behandlungen an. Bei Interesse verweise auf die Website oder die telefonische Bestellung.',
   'gutschein,geschenk,geschenkgutschein,voucher',
   1,
   6
@@ -111,7 +111,7 @@ VALUES
   'c1000000-0000-0000-0000-000000000013',
   'tr',
   'Sunulan masaj türleri',
-  'König Energetik şu masajları sunmaktadır: Klasik Masaj, Spor Masajı, Derin Doku Masajı, Aromaterapi Masajı, Sıcak Taş Masajı, Refleksoloji, Lenf Drenajı, Hamilelik Masajı ve Baş-Boyun-Omuz Masajı. Detaylar için web sitesine yönlendir.',
+  'Energetische Massage şu masajları sunmaktadır: Klasik Masaj, Spor Masajı, Derin Doku Masajı, Aromaterapi Masajı, Sıcak Taş Masajı, Refleksoloji, Lenf Drenajı, Hamilelik Masajı ve Baş-Boyun-Omuz Masajı. Detaylar için web sitesine yönlendir.',
   'masaj,hizmet,tedavi,seçenek',
   1,
   3
@@ -159,7 +159,7 @@ VALUES
   'c1000000-0000-0000-0000-000000000023',
   'en',
   'Available massage types',
-  'König Energetik offers: Classic Massage, Sports Massage, Deep Tissue Massage, Aromatherapy Massage, Hot Stone Massage, Reflexology, Lymphatic Drainage, Pregnancy Massage and Head-Neck-Shoulder Massage. Refer to the website for details on individual treatments.',
+  'Energetische Massage offers: Classic Massage, Sports Massage, Deep Tissue Massage, Aromatherapy Massage, Hot Stone Massage, Reflexology, Lymphatic Drainage, Pregnancy Massage and Head-Neck-Shoulder Massage. Refer to the website for details on individual treatments.',
   'massage,treatment,service,option',
   1,
   3

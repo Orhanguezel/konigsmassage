@@ -30,7 +30,7 @@ SET @HAS_REVIEW_I18N := (
 -- Testimonial target ids (define your own)
 -- Option A: single bucket id (recommended for homepage slider):
 -- ---------------------------
-SET @TESTIMONIAL_BUCKET := 'konigsmassage';
+SET @TESTIMONIAL_BUCKET := 'energetische-massage';
 
 -- ---------------------------
 -- Parent review ids (fixed)

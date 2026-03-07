@@ -1,6 +1,6 @@
 -- ===================================================================
 -- FILE: 110_telegram_inbound_messages.schema.sql
--- Telegram inbound messages table (Königs Massage)
+-- Telegram inbound messages table (Energetische Massage)
 -- ===================================================================
 
 SET NAMES utf8mb4;

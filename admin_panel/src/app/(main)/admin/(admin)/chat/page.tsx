@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/app/(main)/admin/(admin)/chat/page.tsx
-// Admin Chat & AI Support Page (König Energetik)
+// Admin Chat & AI Support Page (Energetische Massage)
 // =============================================================
 
 import ChatAdminPage from './Chat';

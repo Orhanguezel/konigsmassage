@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 161_footer_sections_seed.sql (KÖNIG ENERGETIK — FINAL)
+-- FILE: 161_footer_sections_seed.sql (Energetische Massage — FINAL)
 -- footer_sections + footer_sections_i18n (tr, en, de)
 -- Sections: Quick Access, Treatments, Legal, Social
 -- Idempotent seed

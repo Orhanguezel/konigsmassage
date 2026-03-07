@@ -9,7 +9,7 @@ export function AdminFooter() {
     <footer className="mt-auto border-t py-4 px-6 bg-background/50 backdrop-blur-sm">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
-          <span className="font-semibold">{copy.app_name || 'König Energetik'}</span>
+          <span className="font-semibold">{copy.app_name || 'Energetische Massage'}</span>
           <span className="text-border">|</span>
           <span className="font-mono">{copy.app_version || 'v1.4.2'}</span>
         </div>

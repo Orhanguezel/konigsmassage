@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 051.6_custom_pages_terms.seed.sql (FINAL — KÖNIG ENERGETIK, rerunnable)
--- KÖNIG ENERGETIK – Custom Page: Terms / Nutzungsbedingungen (TR/EN/DE)
+-- FILE: 051.6_custom_pages_terms.seed.sql (FINAL — Energetische Massage, rerunnable)
+-- Energetische Massage – Custom Page: Terms / Nutzungsbedingungen (TR/EN/DE)
 -- ✅ PARENT: custom_pages.module_key = 'terms'
 -- ✅ category/subcategory YOK (schema’da yok)
 -- ✅ images/storage_image_ids LONGTEXT JSON-string (schema uyumlu)
@@ -125,7 +125,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Amaç ve Kapsam</h2>',
           '<p class="text-slate-700">',
-            'Bu koşullar, KÖNIG ENERGETIK web sitesinin kullanımına ilişkin kuralları ve tarafların hak/yükümlülüklerini düzenler. ',
+            'Bu koşullar, Energetische Massage web sitesinin kullanımına ilişkin kuralları ve tarafların hak/yükümlülüklerini düzenler. ',
             'Sitedeki içerikler genel bilgilendirme amaçlıdır ve sağlık/tedavi taahhüdü niteliği taşımaz.',
           '</p>',
         '</div>',
@@ -134,7 +134,7 @@ VALUES
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
             '<h2 class="text-xl font-semibold text-slate-900 mb-3">2. İçerik ve Fikri Mülkiyet</h2>',
             '<p class="text-slate-700 mb-3">',
-              'Sitedeki metin, görsel, logo ve diğer tüm materyaller KÖNIG ENERGETIK’a veya hak sahiplerine aittir.',
+              'Sitedeki metin, görsel, logo ve diğer tüm materyaller Energetische Massage’a veya hak sahiplerine aittir.',
             '</p>',
             '<ul class="list-disc pl-6 text-slate-700 space-y-2">',
               '<li>İzinsiz kopyalama/çoğaltma/yayma yapılamaz</li>',
@@ -165,7 +165,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">5. Sorumluluk Reddi</h2>',
           '<p class="text-slate-700 mb-3">',
-            'Sitede yer alan bilgiler genel bilgilendirme amaçlıdır. KÖNIG ENERGETIK, içeriğin doğruluğu ve güncelliği için makul çaba gösterir; ',
+            'Sitede yer alan bilgiler genel bilgilendirme amaçlıdır. Energetische Massage, içeriğin doğruluğu ve güncelliği için makul çaba gösterir; ',
             'ancak içeriklerin hatasız olduğu veya her zaman güncel kalacağı yönünde garanti vermez.',
           '</p>',
           '<p class="text-slate-700">',
@@ -176,24 +176,24 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">6. Üçüncü Taraf Bağlantılar</h2>',
           '<p class="text-slate-700">',
-            'Üçüncü taraf sitelere verilen bağlantılar bilgi amaçlıdır. KÖNIG ENERGETIK bu sitelerin içeriğinden ve uygulamalarından sorumlu değildir.',
+            'Üçüncü taraf sitelere verilen bağlantılar bilgi amaçlıdır. Energetische Massage bu sitelerin içeriğinden ve uygulamalarından sorumlu değildir.',
           '</p>',
         '</div>',
 
         '<div class="bg-slate-900 text-white rounded-2xl p-6">',
           '<h2 class="text-xl font-semibold mb-3">7. Değişiklikler</h2>',
           '<p class="text-white/90">',
-            'KÖNIG ENERGETIK, kullanım koşullarını güncelleme hakkını saklı tutar. Güncellemeler web sitesinde yayımlandığı tarihten itibaren geçerlidir.',
+            'Energetische Massage, kullanım koşullarını güncelleme hakkını saklı tutar. Güncellemeler web sitesinde yayımlandığı tarihten itibaren geçerlidir.',
           '</p>',
         '</div>',
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Kullanım Koşulları: web sitesi kullanımı, fikri mülkiyet, kullanıcı yükümlülükleri, randevu süreçleri, sorumluluk sınırları ve değişiklik hükümleri.',
-  'KÖNIG ENERGETIK Kullanım Koşulları sayfası',
-  'Kullanım Koşulları | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK web sitesi kullanım koşulları: içerik hakları, kullanıcı yükümlülükleri, randevu süreçleri, sorumluluk reddi ve üçüncü taraf bağlantılar.',
-  'koenig energetik,legal,kullanim kosullari,terms,fikri mulkiyet,randevu,sorumluluk',
+  'Energetische Massage Kullanım Koşulları: web sitesi kullanımı, fikri mülkiyet, kullanıcı yükümlülükleri, randevu süreçleri, sorumluluk sınırları ve değişiklik hükümleri.',
+  'Energetische Massage Kullanım Koşulları sayfası',
+  'Kullanım Koşulları | Energetische Massage',
+  'Energetische Massage web sitesi kullanım koşulları: içerik hakları, kullanıcı yükümlülükleri, randevu süreçleri, sorumluluk reddi ve üçüncü taraf bağlantılar.',
+  'energetische massage,legal,kullanim kosullari,terms,fikri mulkiyet,randevu,sorumluluk',
   NOW(3), NOW(3)
 ),
 
@@ -216,7 +216,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Purpose and Scope</h2>',
           '<p class="text-slate-700">',
-            'These terms govern the use of the KÖNIG ENERGETIK website. Website content is provided for general informational purposes and does not constitute medical advice.',
+            'These terms govern the use of the Energetische Massage website. Website content is provided for general informational purposes and does not constitute medical advice.',
           '</p>',
         '</div>',
 
@@ -224,7 +224,7 @@ VALUES
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
             '<h2 class="text-xl font-semibold text-slate-900 mb-3">2. Intellectual Property</h2>',
             '<p class="text-slate-700 mb-3">',
-              'Texts, images, logos and all materials are owned by KÖNIG ENERGETIK or respective rights holders.',
+              'Texts, images, logos and all materials are owned by Energetische Massage or respective rights holders.',
             '</p>',
             '<ul class="list-disc pl-6 text-slate-700 space-y-2">',
               '<li>No reproduction or distribution without permission</li>',
@@ -255,7 +255,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">5. Disclaimer</h2>',
           '<p class="text-slate-700 mb-3">',
-            'Content is provided “as is” for general information. KÖNIG ENERGETIK makes reasonable efforts to keep information accurate and up to date, but provides no warranty.',
+            'Content is provided “as is” for general information. Energetische Massage makes reasonable efforts to keep information accurate and up to date, but provides no warranty.',
           '</p>',
           '<p class="text-slate-700">',
             'Any reliance on website content is at the user’s own risk.',
@@ -265,24 +265,24 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">6. External Links</h2>',
           '<p class="text-slate-700">',
-            'Links to third-party websites are provided for convenience. KÖNIG ENERGETIK is not responsible for third-party content or practices.',
+            'Links to third-party websites are provided for convenience. Energetische Massage is not responsible for third-party content or practices.',
           '</p>',
         '</div>',
 
         '<div class="bg-slate-900 text-white rounded-2xl p-6">',
           '<h2 class="text-xl font-semibold mb-3">7. Changes</h2>',
           '<p class="text-white/90">',
-            'KÖNIG ENERGETIK may update these terms. Changes take effect upon publication on this website.',
+            'Energetische Massage may update these terms. Changes take effect upon publication on this website.',
           '</p>',
         '</div>',
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Terms of Use: website usage, intellectual property, user obligations, booking rules, disclaimer and updates.',
-  'KÖNIG ENERGETIK Terms of Use page',
-  'Terms of Use | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK Terms of Use covers IP, user obligations, appointment rules, disclaimers, external links and changes.',
-  'koenig energetik,legal,terms of use,appointments,disclaimer,intellectual property',
+  'Energetische Massage Terms of Use: website usage, intellectual property, user obligations, booking rules, disclaimer and updates.',
+  'Energetische Massage Terms of Use page',
+  'Terms of Use | Energetische Massage',
+  'Energetische Massage Terms of Use covers IP, user obligations, appointment rules, disclaimers, external links and changes.',
+  'energetische massage,legal,terms of use,appointments,disclaimer,intellectual property',
   NOW(3), NOW(3)
 ),
 
@@ -305,7 +305,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Zweck und Geltungsbereich</h2>',
           '<p class="text-slate-700">',
-            'Diese Bedingungen regeln die Nutzung der Website von KÖNIG ENERGETIK. Inhalte dienen der allgemeinen Information und stellen keine medizinische Beratung dar.',
+            'Diese Bedingungen regeln die Nutzung der Website von Energetische Massage. Inhalte dienen der allgemeinen Information und stellen keine medizinische Beratung dar.',
           '</p>',
         '</div>',
 
@@ -313,7 +313,7 @@ VALUES
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
             '<h2 class="text-xl font-semibold text-slate-900 mb-3">2. Urheberrechte</h2>',
             '<p class="text-slate-700 mb-3">',
-              'Texte, Bilder, Logos und Materialien sind Eigentum von KÖNIG ENERGETIK bzw. der jeweiligen Rechteinhaber.',
+              'Texte, Bilder, Logos und Materialien sind Eigentum von Energetische Massage bzw. der jeweiligen Rechteinhaber.',
             '</p>',
             '<ul class="list-disc pl-6 text-slate-700 space-y-2">',
               '<li>Keine Vervielfältigung ohne Erlaubnis</li>',
@@ -344,28 +344,28 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">5. Haftungsausschluss</h2>',
           '<p class="text-slate-700 mb-3">',
-            'Inhalte werden „wie gesehen“ bereitgestellt. KÖNIG ENERGETIK bemüht sich um Aktualität, übernimmt jedoch keine Gewähr.',
+            'Inhalte werden „wie gesehen“ bereitgestellt. Energetische Massage bemüht sich um Aktualität, übernimmt jedoch keine Gewähr.',
           '</p>',
           '<p class="text-slate-700">Die Nutzung der Informationen erfolgt auf eigenes Risiko.</p>',
         '</div>',
 
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">6. Externe Links</h2>',
-          '<p class="text-slate-700">Für Inhalte verlinkter Drittseiten übernimmt KÖNIG ENERGETIK keine Verantwortung.</p>',
+          '<p class="text-slate-700">Für Inhalte verlinkter Drittseiten übernimmt Energetische Massage keine Verantwortung.</p>',
         '</div>',
 
         '<div class="bg-slate-900 text-white rounded-2xl p-6">',
           '<h2 class="text-xl font-semibold mb-3">7. Änderungen</h2>',
-          '<p class="text-white/90">KÖNIG ENERGETIK kann diese Bedingungen aktualisieren. Änderungen gelten ab Veröffentlichung.</p>',
+          '<p class="text-white/90">Energetische Massage kann diese Bedingungen aktualisieren. Änderungen gelten ab Veröffentlichung.</p>',
         '</div>',
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Nutzungsbedingungen: Website-Nutzung, Urheberrechte, Pflichten, Terminregeln, Haftungsausschluss und Änderungen.',
-  'KÖNIG ENERGETIK Nutzungsbedingungen',
-  'Nutzungsbedingungen | KÖNIG ENERGETIK',
+  'Energetische Massage Nutzungsbedingungen: Website-Nutzung, Urheberrechte, Pflichten, Terminregeln, Haftungsausschluss und Änderungen.',
+  'Energetische Massage Nutzungsbedingungen',
+  'Nutzungsbedingungen | Energetische Massage',
   'Die Nutzungsbedingungen regeln Inhaltsnutzung, Termin-/Buchungsregeln, Haftungsausschluss, externe Links und Aktualisierungen.',
-  'koenig energetik,legal,nutzungsbedingungen,termine,haftung,urheberrecht',
+  'energetische massage,legal,nutzungsbedingungen,termine,haftung,urheberrecht',
   NOW(3), NOW(3)
 )
 ON DUPLICATE KEY UPDATE

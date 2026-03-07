@@ -1,7 +1,7 @@
 // =============================================================
 // FILE: src/app/(main)/admin/(admin)/chat/components/ChatSettingsPanel.tsx
 // Chat & AI Support Settings Panel
-// König Energetik
+// Energetische Massage
 // =============================================================
 
 'use client';
@@ -466,7 +466,7 @@ export default function ChatSettingsPanel() {
                       [opt.value]: e.target.value,
                     }))
                   }
-                  placeholder="Willkommen bei König Energetik! Wie kann ich Ihnen helfen?"
+                  placeholder="Willkommen bei Energetische Massage! Wie kann ich Ihnen helfen?"
                 />
               </div>
             ))}

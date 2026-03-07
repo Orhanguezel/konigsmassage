@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 040_site_settings.sql (koenigsmassage) – MULTI-LOCALE (Dynamic) [FINAL]
+-- FILE: 040_site_settings.sql (energetische-massage-bonn) – MULTI-LOCALE (Dynamic) [FINAL]
 --  - app_locales + default_locale => locale='*'
 --  - localized settings => locale in ('tr','en','de')
 --  - cookie_consent => LOCALIZED (tr/en/de)
@@ -99,7 +99,7 @@ VALUES
   UUID(),
   'public_base_url',
   '*',
-  'https://www.koenigsmassage.com',
+  'https://www.energetische-massage-bonn.de',
   NOW(3),
   NOW(3)
 )
@@ -124,7 +124,7 @@ VALUES
   UUID(),
   'booking_admin_emails',
   '*',
-  CAST(JSON_ARRAY('info@koenigsmassage.com') AS CHAR CHARACTER SET utf8mb4),
+  CAST(JSON_ARRAY('info@energetische-massage-bonn.de') AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
 )
@@ -141,7 +141,7 @@ VALUES
   UUID(),
   'site_title',
   'tr',
-  'KÖNIG ENERGETIK',
+  'Energetische Massage',
   NOW(3),
   NOW(3)
 ),
@@ -150,13 +150,13 @@ VALUES
   'contact_info',
   'tr',
   CAST(JSON_OBJECT(
-    'companyName','KÖNIG ENERGETIK',
+    'companyName','Energetische Massage',
     'phones',JSON_ARRAY('+49 176 41107158'),
-    'email','info@koenigsmassage.com',
+    'email','info@energetische-massage-bonn.de',
     'address','Bonn — randevu ile',
     'addressSecondary','',
     'whatsappNumber','+49 176 41107158',
-    'website','https://www.koenigsmassage.com',
+    'website','https://www.energetische-massage-bonn.de',
     'notes','Randevu ve sorularınız için e-posta veya WhatsApp üzerinden ulaşabilirsiniz. Seanslar ön görüşme ve onay ile planlanır.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -167,12 +167,12 @@ VALUES
   'socials',
   'tr',
   CAST(JSON_OBJECT(
-    'instagram','https://instagram.com/koenigsmassage',
-    'facebook','https://facebook.com/koenigsmassage',
-    'youtube','https://youtube.com/@koenigsmassage',
-    'linkedin','https://linkedin.com/company/koenigsmassage',
-    'x','https://x.com/koenigsmassage',
-    'tiktok','https://tiktok.com/@koenigsmassage'
+    'instagram','https://instagram.com/energetischemassagebonn',
+    'facebook','https://facebook.com/energetischemassagebonn',
+    'youtube','https://youtube.com/@energetischemassagebonn',
+    'linkedin','https://linkedin.com/company/energetischemassagebonn',
+    'x','https://x.com/energetischemassagebonn',
+    'tiktok','https://tiktok.com/@energetischemassagebonn'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -184,7 +184,7 @@ VALUES
   CAST(JSON_OBJECT(
     'headline','Bonn’da Enerjetik Masaj',
     'subline','Kalpten dokunuş, bilinçli varlık ve güvenli bir alanla derin gevşeme.',
-    'body','KÖNIG ENERGETIK, Anastasia König’in Bonn’da sunduğu enerjetik masaj seanslarını bir araya getirir. Tayland’da ve farklı ülkelerde edindiği masaj tekniklerini, sezgisel yaklaşımı ve dikkatli dokunuşla birleştirir. Her seans kişiye özel, saygılı ve net sınırlar içinde ilerler. Amaç; beden farkındalığını desteklemek, iç huzuru güçlendirmek ve gündelik yükleri geride bırakmanıza yardımcı olmaktır. Terminler ön görüşme ile, randevuya göre planlanır.'
+    'body','Energetische Massage, Anastasia König’in Bonn’da sunduğu enerjetik masaj seanslarını bir araya getirir. Tayland’da ve farklı ülkelerde edindiği masaj tekniklerini, sezgisel yaklaşımı ve dikkatli dokunuşla birleştirir. Her seans kişiye özel, saygılı ve net sınırlar içinde ilerler. Amaç; beden farkındalığını desteklemek, iç huzuru güçlendirmek ve gündelik yükleri geride bırakmanıza yardımcı olmaktır. Terminler ön görüşme ile, randevuya göre planlanır.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -194,17 +194,17 @@ VALUES
   'company_brand',
   'tr',
   CAST(JSON_OBJECT(
-    'name','KÖNIG ENERGETIK',
-    'shortName','KÖNIG',
-    'website','https://www.koenigsmassage.com',
+    'name','Energetische Massage',
+    'shortName','EM',
+    'website','https://www.energetische-massage-bonn.de',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
       'width',120,
       'height',120,
-      'alt','KÖNIG ENERGETIK Logo'
+      'alt','Energetische Massage Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -231,7 +231,7 @@ VALUES
   UUID(),
   'site_title',
   'en',
-  'KÖNIG ENERGETIK',
+  'Energetische Massage',
   NOW(3),
   NOW(3)
 ),
@@ -240,13 +240,13 @@ VALUES
   'contact_info',
   'en',
   CAST(JSON_OBJECT(
-    'companyName','KÖNIG ENERGETIK',
+    'companyName','Energetische Massage',
     'phones',JSON_ARRAY('+49 176 41107158'),
-    'email','info@koenigsmassage.com',
+    'email','info@energetische-massage-bonn.de',
     'address','Bonn — by appointment',
     'addressSecondary','',
     'whatsappNumber','+49 176 41107158',
-    'website','https://www.koenigsmassage.com',
+    'website','https://www.energetische-massage-bonn.de',
     'notes','For bookings and questions, contact via email or WhatsApp. Sessions are arranged after a short pre-chat and consent.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -257,12 +257,12 @@ VALUES
   'socials',
   'en',
   CAST(JSON_OBJECT(
-    'instagram','https://instagram.com/koenigsmassage',
-    'facebook','https://facebook.com/koenigsmassage',
-    'youtube','https://youtube.com/@koenigsmassage',
-    'linkedin','https://linkedin.com/company/koenigsmassage',
-    'x','https://x.com/koenigsmassage',
-    'tiktok','https://tiktok.com/@koenigsmassage'
+    'instagram','https://instagram.com/energetischemassagebonn',
+    'facebook','https://facebook.com/energetischemassagebonn',
+    'youtube','https://youtube.com/@energetischemassagebonn',
+    'linkedin','https://linkedin.com/company/energetischemassagebonn',
+    'x','https://x.com/energetischemassagebonn',
+    'tiktok','https://tiktok.com/@energetischemassagebonn'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -274,7 +274,7 @@ VALUES
   CAST(JSON_OBJECT(
     'headline','Energetic Massage in Bonn',
     'subline','Healing touch with heart — mindful presence, clear boundaries, and deep relaxation.',
-    'body','KÖNIG ENERGETIK brings together the energetic massage sessions offered by Anastasia König in Bonn. She combines bodywork techniques learned in Thailand and across her travels with an intuitive, attentive approach. Each session is individual, respectful, and clearly bounded. The intention is to support body awareness, inner calm, and a gentle release from everyday pressure. Appointments are available by arrangement after a short conversation and consent.'
+    'body','Energetische Massage brings together the energetic massage sessions offered by Anastasia König in Bonn. She combines bodywork techniques learned in Thailand and across her travels with an intuitive, attentive approach. Each session is individual, respectful, and clearly bounded. The intention is to support body awareness, inner calm, and a gentle release from everyday pressure. Appointments are available by arrangement after a short conversation and consent.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -284,17 +284,17 @@ VALUES
   'company_brand',
   'en',
   CAST(JSON_OBJECT(
-    'name','KÖNIG ENERGETIK',
-    'shortName','KÖNIG',
-    'website','https://www.koenigsmassage.com',
+    'name','Energetische Massage',
+    'shortName','EM',
+    'website','https://www.energetische-massage-bonn.de',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
       'width',120,
       'height',120,
-      'alt','KÖNIG ENERGETIK Logo'
+      'alt','Energetische Massage Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -313,7 +313,7 @@ VALUES
   UUID(),
   'site_title',
   'de',
-  'KÖNIG ENERGETIK',
+  'Energetische Massage',
   NOW(3),
   NOW(3)
 ),
@@ -322,13 +322,13 @@ VALUES
   'contact_info',
   'de',
   CAST(JSON_OBJECT(
-    'companyName','KÖNIG ENERGETIK',
+    'companyName','Energetische Massage',
     'phones',JSON_ARRAY('+49 176 41107158'),
-    'email','info@koenigsmassage.com',
+    'email','info@energetische-massage-bonn.de',
     'address','Bonn — nach Terminvereinbarung',
     'addressSecondary','',
     'whatsappNumber','+49 176 41107158',
-    'website','https://www.koenigsmassage.com',
+    'website','https://www.energetische-massage-bonn.de',
     'notes','Für Termine und Fragen erreichen Sie mich per E-Mail oder WhatsApp. Termine nach kurzem Vorgespräch und Einverständnis.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -339,12 +339,12 @@ VALUES
   'socials',
   'de',
   CAST(JSON_OBJECT(
-    'instagram','https://instagram.com/koenigsmassage',
-    'facebook','https://facebook.com/koenigsmassage',
-    'youtube','https://youtube.com/@koenigsmassage',
-    'linkedin','https://linkedin.com/company/koenigsmassage',
-    'x','https://x.com/koenigsmassage',
-    'tiktok','https://tiktok.com/@koenigsmassage'
+    'instagram','https://instagram.com/energetischemassagebonn',
+    'facebook','https://facebook.com/energetischemassagebonn',
+    'youtube','https://youtube.com/@energetischemassagebonn',
+    'linkedin','https://linkedin.com/company/energetischemassagebonn',
+    'x','https://x.com/energetischemassagebonn',
+    'tiktok','https://tiktok.com/@energetischemassagebonn'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -356,7 +356,7 @@ VALUES
   CAST(JSON_OBJECT(
     'headline','Energetische Massage in Bonn',
     'subline','Heilende Berührung mit Herz — achtsam, klar abgegrenzt und individuell.',
-    'body','KÖNIG ENERGETIK bündelt die energetischen Massage-Sessions von Anastasia König in Bonn. Techniken aus Thailand und weiteren Reisen verbinden sich mit einer intuitiven, präsenten Arbeitsweise. Jede Sitzung ist persönlich, respektvoll und in klaren Grenzen gehalten. Im Mittelpunkt stehen Körperwahrnehmung, innere Ruhe und ein sanftes Loslassen vom Alltag. Termine nach Vereinbarung, idealerweise nach kurzem Vorgespräch und Einverständnis.'
+    'body','Energetische Massage bündelt die energetischen Massage-Sessions von Anastasia König in Bonn. Techniken aus Thailand und weiteren Reisen verbinden sich mit einer intuitiven, präsenten Arbeitsweise. Jede Sitzung ist persönlich, respektvoll und in klaren Grenzen gehalten. Im Mittelpunkt stehen Körperwahrnehmung, innere Ruhe und ein sanftes Loslassen vom Alltag. Termine nach Vereinbarung, idealerweise nach kurzem Vorgespräch und Einverständnis.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -366,17 +366,17 @@ VALUES
   'company_brand',
   'de',
   CAST(JSON_OBJECT(
-    'name','KÖNIG ENERGETIK',
-    'shortName','KÖNIG',
-    'website','https://www.koenigsmassage.com',
+    'name','Energetische Massage',
+    'shortName','EM',
+    'website','https://www.energetische-massage-bonn.de',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
       'width',120,
       'height',120,
-      'alt','KÖNIG ENERGETIK Logo'
+      'alt','Energetische Massage Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -392,15 +392,15 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO `site_settings` (`id`, `key`, `locale`, `value`, `created_at`, `updated_at`)
 VALUES
 (UUID(), 'storage_driver', '*', 'cloudinary', NOW(3), NOW(3)),
-(UUID(), 'storage_local_root', '*', '/var/www/koenigsmassage/uploads', NOW(3), NOW(3)),
+(UUID(), 'storage_local_root', '*', '/var/www/konigsmassage/uploads', NOW(3), NOW(3)),
 (UUID(), 'storage_local_base_url', '*', '/uploads', NOW(3), NOW(3)),
 (UUID(), 'cloudinary_cloud_name', '*', 'dbozv7wqd', NOW(3), NOW(3)),
 (UUID(), 'cloudinary_api_key', '*', '644676135993432', NOW(3), NOW(3)),
 (UUID(), 'cloudinary_api_secret', '*', 'change-me-in-admin', NOW(3), NOW(3)),
-(UUID(), 'cloudinary_folder', '*', 'uploads/koenigsmassage', NOW(3), NOW(3)),
-(UUID(), 'cloudinary_unsigned_preset', '*', 'koenigsmassage_unsigned', NOW(3), NOW(3)),
+(UUID(), 'cloudinary_folder', '*', 'uploads/energetische-massage', NOW(3), NOW(3)),
+(UUID(), 'cloudinary_unsigned_preset', '*', 'energetische_massage_unsigned', NOW(3), NOW(3)),
 (UUID(), 'storage_cdn_public_base', '*', 'https://res.cloudinary.com', NOW(3), NOW(3)),
-(UUID(), 'storage_public_api_base', '*', 'https://www.koenigsmassage.com/api', NOW(3), NOW(3))
+(UUID(), 'storage_public_api_base', '*', 'https://www.energetische-massage-bonn.de/api', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `value`      = VALUES(`value`),
   `updated_at` = VALUES(`updated_at`);
@@ -412,10 +412,10 @@ INSERT INTO `site_settings` (`id`, `key`, `locale`, `value`, `created_at`, `upda
 VALUES
 (UUID(), 'smtp_host', '*', 'smtp.example.com', NOW(3), NOW(3)),
 (UUID(), 'smtp_port', '*', '465', NOW(3), NOW(3)),
-(UUID(), 'smtp_username', '*', 'no-reply@koenigsmassage.com', NOW(3), NOW(3)),
+(UUID(), 'smtp_username', '*', 'no-reply@energetische-massage-bonn.de', NOW(3), NOW(3)),
 (UUID(), 'smtp_password', '*', 'change-me-in-admin', NOW(3), NOW(3)),
-(UUID(), 'smtp_from_email', '*', 'no-reply@koenigsmassage.com', NOW(3), NOW(3)),
-(UUID(), 'smtp_from_name', '*', 'KÖNIG ENERGETIK', NOW(3), NOW(3)),
+(UUID(), 'smtp_from_email', '*', 'no-reply@energetische-massage-bonn.de', NOW(3), NOW(3)),
+(UUID(), 'smtp_from_name', '*', 'Energetische Massage', NOW(3), NOW(3)),
 (UUID(), 'smtp_ssl', '*', 'true', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `value`      = VALUES(`value`),
@@ -455,8 +455,8 @@ VALUES
   'site_logo',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043389/site-media/koenig-energetik-horizontal.svg',
-    'alt','KÖNIG ENERGETIK Logo'
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+    'alt','Energetische Massage Logo'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -466,8 +466,8 @@ VALUES
   'site_logo_dark',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043470/site-media/koenig-energetik-secondary.svg',
-    'alt','KÖNIG ENERGETIK Logo (Dark)'
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+    'alt','Energetische Massage Logo (Dark)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -477,8 +477,8 @@ VALUES
   'site_logo_light',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771043356/site-media/koenig-energetik-horizontal-light.svg',
-    'alt','KÖNIG ENERGETIK Logo (Light)'
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+    'alt','Energetische Massage Logo (Light)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -489,7 +489,7 @@ VALUES
   '*',
   CAST(JSON_OBJECT(
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771039304/site-media/koenig-energetik-icon.svg',
-    'alt','KÖNIG ENERGETIK Favicon'
+    'alt','Energetische Massage Favicon'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -502,7 +502,7 @@ VALUES
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222471/site-media/about.png',
     'width',1200,
     'height',630,
-    'alt','KÖNIG ENERGETIK – Energetische Massage in Bonn'
+    'alt','Energetische Massage – Energetische Massage in Bonn'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -515,7 +515,7 @@ VALUES
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771038160/site-media/termin_portrait.jpg',
     'width',1200,
     'height',800,
-    'alt','KÖNIG ENERGETIK – Termin-Titelbild'
+    'alt','Energetische Massage – Termin-Titelbild'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)

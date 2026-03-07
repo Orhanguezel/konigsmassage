@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/modules/dashboard/service.ts
-// Knowledge-context builder for AI chat (König Energetik)
+// Knowledge-context builder for AI chat (Energetische Massage)
 // Searches: services, custom pages, chat_ai_knowledge
 // =============================================================
 

@@ -44,7 +44,7 @@ export default function ContactPage() {
 
   const t = useMemo(
     () => ({
-      subprefix: safeStr(ui('ui_contact_subprefix', 'KÖNIG ENERGETIK')),
+      subprefix: safeStr(ui('ui_contact_subprefix', 'Energetische Massage')),
       sublabel: safeStr(ui('ui_contact_sublabel', 'Contact')),
       titleLeft: safeStr(ui('ui_contact_title_left', 'Contact')),
       tagline: safeStr(

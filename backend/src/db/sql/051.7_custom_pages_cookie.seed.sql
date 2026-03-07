@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 051.7_custom_pages_cookie.seed.sql (FINAL — KÖNIG ENERGETIK)
--- KÖNIG ENERGETIK – Custom Page: Çerez Politikası / Cookie Policy (TR/EN/DE)
+-- FILE: 051.7_custom_pages_cookie.seed.sql (FINAL — Energetische Massage)
+-- Energetische Massage – Custom Page: Çerez Politikası / Cookie Policy (TR/EN/DE)
 -- ✅ module_key artık PARENT: custom_pages.module_key = 'cookies'
 -- Category: LEGAL (aaaa7101)
 -- SubCategory: Çerez Politikası (bbbb7008)
@@ -155,11 +155,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Çerez Politikası: çerez türleri, kullanım amaçları ve tercih yönetimi.',
-  'KÖNIG ENERGETIK Çerez Politikası sayfası',
-  'Çerez Politikası | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK çerez politikası; zorunlu, fonksiyonel ve analitik çerezler ile tercih yönetimi hakkında bilgi verir.',
-  'koenig energetik,legal,cerez politikasi,cookies,analitik,tercih yonetimi',
+  'Energetische Massage Çerez Politikası: çerez türleri, kullanım amaçları ve tercih yönetimi.',
+  'Energetische Massage Çerez Politikası sayfası',
+  'Çerez Politikası | Energetische Massage',
+  'Energetische Massage çerez politikası; zorunlu, fonksiyonel ve analitik çerezler ile tercih yönetimi hakkında bilgi verir.',
+  'energetische massage,legal,cerez politikasi,cookies,analitik,tercih yonetimi',
   NOW(3), NOW(3)
 ),
 (
@@ -217,11 +217,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Cookie Policy: cookie types, purposes, and preference management.',
-  'KÖNIG ENERGETIK Cookie Policy page',
-  'Cookie Policy | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK Cookie Policy explains cookie categories and how to manage preferences in your browser.',
-  'koenig energetik,legal,cookie policy,cookies,analytics,preferences',
+  'Energetische Massage Cookie Policy: cookie types, purposes, and preference management.',
+  'Energetische Massage Cookie Policy page',
+  'Cookie Policy | Energetische Massage',
+  'Energetische Massage Cookie Policy explains cookie categories and how to manage preferences in your browser.',
+  'energetische massage,legal,cookie policy,cookies,analytics,preferences',
   NOW(3), NOW(3)
 ),
 (
@@ -279,11 +279,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Cookie-Richtlinie: Kategorien, Zwecke und Verwaltung der Cookie-Einstellungen.',
-  'KÖNIG ENERGETIK Cookie-Richtlinie',
-  'Cookie-Richtlinie | KÖNIG ENERGETIK',
-  'Die Cookie-Richtlinie von KÖNIG ENERGETIK erläutert Cookie-Kategorien und die Verwaltung über Browsereinstellungen.',
-  'koenig energetik,legal,cookie richtlinie,cookies,analyse,einstellungen',
+  'Energetische Massage Cookie-Richtlinie: Kategorien, Zwecke und Verwaltung der Cookie-Einstellungen.',
+  'Energetische Massage Cookie-Richtlinie',
+  'Cookie-Richtlinie | Energetische Massage',
+  'Die Cookie-Richtlinie von Energetische Massage erläutert Cookie-Kategorien und die Verwaltung über Browsereinstellungen.',
+  'energetische massage,legal,cookie richtlinie,cookies,analyse,einstellungen',
   NOW(3), NOW(3)
 )
 ON DUPLICATE KEY UPDATE

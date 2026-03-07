@@ -1,6 +1,6 @@
 -- =============================================================
 -- 141_faqs_seed.sql (FINAL)
--- KÖNIG ENERGETIK – Multilingual FAQs seed (faqs + faqs_i18n)
+-- Energetische Massage – Multilingual FAQs seed (faqs + faqs_i18n)
 -- ✅ 140_faqs.sql şema mevcut olmalı (DROP/CREATE yok)
 -- ✅ TR + EN + DE
 -- ✅ NO category fields

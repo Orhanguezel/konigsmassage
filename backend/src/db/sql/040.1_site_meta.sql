@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 040.1_site_meta.sql  (FINAL / DRY OG IMAGE) — FIX 1093
--- KÖNIG ENERGETIK – Default Meta + Global SEO (NEW STANDARD)
+-- Energetische Massage – Default Meta + Global SEO (NEW STANDARD)
 --  - FIX: avoids MySQL ER_UPDATE_TABLE_USED (1093)
 --    * no SELECT from site_settings inside INSERT/UPDATE statements
 --    * reuses variables for seo/site_seo payloads
@@ -51,12 +51,12 @@ SET @OG_DEFAULT := COALESCE(
 -- -------------------------------------------------------------
 -- Title policies
 -- -------------------------------------------------------------
-SET @SITE_NAME_GLOBAL := 'KÖNIG ENERGETIK';
-SET @TITLE_GLOBAL := 'KÖNIG ENERGETIK – Energetische Massage in Bonn';
+SET @SITE_NAME_GLOBAL := 'Energetische Massage';
+SET @TITLE_GLOBAL := 'Energetische Massage – Energetische Massage in Bonn';
 
-SET @BRAND_TR := 'KÖNIG ENERGETIK – Bonn’da Enerjetik Masaj';
-SET @BRAND_EN := 'KÖNIG ENERGETIK – Energetic Massage in Bonn';
-SET @BRAND_DE := 'KÖNIG ENERGETIK – Energetische Massage in Bonn';
+SET @BRAND_TR := 'Energetische Massage – Bonn’da Enerjetik Masaj';
+SET @BRAND_EN := 'Energetische Massage – Energetic Massage in Bonn';
+SET @BRAND_DE := 'Energetische Massage – Energetische Massage in Bonn';
 
 -- Descriptions (<= ~160 chars target)
 SET @DESC_TR := 'Bonn’da enerjetik masaj: bilinçli dokunuş, net sınırlar ve derin gevşeme. Seanslar ön görüşme ile, randevuya göre.';
@@ -64,7 +64,7 @@ SET @DESC_EN := 'Energetic massage sessions in Bonn with mindful touch, clear bo
 SET @DESC_DE := 'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung. Termine nach Vereinbarung.';
 SET @DESC_GLOBAL := 'Energetic massage sessions in Bonn with mindful touch, clear boundaries, and deep relaxation. Appointments by arrangement.';
 
-SET @KW_GLOBAL := 'KÖNIG ENERGETIK, energetische Massage, Bonn, Anastasia König, Entspannungsmassage, Thai Yoga Massage, Aroma-Energie, Fußreflex, Körperwahrnehmung, Termin';
+SET @KW_GLOBAL := 'Energetische Massage, energetische Massage, Bonn, Anastasia König, Entspannungsmassage, Thai Yoga Massage, Aroma-Energie, Fußreflex, Körperwahrnehmung, Termin';
 
 -- -------------------------------------------------------------
 -- Build JSON payloads ONCE (so we can reuse for seo + site_seo)
@@ -73,7 +73,7 @@ SET @SEO_GLOBAL := CAST(
   JSON_OBJECT(
     'site_name',      @SITE_NAME_GLOBAL,
     'title_default',  @TITLE_GLOBAL,
-    'title_template', '%s – KÖNIG ENERGETIK',
+    'title_template', '%s – Energetische Massage',
     'description',    @DESC_GLOBAL,
     'open_graph', JSON_OBJECT(
       'type',   'website',
@@ -96,7 +96,7 @@ SET @SEO_TR := CAST(
   JSON_OBJECT(
     'site_name',      @SITE_NAME_GLOBAL,
     'title_default',  @BRAND_TR,
-    'title_template', '%s – KÖNIG ENERGETIK',
+    'title_template', '%s – Energetische Massage',
     'description',    @DESC_TR,
     'open_graph', JSON_OBJECT('type','website','images', JSON_ARRAY(@OG_DEFAULT)),
     'twitter',   JSON_OBJECT('card','summary_large_image','site','','creator',''),
@@ -108,7 +108,7 @@ SET @SEO_EN := CAST(
   JSON_OBJECT(
     'site_name',      @SITE_NAME_GLOBAL,
     'title_default',  @BRAND_EN,
-    'title_template', '%s – KÖNIG ENERGETIK',
+    'title_template', '%s – Energetische Massage',
     'description',    @DESC_EN,
     'open_graph', JSON_OBJECT('type','website','images', JSON_ARRAY(@OG_DEFAULT)),
     'twitter',   JSON_OBJECT('card','summary_large_image','site','','creator',''),
@@ -120,7 +120,7 @@ SET @SEO_DE := CAST(
   JSON_OBJECT(
     'site_name',      @SITE_NAME_GLOBAL,
     'title_default',  @BRAND_DE,
-    'title_template', '%s – KÖNIG ENERGETIK',
+    'title_template', '%s – Energetische Massage',
     'description',    @DESC_DE,
     'open_graph', JSON_OBJECT('type','website','images', JSON_ARRAY(@OG_DEFAULT)),
     'twitter',   JSON_OBJECT('card','summary_large_image','site','','creator',''),
@@ -178,7 +178,7 @@ VALUES
   CAST(JSON_OBJECT(
     'title',       @BRAND_TR,
     'description', @DESC_TR,
-    'keywords',    'KÖNIG ENERGETIK, enerjetik masaj, Bonn, Anastasia König, rahatlama, beden farkındalığı, Thai Yoga, aroma, ayak refleks, randevu'
+    'keywords',    'Energetische Massage, enerjetik masaj, Bonn, Anastasia König, rahatlama, beden farkındalığı, Thai Yoga, aroma, ayak refleks, randevu'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -190,7 +190,7 @@ VALUES
   CAST(JSON_OBJECT(
     'title',       @BRAND_EN,
     'description', @DESC_EN,
-    'keywords',    'KÖNIG ENERGETIK, energetic massage, Bonn, Anastasia König, relaxation, body awareness, Thai yoga massage, aroma energy, foot reflex, appointment'
+    'keywords',    'Energetische Massage, energetic massage, Bonn, Anastasia König, relaxation, body awareness, Thai yoga massage, aroma energy, foot reflex, appointment'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -202,7 +202,7 @@ VALUES
   CAST(JSON_OBJECT(
     'title',       @BRAND_DE,
     'description', @DESC_DE,
-    'keywords',    'KÖNIG ENERGETIK, energetische Massage, Bonn, Anastasia König, Entspannung, Körperwahrnehmung, Thai Yoga Massage, Aroma-Energie, Fußreflex, Termin'
+    'keywords',    'Energetische Massage, energetische Massage, Bonn, Anastasia König, Entspannung, Körperwahrnehmung, Thai Yoga Massage, Aroma-Energie, Fußreflex, Termin'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)

@@ -60,7 +60,7 @@ export default function BlogHomeSection({ locale: explicitLocale }: { locale?: s
         <div className="flex items-end justify-between gap-6 mb-12">
           <div className="max-w-2xl">
             <span className="block text-brand-primary font-bold uppercase tracking-widest text-sm mb-3">
-              {safeStr(ui('ui_blog_home_subprefix', 'KÖNIG ENERGETIK')) || 'KÖNIG ENERGETIK'}
+              {safeStr(ui('ui_blog_home_subprefix', 'Energetische Massage')) || 'Energetische Massage'}
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-text-primary leading-tight">
               {title}

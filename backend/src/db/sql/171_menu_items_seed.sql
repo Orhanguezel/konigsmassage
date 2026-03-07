@@ -1,5 +1,5 @@
 -- ============================================================
--- FILE: 171_menu_items_seed.sql (KÖNIG ENERGETIK — FINAL)
+-- FILE: 171_menu_items_seed.sql (Energetische Massage — FINAL)
 -- menu_items + menu_items_i18n (tr, en, de)
 -- Header: Home, About (submenu: About + FAQs), Treatments (single link), Blog, Appointment
 -- Footer: Quick Access, Treatments (1), Legal, Social
@@ -165,8 +165,8 @@ VALUES
 (UUID(),'24c49639-01d0-4274-8fb9-c31ed64d0726','tr','Kullanım Koşulları','/terms','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 
 -- FOOTER: SOCIAL (TR)
-(UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','tr','Instagram','https://www.instagram.com/koenigsmassage','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
-(UUID(),'a9b1c2d3-e4f5-4a66-8b11-333333333333','tr','YouTube','https://www.youtube.com/@koenigsmassage','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000')
+(UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','tr','Instagram','https://www.instagram.com/energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'a9b1c2d3-e4f5-4a66-8b11-333333333333','tr','YouTube','https://www.youtube.com/@energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000')
 ON DUPLICATE KEY UPDATE
   `title`      = VALUES(`title`),
   `url`        = VALUES(`url`),
@@ -204,8 +204,8 @@ VALUES
 (UUID(),'24c49639-01d0-4274-8fb9-c31ed64d0726','en','Terms of Use','/terms','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 
 -- FOOTER: SOCIAL (EN)
-(UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','en','Instagram','https://www.instagram.com/koenigsmassage','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
-(UUID(),'a9b1c2d3-e4f5-4a66-8b11-333333333333','en','YouTube','https://www.youtube.com/@koenigsmassage','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000')
+(UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','en','Instagram','https://www.instagram.com/energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'a9b1c2d3-e4f5-4a66-8b11-333333333333','en','YouTube','https://www.youtube.com/@energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000')
 ON DUPLICATE KEY UPDATE
   `title`      = VALUES(`title`),
   `url`        = VALUES(`url`),
@@ -243,8 +243,8 @@ VALUES
 (UUID(),'24c49639-01d0-4274-8fb9-c31ed64d0726','de','Nutzungsbedingungen','/terms','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 
 -- FOOTER: SOCIAL (DE)
-(UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','de','Instagram','https://www.instagram.com/koenigsmassage','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
-(UUID(),'a9b1c2d3-e4f5-4a66-8b11-333333333333','de','YouTube','https://www.youtube.com/@koenigsmassage','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000')
+(UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','de','Instagram','https://www.instagram.com/energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'a9b1c2d3-e4f5-4a66-8b11-333333333333','de','YouTube','https://www.youtube.com/@energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000')
 ON DUPLICATE KEY UPDATE
   `title`      = VALUES(`title`),
   `url`        = VALUES(`url`),

@@ -1,6 +1,6 @@
 -- ===================================================================
 -- FILE: 110.1_telegram_inbound_messages.seed.sql
--- Telegram inbound messages sample seeds (Königs Massage)
+-- Telegram inbound messages sample seeds (Energetische Massage)
 -- ===================================================================
 
 SET NAMES utf8mb4;
@@ -52,15 +52,15 @@ INSERT INTO `telegram_inbound_messages` (
   777,
   '-100987654321',
   'group',
-  'Königs Massage Team',
-  'konigs_massage',
+  'Energetische Massage Team',
+  'energetische_massage',
   '222333444',
   'massage_team',
   'Team',
-  'Königs',
+  'Energetische',
   0,
   'Neuer Termin wurde bestätigt.',
-  '{ "update_id": 10000002, "message": { "message_id": 777, "chat": { "id": -100987654321, "type": "group", "title": "Königs Massage Team", "username": "konigs_massage" }, "from": { "id": 222333444, "is_bot": false, "first_name": "Team", "last_name": "Königs", "username": "massage_team" }, "date": 1737040100, "text": "Neuer Termin wurde bestätigt." } }',
+  '{ "update_id": 10000002, "message": { "message_id": 777, "chat": { "id": -100987654321, "type": "group", "title": "Energetische Massage Team", "username": "energetische_massage" }, "from": { "id": 222333444, "is_bot": false, "first_name": "Team", "last_name": "Energetische", "username": "massage_team" }, "date": 1737040100, "text": "Neuer Termin wurde bestätigt." } }',
   1737040100,
   NOW(3)
 ),

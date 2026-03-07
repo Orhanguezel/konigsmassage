@@ -34,10 +34,10 @@ VALUES
 
       -- SEO (pages/privacy-policy.tsx)
       'ui_privacy_policy_page_description',
-        'KÖNIG ENERGETIK gizlilik politikası: hangi verileri topluyoruz, hangi amaçlarla işliyoruz, saklama süreleri, güvenlik önlemleri ve haklarınız.',
-      'ui_privacy_policy_meta_title',        'Gizlilik Politikası | KÖNIG ENERGETIK',
+        'Energetische Massage gizlilik politikası: hangi verileri topluyoruz, hangi amaçlarla işliyoruz, saklama süreleri, güvenlik önlemleri ve haklarınız.',
+      'ui_privacy_policy_meta_title',        'Gizlilik Politikası | Energetische Massage',
       'ui_privacy_policy_meta_description',
-        'KÖNIG ENERGETIK gizlilik politikası: hangi verileri topluyoruz, hangi amaçlarla işliyoruz, saklama süreleri, güvenlik önlemleri ve haklarınız.'
+        'Energetische Massage gizlilik politikası: hangi verileri topluyoruz, hangi amaçlarla işliyoruz, saklama süreleri, güvenlik önlemleri ve haklarınız.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -60,10 +60,10 @@ VALUES
 
       -- SEO
       'ui_privacy_policy_page_description',
-        'KÖNIG ENERGETIK privacy policy: what data we collect, purposes of processing, retention periods, security measures, and your rights.',
-      'ui_privacy_policy_meta_title',        'Privacy Policy | KÖNIG ENERGETIK',
+        'Energetische Massage privacy policy: what data we collect, purposes of processing, retention periods, security measures, and your rights.',
+      'ui_privacy_policy_meta_title',        'Privacy Policy | Energetische Massage',
       'ui_privacy_policy_meta_description',
-        'KÖNIG ENERGETIK privacy policy: what data we collect, purposes of processing, retention periods, security measures, and your rights.'
+        'Energetische Massage privacy policy: what data we collect, purposes of processing, retention periods, security measures, and your rights.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -86,10 +86,10 @@ VALUES
 
       -- SEO
       'ui_privacy_policy_page_description',
-        'KÖNIG ENERGETIK Datenschutzerklärung: welche Daten wir erheben, Zwecke der Verarbeitung, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.',
-      'ui_privacy_policy_meta_title',        'Datenschutzerklärung | KÖNIG ENERGETIK',
+        'Energetische Massage Datenschutzerklärung: welche Daten wir erheben, Zwecke der Verarbeitung, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.',
+      'ui_privacy_policy_meta_title',        'Datenschutzerklärung | Energetische Massage',
       'ui_privacy_policy_meta_description',
-        'KÖNIG ENERGETIK Datenschutzerklärung: welche Daten wir erheben, Zwecke der Verarbeitung, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.'
+        'Energetische Massage Datenschutzerklärung: welche Daten wir erheben, Zwecke der Verarbeitung, Speicherdauer, Sicherheitsmaßnahmen und Ihre Rechte.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),

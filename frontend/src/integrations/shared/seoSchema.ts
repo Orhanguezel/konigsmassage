@@ -87,9 +87,9 @@ export const DEFAULT_OG_IMAGE = '/img/og-default.jpg';
  * Asıl değerler site_settings.seo / site_settings.site_seo içinden gelir.
  */
 export const DEFAULT_SEO_GLOBAL: SeoObject = {
-  site_name: 'KÖNIG ENERGETIK',
-  title_default: 'KÖNIG ENERGETIK – Energetische Massage in Bonn',
-  title_template: '%s – KÖNIG ENERGETIK',
+  site_name: 'Energetische Massage',
+  title_default: 'Energetische Massage – Energetische Massage in Bonn',
+  title_template: '%s – Energetische Massage',
   description:
     'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung. Termine nach Vereinbarung.',
   open_graph: {
@@ -114,25 +114,25 @@ export const DEFAULT_SEO_GLOBAL: SeoObject = {
  */
 export const DEFAULT_SITE_META_DEFAULT_BY_LOCALE: Record<string, SiteMetaDefaultObject> = {
   tr: {
-    title: 'KÖNIG ENERGETIK – Bonn’da Enerjetik Masaj',
+    title: 'Energetische Massage – Bonn’da Enerjetik Masaj',
     description:
       'Bonn’da enerjetik masaj: bilinçli dokunuş, net sınırlar ve derin gevşeme. Seanslar ön görüşme ile, randevuya göre.',
     keywords:
       'koenig energetik, enerjetik masaj, bonn, anastasia könig, rahatlama, beden farkındalığı, thai yoga, aroma, ayak refleks, randevu',
   },
   en: {
-    title: 'KÖNIG ENERGETIK – Energetic Massage in Bonn',
+    title: 'Energetische Massage – Energetic Massage in Bonn',
     description:
       'Energetic massage sessions in Bonn with mindful touch, clear boundaries, and deep relaxation. Appointments by arrangement.',
     keywords:
       'koenig energetik, energetic massage, bonn, anastasia könig, relaxation, body awareness, thai yoga massage, aroma energy, foot reflex, appointment',
   },
   de: {
-    title: 'KÖNIG ENERGETIK – Energetische Massage in Bonn',
+    title: 'Energetische Massage – Energetische Massage in Bonn',
     description:
       'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung. Termine nach Vereinbarung.',
     keywords:
-      'könig energetik, energetische massage, bonn, anastasia könig, entspannung, körperwahrnehmung, thai yoga massage, aroma-energie, fußreflex, termin',
+      'Energetische Massage, energetische massage, bonn, anastasia könig, entspannung, körperwahrnehmung, thai yoga massage, aroma-energie, fußreflex, termin',
   },
 };
 
@@ -248,7 +248,7 @@ export function parseSeoFromSettings(input: unknown): SeoObject {
 }
 
 /**
- * site_settings.site_meta_default parse helper (KÖNIG ENERGETIK uyumlu):
+ * site_settings.site_meta_default parse helper (Energetische Massage uyumlu):
  *
  * Desteklenen DB formatları:
  *

@@ -1,6 +1,6 @@
 // ===================================================================
 // FILE: src/integrations/shared/chat.ts
-// Chat module types (König Energetik — AI support + admin takeover)
+// Chat module types (Energetische Massage — AI support + admin takeover)
 // ===================================================================
 
 // ─── Enums ──────────────────────────────────────────────────

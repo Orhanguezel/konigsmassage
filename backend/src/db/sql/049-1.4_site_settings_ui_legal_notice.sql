@@ -34,10 +34,10 @@ VALUES
 
       -- SEO (pages/legal-notice.tsx)
       'ui_legal_notice_page_description',
-        'KÖNIG ENERGETIK yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.',
-      'ui_legal_notice_meta_title',        'Yasal Bilgilendirme | KÖNIG ENERGETIK',
+        'Energetische Massage yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.',
+      'ui_legal_notice_meta_title',        'Yasal Bilgilendirme | Energetische Massage',
       'ui_legal_notice_meta_description',
-        'KÖNIG ENERGETIK yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.'
+        'Energetische Massage yasal bilgilendirme metni: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -60,10 +60,10 @@ VALUES
 
       -- SEO
       'ui_legal_notice_page_description',
-        'KÖNIG ENERGETIK legal notice: disclaimers, external links, intellectual property, and limitation of liability.',
-      'ui_legal_notice_meta_title',        'Legal Notice | KÖNIG ENERGETIK',
+        'Energetische Massage legal notice: disclaimers, external links, intellectual property, and limitation of liability.',
+      'ui_legal_notice_meta_title',        'Legal Notice | Energetische Massage',
       'ui_legal_notice_meta_description',
-        'KÖNIG ENERGETIK legal notice: disclaimers, external links, intellectual property, and limitation of liability.'
+        'Energetische Massage legal notice: disclaimers, external links, intellectual property, and limitation of liability.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -86,10 +86,10 @@ VALUES
 
       -- SEO
       'ui_legal_notice_page_description',
-        'KÖNIG ENERGETIK rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.',
-      'ui_legal_notice_meta_title',        'Impressum & Rechtliches | KÖNIG ENERGETIK',
+        'Energetische Massage rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.',
+      'ui_legal_notice_meta_title',        'Impressum & Rechtliches | Energetische Massage',
       'ui_legal_notice_meta_description',
-        'KÖNIG ENERGETIK rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.'
+        'Energetische Massage rechtlicher Hinweis: Haftungsausschluss, externe Links, geistiges Eigentum und Haftungsbeschränkung.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),

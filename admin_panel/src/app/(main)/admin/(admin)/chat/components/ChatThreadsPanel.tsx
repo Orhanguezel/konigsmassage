@@ -1,7 +1,7 @@
 // =============================================================
 // FILE: src/app/(main)/admin/(admin)/chat/components/ChatThreadsPanel.tsx
 // Chat Threads list + inline message panel
-// König Energetik
+// Energetische Massage
 // =============================================================
 
 'use client';

@@ -1,6 +1,6 @@
 
 -- =============================================================
--- FILE: 041_admin_settings.sql (koenigsmassage)
+-- FILE: 041_admin_settings.sql (energetische-massage-bonn)
 -- Admin Panel UI Configurations (Theme, Layout, Page Meta)
 -- =============================================================
 
@@ -30,19 +30,19 @@ VALUES
       'content_layout', 'centered'
     ),
     'branding', JSON_OBJECT(
-      'app_name', 'Königs Massage Panel',
-      'app_copyright', 'Königs Massage',
+      'app_name', 'Energetische Massage Panel',
+      'app_copyright', 'Energetische Massage',
       'html_lang', 'de',
       'theme_color', '#FDFCFB',
       'favicon_16', '/favicon/favicon-16.svg',
       'favicon_32', '/favicon/favicon-32.svg',
       'apple_touch_icon', '/favicon/apple-touch-icon.svg',
       'meta', JSON_OBJECT(
-        'title', 'König Energetik - Energetische Massage Berlin | Anastasia König',
-        'description', 'König Energetik: Ganzheitliche energetische Massage in Berlin. Anastasia König bietet mobile Körperarbeit bei Ihnen zu Hause. Heilende Berührung mit Herz.',
-        'og_url', 'https://koenig-energetik.de/',
-        'og_title', 'König Energetik - Energetische Massage Berlin',
-        'og_description', 'Ganzheitliche energetische Massage in Berlin. Heilende Berührung mit Herz. Mobile Körperarbeit von Anastasia König.',
+        'title', 'Energetische Massage - Energetische Massage Bonn | Anastasia König',
+        'description', 'Energetische Massage: Ganzheitliche energetische Massage in Bonn. Anastasia König bietet mobile Körperarbeit bei Ihnen zu Hause. Heilende Berührung mit Herz.',
+        'og_url', 'https://energetische-massage-bonn.de/',
+        'og_title', 'Energetische Massage - Energetische Massage Bonn',
+        'og_description', 'Ganzheitliche energetische Massage in Bonn. Heilende Berührung mit Herz. Mobile Körperarbeit von Anastasia König.',
         'og_image', '/logo/koenig-energetik-icon.svg',
         'twitter_card', 'summary_large_image'
       )

@@ -18,14 +18,14 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_page_title',               'Blog',
     'ui_blog_detail_page_title',        'Blog Detayı',
 
-    'ui_blog_subprefix',                'KÖNIG ENERGETIK',
+    'ui_blog_subprefix',                'Energetische Massage',
     'ui_blog_page_lead',                'Enerjetik masaj, beden farkındalığı ve içsel denge üzerine yazılar.',
     'ui_blog_empty',                    'Henüz blog yazısı bulunmuyor.',
     'ui_blog_untitled',                 'Başlıksız',
     'ui_blog_no_image',                 '(Görsel yok)',
 
-    'ui_blog_meta_title',               'Blog | KÖNIG ENERGETIK',
-    'ui_blog_meta_description',         'Energetische Massage, derin gevşeme, beden farkındalığı ve içsel denge üzerine yazılar. KÖNIG ENERGETIK – Bonn.',
+    'ui_blog_meta_title',               'Blog | Energetische Massage',
+    'ui_blog_meta_description',         'Energetische Massage, derin gevşeme, beden farkındalığı ve içsel denge üzerine yazılar. Energetische Massage – Bonn.',
     'ui_blog_og_image',                 '',
 
     'ui_blog_loading',                  'Yükleniyor...',
@@ -38,7 +38,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_author_role_fallback',     'Blog Admin',
 
     'ui_blog_highlights_title',         'Öne Çıkanlar',
-    'ui_blog_home_subprefix',           'KÖNIG ENERGETIK',
+    'ui_blog_home_subprefix',           'Energetische Massage',
     'ui_blog_home_title',               'Öne Çıkan Yazılar',
     'ui_blog_home_lead',                'Enerjetik masaj ve iyi oluş üzerine seçilmiş iki yazı.',
     'ui_blog_home_view_all',            'Tümünü Gör',
@@ -79,14 +79,14 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_page_title',               'Blog',
     'ui_blog_detail_page_title',        'Blog Detail',
 
-    'ui_blog_subprefix',                'KÖNIG ENERGETIK',
+    'ui_blog_subprefix',                'Energetische Massage',
     'ui_blog_page_lead',                'Articles on energetic massage, body awareness, and inner balance.',
     'ui_blog_empty',                    'No blog posts yet.',
     'ui_blog_untitled',                 'Untitled',
     'ui_blog_no_image',                 '(No image)',
 
-    'ui_blog_meta_title',               'Blog | KÖNIG ENERGETIK',
-    'ui_blog_meta_description',         'Articles on energetic massage, deep relaxation, body awareness, and inner balance. KÖNIG ENERGETIK – Bonn.',
+    'ui_blog_meta_title',               'Blog | Energetische Massage',
+    'ui_blog_meta_description',         'Articles on energetic massage, deep relaxation, body awareness, and inner balance. Energetische Massage – Bonn.',
     'ui_blog_og_image',                 '',
 
     'ui_blog_loading',                  'Loading...',
@@ -99,7 +99,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_author_role_fallback',     'Blog Admin',
 
     'ui_blog_highlights_title',         'Highlights',
-    'ui_blog_home_subprefix',           'KÖNIG ENERGETIK',
+    'ui_blog_home_subprefix',           'Energetische Massage',
     'ui_blog_home_title',               'Featured Articles',
     'ui_blog_home_lead',                'Two selected posts about energetic massage and well-being.',
     'ui_blog_home_view_all',            'View all',
@@ -140,14 +140,14 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_page_title',               'Blog',
     'ui_blog_detail_page_title',        'Blogdetails',
 
-    'ui_blog_subprefix',                'KÖNIG ENERGETIK',
+    'ui_blog_subprefix',                'Energetische Massage',
     'ui_blog_page_lead',                'Beiträge über energetische Massage, Körperwahrnehmung und innere Balance.',
     'ui_blog_empty',                    'Noch keine Blogbeiträge.',
     'ui_blog_untitled',                 'Ohne Titel',
     'ui_blog_no_image',                 '(Kein Bild)',
 
-    'ui_blog_meta_title',               'Blog | KÖNIG ENERGETIK',
-    'ui_blog_meta_description',         'Beiträge über energetische Massage, tiefe Entspannung, Körperwahrnehmung und innere Balance. KÖNIG ENERGETIK – Bonn.',
+    'ui_blog_meta_title',               'Blog | Energetische Massage',
+    'ui_blog_meta_description',         'Beiträge über energetische Massage, tiefe Entspannung, Körperwahrnehmung und innere Balance. Energetische Massage – Bonn.',
     'ui_blog_og_image',                 '',
 
     'ui_blog_loading',                  'Wird geladen...',
@@ -160,7 +160,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_author_role_fallback',     'Blog-Admin',
 
     'ui_blog_highlights_title',         'Highlights',
-    'ui_blog_home_subprefix',           'KÖNIG ENERGETIK',
+    'ui_blog_home_subprefix',           'Energetische Massage',
     'ui_blog_home_title',               'Ausgewählte Beiträge',
     'ui_blog_home_lead',                'Zwei ausgewählte Beiträge über energetische Massage und Wohlbefinden.',
     'ui_blog_home_view_all',            'Alle anzeigen',

@@ -1,7 +1,7 @@
 // =============================================================
 // FILE: src/modules/chat/ai.ts
 // Multi-provider AI chat (DB settings + env var fallback)
-// König Energetik
+// Energetische Massage
 // =============================================================
 
 import { getChatAiSettings, type ChatAiSettings } from "@/modules/siteSettings/service";

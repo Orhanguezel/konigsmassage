@@ -62,9 +62,9 @@ ON DUPLICATE KEY UPDATE
 -- ─── Welcome messages (localized) ──────────────────────────────────
 
 INSERT INTO `site_settings` (`id`, `key`, `locale`, `value`, `created_at`, `updated_at`) VALUES
-  (UUID(), 'chat_ai_welcome_message', 'de', 'Willkommen bei KÖNIG ENERGETIK! Wie kann ich Ihnen helfen?', NOW(3), NOW(3)),
-  (UUID(), 'chat_ai_welcome_message', 'tr', 'KÖNIG ENERGETIK''e hoş geldiniz! Size nasıl yardımcı olabilirim?', NOW(3), NOW(3)),
-  (UUID(), 'chat_ai_welcome_message', 'en', 'Welcome to KÖNIG ENERGETIK! How can I help you?', NOW(3), NOW(3))
+  (UUID(), 'chat_ai_welcome_message', 'de', 'Willkommen bei Energetische Massage! Wie kann ich Ihnen helfen?', NOW(3), NOW(3)),
+  (UUID(), 'chat_ai_welcome_message', 'tr', 'Energetische Massage''e hoş geldiniz! Size nasıl yardımcı olabilirim?', NOW(3), NOW(3)),
+  (UUID(), 'chat_ai_welcome_message', 'en', 'Welcome to Energetische Massage! How can I help you?', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `value`      = VALUES(`value`),
   `updated_at` = VALUES(`updated_at`);

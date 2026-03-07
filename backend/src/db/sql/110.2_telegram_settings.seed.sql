@@ -1,7 +1,7 @@
 -- ===================================================================
 -- FILE: 110.2_telegram_settings.seed.sql
 -- Telegram notification settings + multi-language templates
--- Königs Massage — de (primary), tr, en
+-- Energetische Massage — de (primary), tr, en
 -- ===================================================================
 
 SET NAMES utf8mb4;

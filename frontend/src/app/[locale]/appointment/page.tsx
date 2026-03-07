@@ -31,7 +31,7 @@ export default function AppointmentPage() {
     const key = 'ui_appointment_meta_title';
     const v = safeStr(ui(key, ''));
     if (isValidUiText(v, key)) return v;
-    return `${bannerTitle || fbTitle} | KÖNIG ENERGETIK`;
+    return `${bannerTitle || fbTitle} | Energetische Massage`;
   }, [ui, bannerTitle, fbTitle]);
 
   const pageDescription = useMemo(() => {

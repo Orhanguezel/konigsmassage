@@ -404,7 +404,7 @@ export const AppointmentPageContent: React.FC = () => {
         >
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 text-brand-primary font-bold uppercase tracking-widest text-sm mb-4">
-              {t('ui_appointment_subprefix', 'KÖNIG ENERGETIK')}{' '}
+              {t('ui_appointment_subprefix', 'Energetische Massage')}{' '}
               {t('ui_appointment_sublabel', 'Appointment')}
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-text-primary mb-5 leading-[1.05]">

@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 191_slider_full.sql (KÖNIG ENERGETIK — FINAL)
+-- FILE: 191_slider_full.sql (Energetische Massage — FINAL)
 -- Slider – schema + seed + i18n (TR / EN / DE)
 -- Tüm slaytlar Energetische Massage odaklı
 -- Idempotent seed

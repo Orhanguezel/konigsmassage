@@ -40,7 +40,7 @@ const AboutSection: React.FC<{ locale?: string }> = ({ locale: explicitLocale })
 
   const firstTitle = useMemo(() => {
     const t = safeStr(first?.title);
-    return t || safeStr(ui('ui_about_fallback_title', 'KÖNIG ENERGETIK')) || 'KÖNIG ENERGETIK';
+    return t || safeStr(ui('ui_about_fallback_title', 'Energetische Massage')) || 'Energetische Massage';
   }, [first?.title, ui]);
 
   const firstSummaryRaw = useMemo(() => {
@@ -78,7 +78,7 @@ const AboutSection: React.FC<{ locale?: string }> = ({ locale: explicitLocale })
   const subPrefix = useMemo(() => {
     const key = 'ui_about_subprefix';
     const v = safeStr(ui(key, ''));
-    return isValidUiText(v, key) ? v : 'KÖNIG ENERGETIK';
+    return isValidUiText(v, key) ? v : 'Energetische Massage';
   }, [ui]);
 
   const subLabel = useMemo(() => {

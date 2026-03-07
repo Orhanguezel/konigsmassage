@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 051_custom_pages_about.seed.sql (FINAL / FULL)
--- KÖNIG ENERGETIK — Kurumsal Sayfalar (About / Hakkımda / Über mich)
+-- Energetische Massage — Kurumsal Sayfalar (About / Hakkımda / Über mich)
 -- ✅ module_key PARENT: custom_pages.module_key = 'about'
 -- ✅ NO categories + sub_categories
 -- ✅ images + storage_image_ids JSON-string güvenli yazılır
@@ -118,7 +118,7 @@ VALUES
     'html',
     CONCAT(
       '<h2>Hallo, ich bin Anastasia König</h2>',
-      '<p>In Bonn lade ich Sie bei <strong>KÖNIG ENERGETIK</strong> zu energetischen Massagen in ruhiger Atmosphäre ein. ',
+      '<p>In Bonn lade ich Sie bei <strong>Energetische Massage</strong> zu energetischen Massagen in ruhiger Atmosphäre ein. ',
       'Mein Fokus richtet sich nach innen: ankommen, loslassen, zur Ruhe finden – ohne Erwartungen. ',
       'Schon in meiner Weiterbildung in Thailand habe ich bemerkt, dass nicht nur die Hände für die Massage wichtig sind, ',
       'sondern die Gedanken, die man bei der Massage hat.</p>',
@@ -160,10 +160,10 @@ VALUES
     )
   ),
   'Energetische Massage in Bonn: achtsame Berührung, Dankbarkeit und individuelle Impulse für Körper und Seele. Termine nach Vereinbarung.',
-  'Anastasia König — KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK | Über mich',
+  'Anastasia König — Energetische Massage',
+  'Energetische Massage | Über mich',
   'Energetische Massage in Bonn: achtsame Berührung, klare Grenzen und ein sicherer Raum. Individuelle Sitzungen mit Dankbarkeit und Intuition.',
-  'koenig energetik,bonn,energetische massage,anastasia koenig,entspannung,koerperwahrnehmung,thai yoga massage,intuitiv,dankbarkeit',
+  'energetische massage,bonn,energetische massage,anastasia koenig,energetische massage bonn,entspannung,koerperwahrnehmung,thai yoga massage,intuitiv,dankbarkeit',
   NOW(3),
   NOW(3)
 ),
@@ -181,7 +181,7 @@ VALUES
     'html',
     CONCAT(
       '<h2>Merhaba, ben Anastasia König</h2>',
-      '<p>Bonn''da <strong>KÖNIG ENERGETIK</strong> ile sakin bir atmosferde enerjetik masaj seansları sunuyorum. ',
+      '<p>Bonn''da <strong>Energetische Massage</strong> ile sakin bir atmosferde enerjetik masaj seansları sunuyorum. ',
       'Odak noktam içe dönüktür: varmak, bırakmak, huzur bulmak – beklentisiz. ',
       'Tayland''daki eğitimimde fark ettim ki masaj için sadece eller değil, ',
       'masaj sırasında taşınan düşünceler de çok önemli.</p>',
@@ -223,10 +223,10 @@ VALUES
     )
   ),
   'Bonn''da enerjetik masaj: şükran, bilinçli dokunuş ve beden ile ruh için bireysel impulslar. Randevu ile.',
-  'Anastasia König — KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK | Hakkımda',
+  'Anastasia König — Energetische Massage',
+  'Energetische Massage | Hakkımda',
   'Bonn''da enerjetik masaj seansları: sakin atmosfer, bilinçli dokunuş, güvenli alan ve net sınırlar. Şükran ve sezgiyle bireysel seanslar.',
-  'koenig energetik,bonn,enerjetik masaj,anastasia koenig,rahatlama,beden farkindaligi,thai masaj,sezgisel seans,sukran',
+  'energetische massage,bonn,enerjetik masaj,anastasia koenig,energetische massage bonn,rahatlama,beden farkindaligi,thai masaj,sezgisel seans,sukran',
   NOW(3),
   NOW(3)
 ),
@@ -244,7 +244,7 @@ VALUES
     'html',
     CONCAT(
       '<h2>Hello, I''m Anastasia König</h2>',
-      '<p>In Bonn, I welcome you to <strong>KÖNIG ENERGETIK</strong> for energetic massage sessions in a calm atmosphere. ',
+      '<p>In Bonn, I welcome you to <strong>Energetische Massage</strong> for energetic massage sessions in a calm atmosphere. ',
       'My focus is directed inward: arriving, letting go, finding peace – without expectations. ',
       'During my training in Thailand, I realized that it''s not just the hands that matter in massage, ',
       'but the thoughts you carry during the treatment.</p>',
@@ -286,10 +286,10 @@ VALUES
     )
   ),
   'Energetic massage in Bonn: gratitude, mindful touch, and individual impulses for body and soul. By appointment.',
-  'Anastasia König — KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK | About',
+  'Anastasia König — Energetische Massage',
+  'Energetische Massage | About',
   'Energetic massage in Bonn: mindful touch, clear boundaries, and a safe space. Individual sessions with gratitude and intuition.',
-  'koenig energetik,bonn,energetic massage,anastasia koenig,relaxation,body awareness,thai yoga massage,intuitive session,gratitude',
+  'energetische massage,bonn,energetic massage,anastasia koenig,energetische massage bonn,relaxation,body awareness,thai yoga massage,intuitive session,gratitude',
   NOW(3),
   NOW(3)
 )

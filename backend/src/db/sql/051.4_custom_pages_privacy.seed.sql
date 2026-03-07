@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 051.4_custom_pages_privacy.seed.sql (FINAL — KÖNIG ENERGETIK, rerunnable)
--- KÖNIG ENERGETIK – Custom Page: Privacy Policy / Datenschutz (TR/EN/DE)
+-- FILE: 051.4_custom_pages_privacy.seed.sql (FINAL — Energetische Massage, rerunnable)
+-- Energetische Massage – Custom Page: Privacy Policy / Datenschutz (TR/EN/DE)
 -- ✅ PARENT: custom_pages.module_key = 'privacy'
 -- Category/SubCategory: optional (NULL) — admin panelden düzenlenir
 -- NOT: Bu dosyada BLOK YORUM (/* */) YOKTUR. Sadece "--" kullanılır.
@@ -120,7 +120,7 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Gizlilik Politikası</h1>',
         '<p class="text-slate-700 mb-8">',
-          'KÖNIG ENERGETIK olarak, web sitemizi ziyaret eden kullanıcılarımızın gizliliğini korumayı ve kişisel verileri yürürlükteki mevzuata uygun şekilde işlemeyi taahhüt ederiz. ',
+          'Energetische Massage olarak, web sitemizi ziyaret eden kullanıcılarımızın gizliliğini korumayı ve kişisel verileri yürürlükteki mevzuata uygun şekilde işlemeyi taahhüt ederiz. ',
           'Bu metin; hangi verileri topladığımızı, ne amaçla işlediğimizi, nasıl sakladığımızı ve haklarınızı açıklar.',
         '</p>',
 
@@ -209,11 +209,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Gizlilik Politikası: web sitesinde toplanan veriler, kullanım amaçları, hukuki sebepler, saklama, güvenlik ve kullanıcı hakları.',
-  'KÖNIG ENERGETIK Gizlilik Politikası sayfası',
-  'Gizlilik Politikası | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK Gizlilik Politikası; toplanan veriler, işleme amaçları, hukuki sebepler, saklama ve güvenlik önlemleri ile kullanıcı haklarını açıklar.',
-  'koenig energetik,legal,gizlilik,privacy,kvkk,veri guvenligi,cerezler,randevu',
+  'Energetische Massage Gizlilik Politikası: web sitesinde toplanan veriler, kullanım amaçları, hukuki sebepler, saklama, güvenlik ve kullanıcı hakları.',
+  'Energetische Massage Gizlilik Politikası sayfası',
+  'Gizlilik Politikası | Energetische Massage',
+  'Energetische Massage Gizlilik Politikası; toplanan veriler, işleme amaçları, hukuki sebepler, saklama ve güvenlik önlemleri ile kullanıcı haklarını açıklar.',
+  'energetische massage,legal,gizlilik,privacy,kvkk,veri guvenligi,cerezler,randevu',
   NOW(3),
   NOW(3)
 ),
@@ -233,7 +233,7 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Privacy Policy</h1>',
         '<p class="text-slate-700 mb-8">',
-          'At KÖNIG ENERGETIK, we are committed to protecting the privacy of visitors and processing personal data in compliance with applicable laws. ',
+          'At Energetische Massage, we are committed to protecting the privacy of visitors and processing personal data in compliance with applicable laws. ',
           'This notice explains what we collect, why we process it, how we store it, and your rights.',
         '</p>',
 
@@ -320,11 +320,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Privacy Policy: data collected on the website, purposes, legal bases, retention, security and user rights.',
-  'KÖNIG ENERGETIK Privacy Policy page',
-  'Privacy Policy | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK Privacy Policy explains what data we collect, why and how we process it, retention, security measures, and user rights.',
-  'koenig energetik,legal,privacy policy,data protection,cookies,security,appointments',
+  'Energetische Massage Privacy Policy: data collected on the website, purposes, legal bases, retention, security and user rights.',
+  'Energetische Massage Privacy Policy page',
+  'Privacy Policy | Energetische Massage',
+  'Energetische Massage Privacy Policy explains what data we collect, why and how we process it, retention, security measures, and user rights.',
+  'energetische massage,legal,privacy policy,data protection,cookies,security,appointments',
   NOW(3),
   NOW(3)
 ),
@@ -344,7 +344,7 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Datenschutzerklärung</h1>',
         '<p class="text-slate-700 mb-8">',
-          'KÖNIG ENERGETIK verpflichtet sich, die Privatsphäre der Besucher zu schützen und personenbezogene Daten im Einklang mit den anwendbaren gesetzlichen Vorgaben zu verarbeiten. ',
+          'Energetische Massage verpflichtet sich, die Privatsphäre der Besucher zu schützen und personenbezogene Daten im Einklang mit den anwendbaren gesetzlichen Vorgaben zu verarbeiten. ',
           'Diese Erklärung beschreibt Datenkategorien, Zwecke, Rechtsgrundlagen, Speicherfristen, Sicherheitsmaßnahmen und Ihre Rechte.',
         '</p>',
 
@@ -431,11 +431,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Datenschutzerklärung: Datenkategorien, Zwecke, Rechtsgrundlagen, Aufbewahrung, Sicherheitsmaßnahmen und Rechte der Nutzer.',
-  'KÖNIG ENERGETIK Datenschutzerklärung',
-  'Datenschutzerklärung | KÖNIG ENERGETIK',
-  'Die KÖNIG ENERGETIK Datenschutzerklärung erläutert, welche Daten wir erheben, wofür wir sie verwenden, wie wir sie schützen und welche Rechte Nutzer haben.',
-  'koenig energetik,legal,datenschutz,privacy,cookies,sicherheit,personenbezogene daten,termine',
+  'Energetische Massage Datenschutzerklärung: Datenkategorien, Zwecke, Rechtsgrundlagen, Aufbewahrung, Sicherheitsmaßnahmen und Rechte der Nutzer.',
+  'Energetische Massage Datenschutzerklärung',
+  'Datenschutzerklärung | Energetische Massage',
+  'Die Energetische Massage Datenschutzerklärung erläutert, welche Daten wir erheben, wofür wir sie verwenden, wie wir sie schützen und welche Rechte Nutzer haben.',
+  'energetische massage,legal,datenschutz,privacy,cookies,sicherheit,personenbezogene daten,termine',
   NOW(3),
   NOW(3)
 )

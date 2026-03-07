@@ -1,5 +1,5 @@
 -- =============================================================
--- 047_site_settings_ui_service.sql (FINAL — KÖNIG ENERGETIK)
+-- 047_site_settings_ui_service.sql (FINAL — Energetische Massage)
 -- ui_services: Treatments list + detail + "other services" translations
 --  - Key: ui_services
 --  - Value: JSON (stored as TEXT in site_settings.value)
@@ -23,13 +23,13 @@ VALUES
     'ui_services_page_title',                'Enerjetik Rahatlama Masaji',
     'ui_services_detail_page_title',         'Enerjetik Rahatlama Masaji',
 
-    'ui_services_meta_title',                'Enerjetik Rahatlama Masaji | KÖNIG ENERGETIK',
+    'ui_services_meta_title',                'Enerjetik Rahatlama Masaji | Energetische Massage',
     'ui_services_meta_description',          'Bonn''da enerjetik rahatlama masaji. Derin gevseme, dikkatli dokunus, net sinirlar ve kisiye gore ayrilan zaman.',
     'ui_services_og_image',                  '',
-    'ui_services_detail_meta_title',         'Hizmet Detayı | KÖNIG ENERGETIK',
+    'ui_services_detail_meta_title',         'Hizmet Detayı | Energetische Massage',
     'ui_services_detail_meta_description',   'Masajın kapsamı, süre seçenekleri ve uygulama detayları. Size uygun seansı seçmek için masaj detaylarını inceleyin.',
 
-    'ui_services_subprefix',                 'KÖNIG ENERGETIK',
+    'ui_services_subprefix',                 'Energetische Massage',
     'ui_services_sublabel',                  'Masaj',
     'ui_services_title',                     'Enerjetik Rahatlama Masaji',
     'ui_services_page_description',          'Sakin bir ritim, dikkatli dokunus ve derin gevseme icin acilan guvenli bir alan.',
@@ -101,13 +101,13 @@ VALUES
     'ui_services_page_title',                'Energetic Relaxation Massage',
     'ui_services_detail_page_title',         'Energetic Relaxation Massage',
 
-    'ui_services_meta_title',                'Energetic Relaxation Massage | KÖNIG ENERGETIK',
+    'ui_services_meta_title',                'Energetic Relaxation Massage | Energetische Massage',
     'ui_services_meta_description',          'Energetic relaxation massage in Bonn. Mindful touch, deep relaxation, clear boundaries, and enough time to truly arrive.',
     'ui_services_og_image',                  '',
-    'ui_services_detail_meta_title',         'Treatment Detail | KÖNIG ENERGETIK',
+    'ui_services_detail_meta_title',         'Treatment Detail | Energetische Massage',
     'ui_services_detail_meta_description',   'Massage scope, duration options and session details. Review the massage detail to choose the right session.',
 
-    'ui_services_subprefix',                 'KÖNIG ENERGETIK',
+    'ui_services_subprefix',                 'Energetische Massage',
     'ui_services_sublabel',                  'Massage',
     'ui_services_title',                     'Energetic Relaxation Massage',
     'ui_services_page_description',          'A calm rhythm, mindful touch, and a protected space for deep relaxation.',
@@ -179,13 +179,13 @@ VALUES
     'ui_services_page_title',                'Energetische Entspannungsmassage',
     'ui_services_detail_page_title',         'Energetische Entspannungsmassage',
 
-    'ui_services_meta_title',                'Energetische Entspannungsmassage | KÖNIG ENERGETIK',
+    'ui_services_meta_title',                'Energetische Entspannungsmassage | Energetische Massage',
     'ui_services_meta_description',          'Energetische Entspannungsmassage in Bonn. Achtsame Beruehrung, tiefe Entspannung, klare Grenzen und genügend Zeit zum Ankommen.',
     'ui_services_og_image',                  '',
-    'ui_services_detail_meta_title',         'Behandlungsdetails | KÖNIG ENERGETIK',
+    'ui_services_detail_meta_title',         'Behandlungsdetails | Energetische Massage',
     'ui_services_detail_meta_description',   'Umfang, Daueroptionen und Details zur Behandlung. Lesen Sie die Massage-Details, um die passende Sitzung zu wählen.',
 
-    'ui_services_subprefix',                 'KÖNIG ENERGETIK',
+    'ui_services_subprefix',                 'Energetische Massage',
     'ui_services_sublabel',                  'Massage',
     'ui_services_title',                     'Energetische Entspannungsmassage',
     'ui_services_page_description',          'Ruhiger Rhythmus, achtsame Beruehrung und ein geschuetzter Raum zum Loslassen.',

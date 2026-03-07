@@ -172,7 +172,7 @@ export async function buildMetadataFromSeo(
   const locale = normLocaleShort(args.locale, FALLBACK_LOCALE);
 
   // Defaults (DB-driven)
-  const siteName = asStr(seo.site_name) || 'KÖNIG ENERGETIK';
+  const siteName = asStr(seo.site_name) || 'Energetische Massage';
   const titleDefault = asStr(seo.title_default) || siteName;
   const titleTemplate = asStr(seo.title_template) || `%s | ${siteName}`;
   const rawDescription =

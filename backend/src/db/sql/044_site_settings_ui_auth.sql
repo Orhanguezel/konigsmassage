@@ -18,22 +18,22 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     /* =========================================================
        META (NEW KEYS - preferred)
        ========================================================= */
-    'ui_auth_login_meta_title',           'Giriş Yap | KÖNIG ENERGETIK',
-    'ui_auth_login_meta_description',     'KÖNIG ENERGETIK hesabınıza giriş yapın.',
-    'ui_auth_register_meta_title',        'Kayıt Ol | KÖNIG ENERGETIK',
-    'ui_auth_register_meta_description',  'KÖNIG ENERGETIK hesabı oluşturun.',
-    'ui_auth_logout_meta_title',          'Çıkış Yapılıyor | KÖNIG ENERGETIK',
-    'ui_auth_logout_meta_description',    'KÖNIG ENERGETIK hesabınızdan çıkış yapılıyor.',
+    'ui_auth_login_meta_title',           'Giriş Yap | Energetische Massage',
+    'ui_auth_login_meta_description',     'Energetische Massage hesabınıza giriş yapın.',
+    'ui_auth_register_meta_title',        'Kayıt Ol | Energetische Massage',
+    'ui_auth_register_meta_description',  'Energetische Massage hesabı oluşturun.',
+    'ui_auth_logout_meta_title',          'Çıkış Yapılıyor | Energetische Massage',
+    'ui_auth_logout_meta_description',    'Energetische Massage hesabınızdan çıkış yapılıyor.',
 
     /* =========================================================
        META (LEGACY KEYS - backward compatible)
        ========================================================= */
-    'login_meta_title',      'Giriş Yap | KÖNIG ENERGETIK',
-    'login_meta_desc',       'KÖNIG ENERGETIK hesabınıza giriş yapın.',
-    'register_meta_title',   'Kayıt Ol | KÖNIG ENERGETIK',
-    'register_meta_desc',    'KÖNIG ENERGETIK hesabı oluşturun.',
-    'logout_meta_title',     'Çıkış Yapılıyor | KÖNIG ENERGETIK',
-    'logout_meta_desc',      'KÖNIG ENERGETIK hesabınızdan çıkış yapılıyor.',
+    'login_meta_title',      'Giriş Yap | Energetische Massage',
+    'login_meta_desc',       'Energetische Massage hesabınıza giriş yapın.',
+    'register_meta_title',   'Kayıt Ol | Energetische Massage',
+    'register_meta_desc',    'Energetische Massage hesabı oluşturun.',
+    'logout_meta_title',     'Çıkış Yapılıyor | Energetische Massage',
+    'logout_meta_desc',      'Energetische Massage hesabınızdan çıkış yapılıyor.',
 
     /* =========================================================
        LOGIN
@@ -100,22 +100,22 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     /* =========================================================
        META (NEW KEYS - preferred)
        ========================================================= */
-    'ui_auth_login_meta_title',           'Sign In | KÖNIG ENERGETIK',
-    'ui_auth_login_meta_description',     'Sign in to your KÖNIG ENERGETIK account.',
-    'ui_auth_register_meta_title',        'Sign Up | KÖNIG ENERGETIK',
-    'ui_auth_register_meta_description',  'Create your KÖNIG ENERGETIK account.',
-    'ui_auth_logout_meta_title',          'Signing out | KÖNIG ENERGETIK',
-    'ui_auth_logout_meta_description',    'Signing you out of your KÖNIG ENERGETIK account.',
+    'ui_auth_login_meta_title',           'Sign In | Energetische Massage',
+    'ui_auth_login_meta_description',     'Sign in to your Energetische Massage account.',
+    'ui_auth_register_meta_title',        'Sign Up | Energetische Massage',
+    'ui_auth_register_meta_description',  'Create your Energetische Massage account.',
+    'ui_auth_logout_meta_title',          'Signing out | Energetische Massage',
+    'ui_auth_logout_meta_description',    'Signing you out of your Energetische Massage account.',
 
     /* =========================================================
        META (LEGACY KEYS - backward compatible)
        ========================================================= */
-    'login_meta_title',      'Sign In | KÖNIG ENERGETIK',
-    'login_meta_desc',       'Sign in to your KÖNIG ENERGETIK account.',
-    'register_meta_title',   'Sign Up | KÖNIG ENERGETIK',
-    'register_meta_desc',    'Create your KÖNIG ENERGETIK account.',
-    'logout_meta_title',     'Signing out | KÖNIG ENERGETIK',
-    'logout_meta_desc',      'Signing you out of your KÖNIG ENERGETIK account.',
+    'login_meta_title',      'Sign In | Energetische Massage',
+    'login_meta_desc',       'Sign in to your Energetische Massage account.',
+    'register_meta_title',   'Sign Up | Energetische Massage',
+    'register_meta_desc',    'Create your Energetische Massage account.',
+    'logout_meta_title',     'Signing out | Energetische Massage',
+    'logout_meta_desc',      'Signing you out of your Energetische Massage account.',
 
     /* =========================================================
        LOGIN
@@ -182,22 +182,22 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     /* =========================================================
        META (NEW KEYS - preferred)
        ========================================================= */
-    'ui_auth_login_meta_title',           'Anmelden | KÖNIG ENERGETIK',
-    'ui_auth_login_meta_description',     'Melden Sie sich bei Ihrem KÖNIG ENERGETIK-Konto an.',
-    'ui_auth_register_meta_title',        'Registrieren | KÖNIG ENERGETIK',
-    'ui_auth_register_meta_description',  'Erstellen Sie Ihr KÖNIG ENERGETIK-Konto.',
-    'ui_auth_logout_meta_title',          'Abmeldung | KÖNIG ENERGETIK',
-    'ui_auth_logout_meta_description',    'Sie werden von Ihrem KÖNIG ENERGETIK-Konto abgemeldet.',
+    'ui_auth_login_meta_title',           'Anmelden | Energetische Massage',
+    'ui_auth_login_meta_description',     'Melden Sie sich bei Ihrem Energetische Massage-Konto an.',
+    'ui_auth_register_meta_title',        'Registrieren | Energetische Massage',
+    'ui_auth_register_meta_description',  'Erstellen Sie Ihr Energetische Massage-Konto.',
+    'ui_auth_logout_meta_title',          'Abmeldung | Energetische Massage',
+    'ui_auth_logout_meta_description',    'Sie werden von Ihrem Energetische Massage-Konto abgemeldet.',
 
     /* =========================================================
        META (LEGACY KEYS - backward compatible)
        ========================================================= */
-    'login_meta_title',      'Anmelden | KÖNIG ENERGETIK',
-    'login_meta_desc',       'Melden Sie sich bei Ihrem KÖNIG ENERGETIK-Konto an.',
-    'register_meta_title',   'Registrieren | KÖNIG ENERGETIK',
-    'register_meta_desc',    'Erstellen Sie Ihr KÖNIG ENERGETIK-Konto.',
-    'logout_meta_title',     'Abmeldung | KÖNIG ENERGETIK',
-    'logout_meta_desc',      'Sie werden von Ihrem KÖNIG ENERGETIK-Konto abgemeldet.',
+    'login_meta_title',      'Anmelden | Energetische Massage',
+    'login_meta_desc',       'Melden Sie sich bei Ihrem Energetische Massage-Konto an.',
+    'register_meta_title',   'Registrieren | Energetische Massage',
+    'register_meta_desc',    'Erstellen Sie Ihr Energetische Massage-Konto.',
+    'logout_meta_title',     'Abmeldung | Energetische Massage',
+    'logout_meta_desc',      'Sie werden von Ihrem Energetische Massage-Konto abgemeldet.',
 
     /* =========================================================
        LOGIN

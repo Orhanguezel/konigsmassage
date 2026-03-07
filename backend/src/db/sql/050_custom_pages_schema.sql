@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 050_custom_pages.sql (FINAL — KÖNIG ENERGETIK)
+-- FILE: 050_custom_pages.sql (FINAL — Energetische Massage)
 -- Custom Pages (parent + i18n)
 -- ✅ MySQL / MariaDB SAFE
 -- ✅ NO DEFAULT on LONGTEXT

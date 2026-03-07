@@ -391,7 +391,7 @@ export default function Layout({
   // ------------------------------------------------------------
 
   const finalTitle = useMemo(() => {
-    const hardFb = 'KÖNIG ENERGETIK – Energetische Massage in Bonn';
+    const hardFb = 'Energetische Massage – Energetische Massage in Bonn';
     return cleanString(effectiveTitleProp) || seoTitleDefault || metaDefault.title || hardFb;
   }, [effectiveTitleProp, seoTitleDefault, metaDefault.title]);
 

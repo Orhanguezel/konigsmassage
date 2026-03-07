@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 052_custom_pages_blog.seed.sql (FINAL / FULL / NO DROP)
--- KÖNIG ENERGETIK — Blog (6 posts) — module_key='blog'
+-- Energetische Massage — Blog (6 posts) — module_key='blog'
 -- ✅ custom_pages: module_key only in parent
 -- ✅ custom_pages_i18n: module_key YOK
 -- ✅ TR / EN / DE
@@ -91,7 +91,7 @@ VALUES
   ),
   'Bağırsak sağlığı; sindirim, bağışıklık ve ruh hâli üzerinde belirleyicidir. Doğal yöntemlerle bağırsak dengesini desteklemek uzun vadeli iyilik hâline katkı sağlar.',
   'Bağırsak sağlığı ve kolon temizliği',
-  'Kolon Temizliği ve Bağırsak Sağlığı | KÖNIG ENERGETIK',
+  'Kolon Temizliği ve Bağırsak Sağlığı | Energetische Massage',
   'Bağırsak sağlığının bağışıklık ve ruh hâliyle ilişkisi; su, lif, fermente gıdalar ve doğal alışkanlıklarla destek önerileri.',
   'bagirsak sagligi,kolon,detoks,lif,fermente,probiyotik,dogal yasam',
   NOW(3),NOW(3)
@@ -130,7 +130,7 @@ VALUES
   ),
   'Gut health impacts digestion, immunity, and mental well-being. Practical, natural habits—hydration, fiber, fermented foods—can support long-term wellness.',
   'Gut health and colon support',
-  'Colon Cleansing & Gut Health | KÖNIG ENERGETIK',
+  'Colon Cleansing & Gut Health | Energetische Massage',
   'A practical overview of gut health: hydration, fiber, fermented foods, and natural routines that support balance and long-term well-being.',
   'gut health,colon,fiber,fermented foods,probiotics,natural wellness',
   NOW(3),NOW(3)
@@ -169,7 +169,7 @@ VALUES
   ),
   'Der Darm beeinflusst Verdauung, Immunabwehr und Wohlbefinden. Mit Wasser, Ballaststoffen und fermentierten Lebensmitteln lässt sich die Darmbalance natürlich unterstützen.',
   'Darmgesundheit & natürliche Unterstützung',
-  'Darmreinigung & Darmgesundheit | KÖNIG ENERGETIK',
+  'Darmreinigung & Darmgesundheit | Energetische Massage',
   'Darmgesundheit im Überblick: praktische Routinen wie Wasser, Ballaststoffe und fermentierte Lebensmittel zur Unterstützung der Balance und des Wohlbefindens.',
   'darmgesundheit,darmreinigung,ballaststoffe,fermentiert,probiotika,natuerlich',
   NOW(3),NOW(3)
@@ -251,7 +251,7 @@ VALUES
   ),
   'Kimyasal veya kafein bağımlılığı olmadan; uyku, beslenme, hareket, nefes ve doğal desteklerle enerji seviyesini artırmanın pratik yolları.',
   'Doğal enerji ve zindelik',
-  'Doğal Enerji Artırıcılar | KÖNIG ENERGETIK',
+  'Doğal Enerji Artırıcılar | Energetische Massage',
   'Uyku düzeni, sabah ışığı, dengeli beslenme, hareket ve nefes pratikleriyle kafeinsiz sürdürülebilir enerji yaklaşımları.',
   'enerji,zindelik,uyku,nefes,beslenme,yuruyus,bitki cayi,kafeinsiz',
   NOW(3),NOW(3)
@@ -286,7 +286,7 @@ VALUES
   ),
   'No chemicals, no caffeine dependency: practical routines—sleep, nutrition, movement, breathing, and gentle herbal options—to support stable daily energy.',
   'Natural energy and vitality',
-  'Natural Energy Boosters | KÖNIG ENERGETIK',
+  'Natural Energy Boosters | Energetische Massage',
   'Sustainable, caffeine-free energy approaches: sleep rhythm, morning light, balanced nutrition, movement, and breathing practices for everyday vitality.',
   'energy,vitality,sleep,breathing,nutrition,movement,herbal tea,caffeine-free',
   NOW(3),NOW(3)
@@ -321,7 +321,7 @@ VALUES
   ),
   'Ohne Chemie und Koffein: Schlaf, Ernährung, Bewegung, Atmung und sanfte Kräuteroptionen als praktische Wege zu stabiler Tagesenergie.',
   'Natürliche Energie und Vitalität',
-  'Natürliche Energiebooster | KÖNIG ENERGETIK',
+  'Natürliche Energiebooster | Energetische Massage',
   'Koffeinfreie, nachhaltige Energie im Alltag: Schlafrhythmus, Morgenlicht, ausgewogene Ernährung, Bewegung und Atemroutinen.',
   'energie,vitalitaet,schlaf,atmung,ernaehrung,bewegung,kraeutertee,koffeinfrei',
   NOW(3),NOW(3)
@@ -400,7 +400,7 @@ VALUES
   ),
   'Mevsimsel beslenme; tazelik, besin değeri, çevre ve bütçe açısından avantaj sağlar. Mevsime uygun seçimlerle sağlıklı dengeyi destekleyin.',
   'Mevsimsel beslenme ve sağlık',
-  'Mevsimsel Beslenme | KÖNIG ENERGETIK',
+  'Mevsimsel Beslenme | Energetische Massage',
   'Mevsimlere göre beslenmenin faydaları ve pratik ipuçları: yerel ürünler, dengeli seçimler ve doğanın ritmiyle uyum.',
   'mevsimsel beslenme,saglik,yerel urunler,bagisiklik,sebze,meyve',
   NOW(3),NOW(3)
@@ -432,7 +432,7 @@ VALUES
   ),
   'Seasonal eating supports freshness, nutrients, and sustainability. Use simple seasonal choices to stay balanced and healthy year-round.',
   'Seasonal eating and health',
-  'Seasonal Nutrition | KÖNIG ENERGETIK',
+  'Seasonal Nutrition | Energetische Massage',
   'Benefits and practical tips for seasonal nutrition: local produce, balanced choices, and staying aligned with nature’s yearly rhythm.',
   'seasonal nutrition,health,local produce,immunity,vegetables,fruit',
   NOW(3),NOW(3)
@@ -464,7 +464,7 @@ VALUES
   ),
   'Saisonal essen bedeutet mehr Frische und Nährstoffe – und oft weniger Umweltbelastung. Mit einfachen saisonalen Entscheidungen bleiben Sie das ganze Jahr im Gleichgewicht.',
   'Saisonale Ernährung und Gesundheit',
-  'Saisonale Ernährung | KÖNIG ENERGETIK',
+  'Saisonale Ernährung | Energetische Massage',
   'Saisonale Ernährung: Vorteile und praktische Tipps für lokale Produkte, ausgewogene Auswahl und ein gesundes Jahr im Rhythmus der Natur.',
   'saisonal,ernaehrung,gesundheit,wochenmarkt,immunsystem,gemuese,obst',
   NOW(3),NOW(3)
@@ -552,7 +552,7 @@ VALUES
   ),
   'Gözler kapalı enerjetik masaj seansları: sakin bir ritim, net sınırlar ve içe dönüş için güvenli bir alan.',
   'Gözler kapalı enerjetik masaj',
-  'Gözler Kapalı Enerjetik Masaj | KÖNIG ENERGETIK',
+  'Gözler Kapalı Enerjetik Masaj | Energetische Massage',
   'Enerjetik rahatlama masajında seans akışı, neden gözler kapalı çalışıldığı ve ne beklenebileceği üzerine kısa bir rehber.',
   'enerjetik masaj,rahatlama,beden farkindaligi,nefes,bonn,seans',
   NOW(3),NOW(3)
@@ -593,7 +593,7 @@ VALUES
   ),
   'Closed-eye energetic massage sessions: a calm rhythm, clear boundaries, and a protected space to relax inward.',
   'Closed-eye energetic massage',
-  'Energetic Massage with Closed Eyes | KÖNIG ENERGETIK',
+  'Energetic Massage with Closed Eyes | Energetische Massage',
   'A short guide to what a closed-eye energetic relaxation massage can feel like, how a session flows, and what to expect.',
   'energetic massage,relaxation,body awareness,breath,bonn,session',
   NOW(3),NOW(3)
@@ -634,7 +634,7 @@ VALUES
   ),
   'Energetische Massage mit geschlossenen Augen: ruhiger Rhythmus, klare Grenzen und ein geschützter Raum zum Loslassen.',
   'Energetische Massage mit geschlossenen Augen',
-  'Energetische Massage mit geschlossenen Augen | KÖNIG ENERGETIK',
+  'Energetische Massage mit geschlossenen Augen | Energetische Massage',
   'Was bei einer energetischen Entspannungsmassage mit geschlossenen Augen erwartet werden kann – Ablauf, Haltung und Rahmen.',
   'energetische massage,entspannung,koerperwahrnehmung,atmung,bonn,sitzung',
   NOW(3),NOW(3)
@@ -719,7 +719,7 @@ VALUES
   ),
   'Enerjetik masajda güvenin temeli: net sınırlar, açık iletişim ve onay. Seansın çerçevesi ve beklentiler.',
   'Enerjetik masajda sınırlar',
-  'Enerjetik Masaj: Sınırlar ve Güven | KÖNIG ENERGETIK',
+  'Enerjetik Masaj: Sınırlar ve Güven | Energetische Massage',
   'Enerjetik masaj seanslarında net sınırlar, açık iletişim ve onay neden önemlidir? Nedir ve ne değildir?',
   'enerjetik masaj,sinirlar,onay,guvenli alan,bonn,etik',
   NOW(3),NOW(3)
@@ -757,7 +757,7 @@ VALUES
   ),
   'Energetic massage is grounded in clear boundaries, open communication, and consent. A short guide to the session framework.',
   'Boundaries in energetic massage',
-  'Energetic Massage Boundaries | KÖNIG ENERGETIK',
+  'Energetic Massage Boundaries | Energetische Massage',
   'Why clear boundaries and consent matter in energetic massage sessions — what it is, what it isn’t, and how a safe space is created.',
   'energetic massage,boundaries,consent,safe space,bonn,ethics',
   NOW(3),NOW(3)
@@ -795,7 +795,7 @@ VALUES
   ),
   'Energetische Massage lebt von klaren Grenzen, offener Kommunikation und Einverständnis. Ein kurzer Überblick zum Rahmen der Sitzung.',
   'Grenzen in der energetischen Massage',
-  'Energetische Massage: Grenzen & Sicherheit | KÖNIG ENERGETIK',
+  'Energetische Massage: Grenzen & Sicherheit | Energetische Massage',
   'Warum klare Grenzen und Einverständnis wichtig sind – was energetische Massage ist, was sie nicht ist und wie ein sicherer Raum entsteht.',
   'energetische massage,grenzen,einverstaendnis,sicherheit,bonn,ethik',
   NOW(3),NOW(3)
@@ -876,7 +876,7 @@ VALUES
   ),
   'Nefes ritmi ve sinir sistemi ilişkisi: basit bir pratik ve enerjetik masajda ritmin neden önemli olduğuna dair kısa bir not.',
   'Nefes ve sinir sistemi',
-  'Nefes ve Sinir Sistemi | KÖNIG ENERGETIK',
+  'Nefes ve Sinir Sistemi | Energetische Massage',
   'Rahatlama nasıl başlar? Nefes ritmi, sinir sistemi ve enerjetik masajda dokunuş temposu üzerine kısa bir rehber.',
   'nefes,rahatlama,sinir sistemi,farkindalik,enerjetik masaj,bonn',
   NOW(3),NOW(3)
@@ -910,7 +910,7 @@ VALUES
   ),
   'A short note on breath rhythm and nervous system tone — plus a simple practice and how rhythm supports rest in energetic massage.',
   'Breath and the nervous system',
-  'Breath & Nervous System | KÖNIG ENERGETIK',
+  'Breath & Nervous System | Energetische Massage',
   'How does relaxation begin? A brief guide on breath rhythm, nervous system tone, and why pacing matters in energetic massage.',
   'breath,relaxation,nervous system,mindfulness,energetic massage,bonn',
   NOW(3),NOW(3)
@@ -944,7 +944,7 @@ VALUES
   ),
   'Atemrhythmus und Nervensystem: kurze Übung und warum Rhythmus in der energetischen Massage den Wechsel in Ruhe unterstützen kann.',
   'Atmung und Nervensystem',
-  'Atmung & Nervensystem | KÖNIG ENERGETIK',
+  'Atmung & Nervensystem | Energetische Massage',
   'Wie beginnt Entspannung? Kurzer Überblick zu Atemrhythmus, Nervensystem und warum Tempo in der energetischen Massage wichtig ist.',
   'atmung,entspannung,nervensystem,achtsamkeit,energetische massage,bonn',
   NOW(3),NOW(3)

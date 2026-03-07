@@ -1,6 +1,6 @@
 -- =============================================================
 -- 049-1.7_site_settings_ui_terms.sql  [FINAL]
--- ui_terms (Terms / Nutzungsbedingungen page UI strings) — KÖNIG ENERGETIK (DE/EN/TR)
+-- ui_terms (Terms / Nutzungsbedingungen page UI strings) — Energetische Massage (DE/EN/TR)
 --  - Key: ui_terms
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
@@ -34,10 +34,10 @@ VALUES
 
       -- SEO (pages/terms.tsx)
       'ui_terms_page_description',
-        'KÖNIG ENERGETIK kullanım koşulları: site kullanımı, içerik hakları, sorumluluk sınırlamaları, dış bağlantılar ve güncellemeler.',
-      'ui_terms_meta_title',         'Kullanım Koşulları | KÖNIG ENERGETIK',
+        'Energetische Massage kullanım koşulları: site kullanımı, içerik hakları, sorumluluk sınırlamaları, dış bağlantılar ve güncellemeler.',
+      'ui_terms_meta_title',         'Kullanım Koşulları | Energetische Massage',
       'ui_terms_meta_description',
-        'KÖNIG ENERGETIK kullanım koşulları: site kullanımı, içerik hakları, sorumluluk sınırlamaları, dış bağlantılar ve güncellemeler.'
+        'Energetische Massage kullanım koşulları: site kullanımı, içerik hakları, sorumluluk sınırlamaları, dış bağlantılar ve güncellemeler.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -60,10 +60,10 @@ VALUES
 
       -- SEO
       'ui_terms_page_description',
-        'KÖNIG ENERGETIK terms of use: website usage, content rights, limitation of liability, external links, and updates.',
-      'ui_terms_meta_title',         'Terms of Use | KÖNIG ENERGETIK',
+        'Energetische Massage terms of use: website usage, content rights, limitation of liability, external links, and updates.',
+      'ui_terms_meta_title',         'Terms of Use | Energetische Massage',
       'ui_terms_meta_description',
-        'KÖNIG ENERGETIK terms of use: website usage, content rights, limitation of liability, external links, and updates.'
+        'Energetische Massage terms of use: website usage, content rights, limitation of liability, external links, and updates.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -86,10 +86,10 @@ VALUES
 
       -- SEO
       'ui_terms_page_description',
-        'KÖNIG ENERGETIK Nutzungsbedingungen: Nutzung der Website, Inhaltsrechte, Haftungsbeschränkung, externe Links und Aktualisierungen.',
-      'ui_terms_meta_title',         'Nutzungsbedingungen | KÖNIG ENERGETIK',
+        'Energetische Massage Nutzungsbedingungen: Nutzung der Website, Inhaltsrechte, Haftungsbeschränkung, externe Links und Aktualisierungen.',
+      'ui_terms_meta_title',         'Nutzungsbedingungen | Energetische Massage',
       'ui_terms_meta_description',
-        'KÖNIG ENERGETIK Nutzungsbedingungen: Nutzung der Website, Inhaltsrechte, Haftungsbeschränkung, externe Links und Aktualisierungen.'
+        'Energetische Massage Nutzungsbedingungen: Nutzung der Website, Inhaltsrechte, Haftungsbeschränkung, externe Links und Aktualisierungen.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),

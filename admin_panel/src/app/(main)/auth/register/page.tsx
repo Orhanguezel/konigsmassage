@@ -32,7 +32,7 @@ export default function Register() {
             <div className="mx-auto size-24 relative">
               <Image
                 src="/logo/koenig-energetik-icon.svg"
-                alt="König Energetik"
+                alt="Energetische Massage"
                 fill
                 className="object-contain"
               />

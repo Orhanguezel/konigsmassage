@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 051.9_custom_pages_legal_notice.seed.sql (FINAL — KÖNIG ENERGETIK, rerunnable)
--- KÖNIG ENERGETIK – Custom Page: Legal Notice / Impressum (TR/EN/DE)
+-- FILE: 051.9_custom_pages_legal_notice.seed.sql (FINAL — Energetische Massage, rerunnable)
+-- Energetische Massage – Custom Page: Legal Notice / Impressum (TR/EN/DE)
 -- ✅ PARENT: custom_pages.module_key = 'legal_notice'
 -- ✅ category/subcategory YOK (schema’da yok)
 -- ✅ i18n: module_key YOK
@@ -113,7 +113,7 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Yasal Bilgilendirme</h1>',
         '<p class="text-slate-700 mb-8">',
-          'Bu sayfa, KÖNIG ENERGETIK web sitesine ilişkin genel yasal uyarıları ve bilgilendirmeleri içerir. ',
+          'Bu sayfa, Energetische Massage web sitesine ilişkin genel yasal uyarıları ve bilgilendirmeleri içerir. ',
           'Sitedeki içerikler bilgilendirme amaçlı olup, bağlayıcı teklif veya tıbbi danışmanlık niteliği taşımayabilir.',
         '</p>',
 
@@ -121,13 +121,13 @@ VALUES
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
             '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. İçerik Sorumluluğu</h2>',
             '<p class="text-slate-700">',
-              'KÖNIG ENERGETIK, içeriklerin doğruluğu ve güncelliği için makul çaba gösterir; ancak içerikler genel bilgilendirme amaçlıdır ve bağlayıcı değildir.',
+              'Energetische Massage, içeriklerin doğruluğu ve güncelliği için makul çaba gösterir; ancak içerikler genel bilgilendirme amaçlıdır ve bağlayıcı değildir.',
             '</p>',
           '</div>',
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
             '<h2 class="text-xl font-semibold text-slate-900 mb-3">2. Harici Bağlantılar</h2>',
             '<p class="text-slate-700">',
-              'Üçüncü taraf bağlantılar bilgilendirme amaçlıdır. KÖNIG ENERGETIK, üçüncü taraf içeriklerinden ve uygulamalarından sorumlu değildir.',
+              'Üçüncü taraf bağlantılar bilgilendirme amaçlıdır. Energetische Massage, üçüncü taraf içeriklerinden ve uygulamalarından sorumlu değildir.',
             '</p>',
           '</div>',
         '</div>',
@@ -160,11 +160,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Yasal Bilgilendirme: içerik sorumluluğu, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.',
-  'KÖNIG ENERGETIK Yasal Bilgilendirme sayfası',
-  'Yasal Bilgilendirme | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK web sitesi yasal bilgilendirmeleri: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve genel uyarılar.',
-  'koenig energetik,legal,yasal bilgilendirme,impressum,sorumluluk,fikri mulkiyet',
+  'Energetische Massage Yasal Bilgilendirme: içerik sorumluluğu, harici bağlantılar, fikri mülkiyet ve sorumluluk sınırları.',
+  'Energetische Massage Yasal Bilgilendirme sayfası',
+  'Yasal Bilgilendirme | Energetische Massage',
+  'Energetische Massage web sitesi yasal bilgilendirmeleri: sorumluluk reddi, harici bağlantılar, fikri mülkiyet ve genel uyarılar.',
+  'energetische massage,legal,yasal bilgilendirme,impressum,sorumluluk,fikri mulkiyet',
   NOW(3), NOW(3)
 ),
 (
@@ -177,7 +177,7 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Legal Notice</h1>',
         '<p class="text-slate-700 mb-8">',
-          'This page provides general legal information and disclaimers regarding the KÖNIG ENERGETIK website. Content is provided for informational purposes and does not constitute medical advice.',
+          'This page provides general legal information and disclaimers regarding the Energetische Massage website. Content is provided for informational purposes and does not constitute medical advice.',
         '</p>',
 
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
@@ -213,11 +213,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Legal Notice: disclaimers, external links, intellectual property and limitation of liability.',
-  'KÖNIG ENERGETIK Legal Notice page',
-  'Legal Notice | KÖNIG ENERGETIK',
-  'KÖNIG ENERGETIK Legal Notice covers disclaimers, external links, IP rights and limitation of liability.',
-  'koenig energetik,legal,legal notice,disclaimer,intellectual property,liability',
+  'Energetische Massage Legal Notice: disclaimers, external links, intellectual property and limitation of liability.',
+  'Energetische Massage Legal Notice page',
+  'Legal Notice | Energetische Massage',
+  'Energetische Massage Legal Notice covers disclaimers, external links, IP rights and limitation of liability.',
+  'energetische massage,legal,legal notice,disclaimer,intellectual property,liability',
   NOW(3), NOW(3)
 ),
 (
@@ -230,7 +230,7 @@ VALUES
       '<section class="container mx-auto px-4 py-10">',
         '<h1 class="text-3xl md:text-4xl font-semibold text-slate-900 mb-4">Impressum / Rechtliche Hinweise</h1>',
         '<p class="text-slate-700 mb-8">',
-          'Diese Seite enthält allgemeine rechtliche Hinweise zur Website von KÖNIG ENERGETIK. Inhalte dienen der Information und stellen keine medizinische Beratung dar.',
+          'Diese Seite enthält allgemeine rechtliche Hinweise zur Website von Energetische Massage. Inhalte dienen der Information und stellen keine medizinische Beratung dar.',
         '</p>',
 
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',
@@ -266,11 +266,11 @@ VALUES
       '</section>'
     )
   ),
-  'KÖNIG ENERGETIK Impressum / Rechtliche Hinweise: Haftungsausschluss, externe Links, Urheberrechte und Haftungsbeschränkung.',
-  'KÖNIG ENERGETIK Impressum / Rechtliche Hinweise',
-  'Impressum | KÖNIG ENERGETIK',
-  'Rechtliche Hinweise bei KÖNIG ENERGETIK: Haftungsausschluss, externe Links, Urheberrechte und Haftungsbeschränkung.',
-  'koenig energetik,legal,impressum,rechtliche hinweise,haftung,urheberrecht',
+  'Energetische Massage Impressum / Rechtliche Hinweise: Haftungsausschluss, externe Links, Urheberrechte und Haftungsbeschränkung.',
+  'Energetische Massage Impressum / Rechtliche Hinweise',
+  'Impressum | Energetische Massage',
+  'Rechtliche Hinweise bei Energetische Massage: Haftungsausschluss, externe Links, Urheberrechte und Haftungsbeschränkung.',
+  'energetische massage,legal,impressum,rechtliche hinweise,haftung,urheberrecht',
   NOW(3), NOW(3)
 )
 ON DUPLICATE KEY UPDATE
