@@ -2,13 +2,15 @@
 // FILE: src/i18n/localeUtils.ts  (DYNAMIC)
 // =============================================================
 
+import { FALLBACK_LOCALE as CONFIG_FALLBACK_LOCALE } from './config';
+
 /**
  * ⚠️ DEPRECATED:
  * Burada fallback locale tanımlamayın.
  * Hard fallback: src/i18n/config.ts -> FALLBACK_LOCALE
  * Server fallback: src/i18n/server.ts -> DEFAULT_LOCALE_FALLBACK
  */
-export const FALLBACK_LOCALE = '';
+export const FALLBACK_LOCALE = CONFIG_FALLBACK_LOCALE;
 
 export function normLocaleTag(x: unknown): string {
   return String(x || '')
@@ -111,15 +113,15 @@ export function resolveDefaultLocale(
   const cand = normLocaleTag(defaultLocaleValue);
   if (cand && activeSet.has(cand)) return cand;
 
-  return normLocaleTag(active[0]) || '';
+  return normLocaleTag(active[0]) || FALLBACK_LOCALE;
 }
 
 export function pickFromAcceptLanguage(accept: string | null, active: string[]): string {
   const activeClean = uniqKeepOrder(active);
-  if (!activeClean.length) return '';
+  if (!activeClean.length) return FALLBACK_LOCALE;
 
   const a = (accept || '').toLowerCase();
-  if (!a) return activeClean[0] || '';
+  if (!a) return activeClean[0] || FALLBACK_LOCALE;
 
   const prefs = a
     .split(',')
@@ -132,7 +134,7 @@ export function pickFromAcceptLanguage(accept: string | null, active: string[]):
     if (activeClean.includes(p)) return p;
   }
 
-  return activeClean[0] || '';
+  return activeClean[0] || FALLBACK_LOCALE;
 }
 
 export function pickFromCookie(cookieLocale: string | undefined, active: string[]): string | null {

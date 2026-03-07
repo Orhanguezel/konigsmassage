@@ -18,7 +18,6 @@ export default function AdminBookingsClient() {
     is_read: 'all',
     appointment_date: '',
     resource_id: '',
-    service_id: '',
   });
 
   const params = React.useMemo(
@@ -28,7 +27,6 @@ export default function AdminBookingsClient() {
       is_read: filters.is_read === 'all' ? undefined : (filters.is_read === 'read' ? true : false),
       appointment_date: filters.appointment_date || undefined,
       resource_id: filters.resource_id || undefined,
-      service_id: filters.service_id || undefined,
       limit: 200,
     }),
     [filters],

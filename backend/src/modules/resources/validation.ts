@@ -12,6 +12,18 @@ export const resourceTypeSchema = z.enum(resourceTypeEnum);
 
 export const capacitySchema = z.coerce.number().int().min(1).max(50); // pratik limit; gerekirse artırırız
 
+const localeCodeSchema = z
+  .string()
+  .trim()
+  .min(2)
+  .max(10)
+  .transform((v) => safeTrim(v).toLowerCase());
+
+const resourceI18nItemSchema = z.object({
+  locale: localeCodeSchema,
+  title: z.string().trim().min(1).max(190).transform((v) => safeTrim(v)),
+});
+
 export const adminListResourcesQuerySchema = z.object({
   q: z.string().trim().min(1).optional(),
   type: resourceTypeSchema.optional(),
@@ -40,6 +52,7 @@ export const adminCreateResourceBodySchema = z.object({
 
   external_ref_id: uuid36Schema.optional().nullable(),
   is_active: z.union([z.boolean(), z.number(), z.string()]).optional(),
+  i18n: z.array(resourceI18nItemSchema).max(20).optional(),
 });
 
 export type AdminCreateResourceBody = z.infer<typeof adminCreateResourceBodySchema>;
@@ -53,6 +66,7 @@ export const adminUpdateResourceBodySchema = z
 
     external_ref_id: uuid36Schema.optional().nullable(),
     is_active: z.union([z.boolean(), z.number(), z.string()]).optional(),
+    i18n: z.array(resourceI18nItemSchema).max(20).optional(),
   })
   .refine((v) => Object.keys(v).length > 0, { message: 'No-op body' });
 
@@ -60,4 +74,5 @@ export type AdminUpdateResourceBody = z.infer<typeof adminUpdateResourceBodySche
 
 export const publicListResourcesQuerySchema = z.object({
   type: resourceTypeSchema.optional(),
+  locale: localeCodeSchema.optional(),
 });

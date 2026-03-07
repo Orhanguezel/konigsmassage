@@ -21,11 +21,13 @@ import {
 import {
   extractVariablesFromText,
   parseVariablesColumn,
+  renderTextWithParams,
   toBool,
   now,
   normalizeVariablesInput,
 } from "./utils";
 import { DEFAULT_LOCALE } from "@/core/i18n";
+import { sendMail } from "@/modules/mail/service";
 import { z } from "zod";
 
 type ListQuery = {
@@ -452,5 +454,70 @@ export const deleteEmailTemplateAdmin: RouteHandler = async (req, reply) => {
     return reply
       .code(500)
       .send({ error: { message: "email_template_delete_failed" } });
+  }
+};
+
+/** POST /admin/email_templates/:id/send-test */
+export const sendTestEmailAdmin: RouteHandler = async (req, reply) => {
+  try {
+    const { id } = (req.params as { id?: string }) ?? {};
+    if (!id)
+      return reply.code(400).send({ error: { message: "invalid_id" } });
+
+    const body = req.body as { to?: string; locale?: string } | undefined;
+    const to = body?.to?.trim();
+    if (!to || !to.includes("@"))
+      return reply.code(400).send({ error: { message: "valid_email_required" } });
+
+    const locale = body?.locale?.trim() || DEFAULT_LOCALE;
+
+    const [parent] = await db
+      .select()
+      .from(emailTemplates)
+      .where(eq(emailTemplates.id, id))
+      .limit(1);
+
+    if (!parent)
+      return reply.code(404).send({ error: { message: "not_found" } });
+
+    const translations = await db
+      .select()
+      .from(emailTemplatesI18n)
+      .where(eq(emailTemplatesI18n.template_id, id));
+
+    const translation =
+      translations.find((t) => t.locale === locale) ||
+      translations[0];
+
+    if (!translation)
+      return reply.code(404).send({ error: { message: "no_translation_found" } });
+
+    // Build sample params from declared + detected variables
+    const vars = parseVariablesColumn(parent.variables) || [];
+    const contentVars = translation.content
+      ? extractVariablesFromText(translation.content)
+      : [];
+    const allVars = [...new Set([...vars, ...contentVars])];
+
+    const sampleParams: Record<string, string> = {};
+    for (const v of allVars) {
+      sampleParams[v] = `[${v}]`;
+    }
+
+    const renderedSubject = renderTextWithParams(translation.subject || "", sampleParams);
+    const renderedHtml = renderTextWithParams(translation.content || "", sampleParams);
+
+    await sendMail({
+      to,
+      subject: `[TEST] ${renderedSubject}`,
+      html: renderedHtml,
+    });
+
+    return reply.send({ success: true, message: "test_email_sent", to });
+  } catch (e) {
+    (req as any).log?.error?.(e);
+    return reply
+      .code(500)
+      .send({ error: { message: "send_test_email_failed" } });
   }
 };

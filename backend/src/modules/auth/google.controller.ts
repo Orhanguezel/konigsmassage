@@ -28,9 +28,24 @@ import {
   frontendRedirectDefault,
 } from "./controller";
 import { hash as argonHash } from "argon2";
+import { writeAuthAuditEvent } from "@/modules/audit/service";
 
 export function makeGoogleAuthController(app: FastifyInstance) {
   const adminEmails = parseAdminEmailAllowlist();
+  const logAuthEvent = (
+    req: FastifyRequest,
+    event: "login_success" | "login_failed",
+    extra?: { userId?: string | null; email?: string | null },
+  ) => {
+    void writeAuthAuditEvent({
+      req,
+      event,
+      userId: extra?.userId ?? null,
+      email: extra?.email ?? null,
+    }).catch((err) => {
+      req.log?.warn?.({ err, event }, "audit_auth_event_failed");
+    });
+  };
 
   async function upsertGoogleUser(payload: TokenPayload) {
     const email = payload.email;
@@ -131,6 +146,7 @@ export function makeGoogleAuthController(app: FastifyInstance) {
           { err },
           "google_verify_failed_id_token",
         );
+        logAuthEvent(req, "login_failed");
         return reply
           .status(401)
           .send({ error: { message: "invalid_google_token" } });
@@ -148,6 +164,7 @@ export function makeGoogleAuthController(app: FastifyInstance) {
 
       setAccessCookie(reply, access);
       setRefreshCookie(reply, refresh);
+      logAuthEvent(req, "login_success", { userId: user.id, email: user.email });
 
       return reply.send({
         access_token: access,

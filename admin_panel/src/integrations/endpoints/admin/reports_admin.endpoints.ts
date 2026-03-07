@@ -4,11 +4,11 @@
 // =============================================================
 
 import { baseApi } from '@/integrations/baseApi';
-import type { KpiRow, UserPerformanceRow, LocationRow, ReportRole } from '@/integrations/shared';
+import type { KpiRow, UserPerformanceRow, LocationRow, ReportFilterParams } from '@/integrations/shared';
 
 export const reportsAdminApi = baseApi.injectEndpoints({
   endpoints: (b) => ({
-    adminReportsKpi: b.query<KpiRow[], { from?: string; to?: string } | void>({
+    adminReportsKpi: b.query<KpiRow[], ReportFilterParams | void>({
       query: (params) => ({
         url: '/admin/reports/kpi',
         method: 'GET',
@@ -17,10 +17,7 @@ export const reportsAdminApi = baseApi.injectEndpoints({
       transformResponse: (res: unknown): KpiRow[] => (Array.isArray(res) ? (res as KpiRow[]) : []),
     }),
 
-    adminReportsUsersPerformance: b.query<
-      UserPerformanceRow[],
-      { from?: string; to?: string; role?: ReportRole } | void
-    >({
+    adminReportsUsersPerformance: b.query<UserPerformanceRow[], ReportFilterParams | void>({
       query: (params) => ({
         url: '/admin/reports/users-performance',
         method: 'GET',
@@ -30,7 +27,7 @@ export const reportsAdminApi = baseApi.injectEndpoints({
         Array.isArray(res) ? (res as UserPerformanceRow[]) : [],
     }),
 
-    adminReportsLocations: b.query<LocationRow[], { from?: string; to?: string } | void>({
+    adminReportsLocations: b.query<LocationRow[], ReportFilterParams | void>({
       query: (params) => ({
         url: '/admin/reports/locations',
         method: 'GET',

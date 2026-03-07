@@ -25,6 +25,7 @@ export const auditRequestLogs = mysqlTable(
     ip: varchar('ip', { length: 64 }).notNull(),
     user_agent: longtext('user_agent'), // LONGTEXT
     referer: longtext('referer'), // LONGTEXT
+    body_snapshot: longtext('body_snapshot'),
 
     user_id: varchar('user_id', { length: 64 }),
     is_admin: int('is_admin').notNull().default(0),

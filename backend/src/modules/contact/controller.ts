@@ -12,7 +12,8 @@ import { repoCreateContact } from './repository';
 import type { ContactView } from './schema';
 
 import { sendTemplatedEmail } from '@/modules/email-templates/mailer';
-import { getSmtpSettings } from '@/modules/siteSettings/service';
+import { getSmtpSettings, getSettingValue } from '@/modules/siteSettings/service';
+import { createUserNotification } from '@/modules/notifications/service';
 
 type CreateReq = FastifyRequest<{ Body: unknown }>;
 
@@ -122,6 +123,21 @@ export async function createContactPublic(req: CreateReq, reply: FastifyReply) {
     await sendContactEmails({ contact: created, locale, defaultLocale });
   } catch (err: any) {
     req.log?.error?.({ err }, 'contact_email_send_failed');
+  }
+
+  // Admin notification (best-effort)
+  try {
+    const adminUserId = ((await getSettingValue('booking_admin_user_id')) ?? '').trim();
+    if (adminUserId && adminUserId.length === 36) {
+      await createUserNotification({
+        userId: adminUserId,
+        type: 'custom',
+        title: 'Yeni iletişim mesajı',
+        message: `${created.name} — ${created.subject}`,
+      });
+    }
+  } catch (err: any) {
+    req.log?.error?.({ err }, 'contact_notification_failed');
   }
 
   return reply.code(201).send(created);

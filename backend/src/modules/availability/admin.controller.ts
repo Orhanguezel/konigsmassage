@@ -8,10 +8,12 @@ import { asc, eq, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 
 import { db } from '@/db/client';
-import { resourceWorkingHours } from './schema';
+import { resourceRecurringOverrides, resourceWorkingHours } from './schema';
 
 import {
+  adminListRecurringOverridesQuerySchema,
   adminListWorkingHoursQuerySchema,
+  adminUpsertRecurringOverrideBodySchema,
   adminUpsertWorkingHourBodySchema,
   adminListSlotsQuerySchema,
   adminSlotAvailabilityQuerySchema,
@@ -24,10 +26,12 @@ import {
 import {
   getAvailability,
   listSlotsForDate,
+  listRecurringOverrides,
   getDailyPlanMerged,
   generateMissingSlotsForDate,
   overrideDaySlots,
   overrideSingleSlot,
+  upsertRecurringOverride,
 } from './repository';
 
 import { toActive01 } from '@/modules/_shared';
@@ -56,6 +60,21 @@ export const listWorkingHoursAdmin: RouteHandler = async (req, reply) => {
     }
     req.log.error(e);
     return reply.code(500).send({ error: { message: 'working_hours_list_failed' } });
+  }
+};
+
+/** GET /admin/resource-recurring-overrides?resource_id=... */
+export const listRecurringOverridesAdmin: RouteHandler = async (req, reply) => {
+  try {
+    const q = adminListRecurringOverridesQuerySchema.parse((req as any).query ?? {});
+    const rows = await listRecurringOverrides({ resource_id: q.resource_id });
+    return reply.send(rows);
+  } catch (e: any) {
+    if (e?.name === 'ZodError') {
+      return reply.code(400).send({ error: { message: 'validation_error', details: e.issues } });
+    }
+    req.log.error(e);
+    return reply.code(500).send({ error: { message: 'recurring_overrides_list_failed' } });
   }
 };
 
@@ -132,6 +151,30 @@ export const upsertWorkingHourAdmin: RouteHandler = async (req, reply) => {
   }
 };
 
+/** POST /admin/resource-recurring-overrides */
+export const upsertRecurringOverrideAdmin: RouteHandler = async (req, reply) => {
+  try {
+    const body = adminUpsertRecurringOverrideBodySchema.parse(req.body ?? {});
+    const saved = await upsertRecurringOverride({
+      id: body.id,
+      resource_id: body.resource_id,
+      dow: body.dow,
+      is_active: body.is_active,
+    });
+
+    return reply.code(body.id ? 200 : 201).send(saved);
+  } catch (e: any) {
+    if (e?.name === 'ZodError') {
+      return reply.code(400).send({ error: { message: 'validation_error', details: e.issues } });
+    }
+    req.log.error(e);
+    if (String(e?.code || '') === 'ER_DUP_ENTRY' || Number(e?.errno || 0) === 1062) {
+      return reply.code(409).send({ error: { message: 'duplicate_recurring_override' } });
+    }
+    return reply.code(500).send({ error: { message: 'recurring_override_upsert_failed' } });
+  }
+};
+
 /** DELETE /admin/resource-working-hours/:id */
 export const deleteWorkingHourAdmin: RouteHandler = async (req, reply) => {
   try {
@@ -143,6 +186,20 @@ export const deleteWorkingHourAdmin: RouteHandler = async (req, reply) => {
   } catch (e: any) {
     req.log.error(e);
     return reply.code(500).send({ error: { message: 'working_hours_delete_failed' } });
+  }
+};
+
+/** DELETE /admin/resource-recurring-overrides/:id */
+export const deleteRecurringOverrideAdmin: RouteHandler = async (req, reply) => {
+  try {
+    const id = safeText((req.params as any)?.id);
+    if (!id || id.length !== 36) return reply.code(400).send({ error: { message: 'invalid_id' } });
+
+    await db.delete(resourceRecurringOverrides).where(eq(resourceRecurringOverrides.id, id));
+    return reply.code(204).send();
+  } catch (e: any) {
+    req.log.error(e);
+    return reply.code(500).send({ error: { message: 'recurring_override_delete_failed' } });
   }
 };
 

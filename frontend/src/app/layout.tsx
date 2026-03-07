@@ -25,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://koenigsmassage.com'),
+    manifest: '/manifest.webmanifest',
     icons: {
       icon: faviconUrl,
       shortcut: faviconUrl,

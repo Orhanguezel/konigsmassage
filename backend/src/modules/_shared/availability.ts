@@ -51,6 +51,15 @@ export type WorkingHourRowDTO = {
   updated_at: any;
 };
 
+export type RecurringOverrideRowDTO = {
+  id: string;
+  resource_id: string;
+  dow: Dow;
+  is_active: 0 | 1;
+  created_at: any;
+  updated_at: any;
+};
+
 export type SlotRowDTO = {
   id: string;
   slot_time: string; // "HH:mm:00"

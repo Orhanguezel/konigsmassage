@@ -53,7 +53,47 @@ export const uuid36Schema = z
 
 
 export type safeText = (v: unknown) => string;
-  
+
+/**
+ * QueryString için boolean parser (undefined korumalı)
+ * undefined → undefined
+ * true/1/"1"/"true" → true
+ * false/0/"0"/"false" → false
+ */
+export function toBoolOrUndefined(v: unknown): boolean | undefined {
+  if (v === undefined || v === null) return undefined;
+  if (typeof v === 'boolean') return v;
+  const s = String(v).toLowerCase();
+  if (s === 'true' || s === '1') return true;
+  if (s === 'false' || s === '0') return false;
+  return undefined;
+}
+
+/**
+ * Boş string, null veya undefined → null
+ * Diğer değerler → string
+ */
+export function nullIfEmpty(v: unknown): string | null {
+  if (v === '' || v === null || v === undefined) return null;
+  return String(v);
+}
+
+/**
+ * MySQL duplicate entry hatası kontrolü
+ */
+export function isDuplicateError(err: any): boolean {
+  const code = err?.code ?? err?.errno;
+  return code === 'ER_DUP_ENTRY' || code === 1062;
+}
+
+/**
+ * Güvenli integer parse
+ */
+export function toInt(v: unknown, fallback = 0): number {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.floor(n) : fallback;
+}
+
 export const hmSchema = z
   .string()
   .trim()

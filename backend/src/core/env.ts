@@ -93,6 +93,26 @@ export const env = {
   PUBLIC_URL: process.env.PUBLIC_URL || 'https://www.konigsmassage.com',
   FRONTEND_URL: FRONTEND_URL,
 
+  PUBLIC_API_BASE: process.env.PUBLIC_API_BASE || '',
+  CDN_PUBLIC_BASE: process.env.CDN_PUBLIC_BASE || '',
+
+  // PayPal
+  PAYPAL_MODE: process.env.PAYPAL_MODE || 'sandbox',
+  PAYPAL_BASE_URL: process.env.PAYPAL_BASE_URL || 'https://api-m.sandbox.paypal.com',
+  PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID || '',
+  PAYPAL_CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET || '',
+  PAYPAL_WEBHOOK_ID: process.env.PAYPAL_WEBHOOK_ID || '',
+
+  // Bank transfer
+  BANK_TRANSFER_ENABLED: toBool(process.env.BANK_TRANSFER_ENABLED, true),
+  BANK_ACCOUNT_NAME: process.env.BANK_ACCOUNT_NAME || '',
+  BANK_IBAN: process.env.BANK_IBAN || '',
+  BANK_NAME: process.env.BANK_NAME || '',
+  BANK_BRANCH: process.env.BANK_BRANCH || '',
+  BANK_SWIFT: process.env.BANK_SWIFT || '',
+
+
+
   // ✅ SMTP / Mail (sadece fallback; asıl değerler site_settings.smtp_* ile gelebilir)
   SMTP_HOST: process.env.SMTP_HOST || '',
   SMTP_PORT: toInt(process.env.SMTP_PORT, 465),
@@ -100,6 +120,9 @@ export const env = {
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASS: process.env.SMTP_PASS || '',
   MAIL_FROM: process.env.MAIL_FROM || '',
+
+  AUDIT_RETENTION_DAYS: toInt(process.env.AUDIT_RETENTION_DAYS, 90),
+  AUDIT_RETENTION_CLEANUP_MINUTES: toInt(process.env.AUDIT_RETENTION_CLEANUP_MINUTES, 360),
 } as const;
 
 export type AppEnv = typeof env;

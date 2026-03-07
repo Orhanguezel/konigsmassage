@@ -103,7 +103,7 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
     locale: '*',
   });
 
-  const { url } = useMemo(
+  const { url, width: mediaWidth, height: mediaHeight } = useMemo(
     () => extractMedia((setting?.value as SettingValue) ?? null),
     [setting?.value],
   );
@@ -143,9 +143,25 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
     );
   }
 
+  // Raster URL -> use native img so aspect ratio is preserved from the actual file.
+  if (typeof finalSrc === 'string') {
+    return (
+      <span className={frameClass} aria-label={alt}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={finalSrc}
+          alt={alt}
+          className={cx('w-full h-auto object-contain', className)}
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
+        />
+      </span>
+    );
+  }
+
   // Raster → Next.js <Image>
-  const w = typeof finalSrc === 'object' ? (finalSrc.width ?? 500) : 500;
-  const h = typeof finalSrc === 'object' ? (finalSrc.height ?? 80) : 80;
+  const w = typeof finalSrc === 'object' ? (finalSrc.width ?? mediaWidth ?? 500) : 500;
+  const h = typeof finalSrc === 'object' ? (finalSrc.height ?? mediaHeight ?? 160) : 160;
 
   return (
     <span className={frameClass} aria-label={alt}>

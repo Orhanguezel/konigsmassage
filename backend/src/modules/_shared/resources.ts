@@ -50,6 +50,16 @@ export type ResourceRowDTO = {
   is_active: 0 | 1;
   created_at: any;
   updated_at: any;
+  i18n?: ResourceI18nDTO[];
+};
+
+export type ResourceI18nDTO = {
+  id: Id36;
+  resource_id: Id36;
+  locale: string;
+  title: string;
+  created_at: any;
+  updated_at: any;
 };
 
 export type ResourcePublicItemDTO = {
@@ -71,6 +81,10 @@ export type ResourceAdminCreateInput = {
   capacity?: number | null;
   external_ref_id?: Id36 | null;
   is_active?: 0 | 1;
+  i18n?: Array<{
+    locale: string;
+    title: string;
+  }>;
 };
 
 export type ResourceAdminUpdatePatch = Partial<{
@@ -79,6 +93,10 @@ export type ResourceAdminUpdatePatch = Partial<{
   capacity: number;
   external_ref_id: Id36 | null;
   is_active: 0 | 1;
+  i18n: Array<{
+    locale: string;
+    title: string;
+  }>;
 }>;
 
 

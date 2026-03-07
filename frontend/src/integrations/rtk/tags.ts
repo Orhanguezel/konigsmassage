@@ -54,6 +54,7 @@ export const metahubTags = [
   'BookingResources',
   'BookingResource',
   'AvailabilityWH',
+  'AvailabilityRecurring',
   'AvailabilitySlots',
   'AvailabilityPlan',
   'AvailabilityCheck',

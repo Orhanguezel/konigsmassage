@@ -13,9 +13,11 @@ import {
   Calendar,
   Clock,
   Contact2,
+  CreditCard,
   Database,
   FileSearch,
   FileText,
+  Gift,
   HardDrive,
   HelpCircle,
   Images,
@@ -55,6 +57,8 @@ export interface NavMainItem {
   comingSoon?: boolean;
   newTab?: boolean;
   isNew?: boolean;
+  /** Optional dynamic badge (e.g. unread count) */
+  badgeKey?: string;
 }
 
 export interface NavGroup {
@@ -85,7 +89,12 @@ export type AdminNavItemKey =
   | 'availability'
   | 'reports'
   | 'telegram'
-  | 'chat';
+  | 'chat'
+  | 'wallet'
+  | 'gutschein'
+  | 'orders'
+  | 'payment_settings'
+  | 'popups';
 
 export type AdminNavGroupKey = 'general' | 'content' | 'marketing' | 'communication' | 'system';
 
@@ -93,6 +102,7 @@ export type AdminNavConfigItem = {
   key: AdminNavItemKey;
   url: string;
   icon?: LucideIcon;
+  badgeKey?: string;
 };
 
 export type AdminNavConfigGroup = {
@@ -116,6 +126,7 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'services', url: '/admin/services', icon: Wrench },
       { key: 'sliders', url: '/admin/slider', icon: Images },
       { key: 'menu_items', url: '/admin/menuitem', icon: Menu },
+      { key: 'popups', url: '/admin/popups', icon: Megaphone },
       { key: 'footer_sections', url: '/admin/footer-sections', icon: FileText },
       { key: 'faqs', url: '/admin/faqs', icon: HelpCircle },
     ],
@@ -139,7 +150,11 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
     items: [
       { key: 'users', url: '/admin/users', icon: Users },
       { key: 'email_templates', url: '/admin/email-templates', icon: Mail },
-      { key: 'notifications', url: '/admin/notifications', icon: Bell },
+      { key: 'notifications', url: '/admin/notifications', icon: Bell, badgeKey: 'notifications_unread' },
+      { key: 'orders', url: '/admin/orders', icon: Package },
+      { key: 'wallet', url: '/admin/wallet', icon: Receipt },
+      { key: 'gutschein', url: '/admin/gutschein', icon: Gift },
+      { key: 'payment_settings', url: '/admin/payment-settings', icon: CreditCard },
       { key: 'storage', url: '/admin/storage', icon: HardDrive },
       { key: 'db', url: '/admin/db', icon: Database },
       { key: 'audit', url: '/admin/audit', icon: FileSearch },
@@ -177,6 +192,11 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   reports: 'Reports',
   telegram: 'Telegram',
   chat: 'Chat & AI',
+  orders: 'Orders',
+  wallet: 'Wallet',
+  gutschein: 'Gift Cards',
+  payment_settings: 'Payment Settings',
+  popups: 'Popups',
 };
 
 export function buildAdminSidebarItems(
@@ -211,6 +231,7 @@ export function buildAdminSidebarItems(
           title,
           url: item.url,
           icon: item.icon,
+          badgeKey: item.badgeKey,
         };
       }),
     };

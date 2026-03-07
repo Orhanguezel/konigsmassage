@@ -13,6 +13,8 @@ import type { PublicMenuItemDto } from '@/integrations/shared';
 
 import { localizePath } from '@/integrations/shared';
 import { useLocaleShort, useUiSection } from '@/i18n';
+import { useAuthStore } from '@/features/auth/auth.store';
+import { IconUser } from '@/components/ui/icons';
 
 type SimpleBrand = {
   name: string;
@@ -35,7 +37,13 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [overlayDark, setOverlayDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Hooks her zaman aynı sırada çağrılmalı!
   const locale = useLocaleShort(localeProp);
@@ -346,10 +354,10 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
           id="header-sticky"
           className={`w-full z-99 transition-all duration-300 flex items-center ${
             scrolled
-              ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-md shadow-lg text-slate-800 h-[90px]'
+              ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-md shadow-lg text-slate-800 h-[116px]'
               : !scrolled && overlayDark
-                ? 'absolute top-0 left-0 bg-transparent text-white h-[120px]'
-                : 'absolute top-0 left-0 bg-white/95 backdrop-blur-md shadow-sm text-slate-800 h-[120px]'
+                ? 'absolute top-0 left-0 bg-transparent text-white h-[148px]'
+                : 'absolute top-0 left-0 bg-white/95 backdrop-blur-md shadow-sm text-slate-800 h-[148px]'
           }`}
         >
           <div className="container mx-auto px-4">
@@ -361,8 +369,8 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
                     <SiteLogo
                       variant={!scrolled && overlayDark ? 'light' : 'default'}
                       alt={resolvedBrand.name}
-                      wrapperClassName="w-64 sm:w-72 md:w-80"
-                      className="w-auto max-w-none"
+                      wrapperClassName="w-48 sm:w-56 md:w-64"
+                      className="w-auto max-w-full h-auto max-h-[96px] md:max-h-[110px]"
                     />
                   </Link>
                 </div>
@@ -392,6 +400,15 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
               {/* Right */}
               <div className="w-auto shrink-0">
                 <div className="flex items-center justify-end gap-4">
+                  {mounted && isAuthenticated && (
+                    <Link
+                      href={localizePath(locale, '/profile')}
+                      aria-label="Profile"
+                      className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+                    >
+                      <IconUser className="w-5 h-5" />
+                    </Link>
+                  )}
                   <div className="hidden lg:inline-flex">
                     <button
                       type="button"

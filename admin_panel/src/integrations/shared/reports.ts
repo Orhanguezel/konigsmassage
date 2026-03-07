@@ -3,38 +3,38 @@
 // Admin reports DTOs
 // =============================================================
 
-export type ReportRole = 'seller' | 'driver';
+export type ReportFilterParams = {
+  from?: string;
+  to?: string;
+  service_id?: string;
+  resource_id?: string;
+  status?: string;
+  locale?: string;
+};
 
 export type KpiRow = {
   period: 'day' | 'week' | 'month' | string;
   bucket: string;
-  orders_total: number;
-  delivered_orders: number;
-  chickens_delivered: number;
+  bookings_total: number;
+  completed_total: number;
+  cancelled_total: number;
   success_rate: number; // 0..1
 };
 
 export type UserPerformanceRow = {
-  user_id: string;
-  role: ReportRole | string;
-  orders_total: number;
-  delivered_orders: number;
+  resource_id: string;
+  resource_title: string;
+  bookings_total: number;
+  completed_total: number;
   cancelled_orders: number;
-  chickens_delivered: number;
   success_rate: number; // 0..1
-  incentive_amount_total: number;
-  incentive_deliveries_count: number;
-  incentive_chickens_count: number;
 };
 
 export type LocationRow = {
-  city_id: string | null;
-  city_name: string | null;
-  district_id: string | null;
-  district_name: string | null;
-  orders_total: number;
-  delivered_orders: number;
+  locale: string;
+  locale_label: string;
+  bookings_total: number;
+  completed_total: number;
   cancelled_orders: number;
-  chickens_delivered: number;
   success_rate: number; // 0..1
 };

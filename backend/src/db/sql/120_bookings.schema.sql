@@ -42,6 +42,10 @@ CREATE TABLE `bookings` (
   `status`              VARCHAR(24)   NOT NULL DEFAULT 'new',
   `is_read`             TINYINT(1)    NOT NULL DEFAULT 0,
 
+  -- payment (optional — booking_payment_enabled site setting)
+  `order_id`            CHAR(36)      NULL,
+  `payment_status`      VARCHAR(24)   NULL DEFAULT 'none',
+
   `admin_note`          TEXT          NULL,
   `decided_at`          DATETIME(3)   NULL,
   `decided_by`          VARCHAR(120)  NULL,

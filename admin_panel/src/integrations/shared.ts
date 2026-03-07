@@ -57,3 +57,6 @@ export * from '@/integrations/shared/telegram';
 export * from '@/integrations/shared/telegram_inbound';
 export * from '@/integrations/shared/telegram_webhook';
 export * from '@/integrations/shared/chat';
+export * from '@/integrations/shared/wallet';
+export * from '@/integrations/shared/gutschein';
+export * from '@/integrations/shared/orders';

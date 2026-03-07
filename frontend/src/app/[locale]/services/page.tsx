@@ -1,72 +1,73 @@
-'use client';
+import type { Metadata } from 'next';
 
-import React, { useMemo } from 'react';
 import Banner from '@/layout/banner/Breadcrum';
-import Service from '@/components/containers/services/Service';
-import ServiceMore from '@/components/containers/services/ServiceMore';
-import { LayoutSeoBridge } from '@/seo';
-import { useLocaleShort, useUiSection } from '@/i18n';
-import { isValidUiText } from '@/integrations/shared';
-import { safeStr, toCdnSrc } from '@/integrations/shared';
+import ServiceDetail from '@/components/containers/services/ServiceDetail';
+import { fetchPrimaryServicePublic, fetchSeoObject, buildMetadataFromSeo } from '@/seo/server';
+import { excerpt, normPath, absUrlJoin, safeStr } from '@/integrations/shared';
 
-export default function ServicesPage() {
-  const locale = useLocaleShort();
-  const { ui } = useUiSection('ui_services', locale as any);
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
 
-  const bannerTitle = useMemo(() => {
-    const key = 'ui_services_page_title';
-    const v = safeStr(ui(key, 'Masaj Çeşitleri'));
-    return isValidUiText(v, key) ? v : 'Masaj Çeşitleri';
-  }, [ui]);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
 
-  const pageTitle = useMemo(() => {
-    const key = 'ui_services_meta_title';
-    const v = safeStr(ui(key, ''));
-    if (isValidUiText(v, key)) return v;
-    return bannerTitle || 'Masaj Çeşitleri';
-  }, [ui, bannerTitle]);
+  const [seo, service] = await Promise.all([
+    fetchSeoObject(locale),
+    fetchPrimaryServicePublic({ locale }),
+  ]);
 
-  const pageDescription = useMemo(() => {
-    const key = 'ui_services_meta_description';
-    const v = safeStr(ui(key, ''));
-    if (isValidUiText(v, key)) return v;
+  const base = await buildMetadataFromSeo(seo, { locale, pathname: normPath('/services') });
 
-    return safeStr(
-      ui(
-        'ui_services_meta_description_fallback',
-        'Masaj çeşitlerimizi keşfedin. Randevu ve detaylı bilgi için bizimle iletişime geçin.',
-      ),
-    );
-  }, [ui]);
+  if (!service) return base;
 
-  const ogImageOverride = useMemo(() => {
-    const key = 'ui_services_og_image';
-    const raw = safeStr(ui(key, ''));
-    if (!raw) return undefined;
-    if (/^https?:\/\//i.test(raw)) return raw;
-    return toCdnSrc(raw, 1200, 630, 'fill') || raw;
-  }, [ui]);
+  const pageTitle =
+    safeStr(service.meta_title) || safeStr(service.name) || 'Energetische Entspannungsmassage';
+  const pageDescription = excerpt(
+    safeStr(service.meta_description) || safeStr(service.description),
+    180,
+  );
+  const imageRaw =
+    safeStr((service as any)?.featured_image_url) ||
+    safeStr(service.image_url) ||
+    safeStr(service.featured_image);
+  const baseUrl = base.metadataBase?.toString() || '';
+  const imageAbs = imageRaw ? absUrlJoin(baseUrl, imageRaw) : '';
+
+  return {
+    ...base,
+    title: pageTitle,
+    ...(pageDescription ? { description: pageDescription } : {}),
+    openGraph: {
+      ...(base.openGraph || {}),
+      title: pageTitle,
+      ...(pageDescription ? { description: pageDescription } : {}),
+      ...(imageAbs ? { images: [{ url: imageAbs }] } : {}),
+    },
+    twitter: {
+      ...(base.twitter || {}),
+      ...(imageAbs ? { images: [imageAbs] } : {}),
+    },
+  };
+}
+
+export default async function ServicesPage({ params }: PageProps) {
+  const { locale } = await params;
+  const service = await fetchPrimaryServicePublic({ locale });
+
+  const title = safeStr(service?.name) || 'Energetische Entspannungsmassage';
+  const slug = safeStr(service?.slug);
 
   return (
     <>
-      <LayoutSeoBridge
-        title={pageTitle}
-        description={pageDescription || undefined}
-        ogImage={ogImageOverride}
-        noindex={false}
-      />
-
-      <Banner title={bannerTitle} />
-
-      <div className="bg-bg-accent min-h-[50vh]">
-        <section className="container mx-auto py-16 px-4">
-          <Service />
+      <Banner title={title} />
+      {slug ? (
+        <ServiceDetail forcedSlug={slug} hideBackLink />
+      ) : (
+        <section className="py-20 text-center text-text-secondary">
+          Der Service wird gerade vorbereitet.
         </section>
-
-        <section className="container mx-auto pb-16 px-4">
-          <ServiceMore />
-        </section>
-      </div>
+      )}
     </>
   );
 }

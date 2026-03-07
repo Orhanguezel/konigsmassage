@@ -16,6 +16,8 @@ import type {
   PasswordResetRequestResp,
   PasswordResetConfirmBody,
   PasswordResetConfirmResp,
+  EmailVerificationResp,
+  EmailVerificationConfirmBody,
 } from '@/integrations/shared';
 
 const BASE = '/auth';
@@ -133,6 +135,24 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Auth', 'User'],
     }),
+
+    /** POST /auth/email-verification/send  (doğrulama e-postası gönder) */
+    sendEmailVerification: b.mutation<EmailVerificationResp, void>({
+      query: (): FetchArgs => ({
+        url: `${BASE}/email-verification/send`,
+        method: 'POST',
+      }),
+    }),
+
+    /** POST /auth/email-verification/confirm  (e-posta doğrula) */
+    confirmEmailVerification: b.mutation<EmailVerificationResp, EmailVerificationConfirmBody>({
+      query: (body): FetchArgs => ({
+        url: `${BASE}/email-verification/confirm`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Auth', 'User'],
+    }),
   }),
   overrideExisting: true,
 });
@@ -150,6 +170,8 @@ export const {
   useUpdateUserMutation,
   useRequestPasswordResetMutation,
   useConfirmPasswordResetMutation,
+  useSendEmailVerificationMutation,
+  useConfirmEmailVerificationMutation,
 } = authApi;
 
 // Kısa alias'lar

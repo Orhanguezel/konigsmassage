@@ -19,6 +19,7 @@ export type DashboardAnalyticsDto = {
     bookings_completed: number;
     bookings_cancelled: number;
     bookings_other: number;
+    revenue_total: number;
 
     slots_total: number;
     slots_reserved: number;
@@ -35,6 +36,10 @@ export type DashboardAnalyticsDto = {
     reviews_total: number;
     users_total: number;
     storage_assets_total: number;
+    db_snapshots_total: number;
+    audit_logs_total: number;
+    availability_total: number;
+    notifications_total: number;
 
     contact_messages_unread: number;
     contact_messages_total: number;
@@ -52,6 +57,13 @@ export type DashboardAnalyticsDto = {
     slots_reserved: number;
   }>;
 
+  services: Array<{
+    service_id: string;
+    service_name: string;
+    bookings_total: number;
+    revenue_total: number;
+  }>;
+
   trend: Array<{
     bucket: string; // YYYY-MM-DD | YYYY-Wxx
     bookings_total: number;
@@ -59,5 +71,10 @@ export type DashboardAnalyticsDto = {
     bookings_confirmed: number;
     bookings_completed: number;
     bookings_cancelled: number;
+  }>;
+
+  revenueTrend: Array<{
+    bucket: string;
+    revenue_total: number;
   }>;
 };

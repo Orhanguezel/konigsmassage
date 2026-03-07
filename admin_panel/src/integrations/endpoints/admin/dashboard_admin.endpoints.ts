@@ -2,16 +2,18 @@
 // FILE: src/integrations/endpoints/admin/dashboard_admin.endpoints.ts
 // =============================================================
 import { baseApi } from "@/integrations/baseApi";
-import type { DashboardSummary } from "@/integrations/shared";
-import { normalizeDashboardSummary } from "@/integrations/shared";
+import type { DashboardAnalytics, DashboardRangeKey } from "@/integrations/shared";
+import { normalizeDashboardAnalytics } from "@/integrations/shared";
 
 // ---- API -----------------------------------------------------
 export const dashboardAdminApi = baseApi.injectEndpoints({
   endpoints: (b) => ({
-    // GET /admin/dashboard/analytics
-    getDashboardSummaryAdmin: b.query<DashboardSummary, void>({
-      query: () => ({ url: "/admin/dashboard/analytics" }),
-      transformResponse: (res: unknown) => normalizeDashboardSummary(res),
+    getDashboardSummaryAdmin: b.query<DashboardAnalytics, { range?: DashboardRangeKey } | void>({
+      query: (params) => ({
+        url: "/admin/dashboard/analytics",
+        params: params ?? undefined,
+      }),
+      transformResponse: (res: unknown) => normalizeDashboardAnalytics(res),
       providesTags: [{ type: "Dashboard" as const, id: "SUMMARY" }],
     }),
   }),

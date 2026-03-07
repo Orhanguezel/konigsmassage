@@ -274,6 +274,19 @@ export default function UserDetailClient({ id }: { id: string }) {
 
           <Separator />
 
+          {/* E-posta doğrulama durumu */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="font-medium">E-posta Doğrulama</div>
+              <div className="text-sm text-muted-foreground">Kullanıcının e-posta doğrulama durumu</div>
+            </div>
+            <Badge variant={u.email_verified ? 'default' : 'destructive'}>
+              {u.email_verified ? 'Doğrulanmış' : 'Doğrulanmamış'}
+            </Badge>
+          </div>
+
+          <Separator />
+
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <div className="font-medium">{t('admin.users.detail.status.title')}</div>

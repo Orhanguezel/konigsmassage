@@ -16,6 +16,7 @@ import {
   markBookingReadAdminHandler,
   acceptBookingAdminHandler,
   rejectBookingAdminHandler,
+  sendBookingReminderAdminHandler,
 } from './admin.controller';
 
 export async function registerBookingsAdmin(app: FastifyInstance) {
@@ -32,5 +33,6 @@ export async function registerBookingsAdmin(app: FastifyInstance) {
 
 app.post(`${BASE}/:id/accept`, { preHandler: [requireAuth] }, acceptBookingAdminHandler);
 app.post(`${BASE}/:id/reject`, { preHandler: [requireAuth] }, rejectBookingAdminHandler);
+app.post(`${BASE}/:id/reminder`, { preHandler: [requireAuth] }, sendBookingReminderAdminHandler);
 
 }

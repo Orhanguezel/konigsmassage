@@ -42,6 +42,7 @@ async function loadSettings(): Promise<ChatAiSettings> {
     // DB unavailable → return empty, env vars will be used as fallback
     return {
       enabled: true,
+      defaultProvider: "auto",
       providerOrder: "",
       systemPrompt: null,
       appointmentUrl: null,
@@ -78,6 +79,12 @@ function resolveProviderOrder(
   preferredProvider?: "auto" | AiProvider,
 ): AiProvider[] {
   const defaultOrder = ["openai", "anthropic", "grok"] as AiProvider[];
+  const fallbackPreferred =
+    settings.defaultProvider === "openai" ||
+    settings.defaultProvider === "anthropic" ||
+    settings.defaultProvider === "grok"
+      ? settings.defaultProvider
+      : "auto";
 
   const orderStr = settings.providerOrder || getEnv("AI_PROVIDER_ORDER");
   const configured = orderStr
@@ -86,8 +93,11 @@ function resolveProviderOrder(
     .filter((v): v is AiProvider => v === "openai" || v === "anthropic" || v === "grok");
 
   const base = configured.length ? configured : defaultOrder;
-  if (!preferredProvider || preferredProvider === "auto") return [...new Set(base)];
-  return [preferredProvider, ...base.filter((p) => p !== preferredProvider)];
+  const effectivePreferred =
+    !preferredProvider || preferredProvider === "auto" ? fallbackPreferred : preferredProvider;
+
+  if (!effectivePreferred || effectivePreferred === "auto") return [...new Set(base)];
+  return [effectivePreferred, ...base.filter((p) => p !== effectivePreferred)];
 }
 
 // ─── API callers ─────────────────────────────────────────────

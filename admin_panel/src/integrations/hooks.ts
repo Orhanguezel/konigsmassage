@@ -59,7 +59,13 @@ export * from '@/integrations/endpoints/admin/availability_admin.endpoints';
 export * from '@/integrations/endpoints/admin/telegram_inbound.endpoints';
 export * from '@/integrations/endpoints/admin/telegram_webhook.endpoints';
 export * from '@/integrations/endpoints/admin/telegram_admin.endpoints';
+export * from '@/integrations/endpoints/admin/wallet_admin.endpoints';
+
+// Gutschein / Gift Cards
+export * from '@/integrations/endpoints/admin/gutschein_admin.endpoints';
 
 // Chat / AI Support
 export * from '@/integrations/endpoints/admin/chat_admin.endpoints';
 
+// Orders / Payments
+export * from '@/integrations/endpoints/admin/orders_admin.endpoints';

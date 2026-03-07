@@ -30,6 +30,7 @@ import {
 import { useListMenuItemsQuery, useGetSiteSettingByKeyQuery } from '@/integrations/rtk/hooks';
 import type { PublicMenuItemDto } from '@/integrations/shared';
 import { useUiSection } from '@/i18n';
+import { useAuthStore } from '@/features/auth/auth.store';
 
 export type SimpleBrand = {
   name: string;
@@ -266,6 +267,9 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({
 
   const loginHref = localizePath(resolvedLocale, '/login');
   const registerHref = localizePath(resolvedLocale, '/register');
+  const profileHref = localizePath(resolvedLocale, '/profile');
+  const logoutHref = localizePath(resolvedLocale, '/logout');
+  const { isAuthenticated } = useAuthStore();
 
   return (
     <>
@@ -386,22 +390,45 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({
 
             {/* Auth Buttons */}
             <div className="grid grid-cols-2 gap-3 mb-8">
-              <Link
-                href={loginHref}
-                className="flex items-center justify-center gap-2 px-4 py-3 border border-sand-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-sand-50 hover:text-brand-primary transition-all"
-                onClick={onClose}
-              >
-                <IconLogIn className="text-lg" size={18} />
-                <span>{ui('ui_header_login', 'Login')}</span>
-              </Link>
-              <Link
-                href={registerHref}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-brand-primary text-white rounded-lg text-sm font-bold hover:bg-brand-dark transition-all shadow-sm"
-                onClick={onClose}
-              >
-                <IconUserPlus className="text-lg" size={18} />
-                <span>{ui('ui_header_register', 'Register')}</span>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href={profileHref}
+                    className="flex items-center justify-center gap-2 px-4 py-3 border border-sand-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-sand-50 hover:text-brand-primary transition-all"
+                    onClick={onClose}
+                  >
+                    <IconUserPlus className="text-lg" size={18} />
+                    <span>{ui('ui_header_profile', 'Profile')}</span>
+                  </Link>
+                  <Link
+                    href={logoutHref}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-brand-primary text-white rounded-lg text-sm font-bold hover:bg-brand-dark transition-all shadow-sm"
+                    onClick={onClose}
+                  >
+                    <IconLogIn className="text-lg" size={18} />
+                    <span>{ui('ui_header_logout', 'Logout')}</span>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href={loginHref}
+                    className="flex items-center justify-center gap-2 px-4 py-3 border border-sand-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-sand-50 hover:text-brand-primary transition-all"
+                    onClick={onClose}
+                  >
+                    <IconLogIn className="text-lg" size={18} />
+                    <span>{ui('ui_header_login', 'Login')}</span>
+                  </Link>
+                  <Link
+                    href={registerHref}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-brand-primary text-white rounded-lg text-sm font-bold hover:bg-brand-dark transition-all shadow-sm"
+                    onClick={onClose}
+                  >
+                    <IconUserPlus className="text-lg" size={18} />
+                    <span>{ui('ui_header_register', 'Register')}</span>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Contact */}

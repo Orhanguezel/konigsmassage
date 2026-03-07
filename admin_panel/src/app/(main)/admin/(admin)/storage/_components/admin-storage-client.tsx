@@ -80,6 +80,8 @@ type Filters = {
   mime: string;
 };
 
+const ROOT_FOLDER_VALUE = '__root__';
+
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -124,6 +126,10 @@ function getMimeColor(mime: string): string {
   return 'text-muted-foreground';
 }
 
+function isImageMime(mime: string | null | undefined) {
+  return String(mime ?? '').startsWith('image/');
+}
+
 export default function AdminStorageClient() {
   const router = useRouter();
   const t = useAdminT('admin.storage');
@@ -152,7 +158,12 @@ export default function AdminStorageClient() {
     return {
       q: filters.search || undefined,
       bucket: filters.bucket !== 'all' ? filters.bucket : undefined,
-      folder: filters.folder !== 'all' ? filters.folder : undefined,
+      folder:
+        filters.folder === 'all'
+          ? undefined
+          : filters.folder === ROOT_FOLDER_VALUE
+            ? ''
+            : filters.folder,
       mime: filters.mime !== 'all' ? filters.mime : undefined,
       sort: 'created_at',
       order: 'desc',
@@ -361,6 +372,8 @@ export default function AdminStorageClient() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">{t('list.allOption')}</SelectItem>
+                    <SelectItem value={ROOT_FOLDER_VALUE}>{t('list.rootFolder')}</SelectItem>
                     {folders.map((f) => (
                       <SelectItem key={f} value={f}>
                         {f || t('list.rootFolder')}
@@ -495,7 +508,7 @@ export default function AdminStorageClient() {
                           </Button>
                         </TableCell>
                         <TableCell>
-                          {item.url && item.mime.startsWith('image/') ? (
+                          {item.url && isImageMime(item.mime) ? (
                             <img
                               src={item.url}
                               alt={item.name}
@@ -592,7 +605,7 @@ export default function AdminStorageClient() {
               <CardContent className="flex items-center justify-center py-12">
                 <div className="flex items-center gap-2">
                   <Loader2 className="size-5 animate-spin" />
-                  <span>{t('admin.storage.list.loading')}</span>
+                  <span>{t('list.loading')}</span>
                 </div>
               </CardContent>
             </Card>
@@ -626,7 +639,7 @@ export default function AdminStorageClient() {
                         )}
                       </Button>
 
-                      {item.url && item.mime.startsWith('image/') ? (
+                      {item.url && isImageMime(item.mime) ? (
                         <img
                           src={item.url}
                           alt={item.name}

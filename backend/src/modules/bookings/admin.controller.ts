@@ -26,6 +26,7 @@ import {
   isActiveForCapacity,
   to01,
   adminDecisionSchema,
+  adminReminderSchema,
 } from './validation';
 
 import { sendTemplatedEmail } from '@/modules/email-templates/mailer';
@@ -35,6 +36,7 @@ import { telegramNotify } from '@/modules/telegram/telegram.notifier';
 import { db } from '@/db/client';
 import { siteSettings } from '@/modules/siteSettings/schema';
 import { bookings as bookingsTable } from './schema';
+import { env } from '@/core/env';
 
 const safeText = (v: unknown) => String(v ?? '').trim();
 const now = () => new Date();
@@ -555,6 +557,44 @@ export const deleteBookingAdminHandler: RouteHandler = async (req, reply) => {
 };
 
 
+// ----------------------------- payment section helper -----------------------------
+
+async function isBookingPaymentEnabled(): Promise<boolean> {
+  const v = await getSettingValue('booking_payment_enabled');
+  const s = (v ?? '').replace(/"/g, '').trim().toLowerCase();
+  return s === 'true' || s === '1';
+}
+
+function buildPaymentSectionHtml(locale: string, frontendUrl: string, bookingId: string): string {
+  const payUrl = `${frontendUrl}/${locale}/booking-payment/${bookingId}`;
+
+  const texts: Record<string, { title: string; msg: string; btn: string }> = {
+    tr: {
+      title: 'Online Odeme',
+      msg: 'Randevunuz icin odemeyi online olarak yapabilirsiniz.',
+      btn: 'Odeme Yap',
+    },
+    en: {
+      title: 'Online Payment',
+      msg: 'You can pay for your appointment online.',
+      btn: 'Pay Now',
+    },
+    de: {
+      title: 'Online-Zahlung',
+      msg: 'Sie konnen Ihren Termin online bezahlen.',
+      btn: 'Jetzt bezahlen',
+    },
+  };
+
+  const t = texts[locale] || texts.de;
+
+  return `<div style="background:#eef6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px;margin:16px 0;text-align:center;">
+    <p style="margin:0 0 8px;font-weight:bold;color:#1e40af;">${t.title}</p>
+    <p style="margin:0 0 12px;color:#1e3a5f;">${t.msg}</p>
+    <a href="${payUrl}" style="display:inline-block;background:#3b82f6;color:white;padding:10px 28px;text-decoration:none;border-radius:6px;font-weight:bold;">${t.btn}</a>
+  </div>`;
+}
+
 // ----------------------------- decision helpers -----------------------------
 
 async function sendDecisionEmailAndNotify(args: {
@@ -571,6 +611,16 @@ async function sendDecisionEmailAndNotify(args: {
 
   const siteName = await getSiteName();
   const customerLocale = String(b.locale || 'de');
+
+  // Build payment section if enabled and booking is accepted
+  let paymentSection = '';
+  if (args.templateKey === 'booking_accepted_customer') {
+    const payEnabled = await isBookingPaymentEnabled();
+    if (payEnabled) {
+      const frontendUrl = (env.FRONTEND_URL || 'https://konigsmassage.de').replace(/\/+$/, '');
+      paymentSection = buildPaymentSectionHtml(customerLocale, frontendUrl, String(b.id));
+    }
+  }
 
   // Email (best-effort)
   try {
@@ -597,6 +647,7 @@ async function sendDecisionEmailAndNotify(args: {
         status_before: statusBefore,
         status_after: statusAfter,
         decision_note: String(b.decision_note ?? ''),
+        payment_section: paymentSection,
       },
       allowMissing: true,
     });
@@ -654,6 +705,52 @@ async function sendDecisionEmailAndNotify(args: {
     });
   } catch {
     // ignore — telegramNotify already catches internally
+  }
+}
+
+async function sendReminderEmail(args: {
+  booking: any;
+  reminderNote?: string;
+}) {
+  const b = args.booking;
+  const siteName = await getSiteName();
+  const customerLocale = String(b.locale || 'de');
+
+  try {
+    const rendered = await sendTemplatedEmail({
+      to: String(b.email),
+      key: 'booking_reminder_customer',
+      locale: customerLocale,
+      defaultLocale: 'de',
+      params: {
+        site_name: siteName,
+        booking_id: String(b.id),
+        customer_name: String(b.name),
+        customer_email: String(b.email),
+        customer_phone: String(b.phone),
+        appointment_date: String(b.appointment_date),
+        appointment_time: String(b.appointment_time ?? ''),
+        service_title: String(b.service_title ?? ''),
+        resource_title: String(b.resource_title ?? ''),
+        reminder_note: String(args.reminderNote ?? ''),
+      },
+      allowMissing: true,
+    });
+
+    await trackEmailSuccess({
+      bookingId: String(b.id),
+      to: String(b.email),
+      templateKey: 'booking_reminder_customer',
+      subject: rendered?.subject,
+    });
+  } catch (e: any) {
+    await trackEmailError({
+      bookingId: String(b.id),
+      to: String(b.email),
+      templateKey: 'booking_reminder_customer',
+      error: String(e?.message || 'mail_failed'),
+    });
+    throw e;
   }
 }
 
@@ -804,3 +901,32 @@ export const rejectBookingAdminHandler: RouteHandler = async (req, reply) => {
   }
 };
 
+// ----------------------------- REMINDER -----------------------------
+
+export const sendBookingReminderAdminHandler: RouteHandler = async (req, reply) => {
+  try {
+    const id = safeText((req.params as any)?.id);
+    if (!id || id.length !== 36) return reply.code(400).send({ error: { message: 'invalid_id' } });
+
+    const body = adminReminderSchema.parse(req.body ?? {});
+    const existing = await getBookingMergedById({ id, locale: body.locale });
+    if (!existing) return reply.code(404).send({ error: { message: 'not_found' } });
+
+    await sendReminderEmail({
+      booking: existing,
+      reminderNote: body.reminder_note,
+    });
+
+    const refreshed = await getBookingMergedById({
+      id,
+      locale: safeText(body.locale) || String(existing.locale || 'de'),
+    });
+
+    return reply.send(refreshed ?? existing);
+  } catch (e: any) {
+    if (e?.name === 'ZodError')
+      return reply.code(400).send({ error: { message: 'validation_error', details: e.issues } });
+    req.log.error(e);
+    return reply.code(500).send({ error: { message: 'booking_reminder_failed' } });
+  }
+};

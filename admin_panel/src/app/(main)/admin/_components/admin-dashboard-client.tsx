@@ -1,50 +1,34 @@
 'use client';
 
-// =============================================================
-// FILE: src/app/(main)/admin/_components/admin-dashboard-client.tsx
-// Admin Dashboard Client (summary cards)
-// - GET /admin/dashboard/summary → { items: [{ key, label, count }] }
-// - Labels: nav copy > page copy > API label > key fallback
-// - Cards link to their respective admin pages
-// =============================================================
-
 import * as React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { RefreshCcw } from 'lucide-react';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 
 import { useGetDashboardSummaryAdminQuery } from '@/integrations/hooks';
-import type { DashboardSummaryItem } from '@/integrations/shared';
+import type { DashboardRangeKey } from '@/integrations/shared';
 
 import { useAdminUiCopy } from '@/app/(main)/admin/_components/common/useAdminUiCopy';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { useAdminSettings } from './admin-settings-provider';
 
-// dashboard key → admin route
 const ROUTE_MAP: Record<string, string> = {
   site_settings: '/admin/site-settings',
   custom_pages: '/admin/custompage',
   services: '/admin/services',
-  projects: '/admin/projects',
-  offers: '/admin/offers',
-  pricing: '/admin/pricing',
-  brands: '/admin/brands',
-  resume: '/admin/resume',
-  skills: '/admin/skills',
-  sliders: '/admin/slider',
+  faqs: '/admin/faqs',
   menu_items: '/admin/menuitem',
   footer_sections: '/admin/footer-sections',
-  faqs: '/admin/faqs',
-  popups: '/admin/popups',
   newsletter: '/admin/newsletter',
   contacts: '/admin/contacts',
   reviews: '/admin/reviews',
   bookings: '/admin/bookings',
-  mail: '/admin/mail',
   users: '/admin/users',
   email_templates: '/admin/email-templates',
   notifications: '/admin/notifications',
@@ -52,9 +36,18 @@ const ROUTE_MAP: Record<string, string> = {
   db: '/admin/db',
   audit: '/admin/audit',
   availability: '/admin/availability',
-  reports: '/admin/reports',
   resources: '/admin/resources',
 };
+
+const KPI_CHART_CONFIG = {
+  revenue_total: { label: 'Revenue', color: 'var(--chart-1)' },
+} satisfies ChartConfig;
+
+const SERVICE_CHART_CONFIG = {
+  bookings_total: { label: 'Bookings', color: 'var(--chart-2)' },
+} satisfies ChartConfig;
+
+const RANGES: DashboardRangeKey[] = ['7d', '30d', '90d'];
 
 function getErrMessage(err: unknown): string {
   const anyErr = err as any;
@@ -67,41 +60,76 @@ function getErrMessage(err: unknown): string {
   return '';
 }
 
+function formatMoney(v: number): string {
+  return new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(v || 0);
+}
+
+function labelForBucket(v: string): string {
+  if (!v) return '—';
+  if (v.includes('-W')) return v;
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return v;
+  return d.toLocaleDateString('de-DE', { month: 'short', day: 'numeric' });
+}
+
 export default function AdminDashboardClient() {
   const { copy } = useAdminUiCopy();
   const t = useAdminT();
   const page = copy.pages?.dashboard ?? {};
-
   const { pageMeta } = useAdminSettings();
   const dashboardMeta = pageMeta?.dashboard;
 
-  const q = useGetDashboardSummaryAdminQuery();
+  const [range, setRange] = React.useState<DashboardRangeKey>('30d');
+  const q = useGetDashboardSummaryAdminQuery({ range });
 
   React.useEffect(() => {
     if (!q.isError) return;
     toast.error(getErrMessage(q.error) || copy.common?.states?.error || t('admin.common.error'));
   }, [q.isError, q.error, copy.common?.states?.error, t]);
 
-  const items = React.useMemo(() => {
-    let data = (q.data?.items ?? []) as DashboardSummaryItem[];
-    if (dashboardMeta?.metrics && Array.isArray(dashboardMeta.metrics)) {
-      data = data.filter((m) => dashboardMeta!.metrics!.includes(m.key));
-    }
+  const analytics = q.data;
+  const nav = copy.nav?.items ?? ({} as Record<string, string>);
 
-    const nav = copy.nav?.items ?? ({} as Record<string, string>);
+  const kpis = React.useMemo(() => {
+    const totals = analytics?.totals;
+    if (!totals) return [];
+    return [
+      { key: 'bookings_total', label: t('admin.dashboard.analytics.kpi.bookings'), value: String(totals.bookings_total) },
+      { key: 'bookings_confirmed', label: t('admin.dashboard.analytics.kpi.confirmed'), value: String(totals.bookings_confirmed) },
+      { key: 'revenue_total', label: t('admin.dashboard.analytics.kpi.revenue'), value: formatMoney(totals.revenue_total) },
+      { key: 'slots_reserved', label: t('admin.dashboard.analytics.kpi.reservedSlots'), value: String(totals.slots_reserved) },
+    ];
+  }, [analytics?.totals, t]);
 
-    return data.map((item) => ({
-      ...item,
+  const moduleItems = React.useMemo(() => {
+    const totals = analytics?.totals;
+    if (!totals) return [];
+    const pairs: Array<[string, number]> = [
+      ['services', totals.services_total],
+      ['bookings', totals.bookings_total],
+      ['resources', totals.resources_total],
+      ['availability', totals.availability_total],
+      ['contacts', totals.contact_messages_total],
+      ['audit', totals.audit_logs_total],
+      ['storage', totals.storage_assets_total],
+      ['users', totals.users_total],
+    ];
+    return pairs.map(([key, count]) => ({
+      key,
+      count,
+      href: ROUTE_MAP[key] ?? null,
       label:
-        (nav as Record<string, string>)[item.key] ||
-        page[`label_${item.key}`] ||
-        page[item.key] ||
-        t(`admin.dashboard.items.${item.key}` as any) ||
-        item.label ||
-        item.key.replace(/_/g, ' '),
-      href: ROUTE_MAP[item.key] ?? null,
+        (nav as Record<string, string>)[key] ||
+        page[`label_${key}`] ||
+        page[key] ||
+        t(`admin.dashboard.items.${key}` as any) ||
+        key,
     }));
-  }, [q.data, copy.nav?.items, page, t, dashboardMeta]);
+  }, [analytics?.totals, nav, page, t]);
 
   return (
     <div className="space-y-6">
@@ -111,23 +139,29 @@ export default function AdminDashboardClient() {
             {dashboardMeta?.title || page?.title || t('admin.dashboard.title')}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {page?.subtitle || t('admin.dashboard.subtitle')}
+            {t('admin.dashboard.analytics.subtitle')}
           </p>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => q.refetch()}
-          disabled={q.isFetching}
-        >
-          <RefreshCcw className={`mr-2 size-4${q.isFetching ? ' animate-spin' : ''}`} />
-          {copy.common?.actions?.refresh || t('admin.common.refresh')}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {RANGES.map((key) => (
+            <Button
+              key={key}
+              type="button"
+              variant={range === key ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setRange(key)}
+            >
+              {t(`admin.dashboard.analytics.ranges.${key}` as any)}
+            </Button>
+          ))}
+          <Button type="button" variant="outline" size="sm" onClick={() => q.refetch()} disabled={q.isFetching}>
+            <RefreshCcw className={`mr-2 size-4${q.isFetching ? ' animate-spin' : ''}`} />
+            {copy.common?.actions?.refresh || t('admin.common.refresh')}
+          </Button>
+        </div>
       </div>
 
-      {/* Loading skeleton */}
       {q.isLoading && (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -143,40 +177,134 @@ export default function AdminDashboardClient() {
         </div>
       )}
 
-      {/* Summary cards */}
-      {!q.isLoading && (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {items.map((item) => {
-            const card = (
-              <Card className={item.href ? 'transition-colors hover:border-primary/50' : ''}>
+      {!q.isLoading && analytics && (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {kpis.map((item) => (
+              <Card key={item.key}>
                 <CardHeader className="gap-2 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {item.label}
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">{item.label}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-semibold tabular-nums">{item.count}</div>
+                  <div className="text-2xl font-semibold tabular-nums">{item.value}</div>
                 </CardContent>
               </Card>
-            );
+            ))}
+          </div>
 
-            return item.href ? (
-              <Link key={item.key} href={item.href} prefetch={false}>
-                {card}
-              </Link>
-            ) : (
-              <div key={item.key}>{card}</div>
-            );
-          })}
-
-          {items.length === 0 && !q.isFetching && (
-            <Card className="sm:col-span-2 xl:col-span-4">
-              <CardContent className="py-6 text-sm text-muted-foreground">
-                {copy.common?.states?.empty || t('admin.common.noData')}
+          <div className="grid gap-4 xl:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.dashboard.analytics.revenueChart.title')}</CardTitle>
+                <CardDescription>{t('admin.dashboard.analytics.revenueChart.description')}</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-2">
+                {analytics.revenueTrend.length ? (
+                  <ChartContainer config={KPI_CHART_CONFIG} className="aspect-auto h-72 w-full">
+                    <AreaChart data={analytics.revenueTrend}>
+                      <CartesianGrid vertical={false} />
+                      <XAxis dataKey="bucket" tickLine={false} axisLine={false} minTickGap={24} tickFormatter={labelForBucket} />
+                      <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => `${v}`} />
+                      <ChartTooltip
+                        cursor={false}
+                        content={
+                          <ChartTooltipContent
+                            labelFormatter={(label) => labelForBucket(String(label))}
+                            formatter={(value) => formatMoney(Number(value ?? 0))}
+                          />
+                        }
+                      />
+                      <Area dataKey="revenue_total" type="monotone" stroke="var(--color-revenue_total)" fill="var(--color-revenue_total)" fillOpacity={0.22} />
+                    </AreaChart>
+                  </ChartContainer>
+                ) : (
+                  <div className="text-sm text-muted-foreground">{t('admin.dashboard.analytics.states.empty')}</div>
+                )}
               </CardContent>
             </Card>
-          )}
-        </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.dashboard.analytics.servicesChart.title')}</CardTitle>
+                <CardDescription>{t('admin.dashboard.analytics.servicesChart.description')}</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-2">
+                {analytics.services.length ? (
+                  <ChartContainer config={SERVICE_CHART_CONFIG} className="aspect-auto h-72 w-full">
+                    <BarChart data={analytics.services}>
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="service_name"
+                        tickLine={false}
+                        axisLine={false}
+                        interval={0}
+                        angle={analytics.services.length > 3 ? -12 : 0}
+                        textAnchor={analytics.services.length > 3 ? 'end' : 'middle'}
+                        height={50}
+                      />
+                      <YAxis tickLine={false} axisLine={false} allowDecimals={false} />
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent labelFormatter={(label) => String(label)} formatter={(value) => `${Number(value ?? 0)}`} />}
+                      />
+                      <Bar dataKey="bookings_total" fill="var(--color-bookings_total)" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                ) : (
+                  <div className="text-sm text-muted-foreground">{t('admin.dashboard.analytics.states.empty')}</div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.dashboard.analytics.servicesTable.title')}</CardTitle>
+                <CardDescription>{t('admin.dashboard.analytics.servicesTable.description')}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {analytics.services.length ? analytics.services.map((svc) => (
+                  <div key={svc.service_id} className="flex items-center justify-between rounded-md border p-3">
+                    <div>
+                      <div className="font-medium">{svc.service_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {t('admin.dashboard.analytics.servicesTable.bookings', { count: String(svc.bookings_total) })}
+                      </div>
+                    </div>
+                    <div className="text-sm font-medium">{formatMoney(svc.revenue_total)}</div>
+                  </div>
+                )) : (
+                  <div className="text-sm text-muted-foreground">{t('admin.dashboard.analytics.states.empty')}</div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.dashboard.analytics.modules.title')}</CardTitle>
+                <CardDescription>{t('admin.dashboard.analytics.modules.description')}</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 sm:grid-cols-2">
+                {moduleItems.map((item) => {
+                  const body = (
+                    <div className="rounded-md border p-3 transition-colors hover:border-primary/50">
+                      <div className="text-sm text-muted-foreground">{item.label}</div>
+                      <div className="mt-1 text-xl font-semibold tabular-nums">{item.count}</div>
+                    </div>
+                  );
+                  return item.href ? (
+                    <Link key={item.key} href={item.href} prefetch={false}>
+                      {body}
+                    </Link>
+                  ) : (
+                    <div key={item.key}>{body}</div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </div>
+        </>
       )}
     </div>
   );

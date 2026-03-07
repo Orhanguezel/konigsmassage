@@ -17,7 +17,7 @@ import { useAuthStore } from "@/features/auth/auth.store";
 import { useProfile } from "@/features/profiles/profiles.action";
 import { useLocaleShort } from "@/i18n/useLocaleShort";
 import { useUiSection } from "@/i18n/uiDb";
-import { useGetSiteSettingByKeyQuery } from "@/integrations/rtk/hooks";
+import { useCreateContactPublicMutation, useGetSiteSettingByKeyQuery } from "@/integrations/rtk/hooks";
 
 /* ─── Theme tokens (globals.css @theme ile senkron) ────────── */
 const C = {
@@ -42,6 +42,7 @@ const C = {
 const SUPPORT_CONTEXT_ID_FALLBACK = "11111111-1111-1111-1111-111111111111";
 const AI_ASSISTANT_USER_ID = "00000000-0000-0000-0000-00000000a11f";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const GUEST_LEAD_COOLDOWN_MS = 10 * 60 * 1000;
 type AdminQueueFilter = "pending" | "mine" | "all";
 
 function getUserKey(user?: { id?: string | null; email?: string | null }): string {
@@ -110,11 +111,16 @@ function renderMessageText(raw: string, isMine: boolean) {
   });
 }
 
+function guestLeadCooldownKey(): string {
+  return "support-chat-guest-lead-last-at";
+}
+
 export default function SupportBotWidget() {
   const widgetSetting = useGetSiteSettingByKeyQuery({ key: "chat_widget_enabled" });
   const widgetEnabled = widgetSetting.data?.value !== false && widgetSetting.data?.value !== "false";
 
   const locale = useLocaleShort();
+  const welcomeSetting = useGetSiteSettingByKeyQuery({ key: "chat_ai_welcome_message", locale });
   const { ui } = useUiSection("ui_chat", locale);
   const t = useCallback(
     (key: string, fallback: string) => {
@@ -126,6 +132,7 @@ export default function SupportBotWidget() {
 
   const { isAuthenticated, user } = useAuthStore();
   const { data: profile } = useProfile({ enabled: isAuthenticated });
+  const [createContact, createContactState] = useCreateContactPublicMutation();
   const roleBasedAdmin = useMemo(() => isAdminUser(user), [user]);
   const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -133,6 +140,16 @@ export default function SupportBotWidget() {
   const [handoffMode, setHandoffMode] = useState<"ai" | "admin">("ai");
   const [queueFilter, setQueueFilter] = useState<AdminQueueFilter>("pending");
   const [input, setInput] = useState("");
+  const [guestLead, setGuestLead] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+    website: "",
+  });
+  const [guestLeadSuccess, setGuestLeadSuccess] = useState("");
+  const [guestLeadError, setGuestLeadError] = useState("");
+  const [guestLeadCooldownUntil, setGuestLeadCooldownUntil] = useState(0);
   const [supportContextId, setSupportContextId] = useState<string>(SUPPORT_CONTEXT_ID_FALLBACK);
   const takenOverThreadsRef = useRef<Set<string>>(new Set());
   const seenByThreadRef = useRef<Record<string, number>>({});
@@ -315,6 +332,12 @@ export default function SupportBotWidget() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = Number(window.localStorage.getItem(guestLeadCooldownKey()) || 0);
+    if (Number.isFinite(raw) && raw > Date.now()) setGuestLeadCooldownUntil(raw);
+  }, []);
+
   const items = (isAdmin ? adminMessagesQuery.data?.items : userMessagesQuery.data?.items) ?? [];
   const canSend =
     isAuthenticated &&
@@ -329,6 +352,21 @@ export default function SupportBotWidget() {
       : t("ui_chat_ai_mode", "KI aktiv");
   const displayName = user?.full_name?.trim() || user?.email?.split("@")[0] || "User";
   const myAvatar = profile?.avatar_url || null;
+  const welcomeText = useMemo(() => {
+    const raw = welcomeSetting.data?.value;
+    if (typeof raw === "string" && raw.trim()) return raw.trim();
+    return t("ui_chat_empty", "Hallo, wie kann ich Ihnen helfen?");
+  }, [welcomeSetting.data?.value, t]);
+  const guestLeadDisabled = useMemo(
+    () =>
+      !guestLead.name.trim() ||
+      !guestLead.email.trim() ||
+      !guestLead.phone.trim() ||
+      guestLead.message.trim().length < 10 ||
+      createContactState.isLoading ||
+      guestLeadCooldownUntil > Date.now(),
+    [guestLead, createContactState.isLoading, guestLeadCooldownUntil],
+  );
 
   const headerGradient = useMemo(
     () =>
@@ -343,6 +381,44 @@ export default function SupportBotWidget() {
     if (!text || !threadId) return;
     setInput("");
     postMessage.mutate({ text, client_id: crypto.randomUUID() });
+  };
+
+  const handleGuestLeadSubmit = async () => {
+    if (guestLeadCooldownUntil > Date.now()) return;
+
+    setGuestLeadError("");
+    setGuestLeadSuccess("");
+
+    try {
+      await createContact({
+        name: guestLead.name.trim(),
+        email: guestLead.email.trim(),
+        phone: guestLead.phone.trim(),
+        subject: `Guest chat callback request (${locale})`,
+        message: guestLead.message.trim(),
+        website: guestLead.website.trim() || undefined,
+      }).unwrap();
+
+      const nextCooldown = Date.now() + GUEST_LEAD_COOLDOWN_MS;
+      setGuestLeadCooldownUntil(nextCooldown);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(guestLeadCooldownKey(), String(nextCooldown));
+      }
+      setGuestLead({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        website: "",
+      });
+      setGuestLeadSuccess(
+        t("ui_chat_guest_success", "Danke. Ihre Nachricht wurde gesendet. Wir melden uns so bald wie moglich."),
+      );
+    } catch {
+      setGuestLeadError(
+        t("ui_chat_guest_error", "Senden fehlgeschlagen. Bitte versuchen Sie es erneut oder nutzen Sie die Kontaktseite."),
+      );
+    }
   };
 
   const btnSize = isMobile ? 56 : 62;
@@ -491,25 +567,102 @@ export default function SupportBotWidget() {
 
           {/* ─── Not Authenticated ───────────────────── */}
           {!isAuthenticated ? (
-            <div style={{ padding: 20, textAlign: "center" }}>
-              <p style={{ marginBottom: 14, color: C.sand800, fontSize: 14 }}>
-                {t("ui_chat_login_title", "Bitte melden Sie sich an, um den Chat zu nutzen.")}
+            <div style={{ padding: 20 }}>
+              <p style={{ marginBottom: 14, color: C.sand800, fontSize: 14, textAlign: "center" }}>
+                {t("ui_chat_guest_intro", "Ohne Login konnen Sie eine Nachricht hinterlassen. Fur den direkten Chat melden Sie sich bitte an.")}
               </p>
-              <Link
-                href="/login"
-                style={{
-                  display: "inline-block",
-                  background: C.rose900,
-                  color: C.white,
-                  padding: "10px 24px",
-                  borderRadius: 10,
-                  fontWeight: 600,
-                  fontSize: 13,
-                  textDecoration: "none",
-                }}
-              >
-                {t("ui_chat_login_button", "Anmelden")}
-              </Link>
+              <div style={{ display: "grid", gap: 10 }}>
+                <input
+                  value={guestLead.name}
+                  onChange={(e) => setGuestLead((p) => ({ ...p, name: e.target.value }))}
+                  placeholder={t("ui_chat_guest_name", "Ihr Name")}
+                  style={{ border: `1px solid ${C.sand300}`, borderRadius: 10, padding: "10px 12px", fontSize: 13 }}
+                />
+                <input
+                  value={guestLead.email}
+                  onChange={(e) => setGuestLead((p) => ({ ...p, email: e.target.value }))}
+                  placeholder={t("ui_chat_guest_email", "Ihre E-Mail")}
+                  style={{ border: `1px solid ${C.sand300}`, borderRadius: 10, padding: "10px 12px", fontSize: 13 }}
+                />
+                <input
+                  value={guestLead.phone}
+                  onChange={(e) => setGuestLead((p) => ({ ...p, phone: e.target.value }))}
+                  placeholder={t("ui_chat_guest_phone", "Telefonnummer")}
+                  style={{ border: `1px solid ${C.sand300}`, borderRadius: 10, padding: "10px 12px", fontSize: 13 }}
+                />
+                <textarea
+                  value={guestLead.message}
+                  onChange={(e) => setGuestLead((p) => ({ ...p, message: e.target.value }))}
+                  placeholder={t("ui_chat_guest_message", "Worum geht es?")}
+                  rows={4}
+                  style={{
+                    border: `1px solid ${C.sand300}`,
+                    borderRadius: 10,
+                    padding: "10px 12px",
+                    fontSize: 13,
+                    resize: "vertical",
+                    minHeight: 104,
+                  }}
+                />
+                <input
+                  value={guestLead.website}
+                  onChange={(e) => setGuestLead((p) => ({ ...p, website: e.target.value }))}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+                />
+                {guestLeadSuccess ? (
+                  <div style={{ fontSize: 12, color: "#166534", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "10px 12px" }}>
+                    {guestLeadSuccess}
+                  </div>
+                ) : null}
+                {guestLeadError ? (
+                  <div style={{ fontSize: 12, color: "#991b1b", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, padding: "10px 12px" }}>
+                    {guestLeadError}
+                  </div>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={handleGuestLeadSubmit}
+                  disabled={guestLeadDisabled}
+                  style={{
+                    background: C.rose900,
+                    color: C.white,
+                    padding: "10px 16px",
+                    borderRadius: 10,
+                    fontWeight: 600,
+                    fontSize: 13,
+                    border: "none",
+                    opacity: guestLeadDisabled ? 0.55 : 1,
+                    cursor: guestLeadDisabled ? "default" : "pointer",
+                  }}
+                >
+                  {createContactState.isLoading
+                    ? t("ui_chat_guest_sending", "Wird gesendet...")
+                    : guestLeadCooldownUntil > Date.now()
+                      ? t("ui_chat_guest_wait", "Bitte spater erneut versuchen")
+                      : t("ui_chat_guest_submit", "Nachricht senden")}
+                </button>
+              </div>
+              <div style={{ marginTop: 14, textAlign: "center" }}>
+                <Link
+                  href="/login"
+                  style={{
+                    display: "inline-block",
+                    color: C.rose900,
+                    padding: "8px 12px",
+                    borderRadius: 10,
+                    fontWeight: 600,
+                    fontSize: 13,
+                    textDecoration: "none",
+                    border: `1px solid ${C.rose200}`,
+                    background: C.rose50,
+                  }}
+                >
+                  {t("ui_chat_login_button", "Anmelden")}
+                </Link>
+              </div>
             </div>
           ) : (
             <>
@@ -609,7 +762,7 @@ export default function SupportBotWidget() {
                       border: `1px solid ${C.rose200}`,
                     }}
                   >
-                    {t("ui_chat_empty", "Hallo, wie kann ich Ihnen helfen?")}
+                    {welcomeText}
                   </div>
                 ) : (
                   items.map((m) => {

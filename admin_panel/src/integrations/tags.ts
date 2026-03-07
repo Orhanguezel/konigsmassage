@@ -173,6 +173,7 @@ export const tags = [
   'AuditRequestLog',
   'AuditMetric',
   'AvailabilityWH',
+  'AvailabilityRecurring',
   'AvailabilityPlan',
   'AvailabilitySlots',
   'AvailabilityCheck',
@@ -184,6 +185,10 @@ export const tags = [
   'ChatThreads',
   'ChatMessages',
   'ChatKnowledge',
+  'GutscheinProducts',
+  'GutscheinProduct',
+  'Gutscheins',
+  'Gutschein',
 ] as const;
 
 export type tag = typeof tags[number];

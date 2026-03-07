@@ -20,6 +20,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import {
   AlertDialog,
@@ -45,6 +52,7 @@ type FormData = {
   name: string;
   bucket: string;
   folder: string;
+  metadataText: string;
 };
 
 function formatBytes(bytes: number): string {
@@ -53,6 +61,29 @@ function formatBytes(bytes: number): string {
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+function isImageMime(mime: string | null | undefined) {
+  return String(mime ?? '').startsWith('image/');
+}
+
+type PreviewPreset = 'original' | 'thumb' | 'card' | 'hero';
+
+function toCloudinaryPreview(url: string, preset: PreviewPreset): string {
+  const raw = String(url || '').trim();
+  if (!raw.includes('res.cloudinary.com') || !raw.includes('/upload/')) return raw;
+
+  const transforms =
+    preset === 'thumb'
+      ? 'f_auto,q_auto:eco,w_240,h_240,c_fill'
+      : preset === 'card'
+        ? 'f_auto,q_auto:eco,w_640,h_420,c_fill'
+        : preset === 'hero'
+          ? 'f_auto,q_auto:good,w_1440,h_900,c_fit'
+          : '';
+
+  if (!transforms) return raw.replace(/\/upload\/[^/]+\/(.*)$/i, '/upload/$1');
+  return raw.replace('/upload/', `/upload/${transforms}/`);
 }
 
 export default function AdminStorageDetailClient({ id }: { id: string }) {
@@ -89,11 +120,13 @@ export default function AdminStorageDetailClient({ id }: { id: string }) {
     name: '',
     bucket: 'public',
     folder: '',
+    metadataText: '{}',
   });
 
   // File state (only for upload)
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [previewPreset, setPreviewPreset] = React.useState<PreviewPreset>('card');
 
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
@@ -105,10 +138,13 @@ export default function AdminStorageDetailClient({ id }: { id: string }) {
         name: existingItem.name || '',
         bucket: existingItem.bucket || 'public',
         folder: existingItem.folder || '',
+        metadataText: JSON.stringify(existingItem.metadata ?? {}, null, 2),
       });
 
-      if (existingItem.url && existingItem.mime.startsWith('image/')) {
+      if (existingItem.url && isImageMime(existingItem.mime)) {
         setPreviewUrl(existingItem.url);
+      } else {
+        setPreviewUrl(null);
       }
     }
   }, [existingItem, isNew]);
@@ -138,6 +174,11 @@ export default function AdminStorageDetailClient({ id }: { id: string }) {
   };
 
   const busy = isCreating || isUpdating || isDeleting || loadingItem;
+  const currentPreviewBase = previewUrl || existingItem?.url || '';
+  const currentPreviewSrc = React.useMemo(
+    () => toCloudinaryPreview(currentPreviewBase, previewPreset),
+    [currentPreviewBase, previewPreset],
+  );
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,9 +206,30 @@ export default function AdminStorageDetailClient({ id }: { id: string }) {
         router.push('/admin/storage');
       } else {
         // Edit mode
+        let metadata: Record<string, string> | null | undefined = undefined;
+        const raw = formData.metadataText.trim();
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+              toast.error('Metadata JSON object olmalı.');
+              return;
+            }
+            metadata = Object.fromEntries(
+              Object.entries(parsed).map(([k, v]) => [String(k), String(v ?? '')]),
+            );
+          } catch {
+            toast.error('Metadata JSON geçersiz.');
+            return;
+          }
+        } else {
+          metadata = null;
+        }
+
         const updateData: StorageUpdateInput = {
           name: formData.name.trim() || undefined,
           folder: formData.folder.trim() || null,
+          metadata,
         };
 
         await patchAsset({
@@ -274,9 +336,10 @@ export default function AdminStorageDetailClient({ id }: { id: string }) {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center rounded-lg border bg-muted p-8">
-                {(previewUrl || existingItem?.url) ? (
+                {((previewUrl || existingItem?.url) &&
+                  (isNew ? isImageMime(selectedFile?.type) : isImageMime(existingItem?.mime))) ? (
                   <img
-                    src={previewUrl || existingItem?.url || ''}
+                    src={currentPreviewSrc}
                     alt="Preview"
                     className="max-h-96 rounded object-contain"
                   />
@@ -290,6 +353,27 @@ export default function AdminStorageDetailClient({ id }: { id: string }) {
               {/* File Info */}
               {existingItem && (
                 <div className="mt-4 space-y-2 text-sm">
+                  {existingItem.url && isImageMime(existingItem.mime) ? (
+                    <div className="space-y-2 border-t pt-4">
+                      <Label htmlFor="preview_preset" className="text-sm">
+                        Preview Transform
+                      </Label>
+                      <Select
+                        value={previewPreset}
+                        onValueChange={(value) => setPreviewPreset(value as PreviewPreset)}
+                      >
+                        <SelectTrigger id="preview_preset" className="max-w-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="original">Original</SelectItem>
+                          <SelectItem value="thumb">Thumbnail 240x240</SelectItem>
+                          <SelectItem value="card">Card 640x420</SelectItem>
+                          <SelectItem value="hero">Hero 1440x900</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : null}
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">{t('detail.mimeLabel')}</span>
                     <Badge variant="secondary">{existingItem.mime}</Badge>
@@ -445,6 +529,22 @@ export default function AdminStorageDetailClient({ id }: { id: string }) {
                   }
                   placeholder={t('detail.folderPlaceholder')}
                   disabled={busy}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="metadata_edit" className="text-sm">
+                  Metadata (JSON)
+                </Label>
+                <textarea
+                  id="metadata_edit"
+                  value={formData.metadataText}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, metadataText: e.target.value }))
+                  }
+                  placeholder='{"alt":"Homepage hero","title":"Logo"}'
+                  disabled={busy}
+                  className="min-h-[180px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono"
                 />
               </div>
             </CardContent>

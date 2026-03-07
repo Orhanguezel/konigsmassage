@@ -8,8 +8,11 @@ import type { FastifyInstance } from 'fastify';
 import { requireAuth } from '@/common/middleware/auth';
 
 import {
+  listRecurringOverridesAdmin,
   listWorkingHoursAdmin,
+  upsertRecurringOverrideAdmin,
   upsertWorkingHourAdmin,
+  deleteRecurringOverrideAdmin,
   deleteWorkingHourAdmin,
   listSlotsAdmin,
   getSlotAvailabilityAdmin,
@@ -21,9 +24,14 @@ import {
 
 export async function registerAvailabilityAdmin(app: FastifyInstance) {
   const resourceWH = '/resource-working-hours';
+  const recurringOverrides = '/resource-recurring-overrides';
   const resourceSlots = '/resource-slots';
 
   // working hours
+  app.get(recurringOverrides, { preHandler: [requireAuth] }, listRecurringOverridesAdmin);
+  app.post(recurringOverrides, { preHandler: [requireAuth] }, upsertRecurringOverrideAdmin);
+  app.delete(`${recurringOverrides}/:id`, { preHandler: [requireAuth] }, deleteRecurringOverrideAdmin);
+
   app.get(resourceWH, { preHandler: [requireAuth] }, listWorkingHoursAdmin);
   app.post(resourceWH, { preHandler: [requireAuth] }, upsertWorkingHourAdmin);
   app.delete(`${resourceWH}/:id`, { preHandler: [requireAuth] }, deleteWorkingHourAdmin);

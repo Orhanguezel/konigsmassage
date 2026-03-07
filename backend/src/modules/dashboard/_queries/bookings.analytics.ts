@@ -6,6 +6,7 @@
 import { db } from '@/db/client';
 import { sql, and } from 'drizzle-orm';
 import { bookings } from '@/modules/bookings/schema';
+import { servicesI18n } from '@/modules/services/schema';
 import type { TrendBucket } from '@/modules/_shared';
 
 export function bookingsWindowWhere(fromYmd: string, toYmdExclusive: string) {
@@ -120,4 +121,90 @@ export async function getBookingAggByResource(fromYmd: string, toYmdExclusive: s
     bookings_completed: Number(r.bookings_completed ?? 0) || 0,
     bookings_cancelled: Number(r.bookings_cancelled ?? 0) || 0,
   }));
+}
+
+const REVENUE_ELIGIBLE_STATUSES = ['new', 'confirmed', 'completed'] as const;
+
+function revenueCaseExpr() {
+  return sql<number>`
+    CASE
+      WHEN ${bookings.status} IN (${sql.join(REVENUE_ELIGIBLE_STATUSES.map((s) => sql`${s}`), sql`, `)})
+      THEN COALESCE(${servicesI18n.price_numeric}, 0)
+      ELSE 0
+    END
+  `;
+}
+
+export async function getRevenueTotals(fromYmd: string, toYmdExclusive: string) {
+  const where = bookingsWindowWhere(fromYmd, toYmdExclusive);
+
+  const rows = await db
+    .select({
+      revenue_total: sql<number>`COALESCE(SUM(${revenueCaseExpr()}), 0)`,
+    })
+    .from(bookings)
+    .leftJoin(
+      servicesI18n,
+      and(sql`${servicesI18n.service_id} = ${bookings.service_id}`, sql`${servicesI18n.locale} = 'de'`),
+    )
+    .where(where)
+    .limit(1);
+
+  return {
+    revenue_total: Number(rows[0]?.revenue_total ?? 0) || 0,
+  };
+}
+
+export async function getRevenueTrend(
+  fromYmd: string,
+  toYmdExclusive: string,
+  bucket: TrendBucket,
+) {
+  const where = bookingsWindowWhere(fromYmd, toYmdExclusive);
+  const bExpr = bucketExpr(bucket);
+
+  const rows = await db
+    .select({
+      bucket: bExpr,
+      revenue_total: sql<number>`COALESCE(SUM(${revenueCaseExpr()}), 0)`,
+    })
+    .from(bookings)
+    .leftJoin(
+      servicesI18n,
+      and(sql`${servicesI18n.service_id} = ${bookings.service_id}`, sql`${servicesI18n.locale} = 'de'`),
+    )
+    .where(where)
+    .groupBy(bExpr)
+    .orderBy(bExpr);
+
+  return rows.map((r: any) => ({
+    bucket: String(r.bucket ?? ''),
+    revenue_total: Number(r.revenue_total ?? 0) || 0,
+  }));
+}
+
+export async function getBookingAggByService(fromYmd: string, toYmdExclusive: string) {
+  const where = bookingsWindowWhere(fromYmd, toYmdExclusive);
+
+  const rows = await db
+    .select({
+      service_id: bookings.service_id,
+      bookings_total: sql<number>`COUNT(*)`,
+      revenue_total: sql<number>`COALESCE(SUM(${revenueCaseExpr()}), 0)`,
+    })
+    .from(bookings)
+    .leftJoin(
+      servicesI18n,
+      and(sql`${servicesI18n.service_id} = ${bookings.service_id}`, sql`${servicesI18n.locale} = 'de'`),
+    )
+    .where(where)
+    .groupBy(bookings.service_id);
+
+  return rows
+    .filter((r: any) => String(r.service_id ?? '').trim())
+    .map((r: any) => ({
+      service_id: String(r.service_id ?? ''),
+      bookings_total: Number(r.bookings_total ?? 0) || 0,
+      revenue_total: Number(r.revenue_total ?? 0) || 0,
+    }));
 }

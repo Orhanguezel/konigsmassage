@@ -82,9 +82,9 @@ VALUES
  'booking_accepted_customer',
  JSON_ARRAY(
    'site_name','booking_id','customer_name',
-   'appointment_date','appointment_time','service_title','decision_note'
+   'appointment_date','appointment_time','service_title','decision_note','payment_section'
  ),
- 1, '2026-01-12 00:00:00.000', '2026-01-12 00:00:00.000'),
+ 1, '2026-01-12 00:00:00.000', '2026-03-07 00:00:00.000'),
 
 ('b0c0a555-5555-4555-8555-555555555555',
  'booking_rejected_customer',
@@ -92,7 +92,15 @@ VALUES
    'site_name','booking_id','customer_name',
    'appointment_date','appointment_time','service_title','decision_note'
  ),
- 1, '2026-01-12 00:00:00.000', '2026-01-12 00:00:00.000')
+ 1, '2026-01-12 00:00:00.000', '2026-01-12 00:00:00.000'),
+
+('b0c0a666-6666-4666-8666-666666666666',
+ 'booking_reminder_customer',
+ JSON_ARRAY(
+   'site_name','booking_id','customer_name',
+   'appointment_date','appointment_time','service_title','resource_title','reminder_note'
+ ),
+ 1, '2026-03-07 00:00:00.000', '2026-03-07 00:00:00.000')
 
 ON DUPLICATE KEY UPDATE
   `id`         = VALUES(`id`),
@@ -576,10 +584,12 @@ VALUES
     <p style="margin:0;"><strong>Not:</strong> {{decision_note}}</p>
   </div>
 
+  {{payment_section}}
+
   <p>Görüşmek üzere.</p>
   <p><strong>{{site_name}}</strong></p>
 </div>',
- '2026-01-12 00:00:00.000','2026-01-12 00:00:00.000'),
+ '2026-01-12 00:00:00.000','2026-03-07 00:00:00.000'),
 
 ('b1c0a444-4444-4444-8444-444444444442',
  'b0c0a444-4444-4444-8444-444444444444',
@@ -599,10 +609,12 @@ VALUES
     <p style="margin:0;"><strong>Note:</strong> {{decision_note}}</p>
   </div>
 
+  {{payment_section}}
+
   <p>Kind regards,</p>
   <p><strong>{{site_name}}</strong></p>
 </div>',
- '2026-01-12 00:00:00.000','2026-01-12 00:00:00.000'),
+ '2026-01-12 00:00:00.000','2026-03-07 00:00:00.000'),
 
 ('b1c0a444-4444-4444-8444-444444444443',
  'b0c0a444-4444-4444-8444-444444444444',
@@ -622,10 +634,12 @@ VALUES
     <p style="margin:0;"><strong>Hinweis:</strong> {{decision_note}}</p>
   </div>
 
+  {{payment_section}}
+
   <p>Mit freundlichen Grüßen</p>
   <p><strong>{{site_name}}</strong></p>
 </div>',
- '2026-01-12 00:00:00.000','2026-01-12 00:00:00.000'),
+ '2026-01-12 00:00:00.000','2026-03-07 00:00:00.000'),
 
 -- ===================== booking_rejected_customer =====================
 
@@ -696,7 +710,78 @@ VALUES
   <p>Sie können gerne eine neue Anfrage für einen anderen Termin stellen.</p>
   <p><strong>{{site_name}}</strong></p>
 </div>',
- '2026-01-12 00:00:00.000','2026-01-12 00:00:00.000')
+ '2026-01-12 00:00:00.000','2026-01-12 00:00:00.000'),
+
+-- ===================== booking_reminder_customer =====================
+
+('b1c0a666-6666-4666-8666-666666666661',
+ 'b0c0a666-6666-4666-8666-666666666666',
+ 'tr',
+ 'Randevu Hatirlatmasi (Musteri)',
+ 'Yaklasan randevunuz icin hatirlatma - {{site_name}}',
+ '<div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,''Segoe UI'',sans-serif;font-size:14px;line-height:1.6;color:#111827;">
+  <h1 style="font-size:18px;margin:0 0 12px;">Randevu Hatirlatmasi</h1>
+  <p>Merhaba <strong>{{customer_name}}</strong>,</p>
+  <p>Yaklasan randevunuzun detaylarini tekrar paylasiyoruz.</p>
+
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:16px 0;">
+    <p style="margin:0 0 8px;"><strong>Randevu No:</strong> {{booking_id}}</p>
+    <p style="margin:0 0 8px;"><strong>Tarih:</strong> {{appointment_date}}</p>
+    <p style="margin:0 0 8px;"><strong>Saat:</strong> {{appointment_time}}</p>
+    <p style="margin:0 0 8px;"><strong>Hizmet:</strong> {{service_title}}</p>
+    <p style="margin:0 0 8px;"><strong>Terapist/Kaynak:</strong> {{resource_title}}</p>
+    <p style="margin:0;"><strong>Not:</strong> {{reminder_note}}</p>
+  </div>
+
+  <p><strong>{{site_name}}</strong></p>
+</div>',
+ '2026-03-07 00:00:00.000','2026-03-07 00:00:00.000'),
+
+('b1c0a666-6666-4666-8666-666666666662',
+ 'b0c0a666-6666-4666-8666-666666666666',
+ 'en',
+ 'Booking Reminder (Customer)',
+ 'Reminder for your upcoming booking - {{site_name}}',
+ '<div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,''Segoe UI'',sans-serif;font-size:14px;line-height:1.6;color:#111827;">
+  <h1 style="font-size:18px;margin:0 0 12px;">Booking Reminder</h1>
+  <p>Hello <strong>{{customer_name}}</strong>,</p>
+  <p>This is a reminder for your upcoming appointment.</p>
+
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:16px 0;">
+    <p style="margin:0 0 8px;"><strong>Booking No:</strong> {{booking_id}}</p>
+    <p style="margin:0 0 8px;"><strong>Date:</strong> {{appointment_date}}</p>
+    <p style="margin:0 0 8px;"><strong>Time:</strong> {{appointment_time}}</p>
+    <p style="margin:0 0 8px;"><strong>Service:</strong> {{service_title}}</p>
+    <p style="margin:0 0 8px;"><strong>Therapist/Resource:</strong> {{resource_title}}</p>
+    <p style="margin:0;"><strong>Note:</strong> {{reminder_note}}</p>
+  </div>
+
+  <p><strong>{{site_name}}</strong></p>
+</div>',
+ '2026-03-07 00:00:00.000','2026-03-07 00:00:00.000'),
+
+('b1c0a666-6666-4666-8666-666666666663',
+ 'b0c0a666-6666-4666-8666-666666666666',
+ 'de',
+ 'Terminerinnerung (Kunde)',
+ 'Erinnerung an Ihren bevorstehenden Termin - {{site_name}}',
+ '<div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,''Segoe UI'',sans-serif;font-size:14px;line-height:1.6;color:#111827;">
+  <h1 style="font-size:18px;margin:0 0 12px;">Terminerinnerung</h1>
+  <p>Hallo <strong>{{customer_name}}</strong>,</p>
+  <p>hiermit erinnern wir Sie an Ihren bevorstehenden Termin.</p>
+
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:16px 0;">
+    <p style="margin:0 0 8px;"><strong>Termin-Nr.:</strong> {{booking_id}}</p>
+    <p style="margin:0 0 8px;"><strong>Datum:</strong> {{appointment_date}}</p>
+    <p style="margin:0 0 8px;"><strong>Uhrzeit:</strong> {{appointment_time}}</p>
+    <p style="margin:0 0 8px;"><strong>Leistung:</strong> {{service_title}}</p>
+    <p style="margin:0 0 8px;"><strong>Therapeut/Ressource:</strong> {{resource_title}}</p>
+    <p style="margin:0;"><strong>Hinweis:</strong> {{reminder_note}}</p>
+  </div>
+
+  <p><strong>{{site_name}}</strong></p>
+</div>',
+ '2026-03-07 00:00:00.000','2026-03-07 00:00:00.000')
 
 ON DUPLICATE KEY UPDATE
   `template_id`   = VALUES(`template_id`),

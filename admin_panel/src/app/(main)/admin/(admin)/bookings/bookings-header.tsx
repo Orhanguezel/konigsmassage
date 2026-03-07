@@ -40,7 +40,6 @@ export type BookingsFilters = {
   is_read: BookingReadFilter;
   appointment_date: string; // YYYY-MM-DD
   resource_id: string;
-  service_id: string;
 };
 
 export type BookingsHeaderProps = {
@@ -90,7 +89,7 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
         </div>
       </CardHeader>
 
-      <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+      <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <div className="space-y-2 md:col-span-2">
           <Label>{t('filters.searchLabel')}</Label>
           <div className="relative">
@@ -161,16 +160,6 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
             value={filters.resource_id}
             onChange={(e) => onFiltersChange({ ...filters, resource_id: e.target.value })}
             placeholder={t('filters.resourceIdPlaceholder')}
-            disabled={loading}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label>{t('filters.serviceIdLabel')}</Label>
-          <Input
-            value={filters.service_id}
-            onChange={(e) => onFiltersChange({ ...filters, service_id: e.target.value })}
-            placeholder={t('filters.serviceIdPlaceholder')}
             disabled={loading}
           />
         </div>

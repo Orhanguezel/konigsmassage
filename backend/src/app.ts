@@ -39,11 +39,8 @@ import { registerBookings } from '@/modules/bookings/router';
 import { registerAvailability } from '@/modules/availability/router';
 import { registerResources } from '@/modules/resources/router';
 import { registerChat } from '@/modules/chat/router';
-
-// ✅ Audit: plugin + admin routes ayrı import
-import { requestLoggerPlugin } from '@/modules/audit/requestLogger.plugin';
-import { registerAuditAdmin } from '@/modules/audit/admin.routes';
-import { registerAuditStream } from '@/modules/audit/stream.routes';
+import { registerPopups } from '@/modules/popups/router';
+import { registerAudit } from '@/modules/audit/router';
 
 // Admin modüller
 import { registerCustomPagesAdmin } from '@/modules/customPages/admin.routes';
@@ -69,6 +66,13 @@ import { registerReportsAdmin } from '@/modules/reports/admin.routes';
 import { registerTelegram } from '@/modules/telegram/router';
 import { registerTelegramAdmin } from '@/modules/telegram/admin.routes';
 import { registerChatAdmin } from '@/modules/chat/admin.routes';
+import { registerPopupsAdmin } from '@/modules/popups/admin.routes';
+import { registerOrders } from '@/modules/orders/router';
+import { registerOrdersAdmin } from '@/modules/orders/admin.routes';
+import { registerWallet } from '@/modules/wallet/router';
+import { registerWalletAdmin } from '@/modules/wallet/admin.routes';
+import { registerGutschein } from '@/modules/gutschein/router';
+import { registerGutscheinAdmin } from '@/modules/gutschein/admin.routes';
 
 
 function parseCorsOrigins(v?: string | string[]): boolean | string[] {
@@ -147,15 +151,7 @@ export async function createApp() {
     async (api) => {
       api.get('/health', async () => ({ ok: true }));
 
-      // ✅ Audit request logger — /api scope'unda TÜM istekleri loglar
-      // Direkt çağrı: encapsulation bypass (register değil, doğrudan hook)
-      await requestLoggerPlugin(api, {});
-
-      // Audit admin endpoints + SSE stream
-      await api.register(async (i) => {
-        await registerAuditAdmin(i);
-        await registerAuditStream(i);
-      }, { prefix: '/admin' });
+      await registerAudit(api);
       await api.register(async (i) => registerCustomPagesAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerSiteSettingsAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerUserAdmin(i), { prefix: '/admin' });
@@ -178,6 +174,10 @@ export async function createApp() {
       await api.register(async (i) => registerReportsAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerChatAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerTelegramAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerPopupsAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerOrdersAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerWalletAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerGutscheinAdmin(i), { prefix: '/admin' });
 
       // --- Public modüller: /api/...
       await registerAuth(api);
@@ -203,6 +203,10 @@ export async function createApp() {
       await registerResources(api);
       await registerTelegram(api);
       await registerChat(api);
+      await registerPopups(api);
+      await registerOrders(api);
+      await registerWallet(api);
+      await registerGutschein(api);
     },
     { prefix: '/api' },
   );

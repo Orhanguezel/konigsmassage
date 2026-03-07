@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 
 import Banner from '@/layout/banner/Breadcrum';
 import AppointmentPageContent from '@/components/containers/appointment/AppointmentPageContent';
+import GutscheinHomeCta from '@/components/containers/gutschein/GutscheinHomeCta';
 import { LayoutSeoBridge } from '@/seo';
 
 import { useLocaleShort, useUiSection } from '@/i18n';
@@ -68,6 +69,12 @@ export default function AppointmentPage() {
 
       <Banner title={bannerTitle} />
       <AppointmentPageContent />
+
+      <section className="w-full bg-brand-light py-16">
+        <div className="container mx-auto px-4">
+          <GutscheinHomeCta locale={locale || undefined} />
+        </div>
+      </section>
     </>
   );
 }

@@ -43,6 +43,7 @@
     "node_modules",
     "dist",
     "src/modules/frontend/**",
+    "src/modules/cart/**",
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/__tests__/**"

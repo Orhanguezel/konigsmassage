@@ -15,6 +15,7 @@ import {
   type AuditRequestLogRow,
   type AuditAuthEventRow,
 } from './schema';
+import { auditEvents } from './audit_events.schema';
 
 import type {
   AuditRequestLogsListQuery,
@@ -209,9 +210,10 @@ export type ClearAuditTarget = 'requests' | 'auth' | 'all';
 
 export async function clearAuditLogs(
   target: ClearAuditTarget = 'all',
-): Promise<{ deletedRequests: number; deletedAuth: number }> {
+): Promise<{ deletedRequests: number; deletedAuth: number; deletedEvents: number }> {
   let deletedRequests = 0;
   let deletedAuth = 0;
+  let deletedEvents = 0;
 
   if (target === 'requests' || target === 'all') {
     const countRes = await db.select({ c: sql<number>`COUNT(*)` }).from(auditRequestLogs);
@@ -225,7 +227,13 @@ export async function clearAuditLogs(
     await db.execute(sql`TRUNCATE TABLE audit_auth_events`);
   }
 
-  return { deletedRequests, deletedAuth };
+  if (target === 'all') {
+    const countRes = await db.select({ c: sql<number>`COUNT(*)` }).from(auditEvents);
+    deletedEvents = Number(countRes[0]?.c ?? 0);
+    await db.execute(sql`TRUNCATE TABLE audit_events`);
+  }
+
+  return { deletedRequests, deletedAuth, deletedEvents };
 }
 
 /* -------------------------------------------------------------
@@ -279,4 +287,42 @@ export async function getAuditMetricsDaily(
   }));
 
   return { days: daysOut };
+}
+
+export async function purgeAuditLogsOlderThan(days: number): Promise<{
+  deletedRequests: number;
+  deletedAuth: number;
+  deletedEvents: number;
+}> {
+  const keepDays = Math.max(1, Math.min(3650, Number(days || 0)));
+  const cutoff = sql`DATE_SUB(UTC_TIMESTAMP(3), INTERVAL ${keepDays} DAY)`;
+
+  const requestCount = await db
+    .select({ c: sql<number>`COUNT(*)` })
+    .from(auditRequestLogs)
+    .where(sql`${auditRequestLogs.created_at} < ${cutoff}`);
+  const authCount = await db
+    .select({ c: sql<number>`COUNT(*)` })
+    .from(auditAuthEvents)
+    .where(sql`${auditAuthEvents.created_at} < ${cutoff}`);
+  const eventsCount = await db
+    .select({ c: sql<number>`COUNT(*)` })
+    .from(auditEvents)
+    .where(sql`${auditEvents.ts} < ${cutoff}`);
+
+  const deletedRequests = Number(requestCount[0]?.c ?? 0);
+  const deletedAuth = Number(authCount[0]?.c ?? 0);
+  const deletedEvents = Number(eventsCount[0]?.c ?? 0);
+
+  if (deletedRequests > 0) {
+    await db.delete(auditRequestLogs).where(sql`${auditRequestLogs.created_at} < ${cutoff}`);
+  }
+  if (deletedAuth > 0) {
+    await db.delete(auditAuthEvents).where(sql`${auditAuthEvents.created_at} < ${cutoff}`);
+  }
+  if (deletedEvents > 0) {
+    await db.delete(auditEvents).where(sql`${auditEvents.ts} < ${cutoff}`);
+  }
+
+  return { deletedRequests, deletedAuth, deletedEvents };
 }

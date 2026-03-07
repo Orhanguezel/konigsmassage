@@ -56,6 +56,11 @@ export * from './local';
 export * from './seoSchema';
 export * from './errors';
 export * from './localeDisplay';
+export * from './popups.types';
+export * from './wallet.types';
+export * from './gutschein.types';
+export * from './orders.types';
+export * from './booking-payment.types';
 
 // =============================================================
 // END FILE

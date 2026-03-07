@@ -18,15 +18,61 @@ import { localizePath } from '@/integrations/shared';
 import ImageLightboxModal from '@/components/common/public/ImageLightboxModal';
 import OtherServicesSidebar from '@/components/containers/services/OtherServicesSidebar';
 
-export default function ServiceDetail() {
+type ServiceDetailProps = {
+  forcedSlug?: string;
+  hideBackLink?: boolean;
+};
+
+type ContentBlock =
+  | { type: 'heading'; text: string }
+  | { type: 'paragraph'; text: string }
+  | { type: 'list'; items: string[] };
+
+function parseContentBlocks(text: string): ContentBlock[] {
+  const normalized = safeStr(text).replace(/\r\n/g, '\n').trim();
+  if (!normalized) return [];
+
+  const chunks = normalized.split(/\n{2,}/).map((chunk) => chunk.trim()).filter(Boolean);
+  const blocks: ContentBlock[] = [];
+
+  for (const chunk of chunks) {
+    const lines = chunk.split('\n').map((line) => line.trim()).filter(Boolean);
+    if (!lines.length) continue;
+
+    if (lines.every((line) => line.startsWith('- '))) {
+      blocks.push({ type: 'list', items: lines.map((line) => line.replace(/^- /, '').trim()).filter(Boolean) });
+      continue;
+    }
+
+    if (lines.length === 1 && /^(dauer|duration|sure|süre)\b/i.test(lines[0])) {
+      blocks.push({ type: 'heading', text: lines[0] });
+      continue;
+    }
+
+    if (/^##\s+/.test(lines[0])) {
+      blocks.push({ type: 'heading', text: lines[0].replace(/^##\s+/, '').trim() });
+      if (lines.slice(1).length) {
+        blocks.push({ type: 'paragraph', text: lines.slice(1).join(' ') });
+      }
+      continue;
+    }
+
+    blocks.push({ type: 'paragraph', text: lines.join(' ') });
+  }
+
+  return blocks;
+}
+
+export default function ServiceDetail({ forcedSlug, hideBackLink = false }: ServiceDetailProps) {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_services', locale as any);
 
   const params = useParams<{ slug?: string | string[] }>();
   const slug = useMemo(() => {
+    if (safeStr(forcedSlug)) return safeStr(forcedSlug);
     const v = params?.slug;
     return Array.isArray(v) ? safeStr(v[0]) : safeStr(v);
-  }, [params]);
+  }, [forcedSlug, params]);
 
   const servicesHref = useMemo(() => localizePath(locale, '/services'), [locale]);
   const appointmentHref = useMemo(() => {
@@ -80,6 +126,10 @@ export default function ServiceDetail() {
   const [open, setOpen] = useState(false);
 
   const heroSrc = gallery[idx] || hero;
+  const contentBlocks = useMemo(
+    () => parseContentBlocks(safeStr((service as any)?.description)),
+    [service],
+  );
 
   if (!slug || isLoading) {
     return <div className="py-20 text-center">Loading...</div>;
@@ -132,12 +182,14 @@ export default function ServiceDetail() {
             {/* MAIN */}
             <div className="lg:col-span-8 order-1 lg:order-2">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-                <Link
-                  href={servicesHref}
-                  className="inline-flex text-sm font-bold uppercase tracking-wide text-text-muted hover:text-brand-primary"
-                >
-                  ← {ui('ui_services_back_to_list', 'Back')}
-                </Link>
+                {hideBackLink ? <div /> : (
+                  <Link
+                    href={servicesHref}
+                    className="inline-flex text-sm font-bold uppercase tracking-wide text-text-muted hover:text-brand-primary"
+                  >
+                    ← {ui('ui_services_back_to_list', 'Back')}
+                  </Link>
+                )}
 
                 <Link
                   href={appointmentHref}
@@ -190,8 +242,48 @@ export default function ServiceDetail() {
 
               {/* CONTENT BLOG STYLE */}
               <div className="bg-bg-secondary p-8 md:p-10 rounded-xl shadow-soft border border-border-light">
-                <div className="prose prose-lg max-w-none">
-                  <p>{safeStr((service as any)?.description)}</p>
+                <div className="space-y-6">
+                  {contentBlocks.length ? contentBlocks.map((block, blockIndex) => {
+                    if (block.type === 'heading') {
+                      return (
+                        <h2
+                          key={`block-${blockIndex}`}
+                          className="text-2xl font-serif font-bold text-text-primary pt-2"
+                        >
+                          {block.text}
+                        </h2>
+                      );
+                    }
+
+                    if (block.type === 'list') {
+                      return (
+                        <ul
+                          key={`block-${blockIndex}`}
+                          className="space-y-3 rounded-xl bg-white/70 p-5 text-base leading-7 text-text-primary"
+                        >
+                          {block.items.map((item) => (
+                            <li key={item} className="flex items-start gap-3">
+                              <span className="mt-2 size-2 rounded-full bg-brand-primary" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    }
+
+                    return (
+                      <p
+                        key={`block-${blockIndex}`}
+                        className="text-base leading-8 text-text-primary"
+                      >
+                        {block.text}
+                      </p>
+                    );
+                  }) : (
+                    <p className="text-base leading-8 text-text-primary">
+                      {safeStr((service as any)?.description)}
+                    </p>
+                  )}
                 </div>
               </div>
 

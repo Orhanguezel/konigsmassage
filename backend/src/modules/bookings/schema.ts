@@ -38,6 +38,10 @@ export const bookings = mysqlTable(
     status: varchar('status', { length: 24 }).notNull().default('new'),
     is_read: tinyint('is_read', { unsigned: true }).notNull().default(0),
 
+    // payment (optional — booking_payment_enabled site setting)
+    order_id: char('order_id', { length: 36 }),
+    payment_status: varchar('payment_status', { length: 24 }).default('none'),
+
     admin_note: text('admin_note'),
     decided_at: datetime('decided_at', { fsp: 3 }),
     decided_by: varchar('decided_by', { length: 120 }),

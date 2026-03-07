@@ -10,7 +10,12 @@ import type {
   ListResponse,
   BulkCreateResponse,
 } from '@/integrations/shared';
-import { toQueryParams, makeCustomError, StorageListTags } from '@/integrations/shared';
+import {
+  toQueryParams,
+  makeCustomError,
+  StorageListTags,
+  optimizeImageFileForUpload,
+} from '@/integrations/shared';
 
 export const storageAdminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -50,8 +55,9 @@ export const storageAdminApi = baseApi.injectEndpoints({
     >({
       async queryFn(args, _api, _extra, baseQuery) {
         try {
+          const optimizedFile = await optimizeImageFileForUpload(args.file);
           const fd = new FormData();
-          fd.append('file', args.file, args.file.name);
+          fd.append('file', optimizedFile, optimizedFile.name);
           fd.append('bucket', args.bucket);
           if (args.folder) fd.append('folder', args.folder);
           if (args.metadata) {
@@ -105,7 +111,8 @@ export const storageAdminApi = baseApi.injectEndpoints({
             fd.append('metadata', JSON.stringify(args.metadata));
           }
           for (const f of args.files) {
-            fd.append('files', f, f.name);
+            const optimizedFile = await optimizeImageFileForUpload(f);
+            fd.append('files', optimizedFile, optimizedFile.name);
           }
 
           const res = await baseQuery({

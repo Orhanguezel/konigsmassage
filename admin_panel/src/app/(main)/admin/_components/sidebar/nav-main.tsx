@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { NavGroup, NavMainItem } from '@/navigation/sidebar/sidebar-items';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+import { useGetUnreadCountQuery } from '@/integrations/endpoints/admin/notifications_admin.endpoints';
 
 interface NavMainProps {
   readonly items: readonly NavGroup[];
@@ -37,6 +38,15 @@ interface NavMainProps {
 const IsComingSoon = ({ text }: { text: string }) => (
   <span className="ml-auto rounded-md bg-muted px-2 py-1 text-muted-foreground text-xs">{text}</span>
 );
+
+const UnreadBadge = ({ count }: { count: number }) => {
+  if (count <= 0) return null;
+  return (
+    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 font-medium text-destructive-foreground text-xs">
+      {count > 99 ? '99+' : count}
+    </span>
+  );
+};
 
 function isPathActive(currentPath: string, targetUrl: string) {
   const p = String(currentPath || '/');
@@ -52,11 +62,13 @@ const NavItemExpanded = ({
   isActive,
   isSubmenuOpen,
   comingSoonText,
+  badgeCount,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem['subItems']) => boolean;
   isSubmenuOpen: (subItems?: NavMainItem['subItems']) => boolean;
   comingSoonText: string;
+  badgeCount?: number;
 }) => {
   return (
     <Collapsible
@@ -89,6 +101,7 @@ const NavItemExpanded = ({
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
                 {item.comingSoon && <IsComingSoon text={comingSoonText} />}
+                {!item.comingSoon && badgeCount != null && <UnreadBadge count={badgeCount} />}
               </Link>
             </SidebarMenuButton>
           )}
@@ -179,6 +192,7 @@ export function NavMain({ items, showQuickCreate = false }: NavMainProps) {
   const path = usePathname();
   const { state, isMobile } = useSidebar();
   const t = useAdminT();
+  const { data: unreadCount } = useGetUnreadCountQuery(undefined, { pollingInterval: 60_000 });
 
   const isItemActive = (url: string, subItems?: NavMainItem['subItems']) => {
     if (subItems?.length) {
@@ -226,6 +240,8 @@ export function NavMain({ items, showQuickCreate = false }: NavMainProps) {
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
               {group.items.map((item) => {
+                const itemBadgeCount = item.badgeKey === 'notifications_unread' ? (unreadCount?.count ?? 0) : undefined;
+
                 if (state === 'collapsed' && !isMobile) {
                   if (!item.subItems) {
                     return (
@@ -244,6 +260,7 @@ export function NavMain({ items, showQuickCreate = false }: NavMainProps) {
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>
                             {item.comingSoon && <IsComingSoon text={t('admin.sidebar.comingSoon')} />}
+                            {!item.comingSoon && itemBadgeCount != null && <UnreadBadge count={itemBadgeCount} />}
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -260,6 +277,7 @@ export function NavMain({ items, showQuickCreate = false }: NavMainProps) {
                     isActive={isItemActive}
                     isSubmenuOpen={isSubmenuOpen}
                     comingSoonText={t('admin.sidebar.comingSoon')}
+                    badgeCount={itemBadgeCount}
                   />
                 );
               })}

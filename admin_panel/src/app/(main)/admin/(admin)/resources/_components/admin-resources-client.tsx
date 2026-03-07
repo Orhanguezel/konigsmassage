@@ -28,7 +28,7 @@ export default function AdminResourcesClient() {
     () => ({
       q: filters.q || undefined,
       type: filters.type || undefined,
-      status: filters.status === 'all' ? undefined : filters.status,
+      is_active: filters.status === 'all' ? undefined : filters.status === 'active',
       sort: filters.sort,
       order: filters.order,
       limit: 200,

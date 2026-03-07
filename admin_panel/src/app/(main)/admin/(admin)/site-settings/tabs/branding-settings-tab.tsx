@@ -24,6 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AdminImageUploadField } from '@/app/(main)/admin/_components/common/AdminImageUploadField';
 
 import { DEFAULT_BRANDING, type AdminBrandingConfig } from '@/config/app-config';
 
@@ -273,57 +274,45 @@ export const BrandingSettingsTab: React.FC = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="branding_og_image">
-                {t('admin.siteSettings.branding.fields.ogImage')}
-              </Label>
-              <Input
-                id="branding_og_image"
-                value={form.og_image}
-                onChange={(e) => handleChange('og_image', e.target.value)}
-                placeholder="/logo/icon.svg"
-                disabled={busy}
-              />
-            </div>
+            <AdminImageUploadField
+              label={t('admin.siteSettings.branding.fields.ogImage')}
+              value={form.og_image}
+              onChange={(url) => handleChange('og_image', url)}
+              disabled={busy}
+              previewAspect="16x9"
+              previewObjectFit="cover"
+              metadata={{ tag: 'branding_og_image' }}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="branding_favicon_16">
-                {t('admin.siteSettings.branding.fields.favicon16')}
-              </Label>
-              <Input
-                id="branding_favicon_16"
-                value={form.favicon_16}
-                onChange={(e) => handleChange('favicon_16', e.target.value)}
-                placeholder="/favicon/favicon-16.svg"
-                disabled={busy}
-              />
-            </div>
+            <AdminImageUploadField
+              label={t('admin.siteSettings.branding.fields.favicon16')}
+              value={form.favicon_16}
+              onChange={(url) => handleChange('favicon_16', url)}
+              disabled={busy}
+              previewAspect="1x1"
+              previewObjectFit="contain"
+              metadata={{ tag: 'branding_favicon' }}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="branding_favicon_32">
-                {t('admin.siteSettings.branding.fields.favicon32')}
-              </Label>
-              <Input
-                id="branding_favicon_32"
-                value={form.favicon_32}
-                onChange={(e) => handleChange('favicon_32', e.target.value)}
-                placeholder="/favicon/favicon-32.svg"
-                disabled={busy}
-              />
-            </div>
+            <AdminImageUploadField
+              label={t('admin.siteSettings.branding.fields.favicon32')}
+              value={form.favicon_32}
+              onChange={(url) => handleChange('favicon_32', url)}
+              disabled={busy}
+              previewAspect="1x1"
+              previewObjectFit="contain"
+              metadata={{ tag: 'branding_favicon' }}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="branding_apple_touch_icon">
-                {t('admin.siteSettings.branding.fields.appleTouchIcon')}
-              </Label>
-              <Input
-                id="branding_apple_touch_icon"
-                value={form.apple_touch_icon}
-                onChange={(e) => handleChange('apple_touch_icon', e.target.value)}
-                placeholder="/favicon/apple-touch-icon.svg"
-                disabled={busy}
-              />
-            </div>
+            <AdminImageUploadField
+              label={t('admin.siteSettings.branding.fields.appleTouchIcon')}
+              value={form.apple_touch_icon}
+              onChange={(url) => handleChange('apple_touch_icon', url)}
+              disabled={busy}
+              previewAspect="1x1"
+              previewObjectFit="contain"
+              metadata={{ tag: 'branding_apple_touch_icon' }}
+            />
           </div>
         </fieldset>
 

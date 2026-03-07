@@ -158,3 +158,15 @@ export const adminDecisionSchema = z
   .optional()
   .default({});
 
+export const adminReminderSchema = z
+  .object({
+    locale: LOCALE_SCHEMA.optional(),
+    reminder_note: z
+      .string()
+      .trim()
+      .max(8000)
+      .optional()
+      .transform((v) => safeTrim(v)),
+  })
+  .optional()
+  .default({});

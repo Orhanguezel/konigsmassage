@@ -12,6 +12,7 @@ import { useSearchParams } from 'next/navigation';
 
 import {
   useListResourcesPublicQuery,
+  useListServicesPublicQuery,
   useListAvailabilitySlotsPublicQuery,
   useCreateBookingPublicMutation,
   useListResourceWorkingHoursPublicQuery,
@@ -129,24 +130,48 @@ export const AppointmentPageContent: React.FC = () => {
     { skip: !serviceSlug } as any,
   );
 
+  const { data: primaryServicesData } = useListServicesPublicQuery(
+    { locale, default_locale: defaultLocale, limit: 1, order: 'display_order.asc' } as any,
+    { refetchOnMountOrArgChange: true } as any,
+  );
+
+  const primaryService = useMemo(() => {
+    const items = Array.isArray(primaryServicesData?.items) ? primaryServicesData.items : [];
+    return (items[0] as any) ?? null;
+  }, [primaryServicesData]);
+
   const lockedServiceId = useMemo(() => safeStr((serviceFromSlug as any)?.id), [serviceFromSlug]);
   const lockedServiceTitle = useMemo(
     () => safeStr((serviceFromSlug as any)?.name) || safeStr((serviceFromSlug as any)?.title),
     [serviceFromSlug],
   );
+  const primaryServiceId = useMemo(() => safeStr(primaryService?.id), [primaryService]);
+  const primaryServiceSlug = useMemo(
+    () => safeStr(primaryService?.slug),
+    [primaryService],
+  );
+  const primaryServiceTitle = useMemo(
+    () => safeStr(primaryService?.name) || safeStr(primaryService?.title),
+    [primaryService],
+  );
+  const activeServiceId = serviceSlug ? lockedServiceId : primaryServiceId;
+  const activeServiceSlug = serviceSlug || primaryServiceSlug;
+  const activeServiceTitle = serviceSlug ? lockedServiceTitle : primaryServiceTitle;
+  const activeServicePrice = serviceSlug
+    ? Number((serviceFromSlug as any)?.price_numeric ?? 0)
+    : Number((primaryService as any)?.price_numeric ?? 0);
 
   const patch = useCallback(<K extends keyof FormState>(k: K, v: FormState[K]) => {
     setForm((p) => ({ ...p, [k]: v }));
   }, []);
 
   useEffect(() => {
-    if (!serviceSlug) return;
-    if (!lockedServiceId) return;
+    if (!activeServiceId) return;
     setForm((p) => {
-      if (safeStr(p.service_id) === lockedServiceId) return p;
-      return { ...p, service_id: lockedServiceId };
+      if (safeStr(p.service_id) === activeServiceId) return p;
+      return { ...p, service_id: activeServiceId };
     });
-  }, [serviceSlug, lockedServiceId]);
+  }, [activeServiceId]);
 
   // -------- resources (public) --------
   const {
@@ -154,7 +179,7 @@ export const AppointmentPageContent: React.FC = () => {
     isLoading: resourcesLoading,
     isFetching: resourcesFetching,
     isError: resourcesError,
-  } = useListResourcesPublicQuery({ type: 'therapist' }, {
+  } = useListResourcesPublicQuery({ type: 'therapist', locale }, {
     refetchOnMountOrArgChange: true,
   } as any);
 
@@ -259,8 +284,16 @@ export const AppointmentPageContent: React.FC = () => {
   // -------- Create Booking --------
   const [createBooking, { isLoading: isSubmitting }] = useCreateBookingPublicMutation();
 
-  const needsLockedService = !!serviceSlug;
-  const hasLockedService = !needsLockedService || !!safeStr(form.service_id);
+  // booking payment (disabled by default via site setting)
+  const { data: paymentEnabledSetting } = useGetSiteSettingByKeyQuery({ key: 'booking_payment_enabled' });
+  const bookingPaymentEnabled = useMemo(() => {
+    const val = typeof paymentEnabledSetting?.value === 'string'
+      ? paymentEnabledSetting.value.replace(/"/g, '')
+      : String(paymentEnabledSetting?.value ?? '');
+    return val === 'true' || val === '1';
+  }, [paymentEnabledSetting]);
+
+  const hasSelectedService = !!safeStr(form.service_id);
 
   const canSubmit =
     !!form.name &&
@@ -269,7 +302,7 @@ export const AppointmentPageContent: React.FC = () => {
     !!form.resource_id &&
     isValidYmd(form.appointment_date) &&
     isValidHm(form.appointment_time) &&
-    hasLockedService &&
+    hasSelectedService &&
     !isSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -294,17 +327,15 @@ export const AppointmentPageContent: React.FC = () => {
 
       // 🎯 GA4 Conversion Event Push (SPA)
       if (typeof window !== 'undefined') {
-        const servicePrice = serviceFromSlug?.price_numeric || 0;
-
         (window as any).dataLayer = (window as any).dataLayer || [];
         (window as any).dataLayer.push({
           event: 'booking_completed',
           booking_service: payload.service_id || 'unknown',
-          booking_service_name: lockedServiceTitle || 'N/A',
+          booking_service_name: activeServiceTitle || 'N/A',
           booking_date: payload.appointment_date, // "YYYY-MM-DD"
           booking_time: payload.appointment_time, // "HH:mm"
           booking_locale: locale,
-          value: servicePrice, // Gerçek fiyat (numeric)
+          value: activeServicePrice, // Gerçek fiyat (numeric)
           currency: 'EUR',
         });
       }
@@ -331,17 +362,33 @@ export const AppointmentPageContent: React.FC = () => {
             {t('ui_appointment_success_title', 'Randevunuz Alındı!')}
           </h2>
           <p className="text-text-secondary leading-relaxed mb-8">
-            {t(
-              'ui_appointment_success_msg',
-              'Talebiniz bize ulaştı. En kısa sürede sizinle iletişime geçeceğiz.',
-            )}
+            {bookingPaymentEnabled
+              ? t(
+                  'ui_appointment_success_msg_payment',
+                  'Randevunuz onaylandıktan sonra online ödeme yapabilirsiniz.',
+                )
+              : t(
+                  'ui_appointment_success_msg',
+                  'Talebiniz bize ulaştı. En kısa sürede sizinle iletişime geçeceğiz.',
+                )}
           </p>
-          <Link
-            href={localizePath(locale, '/')}
-            className="inline-flex items-center justify-center px-8 py-3 bg-brand-primary text-white font-bold uppercase tracking-wider hover:bg-brand-hover transition-all rounded-sm"
-          >
-            {t('ui_appointment_success_home', 'Ana Sayfaya Dön')}
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href={localizePath(locale, '/')}
+              className="inline-flex items-center justify-center px-8 py-3 bg-brand-primary text-white font-bold uppercase tracking-wider hover:bg-brand-hover transition-all rounded-sm"
+            >
+              {t('ui_appointment_success_home', 'Ana Sayfaya Dön')}
+            </Link>
+
+            {bookingPaymentEnabled && (
+              <Link
+                href={localizePath(locale, '/profile')}
+                className="inline-flex items-center justify-center px-8 py-3 border-2 border-brand-primary text-brand-primary font-bold uppercase tracking-wider hover:bg-brand-primary hover:text-white transition-all rounded-sm"
+              >
+                {t('ui_appointment_success_pay', 'Odeme Yap')}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -393,14 +440,14 @@ export const AppointmentPageContent: React.FC = () => {
             {/* Step 1 (smaller) */}
             <div className="lg:col-span-5" data-aos="fade-right">
               <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft border border-sand-200">
-                {serviceSlug ? (
+                {activeServiceTitle ? (
                   <div className="bg-sand-50 border border-sand-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                     <div>
                       <div className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-1">
                         {t('ui_appointment_selected_service_label', 'Selected service')}
                       </div>
                       <div className="font-serif font-bold text-text-primary leading-snug">
-                        {lockedServiceTitle ||
+                        {activeServiceTitle ||
                           t('ui_appointment_selected_service_loading', 'Loading...')}
                       </div>
                       {serviceError ? (
@@ -418,15 +465,19 @@ export const AppointmentPageContent: React.FC = () => {
                         href={localizePath(locale, '/services')}
                         className="text-sm font-bold text-brand-primary hover:underline"
                       >
-                        {t('ui_appointment_change_service', 'Change')}
+                        {serviceSlug
+                          ? t('ui_appointment_change_service', 'Change')
+                          : t('ui_appointment_view_service_list', 'View service')}
                       </Link>
 
-                      <Link
-                        href={localizePath(locale, `/services/${encodeURIComponent(serviceSlug)}`)}
-                        className="text-sm font-bold text-text-primary hover:text-brand-primary transition-colors"
-                      >
-                        {t('ui_appointment_view_service', 'View')}
-                      </Link>
+                      {activeServiceSlug ? (
+                        <Link
+                          href={localizePath(locale, `/services/${encodeURIComponent(activeServiceSlug)}`)}
+                          className="text-sm font-bold text-text-primary hover:text-brand-primary transition-colors"
+                        >
+                          {t('ui_appointment_view_service', 'View')}
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
                 ) : null}

@@ -33,6 +33,7 @@ const Login: React.FC = () => {
   const { ui } = useUiSection('ui_auth', locale as any);
 
   const registerHref = useMemo(() => localizePath(locale, '/register'), [locale]);
+  const forgotPasswordHref = useMemo(() => localizePath(locale, '/forgot-password'), [locale]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -199,6 +200,12 @@ const Login: React.FC = () => {
                   {ui('login_remember_me', 'Remember me')}
                 </label>
               </div>
+              <Link
+                href={forgotPasswordHref}
+                className="text-sm text-brand-primary hover:text-brand-hover hover:underline transition-all"
+              >
+                {ui('login_forgot_password', 'Forgot password?')}
+              </Link>
             </div>
 
             <button

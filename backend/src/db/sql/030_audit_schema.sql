@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `audit_request_logs` (
   `ip`               VARCHAR(64)  NOT NULL,
   `user_agent`       LONGTEXT     DEFAULT NULL,
   `referer`          LONGTEXT     DEFAULT NULL,
+  `body_snapshot`    LONGTEXT     DEFAULT NULL,
 
   `user_id`          VARCHAR(64)  DEFAULT NULL,
   `is_admin`         INT          NOT NULL DEFAULT 0,

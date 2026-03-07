@@ -284,6 +284,7 @@ export default function UsersListClient() {
                   <TableHead>{t('list.table.email')}</TableHead>
                   <TableHead>{t('list.table.phone')}</TableHead>
                   <TableHead>{t('list.table.status')}</TableHead>
+                  <TableHead>E-posta</TableHead>
                   <TableHead>{t('list.table.role')}</TableHead>
                   <TableHead className="text-right">{t('list.table.actions')}</TableHead>
                 </TableRow>
@@ -296,6 +297,11 @@ export default function UsersListClient() {
                     <TableCell>{u.email ?? '—'}</TableCell>
                     <TableCell>{u.phone ?? '—'}</TableCell>
                     <TableCell>{statusBadge(u)}</TableCell>
+                    <TableCell>
+                      <Badge variant={u.email_verified ? 'default' : 'outline'} className={u.email_verified ? '' : 'text-muted-foreground'}>
+                        {u.email_verified ? 'Doğrulanmış' : 'Bekliyor'}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       <Badge variant={u.roles.includes('admin') ? 'default' : 'secondary'}>
                         {roleLabel(u.roles[0] ?? 'user')}
@@ -313,7 +319,7 @@ export default function UsersListClient() {
 
                 {!usersQ.isFetching && (usersQ.data?.length ?? 0) === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                       {t('list.table.noRecords')}
                     </TableCell>
                   </TableRow>

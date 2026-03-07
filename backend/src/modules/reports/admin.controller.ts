@@ -3,12 +3,17 @@
 // ===================================================================
 
 import type { RouteHandler } from 'fastify';
-import { getKpiData, getUsersPerformanceData, getLocationsData } from './repository';
+import {
+  getKpiDataByFilters,
+  getUsersPerformanceDataByFilters,
+  getLocationsDataByFilters,
+  type ReportParams,
+} from './repository';
 
 export const getKpiReportAdmin: RouteHandler = async (req, reply) => {
-  const { from, to } = req.query as { from?: string; to?: string };
+  const q = req.query as ReportParams;
   try {
-    const data = await getKpiData(from, to);
+    const data = await getKpiDataByFilters(q);
     return reply.send(data);
   } catch (err) {
     req.log.error(err, 'getKpiReportAdmin_failed');
@@ -17,9 +22,9 @@ export const getKpiReportAdmin: RouteHandler = async (req, reply) => {
 };
 
 export const getUsersPerformanceReportAdmin: RouteHandler = async (req, reply) => {
-  const { from, to, role } = req.query as { from?: string; to?: string; role?: string };
+  const q = req.query as ReportParams;
   try {
-    const data = await getUsersPerformanceData(from, to, role);
+    const data = await getUsersPerformanceDataByFilters(q);
     return reply.send(data);
   } catch (err) {
     req.log.error(err, 'getUsersPerformanceReportAdmin_failed');
@@ -28,9 +33,9 @@ export const getUsersPerformanceReportAdmin: RouteHandler = async (req, reply) =
 };
 
 export const getLocationsReportAdmin: RouteHandler = async (req, reply) => {
-  const { from, to } = req.query as { from?: string; to?: string };
+  const q = req.query as ReportParams;
   try {
-    const data = await getLocationsData(from, to);
+    const data = await getLocationsDataByFilters(q);
     return reply.send(data);
   } catch (err) {
     req.log.error(err, 'getLocationsReportAdmin_failed');

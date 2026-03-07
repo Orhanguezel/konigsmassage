@@ -83,3 +83,13 @@ export type PasswordResetConfirmResp = {
   message?: string;
   error?: string;
 };
+
+export type EmailVerificationResp = {
+  success: boolean;
+  message?: string;
+  error?: string;
+};
+
+export type EmailVerificationConfirmBody = {
+  token: string;
+};

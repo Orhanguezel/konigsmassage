@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/components/containers/about/AboutPageContent.tsx
-// konigsmassage – About Page Content (SINGLE PAGE) (I18N + SAFE) [FINAL]
+// konigsmassage – About Page Content (SINGLE PAGE) (I18N + SAFE)
 // =============================================================
 
 'use client';
@@ -11,31 +11,25 @@ import Image from 'next/image';
 // RTK – Custom Pages Public
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
 import type { CustomPageDto } from '@/integrations/shared';
-import { downgradeH1ToH2, isRemoteUrl, pickPage, toCdnSrc} from '@/integrations/shared';
+import { downgradeH1ToH2, isRemoteUrl, pickPage, toCdnSrc } from '@/integrations/shared';
 
 // Helpers
 import { useLocaleShort, useUiSection } from '@/i18n';
-
-
 
 const AboutPageContent: React.FC = () => {
   const locale = useLocaleShort();
   const { ui } = useUiSection('ui_about', locale as any);
 
-  // base wrapper
   const t = useCallback((key: string, fallback: any) => ui(key, fallback), [ui]);
 
-  // ✅ IMPORTANT: if ui() returns the key itself, treat as missing and use fallback
   const readUi = useCallback(
     (key: string, fallback: any) => {
       const v = t(key, fallback);
-
       if (typeof v === 'string') {
         const s = v.trim();
         if (!s) return fallback;
-        if (s === key) return fallback; // missing-key behavior
+        if (s === key) return fallback;
       }
-
       return v;
     },
     [t],
@@ -54,7 +48,6 @@ const AboutPageContent: React.FC = () => {
     [data],
   );
 
-  // Header strings (keep these — do NOT remove)
   const headerSubtitlePrefix = useMemo(
     () => String(readUi('ui_about_subprefix', 'KÖNIG ENERGETIK') || '').trim() || 'KÖNIG ENERGETIK',
     [readUi],
@@ -62,7 +55,7 @@ const AboutPageContent: React.FC = () => {
 
   const headerSubtitleLabel = useMemo(() => {
     const v = String(readUi('ui_about_sublabel', '') || '').trim();
-    return v; // empty allowed
+    return v;
   }, [readUi]);
 
   const headerTitle = useMemo(() => {
@@ -75,7 +68,6 @@ const AboutPageContent: React.FC = () => {
 
   const headerLead = useMemo(() => String(readUi('ui_about_page_lead', '') || '').trim(), [readUi]);
 
-  // CMS html (DB)
   const html = useMemo(() => {
     const raw = page?.content_html || page?.content || '';
     return raw ? downgradeH1ToH2(raw) : '';
@@ -86,10 +78,8 @@ const AboutPageContent: React.FC = () => {
     [page],
   );
 
-  // Featured image
   const imgSrc = useMemo(() => {
     if (!featuredImageRaw) return '';
-
     const cdn = toCdnSrc(featuredImageRaw, 1200, 800, 'fill');
     return (cdn || featuredImageRaw) as any;
   }, [featuredImageRaw]);
@@ -106,9 +96,9 @@ const AboutPageContent: React.FC = () => {
   }, [page, featuredImageRaw]);
 
   return (
-    <section className="relative py-20 z-10 bg-bg-primary text-text-primary">
+    <section className="relative py-16 md:py-24 z-10 bg-bg-primary text-text-primary">
       <div className="container mx-auto px-4">
-        {/* Header (KEEP) */}
+        {/* Header */}
         <div className="mb-12 text-center">
           <div className="mb-4">
             <span className="block text-brand-primary font-bold uppercase tracking-wide mb-2 text-sm md:text-base">
@@ -145,67 +135,94 @@ const AboutPageContent: React.FC = () => {
         )}
 
         {!!page && !isLoading && (
-          <div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12"
-            data-aos="fade-up"
-            data-aos-delay={150}
-          >
-            {/* Image LEFT */}
-            <div className="w-full">
-              <div className="rounded-2xl overflow-hidden shadow-medium bg-bg-secondary border border-border-light">
-                <div className="w-full h-auto aspect-3/2 relative">
-                  {imgSrc ? (
+          <>
+            {/* Hero image — full-width with elegant framing */}
+            {imgSrc && (
+              <div
+                className="mb-12 max-w-5xl mx-auto"
+                data-aos="fade-up"
+                data-aos-delay={100}
+              >
+                <div className="relative rounded-2xl overflow-hidden shadow-medium bg-bg-secondary border border-border-light">
+                  <div className="w-full aspect-16/7 md:aspect-16/6 relative">
                     <Image
                       src={imgSrc}
                       alt={imgAlt}
                       fill
                       className="object-cover"
                       unoptimized={isRemoteUrl(imgSrc)}
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1100px"
+                      priority
                     />
-                  ) : null}
+                  </div>
                 </div>
               </div>
+            )}
 
-              {galleryThumbs.length ? (
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {galleryThumbs.map((src) => (
+            {/* Content — centered, readable width */}
+            <div
+              className="max-w-3xl mx-auto mb-12"
+              data-aos="fade-up"
+              data-aos-delay={200}
+            >
+              {html ? (
+                <div
+                  className="prose prose-lg prose-rose text-text-secondary max-w-none
+                    prose-h2:font-serif prose-h2:text-text-primary prose-h2:text-2xl prose-h2:md:text-3xl prose-h2:mt-0 prose-h2:mb-6
+                    prose-h3:font-serif prose-h3:text-text-primary prose-h3:text-xl prose-h3:md:text-2xl prose-h3:mt-10 prose-h3:mb-4
+                    prose-p:leading-relaxed prose-p:mb-5
+                    prose-li:leading-relaxed
+                    prose-strong:text-text-primary
+                    prose-em:text-brand-primary/80
+                    prose-a:text-brand-primary"
+                  dangerouslySetInnerHTML={{ __html: html }}
+                />
+              ) : (
+                <div>
+                  <p className="mb-0">
+                    {readUi('ui_about_empty_text', 'Content will be published here.')}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Gallery thumbnails — elegant grid */}
+            {galleryThumbs.length > 0 && (
+              <div
+                className="max-w-5xl mx-auto"
+                data-aos="fade-up"
+                data-aos-delay={300}
+              >
+                <div className={`grid gap-4 md:gap-6 ${
+                  galleryThumbs.length === 1
+                    ? 'grid-cols-1 max-w-2xl mx-auto'
+                    : galleryThumbs.length === 2
+                      ? 'grid-cols-2 max-w-4xl mx-auto'
+                      : 'grid-cols-2 md:grid-cols-3'
+                }`}>
+                  {galleryThumbs.map((src, i) => (
                     <div
                       key={src}
-                      className="relative aspect-square rounded-xl overflow-hidden border border-border-light bg-bg-secondary shadow-soft"
+                      className={`relative rounded-xl overflow-hidden border border-border-light bg-bg-secondary shadow-soft
+                        transition-transform duration-500 hover:scale-[1.02] hover:shadow-medium
+                        ${galleryThumbs.length === 3 && i === 0 ? 'col-span-2 md:col-span-1' : ''}`}
                     >
-                      <Image
-                        src={src}
-                        alt={imgAlt}
-                        fill
-                        className="object-cover"
-                        unoptimized={isRemoteUrl(src)}
-                        sizes="(max-width: 768px) 33vw, 160px"
-                      />
+                      <div className="aspect-4/3 relative">
+                        <Image
+                          src={src}
+                          alt={`${imgAlt} ${i + 1}`}
+                          fill
+                          className="object-cover"
+                          unoptimized={isRemoteUrl(src)}
+                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 350px"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
-              ) : null}
-            </div>
-
-            {/* Content RIGHT */}
-            <div className="w-full">
-              <div className="prose prose-lg prose-rose text-text-secondary max-w-none">
-                {html ? (
-                  <div
-                    className="prose-h2:font-serif prose-h2:text-text-primary prose-a:text-brand-primary"
-                    dangerouslySetInnerHTML={{ __html: html }}
-                  />
-                ) : (
-                  <div>
-                    <p className="mb-0">
-                      {readUi('ui_about_empty_text', 'Content will be published here.')}
-                    </p>
-                  </div>
-                )}
               </div>
-            </div>
-          </div>
+            )}
+          </>
         )}
       </div>
     </section>

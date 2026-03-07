@@ -64,6 +64,35 @@ export interface ResourceWorkingHourDto {
   updated_at: string | Date;
 }
 
+export interface ResourceRecurringOverrideDto {
+  id: UUID36;
+  resource_id: UUID36;
+  dow: number;
+  is_active: Active01 | boolean | number | string;
+  created_at: string | Date;
+  updated_at: string | Date;
+}
+
+export interface ResourceRecurringOverride {
+  id: UUID36;
+  resource_id: UUID36;
+  dow: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export const normalizeResourceRecurringOverride = (
+  dto: ResourceRecurringOverrideDto,
+): ResourceRecurringOverride => ({
+  id: String(dto.id),
+  resource_id: String(dto.resource_id),
+  dow: Number(dto.dow),
+  is_active: toBool(dto.is_active),
+  created_at: toIso(dto.created_at),
+  updated_at: toIso(dto.updated_at),
+});
+
 export interface ResourceWorkingHour {
   id: UUID36;
   resource_id: UUID36;

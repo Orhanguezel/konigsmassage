@@ -4,84 +4,141 @@
 
 import { db } from '@/db/client';
 import { bookings } from '@/modules/bookings/schema';
+import { resources, resourcesI18n } from '@/modules/resources/schema';
+import { getDefaultLocale } from '@/modules/siteSettings/service';
 import { sql, and, gte, lte, eq, type SQL } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/mysql-core';
 
 export interface ReportParams {
   from?: string;
   to?: string;
-  role?: string;
+  service_id?: string;
+  resource_id?: string;
+  status?: string;
+  locale?: string;
+}
+
+const DATE_SQL = sql<string>`STR_TO_DATE(${bookings.appointment_date}, '%Y-%m-%d')`;
+
+function buildWhere(params: ReportParams): SQL[] {
+  const where: SQL[] = [];
+  const { from, to, service_id, resource_id, status, locale } = params;
+  if (from) where.push(gte(bookings.appointment_date, from));
+  if (to) where.push(lte(bookings.appointment_date, to));
+  if (service_id) where.push(eq(bookings.service_id, service_id));
+  if (resource_id) where.push(eq(bookings.resource_id, resource_id));
+  if (status) where.push(eq(bookings.status, status));
+  if (locale) where.push(eq(bookings.locale, locale));
+  return where;
 }
 
 export async function getKpiData(from?: string, to?: string) {
-  const where: SQL[] = [];
-  if (from) where.push(gte(bookings.appointment_date, from));
-  if (to) where.push(lte(bookings.appointment_date, to));
-
-  // Daily KPI
-  const daily = await db
-    .select({
-      bucket: bookings.appointment_date,
-      orders_total: sql<number>`count(*)`,
-      delivered_orders: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
-      cancelled_orders: sql<number>`sum(case when status = 'cancelled' then 1 else 0 end)`,
-    })
-    .from(bookings)
-    .where(where.length ? and(...where) : undefined)
-    .groupBy(bookings.appointment_date)
-    .orderBy(bookings.appointment_date);
-
-  return daily.map((r) => ({
-    period: 'day',
-    bucket: r.bucket,
-    orders_total: Number(r.orders_total),
-    delivered_orders: Number(r.delivered_orders),
-    chickens_delivered: 0, // Not applicable
-    success_rate: r.orders_total > 0 ? Number(r.delivered_orders) / Number(r.orders_total) : 0,
-  }));
+  return getKpiDataByFilters({ from, to });
 }
 
-export async function getUsersPerformanceData(from?: string, to?: string, role?: string) {
-  const where: SQL[] = [];
-  if (from) where.push(gte(bookings.appointment_date, from));
-  if (to) where.push(lte(bookings.appointment_date, to));
+export async function getKpiDataByFilters(params: ReportParams) {
+  const where = buildWhere(params);
+  const baseWhere = where.length ? and(...where) : undefined;
 
-  // In this project, "users" performance is "resource" performance
-  const data = await db
-    .select({
-      user_id: bookings.resource_id,
-      orders_total: sql<number>`count(*)`,
-      delivered_orders: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
-      cancelled_orders: sql<number>`sum(case when status = 'cancelled' then 1 else 0 end)`,
-    })
-    .from(bookings)
-    .where(where.length ? and(...where) : undefined)
-    .groupBy(bookings.resource_id);
+  const dailyBucket = sql<string>`DATE_FORMAT(${DATE_SQL}, '%Y-%m-%d')`;
+  const weeklyBucket = sql<string>`CONCAT(DATE_FORMAT(${DATE_SQL}, '%x'), '-W', DATE_FORMAT(${DATE_SQL}, '%v'))`;
+  const monthlyBucket = sql<string>`DATE_FORMAT(${DATE_SQL}, '%Y-%m')`;
 
-  return data.map((r) => ({
-    user_id: r.user_id,
-    role: 'resource',
-    orders_total: Number(r.orders_total),
-    delivered_orders: Number(r.delivered_orders),
-    cancelled_orders: Number(r.cancelled_orders),
-    chickens_delivered: 0,
-    success_rate: r.orders_total > 0 ? Number(r.delivered_orders) / Number(r.orders_total) : 0,
-    incentive_amount_total: 0,
-    incentive_deliveries_count: 0,
-    incentive_chickens_count: 0,
-  }));
+  const periods = await Promise.all([
+    db
+      .select({
+        bucket: dailyBucket.as('bucket'),
+        bookings_total: sql<number>`count(*)`,
+        completed_total: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
+        cancelled_total: sql<number>`sum(case when status = 'cancelled' then 1 else 0 end)`,
+      })
+      .from(bookings)
+      .where(baseWhere)
+      .groupBy(dailyBucket)
+      .orderBy(dailyBucket),
+    db
+      .select({
+        bucket: weeklyBucket.as('bucket'),
+        bookings_total: sql<number>`count(*)`,
+        completed_total: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
+        cancelled_total: sql<number>`sum(case when status = 'cancelled' then 1 else 0 end)`,
+      })
+      .from(bookings)
+      .where(baseWhere)
+      .groupBy(weeklyBucket)
+      .orderBy(weeklyBucket),
+    db
+      .select({
+        bucket: monthlyBucket.as('bucket'),
+        bookings_total: sql<number>`count(*)`,
+        completed_total: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
+        cancelled_total: sql<number>`sum(case when status = 'cancelled' then 1 else 0 end)`,
+      })
+      .from(bookings)
+      .where(baseWhere)
+      .groupBy(monthlyBucket)
+      .orderBy(monthlyBucket),
+  ]);
+
+  return periods.flatMap((rows, index) =>
+    rows.map((r) => ({
+      period: (['day', 'week', 'month'] as const)[index],
+      bucket: String(r.bucket),
+      bookings_total: Number(r.bookings_total),
+      completed_total: Number(r.completed_total),
+      cancelled_total: Number(r.cancelled_total),
+      success_rate:
+        Number(r.bookings_total) > 0 ? Number(r.completed_total) / Number(r.bookings_total) : 0,
+    })),
+  );
+}
+
+export async function getUsersPerformanceData(from?: string, to?: string) {
+  return getUsersPerformanceDataByFilters({ from, to });
 }
 
 export async function getLocationsData(from?: string, to?: string) {
-  const where: SQL[] = [];
-  if (from) where.push(gte(bookings.appointment_date, from));
-  if (to) where.push(lte(bookings.appointment_date, to));
+  return getLocationsDataByFilters({ from, to });
+}
 
-  // Locations grouped by locale since we don't have city/district
+export async function getUsersPerformanceDataByFilters(params: ReportParams) {
+  const where = buildWhere(params);
+  const defaultLocale = String((await getDefaultLocale(null)) || 'de');
+  const iDef = alias(resourcesI18n, 'ri_def');
+
+  const data = await db
+    .select({
+      resource_id: bookings.resource_id,
+      resource_title: sql<string>`COALESCE(${iDef.title}, ${resources.title}, ${bookings.resource_id})`,
+      bookings_total: sql<number>`count(*)`,
+      completed_total: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
+      cancelled_orders: sql<number>`sum(case when status = 'cancelled' then 1 else 0 end)`,
+    })
+    .from(bookings)
+    .leftJoin(resources, eq(resources.id, bookings.resource_id))
+    .leftJoin(iDef, and(eq(iDef.resource_id, resources.id), eq(iDef.locale, defaultLocale)))
+    .where(where.length ? and(...where) : undefined)
+    .groupBy(bookings.resource_id, resources.title, iDef.title);
+
+  return data.map((r) => ({
+    resource_id: r.resource_id,
+    resource_title: String(r.resource_title || r.resource_id || '—'),
+    bookings_total: Number(r.bookings_total),
+    completed_total: Number(r.completed_total),
+    cancelled_orders: Number(r.cancelled_orders),
+    success_rate:
+      Number(r.bookings_total) > 0 ? Number(r.completed_total) / Number(r.bookings_total) : 0,
+  }));
+}
+
+export async function getLocationsDataByFilters(params: ReportParams) {
+  const where = buildWhere(params);
+
   const data = await db
     .select({
       locale: bookings.locale,
-      orders_total: sql<number>`count(*)`,
-      delivered_orders: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
+      bookings_total: sql<number>`count(*)`,
+      completed_total: sql<number>`sum(case when status = 'completed' then 1 else 0 end)`,
       cancelled_orders: sql<number>`sum(case when status = 'cancelled' then 1 else 0 end)`,
     })
     .from(bookings)
@@ -89,14 +146,12 @@ export async function getLocationsData(from?: string, to?: string) {
     .groupBy(bookings.locale);
 
   return data.map((r) => ({
-    city_id: r.locale,
-    city_name: r.locale.toUpperCase(),
-    district_id: null,
-    district_name: null,
-    orders_total: Number(r.orders_total),
-    delivered_orders: Number(r.delivered_orders),
+    locale: String(r.locale || 'de'),
+    locale_label: String(r.locale || 'de').toUpperCase(),
+    bookings_total: Number(r.bookings_total),
+    completed_total: Number(r.completed_total),
     cancelled_orders: Number(r.cancelled_orders),
-    chickens_delivered: 0,
-    success_rate: r.orders_total > 0 ? Number(r.delivered_orders) / Number(r.orders_total) : 0,
+    success_rate:
+      Number(r.bookings_total) > 0 ? Number(r.completed_total) / Number(r.bookings_total) : 0,
   }));
 }

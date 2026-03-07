@@ -39,6 +39,7 @@ import {
 import { Plus, Pencil, Trash2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import {
   useListChatKnowledgeAdminQuery,
@@ -83,6 +84,7 @@ function KnowledgeFormDialog({
   editItem: ChatAiKnowledgeItem | null;
 }) {
   const t = useAdminT('admin.chat');
+  const { localeOptions, defaultLocaleFromDb, coerceLocale } = useAdminLocales();
   const [create, { isLoading: creating }] = useCreateChatKnowledgeAdminMutation();
   const [update, { isLoading: updating }] = useUpdateChatKnowledgeAdminMutation();
 
@@ -91,7 +93,7 @@ function KnowledgeFormDialog({
   React.useEffect(() => {
     if (editItem) {
       setForm({
-        locale: editItem.locale,
+        locale: coerceLocale(editItem.locale, defaultLocaleFromDb),
         title: editItem.title,
         content: editItem.content,
         tags: editItem.tags ?? '',
@@ -99,9 +101,9 @@ function KnowledgeFormDialog({
         is_active: editItem.is_active === 1,
       });
     } else {
-      setForm(EMPTY_FORM);
+      setForm({ ...EMPTY_FORM, locale: coerceLocale('', defaultLocaleFromDb) || EMPTY_FORM.locale });
     }
-  }, [editItem, open]);
+  }, [editItem, open, coerceLocale, defaultLocaleFromDb]);
 
   const saving = creating || updating;
 
@@ -154,14 +156,21 @@ function KnowledgeFormDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label>{t('knowledge.locale')}</Label>
-              <Select value={form.locale} onValueChange={(v) => setForm((p) => ({ ...p, locale: v }))}>
+                <Select value={form.locale} onValueChange={(v) => setForm((p) => ({ ...p, locale: v }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="de">Deutsch</SelectItem>
-                  <SelectItem value="tr">Türkçe</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
+                  {(localeOptions.length
+                    ? localeOptions
+                    : [{ value: coerceLocale('', defaultLocaleFromDb) || 'de', label: 'Default' }]
+                  )
+                    .filter((opt) => !!opt.value)
+                    .map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label || opt.value.toUpperCase()}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -233,6 +242,7 @@ function KnowledgeFormDialog({
 
 export default function ChatKnowledgePanel() {
   const t = useAdminT('admin.chat');
+  const { localeOptions } = useAdminLocales();
   const [remove] = useDeleteChatKnowledgeAdminMutation();
 
   const [localeFilter, setLocaleFilter] = React.useState('all');
@@ -295,9 +305,11 @@ export default function ChatKnowledgePanel() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t('knowledge.allLocales')}</SelectItem>
-                <SelectItem value="de">Deutsch</SelectItem>
-                <SelectItem value="tr">Türkçe</SelectItem>
-                <SelectItem value="en">English</SelectItem>
+                {localeOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label || opt.value.toUpperCase()}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

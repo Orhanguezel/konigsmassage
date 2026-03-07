@@ -19,6 +19,11 @@ export type BookingDecisionPayload = {
   locale?: string; // optional override, otherwise backend uses booking.locale
 };
 
+export type BookingReminderPayload = {
+  reminder_note?: string;
+  locale?: string;
+};
+
 export const bookingsAdminApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     /**
@@ -131,6 +136,24 @@ export const bookingsAdminApi = baseApi.injectEndpoints({
     }),
 
     /**
+     * REMINDER (admin) - POST /admin/bookings/:id/reminder
+     */
+    sendBookingReminderAdmin: build.mutation<
+      BookingMergedDto,
+      { id: string; body?: BookingReminderPayload }
+    >({
+      query: ({ id, body }) => ({
+        url: `${BASE}/${id}/reminder`,
+        method: 'POST',
+        body: body ?? {},
+      }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Bookings' as const, id: arg.id },
+        { type: 'Bookings' as const, id: 'LIST' },
+      ],
+    }),
+
+    /**
      * MARK READ (admin) – POST /admin/bookings/:id/read
      */
     markBookingReadAdmin: build.mutation<BookingMergedDto, string>({
@@ -168,6 +191,7 @@ export const {
   useUpdateBookingAdminMutation,
   useAcceptBookingAdminMutation,
   useRejectBookingAdminMutation,
+  useSendBookingReminderAdminMutation,
   useMarkBookingReadAdminMutation,
   useDeleteBookingAdminMutation,
 } = bookingsAdminApi;

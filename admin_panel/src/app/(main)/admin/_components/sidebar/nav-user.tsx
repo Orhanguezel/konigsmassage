@@ -94,9 +94,11 @@ export function NavUser({
                 <CreditCard />
                 {t('admin.sidebar.user.billing')}
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <MessageSquareDot />
-                {t('admin.sidebar.user.notifications')}
+              <DropdownMenuItem asChild>
+                <Link href="/admin/notifications">
+                  <MessageSquareDot />
+                  {t('admin.sidebar.user.notifications')}
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

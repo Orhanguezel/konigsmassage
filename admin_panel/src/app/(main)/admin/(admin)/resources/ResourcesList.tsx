@@ -110,8 +110,12 @@ export const ResourcesList: React.FC<ResourcesListProps> = ({ items, loading }) 
                       {safe(r.title) || <span className="text-muted">(ad yok)</span>}
                     </div>
 
-                    <div className="text-muted small mt-2">
-                      Güncelleme: {formatDate((r as any).updated_at)}
+                    <div className="text-muted small mt-2 d-flex flex-column gap-1">
+                      <span>Kapasite: {Number((r as any).capacity ?? 1)}</span>
+                      <span>
+                        Ref: {safe((r as any).external_ref_id) || <span className="text-muted">—</span>}
+                      </span>
+                      <span>Güncelleme: {formatDate((r as any).updated_at)}</span>
                     </div>
                   </div>
 
@@ -166,7 +170,9 @@ export const ResourcesList: React.FC<ResourcesListProps> = ({ items, loading }) 
               </th>
               <th>Ad</th>
               <th className="text-nowrap">Tür</th>
+              <th className="text-nowrap">Kapasite</th>
               <th className="text-nowrap">Durum</th>
+              <th className="text-nowrap">Ref</th>
               <th className="text-nowrap">Güncellendi</th>
               <th className="text-end text-nowrap">İşlemler</th>
             </tr>
@@ -189,7 +195,11 @@ export const ResourcesList: React.FC<ResourcesListProps> = ({ items, loading }) 
                   </span>
                 </td>
 
+                <td className="text-nowrap">{Number((r as any).capacity ?? 1)}</td>
+
                 <td className="text-nowrap">{statusBadge((r as any).is_active)}</td>
+
+                <td className="small text-nowrap">{safe((r as any).external_ref_id) || '—'}</td>
 
                 <td className="small text-nowrap">{formatDate((r as any).updated_at)}</td>
 

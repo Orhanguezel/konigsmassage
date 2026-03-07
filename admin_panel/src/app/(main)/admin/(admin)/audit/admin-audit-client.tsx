@@ -47,10 +47,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { AuditDailyChart } from '@/components/admin/audit/AuditDailyChart';
 import { AuditGeoMap } from './AuditGeoMap';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
+import { BASE_URL } from '@/integrations/baseApi';
 
 import type {
   AuditAuthEvent,
@@ -71,7 +82,27 @@ import {
 
 /* ----------------------------- helpers ----------------------------- */
 
-type TabKey = 'requests' | 'auth' | 'metrics' | 'map';
+type TabKey = 'requests' | 'auth' | 'metrics' | 'map' | 'stream';
+
+type StreamStatus = 'connecting' | 'open' | 'closed' | 'error';
+
+type AuditStreamEvent = {
+  id?: string;
+  ts?: string;
+  level?: string;
+  topic?: string;
+  message?: string | null;
+  actor_user_id?: string | null;
+  ip?: string | null;
+  meta?: Record<string, unknown> | null;
+};
+
+type AuditCompareRow = {
+  lineNo: number;
+  left: string;
+  right: string;
+  changed: boolean;
+};
 
 function safeText(v: unknown, fb = ''): string {
   const s = String(v ?? '').trim();
@@ -95,6 +126,7 @@ function normalizeTab(v: string | null): TabKey {
   if (s === 'auth') return 'auth';
   if (s === 'metrics') return 'metrics';
   if (s === 'map') return 'map';
+  if (s === 'stream') return 'stream';
   return 'requests';
 }
 
@@ -144,6 +176,24 @@ function authEventVariant(ev: string): 'default' | 'secondary' | 'destructive' |
   return 'outline';
 }
 
+function streamStatusVariant(
+  status: StreamStatus,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  if (status === 'open') return 'default';
+  if (status === 'connecting') return 'secondary';
+  if (status === 'error') return 'destructive';
+  return 'outline';
+}
+
+function streamEventVariant(
+  level: string | null | undefined,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  if (level === 'error') return 'destructive';
+  if (level === 'warn') return 'secondary';
+  if (level === 'debug') return 'outline';
+  return 'default';
+}
+
 function truncate(s: string | null | undefined, max = 60): string {
   if (!s) return '';
   return s.length > max ? s.slice(0, max) + '…' : s;
@@ -158,6 +208,12 @@ function geoLabel(country: string | null | undefined, city: string | null | unde
 }
 
 type SortKey = 'created_at' | 'response_time_ms' | 'status_code';
+
+function normalizeSnapshotForCompare(v: string | null | undefined): string[] {
+  return String(v ?? '')
+    .replace(/\r\n/g, '\n')
+    .split('\n');
+}
 
 /* ----------------------------- component ----------------------------- */
 
@@ -212,6 +268,10 @@ export default function AdminAuditClient() {
   // local state for metrics
   const [daysText, setDaysText] = React.useState(days);
   const [pathPrefixText, setPathPrefixText] = React.useState(path_prefix);
+  const [streamStatus, setStreamStatus] = React.useState<StreamStatus>('connecting');
+  const [streamEvents, setStreamEvents] = React.useState<AuditStreamEvent[]>([]);
+  const [compareIds, setCompareIds] = React.useState<number[]>([]);
+  const [compareOpen, setCompareOpen] = React.useState(false);
 
   React.useEffect(() => setQText(q), [q]);
   React.useEffect(() => setMethodText(method), [method]);
@@ -231,6 +291,42 @@ export default function AdminAuditClient() {
 
   React.useEffect(() => setDaysText(days), [days]);
   React.useEffect(() => setPathPrefixText(path_prefix), [path_prefix]);
+
+  React.useEffect(() => {
+    if (tab !== 'stream' || typeof window === 'undefined') return;
+
+    const base = String(BASE_URL || '').replace(/\/+$/, '');
+    const url = `${base}/admin/audit/stream`;
+    const es = new EventSource(url, { withCredentials: true });
+
+    setStreamStatus('connecting');
+
+    es.addEventListener('open', () => {
+      setStreamStatus('open');
+    });
+
+    es.addEventListener('error', () => {
+      setStreamStatus(es.readyState === EventSource.CLOSED ? 'closed' : 'error');
+    });
+
+    es.addEventListener('hello', () => {
+      setStreamStatus('open');
+    });
+
+    es.addEventListener('app.event', (evt) => {
+      try {
+        const next = JSON.parse((evt as MessageEvent).data || '{}') as AuditStreamEvent;
+        setStreamEvents((prev) => [next, ...prev].slice(0, 100));
+      } catch {
+        // ignore malformed events
+      }
+    });
+
+    return () => {
+      es.close();
+      setStreamStatus('closed');
+    };
+  }, [tab]);
 
   function apply(next: Partial<Record<string, any>>) {
     const merged = {
@@ -481,6 +577,25 @@ export default function AdminAuditClient() {
 
   const reqTotal = reqData.total ?? 0;
   const authTotal = authData.total ?? 0;
+  const compareItems = reqData.items.filter((item) => compareIds.includes(Number(item.id))).slice(0, 2);
+  const compareLeft = compareItems[0];
+  const compareRight = compareItems[1];
+  const compareRows = React.useMemo<AuditCompareRow[]>(() => {
+    const left = normalizeSnapshotForCompare(compareLeft?.body_snapshot);
+    const right = normalizeSnapshotForCompare(compareRight?.body_snapshot);
+    const size = Math.max(left.length, right.length, 1);
+    return Array.from({ length: size }, (_, idx) => {
+      const l = left[idx] ?? '';
+      const r = right[idx] ?? '';
+      return { lineNo: idx + 1, left: l, right: r, changed: l !== r };
+    });
+  }, [compareLeft?.body_snapshot, compareRight?.body_snapshot]);
+
+  React.useEffect(() => {
+    setCompareIds((prev) =>
+      prev.filter((id) => reqData.items.some((item) => Number(item.id) === Number(id))).slice(0, 2),
+    );
+  }, [reqData.items]);
 
   const canPrev = offset > 0;
   const canNextReq = offset + limit < reqTotal;
@@ -507,11 +622,24 @@ export default function AdminAuditClient() {
     const target = tab === 'requests' ? 'requests' : tab === 'auth' ? 'auth' : 'all';
     try {
       const data = await clearAuditLogs({ target }).unwrap();
-      const total = (data.deletedRequests ?? 0) + (data.deletedAuth ?? 0);
+      const total =
+        (data.deletedRequests ?? 0) +
+        (data.deletedAuth ?? 0) +
+        (data.deletedEvents ?? 0);
       toast.success(t('clear.success', { count: String(total) }));
     } catch (err: any) {
       toast.error(err?.data?.error?.message || err?.message || t('error'));
     }
+  }
+
+  function toggleCompare(id: number, checked: boolean) {
+    setCompareIds((prev) => {
+      if (checked) {
+        if (prev.includes(id)) return prev;
+        return [...prev, id].slice(-2);
+      }
+      return prev.filter((x) => x !== id);
+    });
   }
 
   const anyLoading = reqLoading || authLoading || metricsLoading || geoLoading || isClearing;
@@ -549,6 +677,9 @@ export default function AdminAuditClient() {
           </TabsTrigger>
           <TabsTrigger value="map">
             <Globe className="mr-2 h-4 w-4" /> {t('tabs.map')}
+          </TabsTrigger>
+          <TabsTrigger value="stream">
+            <Activity className="mr-2 h-4 w-4" /> {t('tabs.stream')}
           </TabsTrigger>
         </TabsList>
 
@@ -650,6 +781,20 @@ export default function AdminAuditClient() {
                   {reqLoading ? t('common.loading') : t('common.recordCount', { count: String(reqData.items.length) })}
                 </Badge>
               </div>
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                <div className="text-sm text-muted-foreground">
+                  {t('requests.compareSelected', { count: String(compareIds.length) })}
+                </div>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  disabled={compareIds.length !== 2}
+                  onClick={() => setCompareOpen(true)}
+                >
+                  {t('requests.compareAction')}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {reqQ.error && (
@@ -662,6 +807,7 @@ export default function AdminAuditClient() {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-[48px]">{t('requests.compare')}</TableHead>
                       <TableHead>{t('columns.date')}</TableHead>
                       <TableHead>{t('columns.request')}</TableHead>
                       <TableHead>{t('columns.status')}</TableHead>
@@ -673,7 +819,7 @@ export default function AdminAuditClient() {
                   <TableBody>
                     {reqData.items.length === 0 && !reqLoading && (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
+                        <TableCell colSpan={7} className="text-center text-sm text-muted-foreground">
                           {t('common.noRecords')}
                         </TableCell>
                       </TableRow>
@@ -684,6 +830,13 @@ export default function AdminAuditClient() {
                       const geo = geoLabel(r.country, r.city);
                       return (
                         <TableRow key={String(r.id)}>
+                          <TableCell>
+                            <Checkbox
+                              checked={compareIds.includes(Number(r.id))}
+                              onCheckedChange={(checked) => toggleCompare(Number(r.id), checked === true)}
+                              aria-label={t('requests.compare')}
+                            />
+                          </TableCell>
                           <TableCell className="whitespace-nowrap text-sm">
                             {fmtWhen(r.created_at)}
                           </TableCell>
@@ -692,6 +845,16 @@ export default function AdminAuditClient() {
                             <div className="text-muted-foreground">{safeText(r.path)}</div>
                             {r.referer && (
                               <div className="text-muted-foreground text-xs">ref: {truncate(r.referer, 40)}</div>
+                            )}
+                            {r.body_snapshot && (
+                              <details className="mt-2 rounded border bg-muted/40 p-2 text-xs">
+                                <summary className="cursor-pointer font-medium">
+                                  {t('requests.bodySnapshot')}
+                                </summary>
+                                <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-words">
+                                  {r.body_snapshot}
+                                </pre>
+                              </details>
                             )}
                           </TableCell>
                           <TableCell>
@@ -1011,7 +1174,131 @@ export default function AdminAuditClient() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="stream" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Activity className="h-4 w-4" /> {t('stream.title')}
+                  </CardTitle>
+                  <CardDescription>{t('stream.description')}</CardDescription>
+                </div>
+                <Badge variant={streamStatusVariant(streamStatus)}>
+                  {t(`stream.status.${streamStatus}`)}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
+                <span>{t('stream.recentCount', { count: String(streamEvents.length) })}</span>
+                <Button type="button" variant="secondary" size="sm" onClick={() => setStreamEvents([])}>
+                  {t('stream.clearLocal')}
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                {streamEvents.length === 0 ? (
+                  <div className="rounded-md border p-4 text-sm text-muted-foreground">
+                    {t('stream.empty')}
+                  </div>
+                ) : (
+                  streamEvents.map((evt, idx) => (
+                    <div key={`${evt.id || evt.ts || 'evt'}-${idx}`} className="rounded-md border p-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={streamEventVariant(evt.level)}>{safeText(evt.level, 'info')}</Badge>
+                        <span className="text-sm font-medium">{safeText(evt.topic, t('stream.unknownTopic'))}</span>
+                        <span className="text-xs text-muted-foreground">{fmtWhen(evt.ts)}</span>
+                      </div>
+                      <div className="mt-2 text-sm">
+                        {safeText(evt.message, t('stream.noMessage'))}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        {[evt.actor_user_id ? `uid:${evt.actor_user_id}` : '', evt.ip ? `ip:${evt.ip}` : '']
+                          .filter(Boolean)
+                          .join(' · ') || '—'}
+                      </div>
+                      {evt.meta && (
+                        <pre className="mt-2 overflow-x-auto rounded bg-muted p-2 text-xs">
+                          {JSON.stringify(evt.meta, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
+
+      <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
+        <DialogContent className="max-w-6xl">
+          <DialogHeader>
+            <DialogTitle>{t('compare.title')}</DialogTitle>
+            <DialogDescription>{t('compare.description')}</DialogDescription>
+          </DialogHeader>
+
+          {compareLeft && compareRight ? (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-md border">
+                <div className="border-b px-4 py-3">
+                  <div className="font-medium">{safeText(compareLeft.method)} {safeText(compareLeft.path)}</div>
+                  <div className="text-xs text-muted-foreground">
+                    #{compareLeft.id} · {fmtWhen(compareLeft.created_at)}
+                  </div>
+                </div>
+                <ScrollArea className="h-[420px]">
+                  <div className="px-4 py-3 font-mono text-xs">
+                    {compareRows.map((row) => (
+                      <div
+                        key={`left-${row.lineNo}`}
+                        className={row.changed ? 'bg-amber-100/60 dark:bg-amber-900/20' : undefined}
+                      >
+                        <span className="mr-3 inline-block w-8 text-muted-foreground">{row.lineNo}</span>
+                        <span className="whitespace-pre-wrap break-words">{row.left || ' '}</span>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+
+              <div className="rounded-md border">
+                <div className="border-b px-4 py-3">
+                  <div className="font-medium">{safeText(compareRight.method)} {safeText(compareRight.path)}</div>
+                  <div className="text-xs text-muted-foreground">
+                    #{compareRight.id} · {fmtWhen(compareRight.created_at)}
+                  </div>
+                </div>
+                <ScrollArea className="h-[420px]">
+                  <div className="px-4 py-3 font-mono text-xs">
+                    {compareRows.map((row) => (
+                      <div
+                        key={`right-${row.lineNo}`}
+                        className={row.changed ? 'bg-sky-100/60 dark:bg-sky-900/20' : undefined}
+                      >
+                        <span className="mr-3 inline-block w-8 text-muted-foreground">{row.lineNo}</span>
+                        <span className="whitespace-pre-wrap break-words">{row.right || ' '}</span>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-md border p-4 text-sm text-muted-foreground">
+              {t('compare.needTwo')}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button type="button" variant="secondary" onClick={() => setCompareOpen(false)}>
+              {t('compare.close')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

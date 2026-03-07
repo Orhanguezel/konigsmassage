@@ -7,7 +7,7 @@
 // =============================================================
 
 import type { ReactNode } from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 
 import { Toaster } from '@/components/ui/sonner';
@@ -21,13 +21,18 @@ import { LocaleProvider } from '@/i18n';
 
 import './globals.css';
 
+export async function generateViewport(): Promise<Viewport> {
+  const branding = await fetchBrandingConfig();
+  return { themeColor: branding.theme_color };
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const branding = await fetchBrandingConfig();
 
   return {
+    metadataBase: new URL(branding.meta.og_url || 'https://admin.konigsmassage.de'),
     title: branding.meta.title,
     description: branding.meta.description,
-    themeColor: branding.theme_color,
     icons: {
       icon: [
         { url: branding.favicon_16, sizes: '16x16', type: 'image/svg+xml' },

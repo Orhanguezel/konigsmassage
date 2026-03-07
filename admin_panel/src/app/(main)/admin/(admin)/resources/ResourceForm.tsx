@@ -8,12 +8,16 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import type { ResourceRowDto, ResourceType } from '@/integrations/shared/resources.types';
+import type { AdminLocaleOption } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
 
 export type ResourceFormMode = 'create' | 'edit';
 
 export type ResourceFormValues = {
   title: string;
   type: ResourceType;
+  capacity: number;
+  external_ref_id: string;
+  i18nTitles: Record<string, string>;
   is_active: boolean;
 };
 
@@ -22,6 +26,8 @@ export type ResourceFormProps = {
   initialData?: ResourceRowDto | null;
   loading: boolean;
   saving: boolean;
+  locales: AdminLocaleOption[];
+  defaultLocale?: string;
   onSubmit: (values: ResourceFormValues) => void | Promise<void>;
   onCancel?: () => void;
 };
@@ -32,17 +38,44 @@ const toType = (v: unknown): ResourceType => {
   return (ok.includes(s) ? s : 'other') as ResourceType;
 };
 
-const buildInitial = (dto?: ResourceRowDto | null): ResourceFormValues => {
+const buildInitial = (
+  dto?: ResourceRowDto | null,
+  locales: AdminLocaleOption[] = [],
+  defaultLocale?: string,
+): ResourceFormValues => {
+  const localeCodes = locales.map((item) => String(item.value || '').trim()).filter(Boolean);
+  const fallbackDefault = String(defaultLocale || localeCodes[0] || 'de').trim() || 'de';
+  const initialI18nTitles = Object.fromEntries(localeCodes.map((code) => [code, ''])) as Record<
+    string,
+    string
+  >;
+
   if (!dto) {
     return {
       title: '',
       type: 'therapist',
+      capacity: 1,
+      external_ref_id: '',
+      i18nTitles: initialI18nTitles,
       is_active: true,
     };
+  }
+  const i18nRows = Array.isArray((dto as any).i18n) ? ((dto as any).i18n as Array<any>) : [];
+  const nextI18nTitles = { ...initialI18nTitles };
+  for (const row of i18nRows) {
+    const locale = String(row?.locale ?? '').trim().toLowerCase();
+    if (!locale) continue;
+    nextI18nTitles[locale] = String(row?.title ?? '');
+  }
+  if (!nextI18nTitles[fallbackDefault] && dto.title) {
+    nextI18nTitles[fallbackDefault] = String(dto.title ?? '');
   }
   return {
     title: String(dto.title ?? ''),
     type: toType(dto.type),
+    capacity: Math.max(1, Number(dto.capacity ?? 1)),
+    external_ref_id: String(dto.external_ref_id ?? ''),
+    i18nTitles: nextI18nTitles,
     is_active: Number(dto.is_active ?? 0) === 1 || (dto as any).is_active === true,
   };
 };
@@ -61,14 +94,18 @@ export const ResourceForm: React.FC<ResourceFormProps> = ({
   initialData,
   loading,
   saving,
+  locales,
+  defaultLocale,
   onSubmit,
   onCancel,
 }) => {
-  const [values, setValues] = useState<ResourceFormValues>(buildInitial(initialData));
+  const [values, setValues] = useState<ResourceFormValues>(
+    buildInitial(initialData, locales, defaultLocale),
+  );
 
   useEffect(() => {
-    setValues(buildInitial(initialData));
-  }, [initialData]);
+    setValues(buildInitial(initialData, locales, defaultLocale));
+  }, [initialData, locales, defaultLocale]);
 
   const disabled = loading || saving;
 
@@ -86,10 +123,23 @@ export const ResourceForm: React.FC<ResourceFormProps> = ({
       toast.error('Lütfen geçerli bir ad gir.');
       return;
     }
+    const capacity = Number(values.capacity ?? 1);
+    if (!Number.isFinite(capacity) || capacity < 1) {
+      toast.error('Kapasite en az 1 olmalı.');
+      return;
+    }
 
     void onSubmit({
       title,
       type: values.type,
+      capacity: Math.floor(capacity),
+      external_ref_id: values.external_ref_id.trim(),
+      i18nTitles: Object.fromEntries(
+        Object.entries(values.i18nTitles).map(([locale, localeTitle]) => [
+          locale,
+          String(localeTitle ?? '').trim(),
+        ]),
+      ),
       is_active: values.is_active,
     });
   };
@@ -107,7 +157,7 @@ export const ResourceForm: React.FC<ResourceFormProps> = ({
                       {mode === 'create' ? 'Yeni Kaynak' : 'Kaynak Düzenle'}
                     </h5>
                     <div className="text-muted small text-truncate">
-                      Kaynak adı, tipi ve aktiflik durumunu yönet.
+                      Kaynak adı, tipi, kapasitesi ve rezervasyon bağlantı alanlarını yönet.
                     </div>
                   </div>
 
@@ -154,6 +204,9 @@ export const ResourceForm: React.FC<ResourceFormProps> = ({
                     {titleHelp ? (
                       <div className="form-text small text-muted">{titleHelp}</div>
                     ) : null}
+                    <div className="form-text small">
+                      Fallback başlık. `de` çevirisi boşsa public tarafta bu değer kullanılır.
+                    </div>
                   </div>
 
                   <div className="col-12 col-lg-3">
@@ -171,6 +224,70 @@ export const ResourceForm: React.FC<ResourceFormProps> = ({
                       ))}
                     </select>
                     <div className="form-text small">Filtreleme ve raporlama için.</div>
+                  </div>
+
+                  <div className="col-12 col-lg-3">
+                    <label className="form-label small mb-1">Kapasite</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={50}
+                      className="form-control form-control-sm"
+                      value={values.capacity}
+                      onChange={(e) =>
+                        setValues((p) => ({ ...p, capacity: Number(e.target.value || 1) }))
+                      }
+                      disabled={disabled}
+                    />
+                    <div className="form-text small">
+                      Aynı slotta aynı kaynak için kaç paralel rezervasyon alınabileceği.
+                    </div>
+                  </div>
+
+                  <div className="col-12 col-lg-6">
+                    <label className="form-label small mb-1">Harici Referans ID</label>
+                    <input
+                      className="form-control form-control-sm"
+                      value={values.external_ref_id}
+                      onChange={(e) =>
+                        setValues((p) => ({ ...p, external_ref_id: e.target.value }))
+                      }
+                      placeholder="Opsiyonel UUID"
+                      disabled={disabled}
+                    />
+                    <div className="form-text small">
+                      Kaynağı başka bir kayıtla eşlemek için kullanılır. Boş bırakılabilir.
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <div className="border rounded-3 p-3 bg-light-subtle">
+                      <div className="fw-semibold small mb-2">Dil Başlıkları</div>
+                      <div className="row g-3">
+                        {locales.map((locale) => {
+                          const code = String(locale.value || '').trim().toLowerCase();
+                          if (!code) return null;
+                          const isDefault = code === String(defaultLocale || '').trim().toLowerCase();
+                          return (
+                            <div key={code} className="col-12 col-lg-4">
+                              <label className="form-label small mb-1">{locale.label}</label>
+                              <input
+                                className="form-control form-control-sm"
+                                value={values.i18nTitles[code] ?? ''}
+                                onChange={(e) =>
+                                  setValues((p) => ({
+                                    ...p,
+                                    i18nTitles: { ...p.i18nTitles, [code]: e.target.value },
+                                  }))
+                                }
+                                placeholder={isDefault ? 'Zorunlu fallback locale' : 'Opsiyonel'}
+                                disabled={disabled}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="col-12 col-lg-3">

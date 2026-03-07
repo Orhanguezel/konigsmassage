@@ -11,6 +11,7 @@ import { generateAiSupportReply } from "./ai";
 import { db as drizzleDb } from "@/db/client";
 import { buildKnowledgeContext } from "./knowledge";
 import { t } from "@/core/locale-strings";
+import { getChatAiSettings } from "@/modules/siteSettings/service";
 
 type AuthedUser = {
   id: string;
@@ -54,11 +55,20 @@ function normalizeLocaleForUrl(v: string | undefined): "tr" | "en" | "de" {
   return "de";
 }
 
-function getAppointmentUrl(locale: string) {
+function resolveLocalizedUrlTemplate(template: string, locale: string): string {
   const loc = normalizeLocaleForUrl(locale);
-  const explicit = String(process.env.AI_SUPPORT_OFFER_URL || "").trim();
+  if (!template) return "";
+  if (template.includes("{locale}")) return template.replaceAll("{locale}", loc);
+  return template;
+}
+
+async function getAppointmentUrl(locale: string) {
+  const loc = normalizeLocaleForUrl(locale);
+  const settings = await getChatAiSettings().catch(() => null);
+  const explicit =
+    resolveLocalizedUrlTemplate(String(settings?.appointmentUrl || "").trim(), loc) ||
+    resolveLocalizedUrlTemplate(String(process.env.AI_SUPPORT_OFFER_URL || "").trim(), loc);
   if (explicit) {
-    if (explicit.includes("{locale}")) return explicit.replaceAll("{locale}", loc);
     return explicit;
   }
   const frontend = String(process.env.FRONTEND_URL || "").trim().replace(/\/+$/, "");
@@ -252,7 +262,9 @@ export function chatService(app: FastifyInstance) {
   }
 
   async function generateAiReplyForThread(thread_id: string) {
-    const aiEnabled = isEnabled(process.env.AI_SUPPORT_ENABLED, true);
+    const settings = await getChatAiSettings().catch(() => null);
+    const aiEnabled =
+      settings?.enabled !== false && isEnabled(process.env.AI_SUPPORT_ENABLED, true);
     if (!aiEnabled) return;
 
     const thread = await repo.getThreadById(thread_id);
@@ -291,7 +303,7 @@ export function chatService(app: FastifyInstance) {
         .find((m) => m.sender_user_id !== AI_ASSISTANT_USER_ID)?.text ?? "";
 
     const preferredLocale = String(thread.preferred_locale || "de").toLowerCase();
-    const appointmentUrl = getAppointmentUrl(preferredLocale);
+    const appointmentUrl = await getAppointmentUrl(preferredLocale);
     const lastAssistantText =
       [...history]
         .reverse()

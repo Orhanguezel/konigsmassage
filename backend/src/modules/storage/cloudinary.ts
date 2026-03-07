@@ -338,26 +338,49 @@ export async function uploadBufferAuto(
   });
 
   try {
-    const rawResult = await new Promise<unknown>((resolve, reject) => {
-      const params: Record<string, any> = {
-        folder,
-        public_id: finalPublicId,
-        resource_type,
-        overwrite: true,
-      };
+    const runUpload = (forceUnsigned: boolean) =>
+      new Promise<unknown>((resolve, reject) => {
+        const params: Record<string, any> = {
+          folder,
+          public_id: finalPublicId,
+          resource_type,
+          overwrite: true,
+        };
 
-      // ✅ unsigned ise preset zorunlu
-      if (!canSigned) {
-        params.upload_preset = cfg.unsignedUploadPreset;
-      }
+        // unsigned mode'da preset şart
+        if (forceUnsigned || !canSigned) {
+          params.upload_preset = cfg.unsignedUploadPreset;
+        }
 
-      const stream = cloudinary.uploader.upload_stream(params, (err, res) => {
-        if (err || !res) return reject(err ?? new Error('upload_failed'));
-        resolve(res);
+        const stream = cloudinary.uploader.upload_stream(params, (err, res) => {
+          if (err || !res) return reject(err ?? new Error('upload_failed'));
+          resolve(res);
+        });
+
+        stream.end(buffer);
       });
 
-      stream.end(buffer);
-    });
+    let rawResult: unknown;
+    try {
+      rawResult = await runUpload(!canSigned);
+    } catch (firstErr: any) {
+      const msg = String(firstErr?.message || '').toLowerCase();
+      const presetMissing =
+        msg.includes('upload preset must be specified') ||
+        msg.includes('unsigned upload');
+
+      if (canSigned && canUnsigned && presetMissing) {
+        console.warn?.('[storage] signed upload fell back to unsigned preset mode', {
+          cloud: cfg.cloudName,
+          folder,
+          publicId: finalPublicId,
+          preset: cfg.unsignedUploadPreset,
+        });
+        rawResult = await runUpload(true);
+      } else {
+        throw firstErr;
+      }
+    }
 
     const r = rawResult as {
       public_id?: string;

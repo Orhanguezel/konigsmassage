@@ -10,7 +10,7 @@ import { listResourcesPublic } from './repository';
 export const listResourcesPublicHandler: RouteHandler = async (req, reply) => {
   try {
     const q = publicListResourcesQuerySchema.parse((req as any).query ?? {});
-    const rows = await listResourcesPublic({ type: q.type });
+    const rows = await listResourcesPublic({ type: q.type, locale: q.locale });
     return reply.send(rows);
   } catch (e: any) {
     if (e?.name === 'ZodError') {

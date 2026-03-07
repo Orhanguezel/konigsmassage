@@ -441,6 +441,49 @@ export async function sendWelcomeMail(input: WelcomeMailInput) {
   return rendered;
 }
 
+/* ------------------ EMAIL VERIFICATION (email_verification) ------------------ */
+
+const emailVerificationMailSchema = z.object({
+  to: z.string().email(),
+  user_name: z.string(),
+  verification_link: z.string().min(1),
+  site_name: z.string().optional(),
+  locale: z.string().optional(),
+  default_locale: z.string().optional(),
+});
+
+export type EmailVerificationMailInput = z.infer<typeof emailVerificationMailSchema>;
+
+export async function sendEmailVerificationMail(input: EmailVerificationMailInput) {
+  const data = emailVerificationMailSchema.parse(input);
+
+  const baseParams: Record<string, unknown> = {
+    user_name: data.user_name,
+    verification_link: data.verification_link,
+    site_name: data.site_name,
+    locale: data.locale,
+    default_locale: data.default_locale,
+  };
+
+  const params = await enrichParamsWithSiteName(baseParams);
+
+  const rendered = await renderEmailTemplateByKey('email_verification', params, {
+    locale: data.locale ?? null,
+    defaultLocale: data.default_locale ?? null,
+    allowMissing: false,
+  });
+
+  if (!rendered) throw new Error('email_template_not_found:email_verification');
+
+  await sendMail({
+    to: data.to,
+    subject: rendered.subject,
+    html: rendered.html,
+  });
+
+  return rendered;
+}
+
 /* ------------------ PASSWORD CHANGED (password_changed) ------------------ */
 
 const passwordChangedMailSchema = z.object({

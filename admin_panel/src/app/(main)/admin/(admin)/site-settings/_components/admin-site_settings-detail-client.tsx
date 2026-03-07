@@ -25,6 +25,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { AdminImageUploadField } from '@/app/(main)/admin/_components/common/AdminImageUploadField';
 
 import type { SiteSetting, SettingValue } from '@/integrations/shared';
 import {
@@ -75,6 +76,7 @@ import {
   businessHoursObjToForm,
   type BusinessHoursFormState,
 } from '../tabs/structured/business-hours-structured-form';
+import { parseMediaUrl } from '@/integrations/shared/common';
 
 /* ----------------------------- helpers (same behavior as /pages) ----------------------------- */
 
@@ -125,6 +127,164 @@ function coerceSettingValue(input: any): any {
 
   return input;
 }
+
+const MEDIA_OBJECT_KEYS = ['url', 'src', 'image_url', 'image'] as const;
+const ROOT_MEDIA_SETTING_KEYS = new Set([
+  'site_logo',
+  'site_logo_dark',
+  'site_logo_light',
+  'site_favicon',
+  'site_apple_touch_icon',
+  'site_app_icon_512',
+  'site_og_default_image',
+  'site_appointment_cover',
+]);
+
+type MediaFieldSpec = {
+  label: string;
+  path: string[];
+  value: string;
+};
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isMediaFieldName(name: string): boolean {
+  const key = String(name || '').trim().toLowerCase();
+  if (!key || key.endsWith('_alt')) return false;
+  return (
+    key.includes('og_image') ||
+    key.includes('cover_image') ||
+    key.includes('hero_image') ||
+    key.includes('featured_image') ||
+    key.includes('decor_image') ||
+    key.includes('signature_image') ||
+    key.includes('icon_image') ||
+    key.endsWith('_image') ||
+    key.endsWith('_logo') ||
+    key.endsWith('_favicon') ||
+    key.endsWith('_icon') ||
+    key === 'image' ||
+    key === 'logo' ||
+    key === 'favicon'
+  );
+}
+
+function prettifyMediaLabel(path: string[]): string {
+  const last = path[path.length - 1] || 'image';
+  return last
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+function collectMediaFields(settingKey: string, value: unknown): MediaFieldSpec[] {
+  const normalizedKey = String(settingKey || '').trim().toLowerCase();
+  const out: MediaFieldSpec[] = [];
+
+  if (ROOT_MEDIA_SETTING_KEYS.has(normalizedKey)) {
+    out.push({
+      label: prettifyMediaLabel([normalizedKey]),
+      path: [],
+      value: parseMediaUrl(value),
+    });
+    return out;
+  }
+
+  const visit = (node: unknown, path: string[] = [], depth = 0) => {
+    if (!isPlainRecord(node) || depth > 3) return;
+
+    for (const [key, child] of Object.entries(node)) {
+      const nextPath = [...path, key];
+      if (isMediaFieldName(key)) {
+        out.push({
+          label: prettifyMediaLabel(nextPath),
+          path: nextPath,
+          value: parseMediaUrl(child),
+        });
+      }
+
+      if (isPlainRecord(child)) visit(child, nextPath, depth + 1);
+    }
+  };
+
+  visit(value);
+
+  return out.filter(
+    (item, index, arr) =>
+      arr.findIndex((candidate) => candidate.path.join('.') === item.path.join('.')) === index,
+  );
+}
+
+function setNestedValue(current: unknown, path: string[], nextUrl: string): unknown {
+  if (!path.length) {
+    if (isPlainRecord(current)) {
+      for (const key of MEDIA_OBJECT_KEYS) {
+        if (key in current) return { ...current, [key]: nextUrl };
+      }
+    }
+    return nextUrl;
+  }
+
+  const [head, ...tail] = path;
+  const base = isPlainRecord(current) ? current : {};
+  const existingChild = base[head];
+
+  if (!tail.length) {
+    if (isPlainRecord(existingChild)) {
+      for (const key of MEDIA_OBJECT_KEYS) {
+        if (key in existingChild) {
+          return { ...base, [head]: { ...existingChild, [key]: nextUrl } };
+        }
+      }
+    }
+
+    return { ...base, [head]: nextUrl };
+  }
+
+  return {
+    ...base,
+    [head]: setNestedValue(existingChild, tail, nextUrl),
+  };
+}
+
+const MediaFieldsEditor: React.FC<{
+  settingKey: string;
+  value: SettingValue;
+  setValue: (next: any) => void;
+  disabled?: boolean;
+}> = ({ settingKey, value, setValue, disabled }) => {
+  const mediaFields = React.useMemo(
+    () => collectMediaFields(settingKey, coerceSettingValue(value)),
+    [settingKey, value],
+  );
+
+  if (!mediaFields.length) return null;
+
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      {mediaFields.map((field) => (
+        <AdminImageUploadField
+          key={field.path.join('.') || settingKey}
+          label={field.label}
+          helperText={field.path.length ? field.path.join('.') : settingKey}
+          bucket="public"
+          folder="site-media"
+          metadata={{
+            module: 'site_settings',
+            setting_key: settingKey,
+            field: field.path.join('.') || 'root',
+          }}
+          value={field.value}
+          onChange={(url) =>
+            setValue((prev: unknown) => setNestedValue(prev ?? coerceSettingValue(value), field.path, url))
+          }
+          disabled={disabled}
+        />
+      ))}
+    </div>
+  );
+};
 
 /* ----------------------------- structured renderers ----------------------------- */
 
@@ -653,15 +813,24 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
             initialMode="structured"
             onSave={handleSave}
             onDelete={async ({ key, locale }) => handleDelete({ key, locale })}
-            renderStructured={(ctx) =>
-              React.createElement(renderStructured as any, {
-                value: ctx.value,
-                setValue: ctx.setValue,
-                disabled: ctx.disabled,
-                settingKey,
-                locale: selectedLocale,
-              })
-            }
+            renderStructured={(ctx) => (
+              <div className="space-y-4">
+                {React.createElement(renderStructured as any, {
+                  value: ctx.value,
+                  setValue: ctx.setValue,
+                  disabled: ctx.disabled,
+                  settingKey,
+                  locale: selectedLocale,
+                })}
+
+                <MediaFieldsEditor
+                  settingKey={settingKey}
+                  value={ctx.value}
+                  setValue={ctx.setValue}
+                  disabled={ctx.disabled}
+                />
+              </div>
+            )}
           />
         </div>
       )}

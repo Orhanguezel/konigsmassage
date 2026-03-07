@@ -839,9 +839,7 @@
         },
         "dateLabel": "Date",
         "resourceIdLabel": "Resource ID",
-        "resourceIdPlaceholder": "(optional)",
-        "serviceIdLabel": "Service ID",
-        "serviceIdPlaceholder": "(optional)"
+        "resourceIdPlaceholder": "(optional)"
       },
       "badges": {
         "unread": "Unread"
@@ -863,7 +861,12 @@
         "description": "Manage bookings and quick actions.",
         "views": {
           "table": "Table",
-          "cards": "Cards"
+          "cards": "Cards",
+          "calendar": "Calendar"
+        },
+        "calendar": {
+          "count": "{count} booking(s)",
+          "contact": "Contact"
         },
         "columns": {
           "status": "Status",
@@ -894,6 +897,7 @@
         "accepting": "Accepting...",
         "reject": "Reject",
         "rejecting": "Rejecting...",
+        "sendReminder": "Send reminder",
         "markRead": "Mark read",
         "backToList": "Back to list"
       },
@@ -919,6 +923,7 @@
         "markedRead": "Marked as read.",
         "accepted": "Booking accepted. (Email + notification triggered)",
         "rejected": "Booking rejected. (Email + notification triggered)",
+        "reminderSent": "Reminder email sent.",
         "loadError": "Failed to load record.",
         "genericError": "Operation failed. Please try again."
       },
@@ -1170,6 +1175,40 @@
     "dashboard": {
       "title": "Dashboard",
       "subtitle": "Overview of records in the system",
+      "analytics": {
+        "subtitle": "Bookings, revenue trend and service performance overview.",
+        "ranges": {
+          "7d": "Last 7 days",
+          "30d": "Last 30 days",
+          "90d": "Last 90 days"
+        },
+        "kpi": {
+          "bookings": "Bookings",
+          "confirmed": "Confirmed",
+          "revenue": "Revenue",
+          "reservedSlots": "Reserved Slots"
+        },
+        "revenueChart": {
+          "title": "Revenue Trend",
+          "description": "Time series based on non-cancelled bookings."
+        },
+        "servicesChart": {
+          "title": "Bookings by Service",
+          "description": "Which service receives how many bookings."
+        },
+        "servicesTable": {
+          "title": "Service Performance",
+          "description": "Booking count and revenue by service.",
+          "bookings": "{count} bookings"
+        },
+        "modules": {
+          "title": "Module Counts",
+          "description": "Quick navigation cards for key admin modules."
+        },
+        "states": {
+          "empty": "No analytics data found for this range."
+        }
+      },
       "items": {
         "db": "Database",
         "audit": "Audit Logs",
@@ -1194,7 +1233,12 @@
         "mail": "Mail",
         "telegram": "Telegram",
         "chat": "Chat & AI",
-        "dashboard": "Overview"
+        "dashboard": "Overview",
+        "orders": "Orders",
+        "wallet": "Wallet",
+        "gutschein": "Gift Cards",
+        "payment_settings": "Payment Settings",
+        "popups": "Popups"
       },
       "stats": {
         "deliveredOrders": "Delivered Orders",
@@ -1682,6 +1726,125 @@
         "loading": "Loading...",
         "noName": "(no name)",
         "noRef": "(no ref)"
+      },
+      "weekly": {
+        "title": "Weekly Working Hours",
+        "description": "These ranges are the source for daily session generation.",
+        "empty": "No working-hour range exists yet. You can add a new range below.",
+        "addTitle": "Add New Working Range",
+        "days": {
+          "1": "Monday",
+          "2": "Tuesday",
+          "3": "Wednesday",
+          "4": "Thursday",
+          "5": "Friday",
+          "6": "Saturday",
+          "7": "Sunday"
+        },
+        "columns": {
+          "day": "Day",
+          "start": "Start",
+          "end": "End",
+          "session": "Session (min)",
+          "break": "Break (min)",
+          "capacity": "Capacity",
+          "active": "Active"
+        },
+        "actions": {
+          "edit": "Edit",
+          "save": "Save",
+          "delete": "Delete",
+          "add": "Add",
+          "editDayHint": "Edit daily sessions for this day"
+        },
+        "messages": {
+          "invalidRange": "Invalid start/end time. End time must be after start time.",
+          "added": "Working range added.",
+          "addFailed": "Working range could not be added.",
+          "updated": "Working range updated.",
+          "updateFailed": "Working range could not be updated.",
+          "deleted": "Working range deleted.",
+          "deleteFailed": "Working range could not be deleted.",
+          "deleteConfirm": "You are about to delete this working range.\n\nDay: {day}\nTime: {start} - {end}\n\nContinue?"
+        }
+      },
+      "recurring": {
+        "title": "Recurring Day Overrides",
+        "description": "Define a weekly override pattern such as closing every Friday or forcing a day open.",
+        "modes": {
+          "default": "Use weekly plan",
+          "open": "Force open",
+          "closed": "Force closed",
+          "defaultDesc": "No recurring override. Weekly working hours remain in effect.",
+          "openDesc": "This day stays open every week if working hours exist.",
+          "closedDesc": "This day is treated as closed every week."
+        },
+        "preview": {
+          "closedByRecurring": "This day is closed by a recurring weekly override. Remove the override or switch it to open to preview working ranges again."
+        },
+        "messages": {
+          "saved": "Recurring override saved.",
+          "deleted": "Recurring override removed.",
+          "saveFailed": "Recurring override could not be saved."
+        }
+      },
+      "daily": {
+        "title": "Daily Plan",
+        "description": "Sessions are derived from the weekly plan for the selected day. Use Generate Slots to persist them.",
+        "fields": {
+          "date": "Date",
+          "dayOfWeek": "Day: {dow} (1=Mon ... 7=Sun)"
+        },
+        "actions": {
+          "generate": "Generate Slots",
+          "closeDay": "Close Day",
+          "openDay": "Open Day",
+          "closeSlot": "Close",
+          "openSlot": "Open"
+        },
+        "notes": {
+          "capacityCheck": "Capacity is checked again at confirmation time by backend rules."
+        },
+        "preview": {
+          "title": "Session Preview (From Weekly Plan)",
+          "description": "Preview is UI-only. Public bookable hours require a persisted DB plan.",
+          "noRanges": "There is no active weekly range for this day.",
+          "rangeLabel": "Working Range",
+          "rangePlaceholder": "Select a range",
+          "rangeHelp": "If there are multiple ranges in one day, manage sessions range by range.",
+          "selectRange": "Select a range to preview sessions.",
+          "noPreview": "No sessions could be generated for the selected range."
+        },
+        "dbPlan": {
+          "title": "DB Plan (Slot Records)",
+          "description": "Public available hours are read from here.",
+          "empty": "DB plan is empty. If you see a preview, use Generate Slots first."
+        },
+        "columns": {
+          "time": "Time",
+          "capacity": "Capacity",
+          "status": "Status",
+          "range": "Range"
+        },
+        "capacityLegend": "(reserved/total)",
+        "statusOpen": "Open",
+        "statusFull": "Full",
+        "statusClosed": "Closed",
+        "rules": {
+          "title": "Rule",
+          "weekly": "Weekly plan is the source of session generation.",
+          "db": "DB plan is the real public source of available hours.",
+          "empty": "If the plan is empty, no public hours are shown."
+        },
+        "messages": {
+          "generateSuccess": "Slot generation completed. Created={created}, Planned={planned}",
+          "generateFailed": "Slot generation failed.",
+          "dayUpdated": "Day updated. Updated={updated}",
+          "dayUpdateFailed": "Day override failed.",
+          "reservationWarning": "This slot has {reserved} confirmed reservation(s).\nClosing it may require follow-up on those bookings.\n\nContinue?",
+          "slotUpdated": "Slot updated.",
+          "slotUpdateFailed": "Slot could not be updated."
+        }
       }
     },
     "audit": {
@@ -1704,7 +1867,8 @@
         "requests": "Requests",
         "auth": "Authentication",
         "metrics": "Metrics",
-        "map": "Map"
+        "map": "Map",
+        "stream": "Live Stream"
       },
       "requests": {
         "filtersTitle": "Filters",
@@ -1716,7 +1880,17 @@
         "sortDate": "Date",
         "sortResponseTime": "Response Time",
         "sortStatusCode": "Status Code",
-        "logsTitle": "Request Logs"
+        "logsTitle": "Request Logs",
+        "bodySnapshot": "Body Snapshot",
+        "compare": "Compare",
+        "compareSelected": "{count} entries selected",
+        "compareAction": "Compare snapshots"
+      },
+      "compare": {
+        "title": "Compare Request Snapshots",
+        "description": "Two selected request bodies are shown side by side line by line.",
+        "needTwo": "Please select exactly two entries to compare.",
+        "close": "Close"
       },
       "auth": {
         "filtersTitle": "Filters",
@@ -1737,6 +1911,21 @@
       "map": {
         "title": "Geographic Distribution",
         "description": "Requests by location for the last {days} days."
+      },
+      "stream": {
+        "title": "Live Event Stream",
+        "description": "Real-time app events from the audit SSE stream.",
+        "recentCount": "{count} events in local history",
+        "clearLocal": "Clear history",
+        "empty": "No live events received yet.",
+        "unknownTopic": "Unknown topic",
+        "noMessage": "No message",
+        "status": {
+          "connecting": "Connecting",
+          "open": "Connected",
+          "closed": "Closed",
+          "error": "Connection error"
+        }
       },
       "common": {
         "from": "From",
@@ -1781,7 +1970,48 @@
         "list": "List (Language)",
         "globalList": "List (Global *)",
         "locales": "Locales",
-        "branding": "Branding"
+        "branding": "Branding",
+        "payment": "Payments"
+      },
+      "payment": {
+        "title": "Payment Settings",
+        "description": "Configure PayPal and bank transfer options.",
+        "paypal": {
+          "title": "PayPal",
+          "enabled": "Enable PayPal",
+          "mode": "Mode",
+          "modeSandbox": "Sandbox (Test)",
+          "modeProduction": "Live (Production)",
+          "clientId": "Client ID",
+          "clientIdPh": "AXxxxx...",
+          "clientSecret": "Client Secret",
+          "clientSecretPh": "ELxxxx...",
+          "webhookId": "Webhook ID (optional)",
+          "webhookIdPh": "WH-xxxx..."
+        },
+        "bankTransfer": {
+          "title": "Bank Transfer",
+          "enabled": "Enable bank transfer",
+          "accountName": "Account holder",
+          "accountNamePh": "Company Name Ltd.",
+          "iban": "IBAN",
+          "ibanPh": "DE89 3704 0044 0532 0130 00",
+          "bankName": "Bank",
+          "bankNamePh": "Deutsche Bank",
+          "branch": "Branch",
+          "branchPh": "Frankfurt am Main",
+          "swift": "SWIFT / BIC",
+          "swiftPh": "DEUTDEDBXXX"
+        },
+        "bookingPayment": {
+          "title": "Booking Online Payment",
+          "description": "When enabled, customers receive a payment link in their booking confirmation email.",
+          "enabled": "Enable online payment for bookings",
+          "activeNote": "Active: Booking confirmation emails will include a payment link. The appointment page will show a \"Pay\" button after booking.",
+          "inactiveNote": "Inactive: Booking confirmation emails will only confirm the appointment without a payment link."
+        },
+        "saved": "Payment settings saved.",
+        "saveError": "Failed to save settings."
       },
       "filters": {
         "title": "Filters",
@@ -2859,6 +3089,22 @@
           "templateFallback": "This template",
           "cancel": "Cancel",
           "delete": "Delete"
+        },
+        "preview": {
+          "showButton": "Preview",
+          "hideButton": "Hide Preview",
+          "title": "HTML Preview"
+        },
+        "testSend": {
+          "title": "Send Test Email",
+          "showButton": "Show",
+          "hideButton": "Hide",
+          "emailLabel": "Recipient email address",
+          "emailPlaceholder": "test@example.com",
+          "sendButton": "Send Test",
+          "sent": "Test email sent successfully.",
+          "failed": "Failed to send test email.",
+          "invalidEmail": "Please enter a valid email address."
         }
       }
     },
@@ -3038,6 +3284,288 @@
         "deleted": "Entry deleted.",
         "saveError": "Save failed.",
         "deleteError": "Delete failed."
+      }
+    },
+    "wallet": {
+      "title": "Wallet & Payments",
+      "description": "Wallet balances, deposit requests and payment approvals",
+      "wallets": {
+        "title": "Wallets",
+        "desc": "User balances and status management",
+        "empty": "No records found",
+        "table": {
+          "user": "User",
+          "balance": "Balance",
+          "earnings": "Total In",
+          "withdrawn": "Total Out",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "actions": {
+          "transactions": "Transactions"
+        }
+      },
+      "deposits": {
+        "title": "Deposit Requests",
+        "desc": "Approve or reject PayPal and bank transfer requests",
+        "empty": "No records found",
+        "filters": {
+          "status": "Status",
+          "method": "Method",
+          "userId": "User ID",
+          "userIdPh": "Filter by UUID"
+        },
+        "table": {
+          "user": "User",
+          "amount": "Amount",
+          "method": "Method",
+          "status": "Status",
+          "createdAt": "Date",
+          "actions": "Actions"
+        },
+        "actions": {
+          "approve": "Approve",
+          "reject": "Reject"
+        }
+      },
+      "transactions": {
+        "title": "Wallet Transactions",
+        "empty": "No records found",
+        "table": {
+          "type": "Type",
+          "amount": "Amount",
+          "method": "Method",
+          "status": "Status",
+          "purpose": "Purpose",
+          "createdAt": "Date"
+        }
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "prev": "Previous",
+        "next": "Next",
+        "search": "Search"
+      },
+      "labels": {
+        "page": "Page {page}"
+      },
+      "messages": {
+        "walletStatusUpdated": "Wallet status updated",
+        "depositApproved": "Deposit approved",
+        "depositRejected": "Deposit rejected",
+        "operationFailed": "Operation failed",
+        "rejectPrompt": "Rejection reason (optional):"
+      }
+    },
+    "popups": {
+      "title": "Popup Management",
+      "description": "Manage popup content, order and visibility",
+      "list": {
+        "title": "Popup List",
+        "desc": "Manage popups with active/passive filters"
+      },
+      "filters": {
+        "search": "Search title or content",
+        "typeAll": "All Types",
+        "statusAll": "All",
+        "statusActive": "Active",
+        "statusPassive": "Passive"
+      },
+      "types": {
+        "topbar": "Top bar",
+        "sidebarTop": "Sidebar top",
+        "sidebarCenter": "Sidebar center",
+        "sidebarBottom": "Sidebar bottom"
+      },
+      "frequency": {
+        "always": "Always",
+        "once": "Once",
+        "daily": "Daily"
+      },
+      "linkTargets": {
+        "self": "Same tab",
+        "blank": "New tab"
+      },
+      "textBehavior": {
+        "marquee": "Marquee",
+        "static": "Static"
+      },
+      "badges": {
+        "active": "Active",
+        "passive": "Passive"
+      },
+      "table": {
+        "title": "Title",
+        "type": "Type",
+        "order": "Order",
+        "active": "Status",
+        "actions": "Actions"
+      },
+      "states": {
+        "empty": "No records found"
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "create": "New",
+        "edit": "Edit",
+        "delete": "Delete",
+        "prev": "Previous",
+        "next": "Next",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "labels": {
+        "page": "Page {page}"
+      },
+      "messages": {
+        "titleRequired": "Title is required",
+        "saved": "Saved",
+        "failed": "Operation failed",
+        "deleteConfirm": "Are you sure you want to delete?",
+        "deleted": "Deleted",
+        "statusUpdated": "Status updated"
+      },
+      "modal": {
+        "edit": "Edit Popup",
+        "new": "New Popup"
+      },
+      "form": {
+        "title": "Title",
+        "locale": "Locale",
+        "content": "Content",
+        "type": "Type",
+        "frequency": "Frequency",
+        "order": "Order",
+        "buttonText": "Button Text",
+        "linkUrl": "Link",
+        "linkTarget": "Link Target",
+        "textBehavior": "Text Behavior",
+        "scrollSpeed": "Scroll Speed",
+        "imageUrl": "Image URL",
+        "imageAsset": "Image Asset ID",
+        "alt": "Alt Text",
+        "bgColor": "Background Color",
+        "textColor": "Text Color",
+        "buttonColor": "Button Color",
+        "buttonHoverColor": "Button Hover Color",
+        "buttonTextColor": "Button Text Color",
+        "start": "Start",
+        "end": "End",
+        "delay": "Delay (sec)",
+        "active": "Active",
+        "closeable": "Closeable"
+      }
+    },
+    "gutschein": {
+      "title": "Gift Cards",
+      "description": "Manage gift cards – create, activate, cancel or view details.",
+      "actions": {
+        "create": "New Gift Card",
+        "products": "Products",
+        "activate": "Activate",
+        "cancel": "Cancel",
+        "refresh": "Refresh"
+      },
+      "filters": {
+        "searchLabel": "Search (code / email / name)",
+        "searchPlaceholder": "KM-XXXX-XXXX or email...",
+        "statusLabel": "Status",
+        "all": "All"
+      },
+      "table": {
+        "code": "Code",
+        "value": "Value",
+        "status": "Status",
+        "payment": "Payment",
+        "recipient": "Recipient",
+        "purchaser": "Purchaser",
+        "expires": "Expires",
+        "actions": "Actions",
+        "empty": "No gift cards found."
+      },
+      "labels": {
+        "admin": "Admin",
+        "total": "Total: {total}",
+        "created": "Created",
+        "expires": "Expires",
+        "recipient": "Recipient"
+      },
+      "create": {
+        "title": "Create Gift Card",
+        "description": "Admin-created gift cards are immediately marked as paid.",
+        "template": "Template Product (optional)",
+        "templatePlaceholder": "Select a product template...",
+        "templateNone": "— Custom (no template) —",
+        "value": "Value",
+        "currency": "Currency",
+        "validityDays": "Validity (days)",
+        "recipientName": "Recipient Name",
+        "recipientEmail": "Recipient Email",
+        "purchaserName": "Purchaser Name",
+        "purchaserEmail": "Purchaser Email",
+        "note": "Internal Note",
+        "notePlaceholder": "Optional internal note...",
+        "submit": "Create Gift Card",
+        "cancel": "Cancel"
+      },
+      "cancelDialog": {
+        "title": "Cancel Gift Card",
+        "description": "Are you sure you want to cancel {code}? This action cannot be undone.",
+        "confirm": "Cancel Card",
+        "keep": "Keep"
+      },
+      "messages": {
+        "created": "Gift card created.",
+        "cancelled": "Gift card cancelled.",
+        "activated": "Gift card activated.",
+        "createError": "Failed to create gift card.",
+        "cancelError": "Failed to cancel gift card.",
+        "activateError": "Failed to activate gift card.",
+        "valueRequired": "Please enter a valid value.",
+        "updated": "Gift card updated.",
+        "updateError": "Failed to update gift card."
+      },
+      "products": {
+        "title": "Gift Card Products",
+        "description": "Define gift card templates with preset values and validity periods.",
+        "create": "New Product",
+        "empty": "No products yet. Create one to get started.",
+        "table": {
+          "name": "Name",
+          "value": "Value",
+          "validity": "Validity",
+          "order": "Order",
+          "active": "Active",
+          "created": "Created",
+          "actions": "Actions"
+        },
+        "form": {
+          "title": "Create Product",
+          "editTitle": "Edit Product",
+          "description": "Create a new gift card template that customers can purchase.",
+          "editDescription": "Update the gift card template.",
+          "name": "Name",
+          "namePlaceholder": "Gift Card 50 €",
+          "value": "Value",
+          "valuePlaceholder": "50.00",
+          "currency": "Currency",
+          "validityDays": "Validity (days)",
+          "displayOrder": "Display Order",
+          "productDescription": "Description",
+          "descriptionPlaceholder": "Optional description...",
+          "isActive": "Active (visible to customers)",
+          "save": "Save Changes",
+          "create": "Create Product",
+          "cancel": "Cancel"
+        },
+        "messages": {
+          "created": "Product created.",
+          "updated": "Product updated.",
+          "error": "Failed to save product.",
+          "toggleError": "Failed to update status.",
+          "nameRequired": "Name is required.",
+          "valueRequired": "Please enter a valid value."
+        }
       }
     }
   },

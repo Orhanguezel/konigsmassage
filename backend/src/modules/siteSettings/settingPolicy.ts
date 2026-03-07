@@ -88,6 +88,21 @@ export const GLOBAL_ONLY_KEYS = new Set<string>([
   'telegram_event_booking_status_changed_enabled',
   'telegram_event_new_contact_enabled',
 
+  // ✅ payment (global-only — credentials & flags)
+  'booking_payment_enabled',
+  'booking_payment_gateway',
+  'paypal_enabled',
+  'paypal_mode',
+  'paypal_client_id',
+  'paypal_client_secret',
+  'paypal_webhook_id',
+  'bank_transfer_enabled',
+  'bank_account_name',
+  'bank_iban',
+  'bank_name',
+  'bank_branch',
+  'bank_swift',
+
   // ✅ site media (global-only)
   'site_logo',
   'site_logo_dark',

@@ -98,6 +98,11 @@ const emptyNav: AdminNavCopy = {
     reports: '',
     telegram: '',
     chat: '',
+    wallet: '',
+    orders: '',
+    payment_settings: '',
+    gutschein: '',
+    popups: '',
   },
 };
 
@@ -138,6 +143,11 @@ export function normalizeAdminUiCopy(raw: unknown): AdminUiCopy {
     reports: uiText(itemsRaw.reports),
     telegram: uiText(itemsRaw.telegram),
     chat: uiText(itemsRaw.chat),
+    wallet: uiText(itemsRaw.wallet),
+    orders: uiText(itemsRaw.orders),
+    payment_settings: uiText(itemsRaw.payment_settings),
+    gutschein: uiText(itemsRaw.gutschein),
+    popups: uiText(itemsRaw.popups),
   };
 
   const commonRaw = parseJsonObject(o.common);

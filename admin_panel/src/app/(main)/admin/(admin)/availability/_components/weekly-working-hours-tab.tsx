@@ -1,11 +1,11 @@
 // =============================================================
 // FILE: src/components/admin/availability/tabs/WeeklyWorkingHoursTab.tsx
-// FINAL — Weekly working hours CRUD tab (+ Edit Day action) — i18n via ui_appointment
+// FINAL — Weekly working hours CRUD tab (+ Edit Day action)
 // =============================================================
 
 'use client';
 
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
@@ -33,19 +33,17 @@ import {
 import type { AdminUpsertWorkingHourPayload, ResourceType } from '@/integrations/shared';
 import { clampInt, hmToMinutes, normalizeHm, toActiveBool } from '@/integrations/shared';
 import {
+  useDeleteRecurringOverrideAdminMutation,
+  useListRecurringOverridesAdminQuery,
   useListWorkingHoursAdminQuery,
+  useUpsertRecurringOverrideAdminMutation,
   useUpsertWorkingHourAdminMutation,
   useDeleteWorkingHourAdminMutation,
 } from '@/integrations/hooks';
-
-// ✅ i18n (same pattern as Appointment)
-import { useLocaleShort } from '@/i18n/useLocaleShort';
-import { useUiSection } from '@/i18n/uiDb';
-import { isValidUiText } from '@/i18n/uiText';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 // ✅ helper
 const toStr = (v: unknown) => String(v ?? '').trim();
-const safeStr = toStr; // Alias for compatibility
 
 const toTimeMinutes = (hm: string) => hmToMinutes(hm);
 
@@ -75,28 +73,17 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
   disabled,
   onEditDay,
 }) => {
-  // ✅ i18n setup (ui_appointment)
-  const locale = useLocaleShort();
-  const { ui } = useUiSection('ui_appointment', locale as any);
+  const t = useAdminT();
 
-  const t = useCallback(
-    (key: string, fallback: string) => {
-      const v = safeStr(ui(key, fallback));
-      return isValidUiText(v, key) ? v : fallback;
-    },
-    [ui],
-  );
-
-  // ✅ DOW labels i18n
   const DOWS = useMemo(
     () => [
-      { value: 1, label: t('ui_dow_1', 'Pazartesi') },
-      { value: 2, label: t('ui_dow_2', 'Salı') },
-      { value: 3, label: t('ui_dow_3', 'Çarşamba') },
-      { value: 4, label: t('ui_dow_4', 'Perşembe') },
-      { value: 5, label: t('ui_dow_5', 'Cuma') },
-      { value: 6, label: t('ui_dow_6', 'Cumartesi') },
-      { value: 7, label: t('ui_dow_7', 'Pazar') },
+      { value: 1, label: t('availability.weekly.days.1') },
+      { value: 2, label: t('availability.weekly.days.2') },
+      { value: 3, label: t('availability.weekly.days.3') },
+      { value: 4, label: t('availability.weekly.days.4') },
+      { value: 5, label: t('availability.weekly.days.5') },
+      { value: 6, label: t('availability.weekly.days.6') },
+      { value: 7, label: t('availability.weekly.days.7') },
     ],
     [t],
   );
@@ -107,6 +94,10 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
   );
 
   const whQuery = useListWorkingHoursAdminQuery(
+    whArgs as any,
+    { skip: !whArgs, refetchOnMountOrArgChange: true } as any,
+  );
+  const recurringQuery = useListRecurringOverridesAdminQuery(
     whArgs as any,
     { skip: !whArgs, refetchOnMountOrArgChange: true } as any,
   );
@@ -138,8 +129,19 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
 
   const [upsertWH, { isLoading: isSavingWh }] = useUpsertWorkingHourAdminMutation();
   const [deleteWH, { isLoading: isDeletingWh }] = useDeleteWorkingHourAdminMutation();
+  const [upsertRecurring, { isLoading: isSavingRecurring }] = useUpsertRecurringOverrideAdminMutation();
+  const [deleteRecurring, { isLoading: isDeletingRecurring }] = useDeleteRecurringOverrideAdminMutation();
 
-  const busy = disabled || whQuery.isLoading || whQuery.isFetching || isSavingWh || isDeletingWh;
+  const busy =
+    disabled ||
+    whQuery.isLoading ||
+    whQuery.isFetching ||
+    recurringQuery.isLoading ||
+    recurringQuery.isFetching ||
+    isSavingWh ||
+    isDeletingWh ||
+    isSavingRecurring ||
+    isDeletingRecurring;
 
   const [newWh, setNewWh] = useState<AdminUpsertWorkingHourPayload>(() => ({
     resource_id: resourceId || ('00000000-0000-0000-0000-000000000000' as any),
@@ -157,6 +159,23 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
     setNewWh((p) => ({ ...p, resource_id: resourceId }) as any);
   }, [hasResourceId, resourceId]);
 
+  const recurringRows = useMemo(() => {
+    const list: any[] = (recurringQuery.data as any) ?? [];
+    return [...list]
+      .map((r) => ({
+        id: toStr(r.id),
+        dow: clampInt(r.dow, 1, 1, 7),
+        is_active: toActiveBool(r.is_active),
+      }))
+      .sort((a, b) => a.dow - b.dow);
+  }, [recurringQuery.data]);
+
+  const recurringByDow = useMemo(() => {
+    const out = new Map<number, { id: string; is_active: boolean }>();
+    for (const row of recurringRows) out.set(row.dow, { id: row.id, is_active: row.is_active });
+    return out;
+  }, [recurringRows]);
+
   const validateRange = (start: string, end: string) => {
     const sMin = toTimeMinutes(start);
     const eMin = toTimeMinutes(end);
@@ -170,10 +189,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
 
     if (!validateRange(start, end)) {
       toast.error(
-        t(
-          'ui_admin_wh_err_range',
-          'Başlangıç/bitiş saati geçersiz. (Bitiş, başlangıçtan büyük olmalı)',
-        ),
+        t('availability.weekly.messages.invalidRange'),
       );
       return;
     }
@@ -186,16 +202,16 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         end_time: end as any,
         slot_minutes: clampInt(newWh.slot_minutes, 60, 1, 24 * 60),
         break_minutes: clampInt(newWh.break_minutes, 0, 0, 24 * 60),
-        capacity: clampInt(newWh.capacity, 1, 0, 999),
+        capacity: clampInt(newWh.capacity, 1, 1, 999),
         is_active: toActiveBool(newWh.is_active),
       } as any).unwrap();
 
-      toast.success(t('ui_admin_wh_added', 'Çalışma aralığı eklendi.'));
+      toast.success(t('availability.weekly.messages.added'));
     } catch (err: any) {
       toast.error(
         err?.data?.error?.message ||
           err?.message ||
-          t('ui_admin_wh_add_failed', 'Çalışma aralığı eklenemedi.'),
+          t('availability.weekly.messages.addFailed'),
       );
     }
   };
@@ -206,7 +222,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
     const end = normalizeHm(row.end_time);
 
     if (!validateRange(start, end)) {
-      toast.error(t('ui_admin_wh_err_invalid_range', 'Başlangıç/bitiş saati geçersiz.'));
+      toast.error(t('availability.weekly.messages.invalidRange'));
       return;
     }
 
@@ -219,16 +235,16 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         end_time: end as any,
         slot_minutes: clampInt(row.slot_minutes, 60, 1, 24 * 60),
         break_minutes: clampInt(row.break_minutes, 0, 0, 24 * 60),
-        capacity: clampInt(row.capacity, 1, 0, 999),
+        capacity: clampInt(row.capacity, 1, 1, 999),
         is_active: !!row.is_active,
       } as any).unwrap();
 
-      toast.success(t('ui_admin_wh_updated', 'Çalışma aralığı güncellendi.'));
+      toast.success(t('availability.weekly.messages.updated'));
     } catch (err: any) {
       toast.error(
         err?.data?.error?.message ||
           err?.message ||
-          t('ui_admin_wh_update_failed', 'Çalışma aralığı güncellenemedi.'),
+          t('availability.weekly.messages.updateFailed'),
       );
     }
   };
@@ -237,21 +253,21 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
     const dayLabel = DOWS.find((x) => x.value === row.dow)?.label || String(row.dow);
 
     const ok = window.confirm(
-      t(
-        'ui_admin_wh_delete_confirm',
-        `Bu çalışma aralığını silmek üzeresin.\n\nGün: ${dayLabel}\nSaat: ${row.start_time} - ${row.end_time}\n\nDevam edilsin mi?`,
-      ),
+      t('availability.weekly.messages.deleteConfirm')
+        .replace('{day}', dayLabel)
+        .replace('{start}', row.start_time)
+        .replace('{end}', row.end_time),
     );
     if (!ok) return;
 
     try {
       await deleteWH({ id: String(row.id), resource_id: resourceId } as any).unwrap();
-      toast.success(t('ui_admin_wh_deleted', 'Çalışma aralığı silindi.'));
+      toast.success(t('availability.weekly.messages.deleted'));
     } catch (err: any) {
       toast.error(
         err?.data?.error?.message ||
           err?.message ||
-          t('ui_admin_wh_delete_failed', 'Çalışma aralığı silinemedi.'),
+          t('availability.weekly.messages.deleteFailed'),
       );
     }
   };
@@ -260,30 +276,53 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
     onEditDay?.({ dow: row.dow, wh_id: row.id });
   };
 
+  const handleRecurringChange = async (dow: number, mode: 'default' | 'open' | 'closed') => {
+    if (!hasResourceId) return;
+    const existing = recurringByDow.get(dow);
+
+    try {
+      if (mode === 'default') {
+        if (!existing?.id) return;
+        await deleteRecurring({ id: existing.id, resource_id: resourceId } as any).unwrap();
+        toast.success(t('availability.recurring.messages.deleted'));
+        return;
+      }
+
+      await upsertRecurring({
+        id: existing?.id || undefined,
+        resource_id: resourceId,
+        dow,
+        is_active: mode === 'open',
+      } as any).unwrap();
+      toast.success(t('availability.recurring.messages.saved'));
+    } catch (err: any) {
+      toast.error(
+        err?.data?.error?.message ||
+          err?.message ||
+          t('availability.recurring.messages.saveFailed'),
+      );
+    }
+  };
+
   return (
     <>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <div className="text-sm font-semibold">
-            {t('ui_admin_wh_title', 'Haftalık Çalışma Saatleri')}
-          </div>
+          <div className="text-sm font-semibold">{t('availability.weekly.title')}</div>
           <div className="text-xs text-muted-foreground">
-            {t(
-              'ui_admin_wh_desc',
-              'Bu aralıklar günlük seans üretiminin kaynağıdır. (Seans dk + Ara dk)',
-            )}
+            {t('availability.weekly.description')}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           {busy ? (
             <Badge variant="secondary" className="text-xs">
-              {t('ui_admin_loading', 'Yükleniyor...')}
+              {t('availability.common.loading')}
             </Badge>
           ) : null}
 
           <Button variant="outline" size="sm" onClick={() => whQuery.refetch()} disabled={busy}>
-            {t('ui_admin_refresh', 'Yenile')}
+            {t('availability.header.actions.refresh')}
           </Button>
         </div>
       </div>
@@ -292,17 +331,15 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead style={{ width: 180 }}>{t('ui_admin_col_day', 'Gün')}</TableHead>
-              <TableHead style={{ width: 120 }}>{t('ui_admin_col_start', 'Başlangıç')}</TableHead>
-              <TableHead style={{ width: 120 }}>{t('ui_admin_col_end', 'Bitiş')}</TableHead>
-              <TableHead style={{ width: 120 }}>
-                {t('ui_admin_col_session', 'Seans (dk)')}
-              </TableHead>
-              <TableHead style={{ width: 120 }}>{t('ui_admin_col_break', 'Ara (dk)')}</TableHead>
-              <TableHead style={{ width: 110 }}>{t('ui_admin_col_capacity', 'Kapasite')}</TableHead>
-              <TableHead style={{ width: 90 }}>{t('ui_admin_col_active', 'Aktif')}</TableHead>
+              <TableHead style={{ width: 180 }}>{t('availability.weekly.columns.day')}</TableHead>
+              <TableHead style={{ width: 120 }}>{t('availability.weekly.columns.start')}</TableHead>
+              <TableHead style={{ width: 120 }}>{t('availability.weekly.columns.end')}</TableHead>
+              <TableHead style={{ width: 120 }}>{t('availability.weekly.columns.session')}</TableHead>
+              <TableHead style={{ width: 120 }}>{t('availability.weekly.columns.break')}</TableHead>
+              <TableHead style={{ width: 110 }}>{t('availability.weekly.columns.capacity')}</TableHead>
+              <TableHead style={{ width: 90 }}>{t('availability.weekly.columns.active')}</TableHead>
               <TableHead className="text-right" style={{ width: 260 }}>
-                {t('ui_admin_col_actions', 'İşlemler')}
+                {t('availability.list.columns.actions')}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -310,10 +347,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
             {whRows.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-sm text-muted-foreground">
-                  {t(
-                    'ui_admin_wh_empty',
-                    'Henüz çalışma aralığı yok. Aşağıdan yeni aralık ekleyebilirsin.',
-                  )}
+                  {t('availability.weekly.empty')}
                 </TableCell>
               </TableRow>
             ) : null}
@@ -443,12 +477,9 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
                         size="sm"
                         disabled={busy || !onEditDay}
                         onClick={() => handleEditDay(r)}
-                        title={t(
-                          'ui_admin_wh_edit_day_hint',
-                          'Bu günün günlük seanslarını düzenle',
-                        )}
+                        title={t('availability.weekly.actions.editDayHint')}
                       >
-                        {t('ui_admin_btn_edit', 'Düzenle')}
+                        {t('availability.weekly.actions.edit')}
                       </Button>
 
                       <Button
@@ -458,7 +489,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
                         disabled={busy}
                         onClick={() => void handleUpdate(r)}
                       >
-                        {t('ui_admin_btn_save', 'Kaydet')}
+                        {t('availability.weekly.actions.save')}
                       </Button>
 
                       <Button
@@ -468,7 +499,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
                         disabled={busy}
                         onClick={() => void handleDelete(r)}
                       >
-                        {t('ui_admin_btn_delete', 'Sil')}
+                        {t('availability.weekly.actions.delete')}
                       </Button>
                     </div>
                   </TableCell>
@@ -481,13 +512,11 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
 
       <Separator className="my-4" />
 
-      <div className="text-sm font-semibold mb-2">
-        {t('ui_admin_wh_add_title', 'Yeni Çalışma Aralığı Ekle')}
-      </div>
+      <div className="text-sm font-semibold mb-2">{t('availability.weekly.addTitle')}</div>
 
       <div className="grid gap-3 md:grid-cols-8">
         <div className="space-y-2 md:col-span-2">
-          <Label>{t('ui_admin_lbl_day', 'Gün')}</Label>
+          <Label>{t('availability.weekly.columns.day')}</Label>
           <Select
             value={String(newWh.dow)}
             onValueChange={(v) => setNewWh((p) => ({ ...p, dow: Number(v) }) as any)}
@@ -507,7 +536,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-1">
-          <Label>{t('ui_admin_lbl_start', 'Başlangıç')}</Label>
+          <Label>{t('availability.weekly.columns.start')}</Label>
           <Input
             type="time"
             value={String(newWh.start_time)}
@@ -517,7 +546,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-1">
-          <Label>{t('ui_admin_lbl_end', 'Bitiş')}</Label>
+          <Label>{t('availability.weekly.columns.end')}</Label>
           <Input
             type="time"
             value={String(newWh.end_time)}
@@ -527,7 +556,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-1">
-          <Label>{t('ui_admin_lbl_session', 'Seans (dk)')}</Label>
+          <Label>{t('availability.weekly.columns.session')}</Label>
           <Input
             type="number"
             value={Number(newWh.slot_minutes ?? 60)}
@@ -541,7 +570,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-1">
-          <Label>{t('ui_admin_lbl_break', 'Ara')}</Label>
+          <Label>{t('availability.weekly.columns.break')}</Label>
           <Input
             type="number"
             value={Number(newWh.break_minutes ?? 0)}
@@ -555,11 +584,11 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-1">
-          <Label>{t('ui_admin_lbl_capacity', 'Kapasite')}</Label>
+          <Label>{t('availability.weekly.columns.capacity')}</Label>
           <Input
             type="number"
             value={Number(newWh.capacity ?? 1)}
-            min={0}
+            min={1}
             max={999}
             onChange={(e) => setNewWh((p) => ({ ...p, capacity: Number(e.target.value) }) as any)}
             disabled={busy}
@@ -567,7 +596,7 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
         </div>
 
         <div className="space-y-2 md:col-span-1">
-          <Label>{t('ui_admin_lbl_active', 'Aktif')}</Label>
+          <Label>{t('availability.weekly.columns.active')}</Label>
           <div className="flex items-center gap-2">
             <Switch
               checked={toActiveBool(newWh.is_active)}
@@ -579,8 +608,60 @@ export const WeeklyWorkingHoursTab: React.FC<WeeklyWorkingHoursTabProps> = ({
 
         <div className="md:col-span-1 flex items-end justify-end">
           <Button type="button" variant="outline" size="sm" onClick={handleAdd} disabled={busy}>
-            {t('ui_admin_btn_add', 'Ekle')}
+            {t('availability.weekly.actions.add')}
           </Button>
+        </div>
+      </div>
+
+      <Separator className="my-4" />
+
+      <div className="space-y-3">
+        <div>
+          <div className="text-sm font-semibold">{t('availability.recurring.title')}</div>
+          <div className="text-xs text-muted-foreground">
+            {t('availability.recurring.description')}
+          </div>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          {DOWS.map((day) => {
+            const existing = recurringByDow.get(day.value);
+            const value = existing ? (existing.is_active ? 'open' : 'closed') : 'default';
+
+            return (
+              <div key={day.value} className="rounded-md border p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium">{day.label}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {value === 'default'
+                        ? t('availability.recurring.modes.defaultDesc')
+                        : value === 'closed'
+                          ? t('availability.recurring.modes.closedDesc')
+                          : t('availability.recurring.modes.openDesc')}
+                    </div>
+                  </div>
+
+                  <Select
+                    value={value}
+                    onValueChange={(next) =>
+                      void handleRecurringChange(day.value, next as 'default' | 'open' | 'closed')
+                    }
+                    disabled={busy}
+                  >
+                    <SelectTrigger className="w-[170px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">{t('availability.recurring.modes.default')}</SelectItem>
+                      <SelectItem value="open">{t('availability.recurring.modes.open')}</SelectItem>
+                      <SelectItem value="closed">{t('availability.recurring.modes.closed')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

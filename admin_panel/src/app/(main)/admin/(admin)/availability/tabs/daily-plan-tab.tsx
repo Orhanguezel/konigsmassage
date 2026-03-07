@@ -33,11 +33,13 @@ import type { AdminOverrideSlotPayload, PlannedSlotDto } from '@/integrations/sh
 import { hmToMinutes, minutesToHm, normalizeHm, normalizeYmd } from '@/integrations/shared';
 import {
   useListWorkingHoursAdminQuery,
+  useListRecurringOverridesAdminQuery,
   useGetDailyPlanAdminQuery,
   useGenerateSlotsAdminMutation,
   useOverrideDayAdminMutation,
   useOverrideSlotAdminMutation,
 } from '@/integrations/hooks';
+import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 const toStr = (v: unknown) => String(v ?? '').trim();
 const todayYmd = () => normalizeYmd(new Date().toISOString());
@@ -91,6 +93,7 @@ function DailyPlanHeader(props: {
   busy: boolean;
   effectiveDate: string;
   dayDow: number;
+  t: (key: string) => string;
   onChangeDate: (ymd: string) => void;
   onRefresh: () => void;
   onGenerate: () => void;
@@ -101,6 +104,7 @@ function DailyPlanHeader(props: {
     busy,
     effectiveDate,
     dayDow,
+    t,
     onChangeDate,
     onRefresh,
     onGenerate,
@@ -112,28 +116,27 @@ function DailyPlanHeader(props: {
     <>
       <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
         <div>
-          <div className="text-sm font-semibold">Günlük Plan</div>
+          <div className="text-sm font-semibold">{t('availability.daily.title')}</div>
           <div className="text-xs text-muted-foreground">
-            Seçilen güne göre haftalık plandan seanslar çıkarılır. DB’ye yazmak için “Slot Üret”
-            kullan.
+            {t('availability.daily.description')}
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {busy ? (
             <Badge variant="secondary" className="text-xs">
-              Yükleniyor...
+              {t('availability.common.loading')}
             </Badge>
           ) : null}
           <Button type="button" variant="outline" size="sm" onClick={onRefresh} disabled={busy}>
-            Yenile
+            {t('availability.header.actions.refresh')}
           </Button>
         </div>
       </div>
 
       <div className="grid gap-3 md:grid-cols-3">
         <div className="space-y-2">
-          <Label>Tarih</Label>
+          <Label>{t('availability.daily.fields.date')}</Label>
           <Input
             type="date"
             value={effectiveDate}
@@ -141,24 +144,24 @@ function DailyPlanHeader(props: {
             disabled={busy}
           />
           <div className="text-xs text-muted-foreground">
-            Gün: <strong>{dayDow}</strong> (1=Pt … 7=Pz)
+            {t('availability.daily.fields.dayOfWeek').replace('{dow}', String(dayDow))}
           </div>
         </div>
 
         <div className="md:col-span-2 flex flex-col gap-2 md:items-end">
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" size="sm" onClick={onGenerate} disabled={busy}>
-              Slot Üret
+              {t('availability.daily.actions.generate')}
             </Button>
             <Button type="button" variant="destructive" size="sm" onClick={onCloseDay} disabled={busy}>
-              Günü Kapat
+              {t('availability.daily.actions.closeDay')}
             </Button>
             <Button type="button" variant="outline" size="sm" onClick={onOpenDay} disabled={busy}>
-              Günü Aç
+              {t('availability.daily.actions.openDay')}
             </Button>
           </div>
           <div className="text-xs text-muted-foreground">
-            Not: Onay anında kapasite tekrar kontrol edilir (backend kuralı).
+            {t('availability.daily.notes.capacityCheck')}
           </div>
         </div>
       </div>
@@ -170,12 +173,13 @@ function DailyPlanHeader(props: {
 
 function PreviewSessionsTable(props: {
   busy: boolean;
+  t: (key: string) => string;
   whForDay: WhRow[];
   selectedWhId: string;
   onSelectWhId: (id: string) => void;
   preview: PreviewSession[];
 }) {
-  const { busy, whForDay, selectedWhId, onSelectWhId, preview } = props;
+  const { busy, t, whForDay, selectedWhId, onSelectWhId, preview } = props;
 
   const hasRanges = whForDay.length > 0;
   const hasPreview = preview.length > 0;
@@ -183,24 +187,24 @@ function PreviewSessionsTable(props: {
   return (
     <>
       <div className="mb-2">
-        <div className="text-sm font-semibold">Seans Önizleme (Haftalık Plandan)</div>
+        <div className="text-sm font-semibold">{t('availability.daily.preview.title')}</div>
         <div className="text-xs text-muted-foreground">
-          Önizleme sadece UI içindir. Public saatler için DB planı doldurmak gerekir.
+          {t('availability.daily.preview.description')}
         </div>
       </div>
 
       {!hasRanges ? (
         <div className="rounded-md border border-muted bg-muted/40 px-3 py-2 text-sm">
-          Bu gün için aktif haftalık çalışma aralığı yok. (DOW eşleşmiyor veya aralık pasif)
+          {t('availability.daily.preview.noRanges')}
         </div>
       ) : (
         <>
           <div className="grid gap-2 md:grid-cols-2 mb-2">
             <div className="space-y-2">
-              <Label>Çalışma Aralığı</Label>
+              <Label>{t('availability.daily.preview.rangeLabel')}</Label>
               <Select value={selectedWhId} onValueChange={onSelectWhId} disabled={busy}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Aralık seçin" />
+                  <SelectValue placeholder={t('availability.daily.preview.rangePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {whForDay.map((wh) => (
@@ -212,27 +216,27 @@ function PreviewSessionsTable(props: {
                 </SelectContent>
               </Select>
               <div className="text-xs text-muted-foreground">
-                Aynı gün içinde birden fazla aralık varsa, günlük seansları aralık bazında yönet.
+                {t('availability.daily.preview.rangeHelp')}
               </div>
             </div>
           </div>
 
           {!selectedWhId ? (
             <div className="rounded-md border border-muted bg-muted/40 px-3 py-2 text-sm">
-              Önizleme için bir aralık seç.
+              {t('availability.daily.preview.selectRange')}
             </div>
           ) : !hasPreview ? (
             <div className="rounded-md border border-muted bg-muted/40 px-3 py-2 text-sm">
-              Seçilen aralık için seans üretilemedi. (Saatler/slot dk/ara dk kontrol et)
+              {t('availability.daily.preview.noPreview')}
             </div>
           ) : (
             <div className="overflow-x-auto mb-3">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead style={{ width: 120 }}>Saat</TableHead>
-                    <TableHead style={{ width: 120 }}>Kapasite</TableHead>
-                    <TableHead>Aralık</TableHead>
+                    <TableHead style={{ width: 120 }}>{t('availability.daily.columns.time')}</TableHead>
+                    <TableHead style={{ width: 120 }}>{t('availability.daily.columns.capacity')}</TableHead>
+                    <TableHead>{t('availability.daily.columns.range')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -257,33 +261,34 @@ function PreviewSessionsTable(props: {
 
 function DbPlanTable(props: {
   busy: boolean;
+  t: (key: string) => string;
   planRows: PlannedSlotDto[];
   onToggle: (row: PlannedSlotDto) => void;
 }) {
-  const { busy, planRows, onToggle } = props;
+  const { busy, t, planRows, onToggle } = props;
   const hasPlan = planRows.length > 0;
 
   return (
     <>
       <div className="mb-2">
-        <div className="text-sm font-semibold">DB Plan (Slot Kayıtları)</div>
-        <div className="text-xs text-muted-foreground">Public “müsait saatler” buradan okunur.</div>
+        <div className="text-sm font-semibold">{t('availability.daily.dbPlan.title')}</div>
+        <div className="text-xs text-muted-foreground">{t('availability.daily.dbPlan.description')}</div>
       </div>
 
       {!hasPlan ? (
         <div className="rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-700">
-          DB plan boş. Önizleme görüyorsan “Slot Üret” ile DB’ye yazdırmalısın.
+          {t('availability.daily.dbPlan.empty')}
         </div>
       ) : (
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead style={{ width: 110 }}>Saat</TableHead>
-                <TableHead style={{ width: 140 }}>Kapasite</TableHead>
-                <TableHead style={{ width: 140 }}>Durum</TableHead>
+                <TableHead style={{ width: 110 }}>{t('availability.daily.columns.time')}</TableHead>
+                <TableHead style={{ width: 140 }}>{t('availability.daily.columns.capacity')}</TableHead>
+                <TableHead style={{ width: 140 }}>{t('availability.daily.columns.status')}</TableHead>
                 <TableHead className="text-right" style={{ width: 160 }}>
-                  İşlem
+                  {t('availability.list.columns.actions')}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -302,17 +307,17 @@ function DbPlanTable(props: {
                     </TableCell>
                     <TableCell className="text-sm">
                       {formatCapacity(cap, reserved)}
-                      {cap > 0 ? <span className="text-xs text-muted-foreground ml-2">(dolu/toplam)</span> : null}
+                      {cap > 0 ? <span className="text-xs text-muted-foreground ml-2">{t('availability.daily.capacityLegend')}</span> : null}
                     </TableCell>
                     <TableCell className="text-nowrap">
                       {isActive ? (
                         available ? (
-                          <Badge className="bg-emerald-100 text-emerald-700">Açık</Badge>
+                          <Badge className="bg-emerald-100 text-emerald-700">{t('availability.daily.statusOpen')}</Badge>
                         ) : (
-                          <Badge className="bg-yellow-100 text-yellow-700">Dolu</Badge>
+                          <Badge className="bg-yellow-100 text-yellow-700">{t('availability.daily.statusFull')}</Badge>
                         )
                       ) : (
-                        <Badge variant="secondary">Kapalı</Badge>
+                        <Badge variant="secondary">{t('availability.daily.statusClosed')}</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right text-nowrap">
@@ -323,7 +328,7 @@ function DbPlanTable(props: {
                         onClick={() => onToggle(p)}
                         disabled={busy}
                       >
-                        {isActive ? 'Kapat' : 'Aç'}
+                        {isActive ? t('availability.daily.actions.closeSlot') : t('availability.daily.actions.openSlot')}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -335,10 +340,10 @@ function DbPlanTable(props: {
       )}
 
       <div className="mt-3 rounded-md border border-muted bg-muted/40 px-3 py-2 text-sm">
-        <div className="font-semibold mb-1">Net Kural</div>
-        <div>Haftalık plan: seans üretiminin kaynağı (UI önizleme buradan).</div>
-        <div>DB plan: public’in gerçek kaynağı (müsait saatler buradan seçilir).</div>
-        <div>Plan boşsa public’te saat görünmez. Bu yüzden üretim şart.</div>
+        <div className="font-semibold mb-1">{t('availability.daily.rules.title')}</div>
+        <div>{t('availability.daily.rules.weekly')}</div>
+        <div>{t('availability.daily.rules.db')}</div>
+        <div>{t('availability.daily.rules.empty')}</div>
       </div>
     </>
   );
@@ -351,6 +356,7 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
   initialDow,
   initialWhId,
 }) => {
+  const t = useAdminT();
   const [selectedDate, setSelectedDate] = useState<string>(() => todayYmd());
   const effectiveDate = useMemo(() => normalizeYmd(selectedDate) || todayYmd(), [selectedDate]);
   const dayDow = useMemo(() => getDow1to7(effectiveDate), [effectiveDate]);
@@ -361,6 +367,10 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
     [hasResourceId, resourceId],
   );
   const whQuery = useListWorkingHoursAdminQuery(
+    whArgs as any,
+    { skip: !whArgs, refetchOnMountOrArgChange: true } as any,
+  );
+  const recurringQuery = useListRecurringOverridesAdminQuery(
     whArgs as any,
     { skip: !whArgs, refetchOnMountOrArgChange: true } as any,
   );
@@ -379,14 +389,27 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
     }));
   }, [whQuery.data]);
 
+  const recurringByDow = useMemo(() => {
+    const rows: any[] = (recurringQuery.data as any) ?? [];
+    const out = new Map<number, boolean>();
+    for (const row of rows) {
+      out.set(Number(row?.dow ?? 0), Number(row?.is_active ?? 0) === 1);
+    }
+    return out;
+  }, [recurringQuery.data]);
+
+  const effectiveDow = Number(initialDow ?? dayDow);
+  const recurringClosed = recurringByDow.get(effectiveDow) === false;
+
   // Active WH ranges for this day
   const whForDay = useMemo(() => {
-    const d = Number(initialDow ?? dayDow);
+    if (recurringClosed) return [];
+    const d = effectiveDow;
     return whRows
       .filter((r) => r.is_active)
       .filter((r) => Number(r.dow) === d)
       .sort((a, b) => hmToMinutes(a.start_time) - hmToMinutes(b.start_time));
-  }, [whRows, dayDow, initialDow]);
+  }, [whRows, effectiveDow, recurringClosed]);
 
   // Selected WH for preview
   const [selectedWhId, setSelectedWhId] = useState<string>('');
@@ -465,6 +488,8 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
     disabled ||
     whQuery.isLoading ||
     whQuery.isFetching ||
+    recurringQuery.isLoading ||
+    recurringQuery.isFetching ||
     planQuery.isLoading ||
     planQuery.isFetching ||
     isGenerating ||
@@ -479,13 +504,13 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
         date: effectiveDate,
       } as any).unwrap();
       toast.success(
-        `Slot üretimi tamam. Oluşan=${(res as any)?.created ?? 0}, Plan=${
-          (res as any)?.planned ?? 0
-        }`,
+        t('availability.daily.messages.generateSuccess')
+          .replace('{created}', String((res as any)?.created ?? 0))
+          .replace('{planned}', String((res as any)?.planned ?? 0)),
       );
       await planQuery.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Slot üretimi başarısız.');
+      toast.error(err?.data?.error?.message || err?.message || t('availability.daily.messages.generateFailed'));
     }
   };
 
@@ -497,10 +522,12 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
         date: effectiveDate,
         is_active: isActive,
       } as any).unwrap();
-      toast.success(`Gün güncellendi. updated=${(res as any)?.updated ?? 0}`);
+      toast.success(
+        t('availability.daily.messages.dayUpdated').replace('{updated}', String((res as any)?.updated ?? 0)),
+      );
       await planQuery.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Gün override edilemedi.');
+      toast.error(err?.data?.error?.message || err?.message || t('availability.daily.messages.dayUpdateFailed'));
     }
   };
 
@@ -514,7 +541,7 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
 
     if (!nextActive && reserved > 0) {
       const ok = window.confirm(
-        `Bu slotta ${reserved} onaylı rezervasyon var.\nSlotu kapatırsan bu randevular için aksiyon gerekebilir.\n\nDevam edilsin mi?`,
+        t('availability.daily.messages.reservationWarning').replace('{reserved}', String(reserved)),
       );
       if (!ok) return;
     }
@@ -528,10 +555,10 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
 
     try {
       await overrideSlot(payload as any).unwrap();
-      toast.success('Slot güncellendi.');
+      toast.success(t('availability.daily.messages.slotUpdated'));
       await planQuery.refetch();
     } catch (err: any) {
-      toast.error(err?.data?.error?.message || err?.message || 'Slot güncellenemedi.');
+      toast.error(err?.data?.error?.message || err?.message || t('availability.daily.messages.slotUpdateFailed'));
     }
   };
 
@@ -541,6 +568,7 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
         busy={busy}
         effectiveDate={effectiveDate}
         dayDow={dayDow}
+        t={t}
         onChangeDate={(v) => setSelectedDate(normalizeYmd(v) || todayYmd())}
         onRefresh={() => planQuery.refetch()}
         onGenerate={handleGenerate}
@@ -550,13 +578,20 @@ export const DailyPlanTab: React.FC<DailyPlanTabProps> = ({
 
       <PreviewSessionsTable
         busy={busy}
+        t={t}
         whForDay={whForDay}
         selectedWhId={selectedWhId}
         onSelectWhId={setSelectedWhId}
         preview={preview}
       />
 
-      <DbPlanTable busy={busy} planRows={planRows} onToggle={handleToggleSlot} />
+      {recurringClosed ? (
+        <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          {t('availability.recurring.preview.closedByRecurring')}
+        </div>
+      ) : null}
+
+      <DbPlanTable busy={busy} t={t} planRows={planRows} onToggle={handleToggleSlot} />
     </>
   );
 };

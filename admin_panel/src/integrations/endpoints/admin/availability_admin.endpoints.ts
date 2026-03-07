@@ -7,7 +7,9 @@ import type {
   AdminGenerateSlotsPayload,
   AdminGenerateSlotsResult,
   AdminListSlotsQuery,
+  AdminListRecurringOverridesQuery,
   AdminListWorkingHoursQuery,
+  AdminUpsertRecurringOverridePayload,
   AdminOverrideDayPayload,
   AdminOverrideDayResult,
   AdminOverrideSlotPayload,
@@ -16,17 +18,70 @@ import type {
   AdminSlotAvailabilityQuery,
   AdminUpsertWorkingHourPayload,
   PlannedSlotDto,
+  ResourceRecurringOverrideDto,
   ResourceSlotDto,
   ResourceWorkingHourDto,
   SlotAvailabilityDto,
 } from '@/integrations/shared';
 
+const RECURRING_BASE = '/admin/resource-recurring-overrides';
 const WH_BASE = '/admin/resource-working-hours';
 const SLOTS_BASE = '/admin/resource-slots';
 
 export const availabilityAdminApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     /* -------------------- working hours -------------------- */
+
+    listRecurringOverridesAdmin: build.query<
+      ResourceRecurringOverrideDto[],
+      AdminListRecurringOverridesQuery
+    >({
+      query: (params) => ({
+        url: `${RECURRING_BASE}`,
+        method: 'GET',
+        params,
+      }),
+      providesTags: (result, error, arg) =>
+        result
+          ? [
+              ...result.map((r) => ({ type: 'AvailabilityRecurring' as const, id: r.id })),
+              { type: 'AvailabilityRecurring' as const, id: `LIST:${arg.resource_id}` },
+            ]
+          : [{ type: 'AvailabilityRecurring' as const, id: `LIST:${arg.resource_id}` }],
+    }),
+
+    upsertRecurringOverrideAdmin: build.mutation<
+      ResourceRecurringOverrideDto | null,
+      AdminUpsertRecurringOverridePayload
+    >({
+      query: (body) => ({
+        url: `${RECURRING_BASE}`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: 'AvailabilityRecurring' as const, id: arg.id ?? 'NEW' },
+        { type: 'AvailabilityRecurring' as const, id: `LIST:${arg.resource_id}` },
+        { type: 'AvailabilityPlan' as const, id: 'PLAN' },
+      ],
+    }),
+
+    deleteRecurringOverrideAdmin: build.mutation<
+      { ok: boolean } | void,
+      { id: string; resource_id?: string }
+    >({
+      query: ({ id }) => ({
+        url: `${RECURRING_BASE}/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: 'AvailabilityRecurring' as const, id: arg.id },
+        ...(arg.resource_id
+          ? [{ type: 'AvailabilityRecurring' as const, id: `LIST:${arg.resource_id}` }]
+          : []),
+        { type: 'AvailabilityPlan' as const, id: 'PLAN' },
+      ],
+    }),
 
     /** LIST — GET /admin/resource-working-hours?resource_id=... */
     listWorkingHoursAdmin: build.query<ResourceWorkingHourDto[], AdminListWorkingHoursQuery>({
@@ -179,6 +234,9 @@ export const availabilityAdminApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useListRecurringOverridesAdminQuery,
+  useUpsertRecurringOverrideAdminMutation,
+  useDeleteRecurringOverrideAdminMutation,
   useListWorkingHoursAdminQuery,
   useUpsertWorkingHourAdminMutation,
   useDeleteWorkingHourAdminMutation,

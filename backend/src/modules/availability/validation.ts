@@ -38,6 +38,10 @@ export const adminListWorkingHoursQuerySchema = z.object({
   resource_id: uuid36Schema,
 });
 
+export const adminListRecurringOverridesQuerySchema = z.object({
+  resource_id: uuid36Schema,
+});
+
 export const adminUpsertWorkingHourBodySchema = z
   .object({
     id: uuid36Schema.optional(),
@@ -97,5 +101,12 @@ export const adminOverrideSlotBodySchema = z.object({
   resource_id: uuid36Schema,
   date: ymdSchema,
   time: hmSchema,
+  is_active: z.union([z.boolean(), z.number(), z.string()]).transform((v) => toActive01(v) ?? 1),
+});
+
+export const adminUpsertRecurringOverrideBodySchema = z.object({
+  id: uuid36Schema.optional(),
+  resource_id: uuid36Schema,
+  dow: z.coerce.number().int().min(1).max(7),
   is_active: z.union([z.boolean(), z.number(), z.string()]).transform((v) => toActive01(v) ?? 1),
 });

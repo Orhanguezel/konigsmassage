@@ -14,6 +14,16 @@ export interface ResourceRowDto {
   external_ref_id?: string | null;
   created_at: string | Date;
   updated_at: string | Date;
+  i18n?: ResourceI18nDto[];
+}
+
+export interface ResourceI18nDto {
+  id?: string;
+  resource_id?: string;
+  locale: string;
+  title: string;
+  created_at?: string | Date;
+  updated_at?: string | Date;
 }
 
 export interface ResourceAdminListItemDto {
@@ -42,6 +52,7 @@ export interface ResourceCreatePayload {
   is_active?: boolean;
   capacity?: number;
   external_ref_id?: string | null;
+  i18n?: ResourceI18nDto[];
 }
 
 export interface ResourceUpdatePayload {
@@ -50,6 +61,7 @@ export interface ResourceUpdatePayload {
   is_active?: boolean;
   capacity?: number;
   external_ref_id?: string | null;
+  i18n?: ResourceI18nDto[];
 }
 
 // Normalizer

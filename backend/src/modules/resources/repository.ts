@@ -5,17 +5,20 @@
 // =============================================================
 
 import { randomUUID } from 'crypto';
-import { and, asc, desc, eq, like, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, like, or, sql, type SQL } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/mysql-core';
 import { db } from '@/db/client';
-import { resources, type ResourceRow } from './schema';
+import { resources, resourcesI18n, type ResourceRow } from './schema';
 import type { AdminListResourcesQuery } from './validation';
 
 import { toActive01, safeTrim } from '@/modules/_shared';
+import { buildLocaleFallbackChain, getDefaultLocale } from '@/modules/siteSettings/service';
 
 import type {
   ResourceAdminCreateInput,
   ResourceAdminUpdatePatch,
   ResourceAdminListItemDTO,
+  ResourceI18nDTO,
   ResourcePublicItemDTO,
   ResourceType,
 } from '@/modules/_shared';
@@ -42,6 +45,78 @@ function coerceCapacity(v: unknown): number {
   return x >= 1 ? x : 1;
 }
 
+function normalizeLocale(v: unknown): string {
+  return safeTrim(v).toLowerCase();
+}
+
+function pickCanonicalTitle(args: {
+  explicit?: unknown;
+  i18n?: Array<{ locale: string; title: string }> | undefined;
+  defaultLocale: string;
+}): string {
+  const explicit = safeTrim(args.explicit);
+  if (explicit) return explicit;
+  const list = Array.isArray(args.i18n) ? args.i18n : [];
+  const wanted = normalizeLocale(args.defaultLocale) || 'de';
+  const preferred =
+    list.find((row) => normalizeLocale(row.locale) === wanted && safeTrim(row.title)) ??
+    list.find((row) => normalizeLocale(row.locale) === 'de' && safeTrim(row.title)) ??
+    list.find((row) => safeTrim(row.title));
+  return safeTrim(preferred?.title);
+}
+
+function normalizeI18nInput(rows?: Array<{ locale: string; title: string }>): Array<{ locale: string; title: string }> {
+  if (!Array.isArray(rows)) return [];
+  const map = new Map<string, string>();
+  for (const row of rows) {
+    const locale = normalizeLocale(row?.locale);
+    const title = safeTrim(row?.title);
+    if (!locale || !title) continue;
+    map.set(locale, title);
+  }
+  return Array.from(map.entries()).map(([locale, title]) => ({ locale, title }));
+}
+
+async function listResourceI18n(resourceIds: string[]): Promise<ResourceI18nDTO[]> {
+  const ids = resourceIds.map((id) => safeTrim(id)).filter(Boolean);
+  if (!ids.length) return [];
+
+  const rows = await db
+    .select()
+    .from(resourcesI18n)
+    .where(inArray(resourcesI18n.resource_id, ids));
+
+  return rows.map((row) => ({
+    id: String(row.id),
+    resource_id: String(row.resource_id),
+    locale: normalizeLocale(row.locale),
+    title: safeTrim(row.title),
+    created_at: (row as any).created_at,
+    updated_at: (row as any).updated_at,
+  }));
+}
+
+async function replaceResourceI18n(resourceId: string, rows?: Array<{ locale: string; title: string }>) {
+  const rid = safeTrim(resourceId);
+  if (!rid) return;
+
+  const normalized = normalizeI18nInput(rows);
+  await db.delete(resourcesI18n).where(eq(resourcesI18n.resource_id, rid));
+  if (!normalized.length) return;
+
+  const now = new Date() as any;
+  await db.insert(resourcesI18n).values(
+    normalized.map((row) => ({
+      id: randomUUID(),
+      resource_id: rid,
+      locale: row.locale,
+      title: row.title,
+      created_at: now,
+      updated_at: now,
+    })) as any,
+  );
+}
+
 function mapSort(q: AdminListResourcesQuery) {
   const sort = q.sort || 'created_at';
   const order = (q.order || 'desc').toLowerCase() === 'asc' ? 'asc' : 'desc';
@@ -63,6 +138,8 @@ function mapSort(q: AdminListResourcesQuery) {
 export async function listResourcesAdmin(
   q: AdminListResourcesQuery,
 ): Promise<ResourceAdminListItemDTO[]> {
+  const defaultLocale = normalizeLocale(await getDefaultLocale(null)) || 'de';
+  const iDef = alias(resourcesI18n, 'ri_def');
   const where: SQL[] = [];
 
   if (q.type) where.push(eq(resources.type, safeTrim(q.type)));
@@ -74,7 +151,12 @@ export async function listResourcesAdmin(
 
   if (q.q) {
     const s = `%${safeTrim(q.q)}%`;
-    where.push(like(resources.title, s));
+    where.push(
+      or(
+        like(resources.title, s),
+        like(iDef.title, s),
+      ) as SQL,
+    );
   }
 
   const { col, order } = mapSort(q);
@@ -83,7 +165,7 @@ export async function listResourcesAdmin(
     .select({
       id: resources.id,
       type: resources.type,
-      title: resources.title,
+      title: sql<string>`COALESCE(${iDef.title}, ${resources.title})`.as('title'),
       capacity: resources.capacity,
       external_ref_id: resources.external_ref_id,
       is_active: resources.is_active,
@@ -91,6 +173,7 @@ export async function listResourcesAdmin(
       updated_at: resources.updated_at,
     })
     .from(resources)
+    .leftJoin(iDef, and(eq(iDef.resource_id, resources.id), eq(iDef.locale, defaultLocale)))
     .limit(q.limit)
     .offset(q.offset)
     .orderBy(order === 'asc' ? asc(col) : desc(col));
@@ -123,14 +206,21 @@ export async function getResourceByIdAdmin(id: string): Promise<ResourceRow | nu
   if (!rid) return null;
 
   const [row] = await db.select().from(resources).where(eq(resources.id, rid)).limit(1);
-  return (row ?? null) as ResourceRow | null;
+  if (!row) return null;
+  const i18n = await listResourceI18n([rid]);
+  return { ...(row as any), i18n } as ResourceRow | null;
 }
 
 export async function createResourceAdmin(args: ResourceAdminCreateInput) {
   const id = randomUUID();
+  const defaultLocale = normalizeLocale(await getDefaultLocale(null)) || 'de';
 
   const type = coerceResourceType(args.type);
-  const title = safeTrim(args.title);
+  const title = pickCanonicalTitle({
+    explicit: args.title,
+    i18n: args.i18n,
+    defaultLocale,
+  });
   const capacity = coerceCapacity(args.capacity);
 
   await db.insert(resources).values({
@@ -141,6 +231,7 @@ export async function createResourceAdmin(args: ResourceAdminCreateInput) {
     external_ref_id: args.external_ref_id ? safeTrim(args.external_ref_id) : null,
     is_active: typeof args.is_active === 'number' ? args.is_active : 1,
   } as any);
+  await replaceResourceI18n(id, normalizeI18nInput(args.i18n).length ? args.i18n : [{ locale: defaultLocale, title }]);
 
   return await getResourceByIdAdmin(id);
 }
@@ -148,6 +239,7 @@ export async function createResourceAdmin(args: ResourceAdminCreateInput) {
 export async function updateResourceByIdAdmin(id: string, patch: ResourceAdminUpdatePatch) {
   const rid = safeTrim(id);
   if (!rid) return null;
+  const defaultLocale = normalizeLocale(await getDefaultLocale(null)) || 'de';
 
   const clean: any = {};
 
@@ -170,6 +262,16 @@ export async function updateResourceByIdAdmin(id: string, patch: ResourceAdminUp
     const a = Number((patch as any).is_active) === 1 ? 1 : 0;
     clean.is_active = a;
   }
+  if (Object.prototype.hasOwnProperty.call(patch, 'i18n')) {
+    const normalized = normalizeI18nInput((patch as any).i18n);
+    const canonical = pickCanonicalTitle({
+      explicit: clean.title,
+      i18n: normalized,
+      defaultLocale,
+    });
+    if (canonical) clean.title = canonical;
+    await replaceResourceI18n(rid, normalized);
+  }
 
   // no-op guard
   if (!Object.keys(clean).length) return await getResourceByIdAdmin(rid);
@@ -190,7 +292,17 @@ export async function deleteResourceByIdAdmin(id: string) {
 
 export async function listResourcesPublic(args?: {
   type?: string;
+  locale?: string;
 }): Promise<ResourcePublicItemDTO[]> {
+  const locale = normalizeLocale(args?.locale) || 'de';
+  const [defaultLocale, fallbacks] = await Promise.all([
+    getDefaultLocale(null),
+    buildLocaleFallbackChain({ requested: locale }),
+  ]);
+  const resolvedDefault = normalizeLocale(defaultLocale) || 'de';
+  const resolvedRequested = fallbacks.find((loc) => loc !== '*' && normalizeLocale(loc)) || locale;
+  const iReq = alias(resourcesI18n, 'ri_req');
+  const iDef = alias(resourcesI18n, 'ri_def');
   const where: SQL[] = [eq(resources.is_active, 1)];
 
   if (args?.type) where.push(eq(resources.type, safeTrim(args.type)));
@@ -199,13 +311,15 @@ export async function listResourcesPublic(args?: {
     .select({
       id: resources.id,
       type: resources.type,
-      title: resources.title,
+      title: sql<string>`COALESCE(${iReq.title}, ${iDef.title}, ${resources.title})`.as('title'),
       capacity: resources.capacity,
       external_ref_id: resources.external_ref_id,
     })
     .from(resources)
+    .leftJoin(iReq, and(eq(iReq.resource_id, resources.id), eq(iReq.locale, resolvedRequested)))
+    .leftJoin(iDef, and(eq(iDef.resource_id, resources.id), eq(iDef.locale, resolvedDefault)))
     .where(and(...where))
-    .orderBy(asc(resources.title));
+    .orderBy(asc(sql`COALESCE(${iReq.title}, ${iDef.title}, ${resources.title})`));
 
   return rows.map((r) => {
     const title = safeTrim(r.title);

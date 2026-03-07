@@ -63,12 +63,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ServiceDetailPage({ params }: PageProps) {
   const p = (await params) as { locale: string; slug: string };
+  const locale = safeStr(p?.locale) || 'de';
   const slug = safeStr(p?.slug);
+  const service = slug ? await fetchServicePublicBySlug({ slug, locale }) : null;
+  const title = safeStr(service?.name) || titleFromSlug(slug, 'Service Detail');
 
   return (
     <>
-      <Banner title={titleFromSlug(slug, 'Service Detail')} />
-      <ServiceDetail />
+      <Banner title={title} />
+      <ServiceDetail forcedSlug={slug} />
     </>
   );
 }

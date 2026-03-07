@@ -3,7 +3,7 @@
 // FINAL — LOCKED — Resources schema (generic + capacity)
 // =============================================================
 
-import { mysqlTable, char, varchar, tinyint, datetime, int, index } from 'drizzle-orm/mysql-core';
+import { mysqlTable, char, varchar, tinyint, datetime, int, index, uniqueIndex } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
 
 
@@ -45,3 +45,29 @@ export const resources = mysqlTable(
 
 export type ResourceRow = typeof resources.$inferSelect;
 export type NewResourceRow = typeof resources.$inferInsert;
+
+export const resourcesI18n = mysqlTable(
+  'resources_i18n',
+  {
+    id: char('id', { length: 36 }).primaryKey().notNull(),
+    resource_id: char('resource_id', { length: 36 }).notNull(),
+    locale: varchar('locale', { length: 10 }).notNull(),
+    title: varchar('title', { length: 190 }).notNull(),
+    created_at: datetime('created_at', { fsp: 3 })
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP(3)`),
+    updated_at: datetime('updated_at', { fsp: 3 })
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP(3)`)
+      .$onUpdateFn(() => new Date()),
+  },
+  (t) => [
+    uniqueIndex('ux_resources_i18n_unique').on(t.resource_id, t.locale),
+    index('resources_i18n_resource_idx').on(t.resource_id),
+    index('resources_i18n_locale_idx').on(t.locale),
+    index('resources_i18n_title_idx').on(t.title),
+  ],
+);
+
+export type ResourceI18nRow = typeof resourcesI18n.$inferSelect;
+export type NewResourceI18nRow = typeof resourcesI18n.$inferInsert;

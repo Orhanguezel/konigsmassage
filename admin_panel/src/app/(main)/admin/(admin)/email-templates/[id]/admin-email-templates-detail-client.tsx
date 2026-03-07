@@ -14,7 +14,7 @@ import * as React from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { ArrowLeft, Code2, Loader2, Mail, Save, Trash2 } from 'lucide-react';
+import { ArrowLeft, Code2, Eye, EyeOff, Loader2, Mail, Save, SendHorizonal, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { AdminLocaleSelect } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
@@ -42,6 +42,7 @@ import {
   useDeleteEmailTemplateAdminMutation,
   useGetEmailTemplateAdminQuery,
   useUpdateEmailTemplateAdminMutation,
+  useSendTestEmailAdminMutation,
 } from '@/integrations/hooks';
 import type {
   EmailTemplateAdminCreatePayload,
@@ -146,6 +147,12 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
   const [createTemplate, { isLoading: isCreating }] = useCreateEmailTemplateAdminMutation();
   const [updateTemplate, { isLoading: isUpdating }] = useUpdateEmailTemplateAdminMutation();
   const [deleteTemplate, { isLoading: isDeleting }] = useDeleteEmailTemplateAdminMutation();
+  const [sendTestEmail, { isLoading: isSendingTest }] = useSendTestEmailAdminMutation();
+
+  // Preview & test send state
+  const [showPreview, setShowPreview] = React.useState(false);
+  const [testEmail, setTestEmail] = React.useState('');
+  const [showTestSend, setShowTestSend] = React.useState(false);
 
   // Form state
   const [formData, setFormData] = React.useState<FormData>({
@@ -233,7 +240,24 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
     [existingItem?.translations, formData.locale],
   );
 
-  const busy = isCreating || isUpdating || isDeleting || loadingItem;
+  const busy = isCreating || isUpdating || isDeleting || loadingItem || isSendingTest;
+
+  const handleSendTest = async () => {
+    if (!testEmail.trim() || !testEmail.includes('@')) {
+      toast.error(t('admin.emailTemplates.detail.testSend.invalidEmail'));
+      return;
+    }
+    try {
+      await sendTestEmail({
+        id: normalizedId,
+        to: testEmail.trim(),
+        locale: formData.locale,
+      }).unwrap();
+      toast.success(t('admin.emailTemplates.detail.testSend.sent'));
+    } catch (err) {
+      toast.error(getErrMsg(err, t('admin.emailTemplates.detail.testSend.failed')));
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -516,31 +540,118 @@ export default function AdminEmailTemplatesDetailClient({ id }: { id: string }) 
         {/* Section 3: Content */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">
-              {t('admin.emailTemplates.detail.sections.content')}
-            </CardTitle>
-            <CardDescription>
-              {t('admin.emailTemplates.detail.sections.contentDescription')}
-            </CardDescription>
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-1.5">
+                <CardTitle className="text-base">
+                  {t('admin.emailTemplates.detail.sections.content')}
+                </CardTitle>
+                <CardDescription>
+                  {t('admin.emailTemplates.detail.sections.contentDescription')}
+                </CardDescription>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPreview((p) => !p)}
+                className="gap-2 shrink-0"
+              >
+                {showPreview ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                {showPreview
+                  ? t('admin.emailTemplates.detail.preview.hideButton')
+                  : t('admin.emailTemplates.detail.preview.showButton')}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Content */}
-            <div className="space-y-2">
-              <Label htmlFor="content" className="text-sm">
-                {t('admin.emailTemplates.detail.fields.contentLabel')}{' '}
-                <span className="text-destructive">*</span>
-              </Label>
-              <Textarea
-                id="content"
-                value={formData.content}
-                onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
-                placeholder={t('admin.emailTemplates.detail.fields.contentPlaceholder')}
-                disabled={busy}
-                rows={12}
-                required
-                className="font-mono text-xs"
-              />
+            {/* Content editor + preview */}
+            <div className={showPreview ? 'grid gap-4 lg:grid-cols-2' : ''}>
+              <div className="space-y-2">
+                <Label htmlFor="content" className="text-sm">
+                  {t('admin.emailTemplates.detail.fields.contentLabel')}{' '}
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="content"
+                  value={formData.content}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
+                  placeholder={t('admin.emailTemplates.detail.fields.contentPlaceholder')}
+                  disabled={busy}
+                  rows={showPreview ? 20 : 12}
+                  required
+                  className="font-mono text-xs"
+                />
+              </div>
+
+              {showPreview && (
+                <div className="space-y-2">
+                  <Label className="text-sm">
+                    {t('admin.emailTemplates.detail.preview.title')}
+                  </Label>
+                  <div className="rounded-md border bg-white">
+                    <iframe
+                      title="Email Preview"
+                      srcDoc={formData.content || '<p style="color:#999;padding:20px;">No content</p>'}
+                      className="w-full border-0"
+                      style={{ minHeight: showPreview ? 420 : 300 }}
+                      sandbox=""
+                    />
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Test Send */}
+            {!isNew && (
+              <div className="space-y-3 rounded-md border p-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">
+                    {t('admin.emailTemplates.detail.testSend.title')}
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowTestSend((p) => !p)}
+                  >
+                    {showTestSend
+                      ? t('admin.emailTemplates.detail.testSend.hideButton')
+                      : t('admin.emailTemplates.detail.testSend.showButton')}
+                  </Button>
+                </div>
+                {showTestSend && (
+                  <div className="flex items-end gap-2">
+                    <div className="flex-1 space-y-1">
+                      <Label htmlFor="test-email" className="text-xs text-muted-foreground">
+                        {t('admin.emailTemplates.detail.testSend.emailLabel')}
+                      </Label>
+                      <Input
+                        id="test-email"
+                        type="email"
+                        value={testEmail}
+                        onChange={(e) => setTestEmail(e.target.value)}
+                        placeholder={t('admin.emailTemplates.detail.testSend.emailPlaceholder')}
+                        disabled={isSendingTest}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={handleSendTest}
+                      disabled={isSendingTest || !testEmail.trim()}
+                      className="gap-2"
+                    >
+                      {isSendingTest ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <SendHorizonal className="size-4" />
+                      )}
+                      {t('admin.emailTemplates.detail.testSend.sendButton')}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 

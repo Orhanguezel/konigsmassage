@@ -800,6 +800,40 @@
     "dashboard": {
       "title": "Özet Paneli",
       "subtitle": "Sistemdeki kayıtların özet görünümü",
+      "analytics": {
+        "subtitle": "Rezervasyon, gelir trendi ve hizmet performansı özeti.",
+        "ranges": {
+          "7d": "Son 7 gün",
+          "30d": "Son 30 gün",
+          "90d": "Son 90 gün"
+        },
+        "kpi": {
+          "bookings": "Rezervasyon",
+          "confirmed": "Onaylanan",
+          "revenue": "Gelir",
+          "reservedSlots": "Rezerve Slot"
+        },
+        "revenueChart": {
+          "title": "Gelir Trendi",
+          "description": "İptal edilmemiş rezervasyonlara göre zaman serisi."
+        },
+        "servicesChart": {
+          "title": "Hizmete Göre Rezervasyon",
+          "description": "Hangi hizmetin kaç rezervasyon aldığı."
+        },
+        "servicesTable": {
+          "title": "Hizmet Performansı",
+          "description": "Hizmet bazında rezervasyon sayısı ve gelir.",
+          "bookings": "{count} rezervasyon"
+        },
+        "modules": {
+          "title": "Modül Sayaçları",
+          "description": "Önemli admin modülleri için hızlı erişim kartları."
+        },
+        "states": {
+          "empty": "Bu aralık için analytics verisi bulunamadı."
+        }
+      },
       "items": {
         "db": "Veritabanı",
         "audit": "Denetim Kayıtları",
@@ -824,7 +858,12 @@
         "mail": "E-Posta",
         "telegram": "Telegram",
         "chat": "Chat & AI",
-        "dashboard": "Özet"
+        "dashboard": "Özet",
+        "orders": "Siparisler",
+        "wallet": "Cüzdan",
+        "gutschein": "Hediye Kartları",
+        "payment_settings": "Ödeme Ayarları",
+        "popups": "Popup"
       },
       "stats": {
         "deliveredOrders": "Teslim Edilen Sipariş",
@@ -1313,9 +1352,7 @@
         },
         "dateLabel": "Tarih",
         "resourceIdLabel": "Kaynak ID",
-        "resourceIdPlaceholder": "(opsiyonel)",
-        "serviceIdLabel": "Servis ID",
-        "serviceIdPlaceholder": "(opsiyonel)"
+        "resourceIdPlaceholder": "(opsiyonel)"
       },
       "badges": {
         "unread": "Okunmadı"
@@ -1337,7 +1374,12 @@
         "description": "Randevuları yönet ve hızlı işlemler yap.",
         "views": {
           "table": "Tablo",
-          "cards": "Kart"
+          "cards": "Kart",
+          "calendar": "Takvim"
+        },
+        "calendar": {
+          "count": "{count} randevu",
+          "contact": "Iletisim"
         },
         "columns": {
           "status": "Durum",
@@ -1368,6 +1410,7 @@
         "accepting": "Kabul ediliyor...",
         "reject": "Reddet",
         "rejecting": "Reddediliyor...",
+        "sendReminder": "Hatirlatma gonder",
         "markRead": "Okundu işaretle",
         "backToList": "Listeye dön"
       },
@@ -1393,6 +1436,7 @@
         "markedRead": "Okundu olarak işaretlendi.",
         "accepted": "Randevu kabul edildi. (E-posta + bildirim tetiklendi)",
         "rejected": "Randevu reddedildi. (E-posta + bildirim tetiklendi)",
+        "reminderSent": "Hatirlatma e-postasi gonderildi.",
         "loadError": "Kayıt yüklenemedi.",
         "genericError": "İşlem başarısız. Lütfen tekrar deneyin."
       },
@@ -1808,6 +1852,22 @@
           "templateFallback": "Bu şablon",
           "cancel": "İptal",
           "delete": "Sil"
+        },
+        "preview": {
+          "showButton": "Önizleme",
+          "hideButton": "Önizlemeyi Gizle",
+          "title": "HTML Önizleme"
+        },
+        "testSend": {
+          "title": "Test E-postası Gönder",
+          "showButton": "Göster",
+          "hideButton": "Gizle",
+          "emailLabel": "Alıcı e-posta adresi",
+          "emailPlaceholder": "test@example.com",
+          "sendButton": "Test Gönder",
+          "sent": "Test e-postası başarıyla gönderildi.",
+          "failed": "Test e-postası gönderilemedi.",
+          "invalidEmail": "Lütfen geçerli bir e-posta adresi girin."
         }
       }
     },
@@ -1918,7 +1978,8 @@
         "requests": "İstekler",
         "auth": "Kimlik Doğrulama",
         "metrics": "Metrikler",
-        "map": "Harita"
+        "map": "Harita",
+        "stream": "Canlı Akış"
       },
       "requests": {
         "filtersTitle": "Filtreler",
@@ -1930,7 +1991,17 @@
         "sortDate": "Tarih",
         "sortResponseTime": "Yanıt Süresi",
         "sortStatusCode": "Durum Kodu",
-        "logsTitle": "İstek Logları"
+        "logsTitle": "İstek Logları",
+        "bodySnapshot": "Body Özeti",
+        "compare": "Karşılaştır",
+        "compareSelected": "{count} kayıt seçildi",
+        "compareAction": "Snapshot karşılaştır"
+      },
+      "compare": {
+        "title": "Request Snapshot Karşılaştır",
+        "description": "Seçilen iki request body’si satır bazında yan yana gösterilir.",
+        "needTwo": "Karşılaştırma için lütfen tam iki kayıt seçin.",
+        "close": "Kapat"
       },
       "auth": {
         "filtersTitle": "Filtreler",
@@ -1951,6 +2022,21 @@
       "map": {
         "title": "Coğrafi Dağılım",
         "description": "Son {days} günün konuma göre istek dağılımı."
+      },
+      "stream": {
+        "title": "Canlı Olay Akışı",
+        "description": "Audit SSE akışından gerçek zamanlı uygulama olayları.",
+        "recentCount": "Yerel geçmişte {count} olay",
+        "clearLocal": "Geçmişi temizle",
+        "empty": "Henüz canlı olay alınmadı.",
+        "unknownTopic": "Bilinmeyen konu",
+        "noMessage": "Mesaj yok",
+        "status": {
+          "connecting": "Bağlanıyor",
+          "open": "Bağlandı",
+          "closed": "Kapalı",
+          "error": "Bağlantı hatası"
+        }
       },
       "common": {
         "from": "Başlangıç",
@@ -1995,7 +2081,48 @@
         "list": "Liste (Dil)",
         "globalList": "Liste (Global *)",
         "locales": "Diller",
-        "branding": "Marka"
+        "branding": "Marka",
+        "payment": "Ödeme"
+      },
+      "payment": {
+        "title": "Ödeme Ayarları",
+        "description": "PayPal ve banka havalesi seçeneklerini yapılandırın.",
+        "paypal": {
+          "title": "PayPal",
+          "enabled": "PayPal'ı etkinleştir",
+          "mode": "Mod",
+          "modeSandbox": "Sandbox (Test)",
+          "modeProduction": "Canlı (Üretim)",
+          "clientId": "Client ID",
+          "clientIdPh": "AXxxxx...",
+          "clientSecret": "Client Secret",
+          "clientSecretPh": "ELxxxx...",
+          "webhookId": "Webhook ID (isteğe bağlı)",
+          "webhookIdPh": "WH-xxxx..."
+        },
+        "bankTransfer": {
+          "title": "Banka Havalesi",
+          "enabled": "Banka havalesi etkinleştir",
+          "accountName": "Hesap sahibi",
+          "accountNamePh": "Şirket Adı A.Ş.",
+          "iban": "IBAN",
+          "ibanPh": "DE89 3704 0044 0532 0130 00",
+          "bankName": "Banka",
+          "bankNamePh": "Deutsche Bank",
+          "branch": "Şube",
+          "branchPh": "Frankfurt am Main",
+          "swift": "SWIFT / BIC",
+          "swiftPh": "DEUTDEDBXXX"
+        },
+        "bookingPayment": {
+          "title": "Randevu Online Ödeme",
+          "description": "Aktif olduğunda, müşteriler randevu onay e-postasında bir ödeme bağlantısı alır.",
+          "enabled": "Randevular için online ödemeyi etkinleştir",
+          "activeNote": "Aktif: Randevu onay e-postaları bir ödeme bağlantısı içerecektir. Randevu sayfasında rezervasyon sonrası \"Ödeme Yap\" butonu görünecektir.",
+          "inactiveNote": "Pasif: Randevu onay e-postaları yalnızca randevuyu onaylar, ödeme bağlantısı içermez."
+        },
+        "saved": "Ödeme ayarları kaydedildi.",
+        "saveError": "Ayarlar kaydedilemedi."
       },
       "filters": {
         "title": "Filtreler",
@@ -2839,6 +2966,125 @@
         "loading": "Yükleniyor...",
         "noName": "(ad yok)",
         "noRef": "(referans yok)"
+      },
+      "weekly": {
+        "title": "Haftalık Çalışma Saatleri",
+        "description": "Bu aralıklar günlük slot üretiminin kaynağıdır.",
+        "empty": "Henüz çalışma aralığı yok. Aşağıdan yeni aralık ekleyebilirsiniz.",
+        "addTitle": "Yeni Çalışma Aralığı Ekle",
+        "days": {
+          "1": "Pazartesi",
+          "2": "Salı",
+          "3": "Çarşamba",
+          "4": "Perşembe",
+          "5": "Cuma",
+          "6": "Cumartesi",
+          "7": "Pazar"
+        },
+        "columns": {
+          "day": "Gün",
+          "start": "Başlangıç",
+          "end": "Bitiş",
+          "session": "Seans (dk)",
+          "break": "Ara (dk)",
+          "capacity": "Kapasite",
+          "active": "Aktif"
+        },
+        "actions": {
+          "edit": "Düzenle",
+          "save": "Kaydet",
+          "delete": "Sil",
+          "add": "Ekle",
+          "editDayHint": "Bu günün günlük slotlarını düzenle"
+        },
+        "messages": {
+          "invalidRange": "Başlangıç/bitiş saati geçersiz. Bitiş saati başlangıçtan büyük olmalı.",
+          "added": "Çalışma aralığı eklendi.",
+          "addFailed": "Çalışma aralığı eklenemedi.",
+          "updated": "Çalışma aralığı güncellendi.",
+          "updateFailed": "Çalışma aralığı güncellenemedi.",
+          "deleted": "Çalışma aralığı silindi.",
+          "deleteFailed": "Çalışma aralığı silinemedi.",
+          "deleteConfirm": "Bu çalışma aralığını silmek üzeresiniz.\n\nGün: {day}\nSaat: {start} - {end}\n\nDevam edilsin mi?"
+        }
+      },
+      "recurring": {
+        "title": "Tekrarlayan Gün Override'ları",
+        "description": "Her cuma kapalı gibi haftalık override kalıpları tanımlayın veya bir günü sürekli açık tutun.",
+        "modes": {
+          "default": "Haftalık planı kullan",
+          "open": "Sürekli açık",
+          "closed": "Sürekli kapalı",
+          "defaultDesc": "Tekrarlayan override yok. Haftalık çalışma saatleri geçerli kalır.",
+          "openDesc": "Çalışma saati varsa bu gün her hafta açık kalır.",
+          "closedDesc": "Bu gün her hafta kapalı kabul edilir."
+        },
+        "preview": {
+          "closedByRecurring": "Bu gün tekrarlayan haftalık override nedeniyle kapalı. Tekrar önizleme görmek için override'ı kaldırın ya da açık yapın."
+        },
+        "messages": {
+          "saved": "Tekrarlayan override kaydedildi.",
+          "deleted": "Tekrarlayan override kaldırıldı.",
+          "saveFailed": "Tekrarlayan override kaydedilemedi."
+        }
+      },
+      "daily": {
+        "title": "Günlük Plan",
+        "description": "Seçilen gün için haftalık plandan slotlar çıkarılır. Kalıcı hale getirmek için Slot Üret kullanın.",
+        "fields": {
+          "date": "Tarih",
+          "dayOfWeek": "Gün: {dow} (1=Pt ... 7=Pz)"
+        },
+        "actions": {
+          "generate": "Slot Üret",
+          "closeDay": "Günü Kapat",
+          "openDay": "Günü Aç",
+          "closeSlot": "Kapat",
+          "openSlot": "Aç"
+        },
+        "notes": {
+          "capacityCheck": "Kapasite backend kuralları gereği onay anında tekrar kontrol edilir."
+        },
+        "preview": {
+          "title": "Seans Önizleme (Haftalık Plandan)",
+          "description": "Önizleme sadece UI içindir. Public saatler için DB planı gerekir.",
+          "noRanges": "Bu gün için aktif haftalık çalışma aralığı yok.",
+          "rangeLabel": "Çalışma Aralığı",
+          "rangePlaceholder": "Aralık seçin",
+          "rangeHelp": "Aynı gün içinde birden fazla aralık varsa, günlük slotları aralık bazında yönetin.",
+          "selectRange": "Önizleme için bir aralık seçin.",
+          "noPreview": "Seçilen aralık için slot üretilemedi."
+        },
+        "dbPlan": {
+          "title": "DB Planı (Slot Kayıtları)",
+          "description": "Public müsait saatler buradan okunur.",
+          "empty": "DB planı boş. Önizleme varsa önce Slot Üret kullanın."
+        },
+        "columns": {
+          "time": "Saat",
+          "capacity": "Kapasite",
+          "status": "Durum",
+          "range": "Aralık"
+        },
+        "capacityLegend": "(dolu/toplam)",
+        "statusOpen": "Açık",
+        "statusFull": "Dolu",
+        "statusClosed": "Kapalı",
+        "rules": {
+          "title": "Kural",
+          "weekly": "Haftalık plan slot üretiminin kaynağıdır.",
+          "db": "DB planı public müsait saatlerin gerçek kaynağıdır.",
+          "empty": "Plan boşsa public tarafta saat görünmez."
+        },
+        "messages": {
+          "generateSuccess": "Slot üretimi tamamlandı. Oluşan={created}, Plan={planned}",
+          "generateFailed": "Slot üretimi başarısız.",
+          "dayUpdated": "Gün güncellendi. Updated={updated}",
+          "dayUpdateFailed": "Gün override edilemedi.",
+          "reservationWarning": "Bu slotta {reserved} onaylı rezervasyon var.\nSlotu kapatırsanız bu randevular için aksiyon gerekebilir.\n\nDevam edilsin mi?",
+          "slotUpdated": "Slot güncellendi.",
+          "slotUpdateFailed": "Slot güncellenemedi."
+        }
       }
     },
     "telegram": {
@@ -3017,6 +3263,288 @@
         "deleted": "Kayıt silindi.",
         "saveError": "Kaydetme başarısız.",
         "deleteError": "Silme başarısız."
+      }
+    },
+    "wallet": {
+      "title": "Cüzdan & Ödemeler",
+      "description": "Cüzdan bakiyeleri, yatırım talepleri ve ödeme onay süreçleri",
+      "wallets": {
+        "title": "Cüzdanlar",
+        "desc": "Kullanıcı bakiyeleri ve durum yönetimi",
+        "empty": "Kayıt bulunamadı",
+        "table": {
+          "user": "Kullanıcı",
+          "balance": "Bakiye",
+          "earnings": "Toplam Giriş",
+          "withdrawn": "Toplam Çıkış",
+          "status": "Durum",
+          "actions": "Aksiyon"
+        },
+        "actions": {
+          "transactions": "İşlemler"
+        }
+      },
+      "deposits": {
+        "title": "Yatırım Talepleri",
+        "desc": "PayPal ve banka havalesi taleplerini onaylayın veya reddedin",
+        "empty": "Kayıt bulunamadı",
+        "filters": {
+          "status": "Durum",
+          "method": "Yöntem",
+          "userId": "Kullanıcı ID",
+          "userIdPh": "UUID ile filtrele"
+        },
+        "table": {
+          "user": "Kullanıcı",
+          "amount": "Tutar",
+          "method": "Yöntem",
+          "status": "Durum",
+          "createdAt": "Tarih",
+          "actions": "Aksiyon"
+        },
+        "actions": {
+          "approve": "Onayla",
+          "reject": "Reddet"
+        }
+      },
+      "transactions": {
+        "title": "Cüzdan İşlemleri",
+        "empty": "Kayıt bulunamadı",
+        "table": {
+          "type": "Tip",
+          "amount": "Tutar",
+          "method": "Yöntem",
+          "status": "Durum",
+          "purpose": "Amaç",
+          "createdAt": "Tarih"
+        }
+      },
+      "actions": {
+        "refresh": "Yenile",
+        "prev": "Önceki",
+        "next": "Sonraki",
+        "search": "Ara"
+      },
+      "labels": {
+        "page": "Sayfa {page}"
+      },
+      "messages": {
+        "walletStatusUpdated": "Cüzdan durumu güncellendi",
+        "depositApproved": "Yatırım onaylandı",
+        "depositRejected": "Yatırım reddedildi",
+        "operationFailed": "İşlem başarısız",
+        "rejectPrompt": "Red nedeni (opsiyonel):"
+      }
+    },
+    "popups": {
+      "title": "Popup Yönetimi",
+      "description": "Popup içerikleri, sırası ve görünürlük yönetimi",
+      "list": {
+        "title": "Popup Listesi",
+        "desc": "Aktif/pasif filtreleri ile popup yönetimi"
+      },
+      "filters": {
+        "search": "Başlık veya içerik ara",
+        "typeAll": "Tüm Tipler",
+        "statusAll": "Tümü",
+        "statusActive": "Aktif",
+        "statusPassive": "Pasif"
+      },
+      "types": {
+        "topbar": "Üst bar",
+        "sidebarTop": "Sidebar üst",
+        "sidebarCenter": "Sidebar orta",
+        "sidebarBottom": "Sidebar alt"
+      },
+      "frequency": {
+        "always": "Her zaman",
+        "once": "Bir kez",
+        "daily": "Günlük"
+      },
+      "linkTargets": {
+        "self": "Aynı sekme",
+        "blank": "Yeni sekme"
+      },
+      "textBehavior": {
+        "marquee": "Kayan yazı",
+        "static": "Sabit"
+      },
+      "badges": {
+        "active": "Aktif",
+        "passive": "Pasif"
+      },
+      "table": {
+        "title": "Başlık",
+        "type": "Tip",
+        "order": "Sıra",
+        "active": "Durum",
+        "actions": "Aksiyon"
+      },
+      "states": {
+        "empty": "Kayıt bulunamadı"
+      },
+      "actions": {
+        "refresh": "Yenile",
+        "create": "Yeni",
+        "edit": "Düzenle",
+        "delete": "Sil",
+        "prev": "Önceki",
+        "next": "Sonraki",
+        "cancel": "İptal",
+        "save": "Kaydet"
+      },
+      "labels": {
+        "page": "Sayfa {page}"
+      },
+      "messages": {
+        "titleRequired": "Başlık zorunlu",
+        "saved": "Kaydedildi",
+        "failed": "İşlem başarısız",
+        "deleteConfirm": "Silmek istediğinize emin misiniz?",
+        "deleted": "Silindi",
+        "statusUpdated": "Durum güncellendi"
+      },
+      "modal": {
+        "edit": "Popup Düzenle",
+        "new": "Popup Ekle"
+      },
+      "form": {
+        "title": "Başlık",
+        "locale": "Dil",
+        "content": "İçerik",
+        "type": "Tip",
+        "frequency": "Frekans",
+        "order": "Sıra",
+        "buttonText": "Buton Metni",
+        "linkUrl": "Bağlantı",
+        "linkTarget": "Link Hedefi",
+        "textBehavior": "Metin Davranışı",
+        "scrollSpeed": "Kaydırma Hızı",
+        "imageUrl": "Görsel URL",
+        "imageAsset": "Görsel Asset ID",
+        "alt": "Alt Metin",
+        "bgColor": "Arkaplan Rengi",
+        "textColor": "Yazı Rengi",
+        "buttonColor": "Buton Rengi",
+        "buttonHoverColor": "Buton Hover Rengi",
+        "buttonTextColor": "Buton Yazı Rengi",
+        "start": "Başlangıç",
+        "end": "Bitiş",
+        "delay": "Gecikme (sn)",
+        "active": "Aktif",
+        "closeable": "Kapatılabilir"
+      }
+    },
+    "gutschein": {
+      "title": "Hediye Kartları",
+      "description": "Hediye kartlarını yönetin – oluşturun, etkinleştirin, iptal edin veya detayları görüntüleyin.",
+      "actions": {
+        "create": "Yeni Hediye Kartı",
+        "products": "Ürünler",
+        "activate": "Etkinleştir",
+        "cancel": "İptal Et",
+        "refresh": "Yenile"
+      },
+      "filters": {
+        "searchLabel": "Ara (kod / e-posta / isim)",
+        "searchPlaceholder": "KM-XXXX-XXXX veya e-posta...",
+        "statusLabel": "Durum",
+        "all": "Tümü"
+      },
+      "table": {
+        "code": "Kod",
+        "value": "Değer",
+        "status": "Durum",
+        "payment": "Ödeme",
+        "recipient": "Alıcı",
+        "purchaser": "Satın Alan",
+        "expires": "Son Geçerlilik",
+        "actions": "Aksiyon",
+        "empty": "Hediye kartı bulunamadı."
+      },
+      "labels": {
+        "admin": "Admin",
+        "total": "Toplam: {total}",
+        "created": "Oluşturuldu",
+        "expires": "Son Geçerlilik",
+        "recipient": "Alıcı"
+      },
+      "create": {
+        "title": "Hediye Kartı Oluştur",
+        "description": "Admin tarafından oluşturulan hediye kartları otomatik olarak ödendi olarak işaretlenir.",
+        "template": "Şablon Ürün (opsiyonel)",
+        "templatePlaceholder": "Bir ürün şablonu seçin...",
+        "templateNone": "— Özel (şablon yok) —",
+        "value": "Değer",
+        "currency": "Para Birimi",
+        "validityDays": "Geçerlilik (gün)",
+        "recipientName": "Alıcı Adı",
+        "recipientEmail": "Alıcı E-posta",
+        "purchaserName": "Satın Alan Adı",
+        "purchaserEmail": "Satın Alan E-posta",
+        "note": "Dahili Not",
+        "notePlaceholder": "Opsiyonel dahili not...",
+        "submit": "Hediye Kartı Oluştur",
+        "cancel": "İptal"
+      },
+      "cancelDialog": {
+        "title": "Hediye Kartını İptal Et",
+        "description": "{code} kodlu kartı iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "confirm": "Kartı İptal Et",
+        "keep": "Vazgeç"
+      },
+      "messages": {
+        "created": "Hediye kartı oluşturuldu.",
+        "cancelled": "Hediye kartı iptal edildi.",
+        "activated": "Hediye kartı etkinleştirildi.",
+        "createError": "Hediye kartı oluşturulamadı.",
+        "cancelError": "İptal işlemi başarısız.",
+        "activateError": "Etkinleştirme başarısız.",
+        "valueRequired": "Lütfen geçerli bir değer girin.",
+        "updated": "Hediye kartı güncellendi.",
+        "updateError": "Hediye kartı güncellenemedi."
+      },
+      "products": {
+        "title": "Hediye Kartı Ürünleri",
+        "description": "Önceden belirlenmiş değer ve geçerlilik sürelerine sahip hediye kartı şablonları tanımlayın.",
+        "create": "Yeni Ürün",
+        "empty": "Henüz ürün yok. Başlamak için bir tane oluşturun.",
+        "table": {
+          "name": "Ad",
+          "value": "Değer",
+          "validity": "Geçerlilik",
+          "order": "Sıra",
+          "active": "Aktif",
+          "created": "Oluşturuldu",
+          "actions": "Aksiyon"
+        },
+        "form": {
+          "title": "Ürün Oluştur",
+          "editTitle": "Ürün Düzenle",
+          "description": "Müşterilerin satın alabileceği yeni bir hediye kartı şablonu oluşturun.",
+          "editDescription": "Hediye kartı şablonunu güncelleyin.",
+          "name": "Ad",
+          "namePlaceholder": "Hediye Kartı 50 €",
+          "value": "Değer",
+          "valuePlaceholder": "50.00",
+          "currency": "Para Birimi",
+          "validityDays": "Geçerlilik (gün)",
+          "displayOrder": "Görüntüleme Sırası",
+          "productDescription": "Açıklama",
+          "descriptionPlaceholder": "Opsiyonel açıklama...",
+          "isActive": "Aktif (müşterilere görünür)",
+          "save": "Değişiklikleri Kaydet",
+          "create": "Ürün Oluştur",
+          "cancel": "İptal"
+        },
+        "messages": {
+          "created": "Ürün oluşturuldu.",
+          "updated": "Ürün güncellendi.",
+          "error": "Ürün kaydedilemedi.",
+          "toggleError": "Durum güncellenemedi.",
+          "nameRequired": "Ad zorunludur.",
+          "valueRequired": "Lütfen geçerli bir değer girin."
+        }
       }
     }
   },

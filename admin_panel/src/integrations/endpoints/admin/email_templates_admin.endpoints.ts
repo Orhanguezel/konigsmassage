@@ -101,6 +101,17 @@ export const emailTemplatesAdminApi = baseApi.injectEndpoints({
         { type: 'EmailTemplates' as const, id: 'LIST_PUBLIC' },
       ],
     }),
+
+    sendTestEmailAdmin: b.mutation<
+      { success: boolean; message: string; to: string },
+      { id: string; to: string; locale?: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `${BASE}/${encodeURIComponent(id)}/send-test`,
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
   overrideExisting: true,
 });
@@ -111,4 +122,5 @@ export const {
   useCreateEmailTemplateAdminMutation,
   useUpdateEmailTemplateAdminMutation,
   useDeleteEmailTemplateAdminMutation,
+  useSendTestEmailAdminMutation,
 } = emailTemplatesAdminApi;

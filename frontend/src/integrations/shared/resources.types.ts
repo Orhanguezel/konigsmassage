@@ -41,6 +41,15 @@ export interface ResourcePublicItemDto {
   label: string;
 }
 
+export interface ResourceI18nDto {
+  id?: string;
+  resource_id?: string;
+  locale: string;
+  title: string;
+  created_at?: string | Date;
+  updated_at?: string | Date;
+}
+
 export interface ResourceAdminListItemDto {
   id: string;
   type: ResourceType;
@@ -61,6 +70,7 @@ export interface ResourceRowDto {
   title: string;
   capacity: number;
   external_ref_id: string | null;
+  i18n?: ResourceI18nDto[];
 
   is_active: ActiveLike;
   created_at: string | Date;
@@ -124,6 +134,7 @@ export interface ResourceAdminCreatePayload {
   capacity?: number | null;
   external_ref_id?: string | null;
   is_active?: boolean | number | string; // backend -> 0|1
+  i18n?: ResourceI18nDto[];
 }
 
 export interface ResourceAdminUpdatePayload {
@@ -132,8 +143,10 @@ export interface ResourceAdminUpdatePayload {
   capacity?: number | null;
   external_ref_id?: string | null;
   is_active?: boolean | number | string;
+  i18n?: ResourceI18nDto[];
 }
 
 export interface ResourcesPublicListQueryParams {
   type?: ResourceType;
+  locale?: string;
 }

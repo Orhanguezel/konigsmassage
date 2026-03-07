@@ -8,7 +8,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { Check, Eye, Pencil, Trash2, X } from 'lucide-react';
+import { CalendarDays, Check, Eye, Mail, Pencil, Trash2, X } from 'lucide-react';
 
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,7 @@ import {
   useDeleteBookingAdminMutation,
   useMarkBookingReadAdminMutation,
   useRejectBookingAdminMutation,
+  useSendBookingReminderAdminMutation,
 } from '@/integrations/hooks';
 
 import { Badge } from '@/components/ui/badge';
@@ -78,15 +79,17 @@ export const BookingsList: React.FC<BookingsListProps> = ({ items, loading }) =>
   const [markRead, markReadState] = useMarkBookingReadAdminMutation();
   const [acceptBooking, acceptState] = useAcceptBookingAdminMutation();
   const [rejectBooking, rejectState] = useRejectBookingAdminMutation();
+  const [sendReminder, reminderState] = useSendBookingReminderAdminMutation();
 
   const busy =
     loading ||
     deleteState.isLoading ||
     markReadState.isLoading ||
     acceptState.isLoading ||
-    rejectState.isLoading;
+    rejectState.isLoading ||
+    reminderState.isLoading;
 
-  const [view, setView] = React.useState<'table' | 'cards'>('table');
+  const [view, setView] = React.useState<'table' | 'cards' | 'calendar'>('table');
 
   const [decisionOpen, setDecisionOpen] = React.useState(false);
   const [decisionMode, setDecisionMode] = React.useState<DecisionMode>('accept');
@@ -191,6 +194,20 @@ export const BookingsList: React.FC<BookingsListProps> = ({ items, loading }) =>
       }
 
       closeDecision();
+    } catch (err: any) {
+      toast.error(err?.data?.error?.message || err?.message || t('messages.genericError'));
+    }
+  };
+
+  const handleReminder = async (b: BookingMergedDto) => {
+    try {
+      await sendReminder({
+        id: String(b.id),
+        body: {
+          locale: String(b.locale || 'de'),
+        },
+      }).unwrap();
+      toast.success(t('messages.reminderSent'));
     } catch (err: any) {
       toast.error(err?.data?.error?.message || err?.message || t('messages.genericError'));
     }
@@ -333,6 +350,17 @@ export const BookingsList: React.FC<BookingsListProps> = ({ items, loading }) =>
                         type="button"
                         size="sm"
                         variant="outline"
+                        onClick={() => void handleReminder(b)}
+                        disabled={busy}
+                      >
+                        <Mail className="mr-2 size-4" />
+                        {t('actions.sendReminder')}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
                         onClick={() => void handleMarkRead(b)}
                         disabled={busy || isRead}
                         title={isRead ? t('tooltips.alreadyRead') : undefined}
@@ -443,6 +471,16 @@ export const BookingsList: React.FC<BookingsListProps> = ({ items, loading }) =>
                     type="button"
                     size="sm"
                     variant="outline"
+                    onClick={() => void handleReminder(b)}
+                    disabled={busy}
+                  >
+                    <Mail className="mr-2 size-4" />
+                    {t('actions.sendReminder')}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
                     onClick={() => void handleMarkRead(b)}
                     disabled={busy || isRead}
                   >
@@ -464,6 +502,122 @@ export const BookingsList: React.FC<BookingsListProps> = ({ items, loading }) =>
             </Card>
           );
         })}
+      </div>
+    );
+  };
+
+  const renderCalendar = () => {
+    if (!hasData) return renderEmpty();
+
+    const grouped = rows.reduce<Record<string, BookingMergedDto[]>>((acc, row) => {
+      const key = String(row.appointment_date || '').trim() || 'no-date';
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(row);
+      return acc;
+    }, {});
+
+    const days = Object.entries(grouped)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, items]) => ({
+        date,
+        items: [...items].sort((l, r) =>
+          formatDateTime(l.appointment_date, l.appointment_time).localeCompare(
+            formatDateTime(r.appointment_date, r.appointment_time),
+          ),
+        ),
+      }));
+
+    return (
+      <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        {days.map((day) => (
+          <Card key={day.date} className="border-border/80">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="size-4 text-primary" />
+                <CardTitle className="text-sm">{day.date === 'no-date' ? '—' : day.date}</CardTitle>
+              </div>
+              <CardDescription>
+                {t('list.calendar.count', { count: day.items.length })}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {day.items.map((b) => {
+                const isRead = isReadRow(b);
+                return (
+                  <div
+                    key={String(b.id)}
+                    className={cn(
+                      'rounded-lg border p-3 space-y-3',
+                      !isRead ? 'bg-muted/30' : 'bg-background',
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">{b.name || '-'}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {b.appointment_time || '--:--'} {b.resource_title ? `• ${b.resource_title}` : ''}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        {statusBadge(b.status)}
+                        {!isRead ? <Badge variant="secondary">{t('badges.unread')}</Badge> : null}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">{t('labels.service')}:</span>{' '}
+                        <span className="font-medium">{b.service_title || '—'}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">{t('list.calendar.contact')}:</span>{' '}
+                        <span className="font-medium">{b.email || b.phone || '—'}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => openDecision('accept', b)}
+                        disabled={busy || !canAccept(b)}
+                      >
+                        <Check className="mr-2 size-4" />
+                        {t('actions.accept')}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => openDecision('reject', b)}
+                        disabled={busy || !canReject(b)}
+                      >
+                        <X className="mr-2 size-4" />
+                        {t('actions.reject')}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => void handleReminder(b)}
+                        disabled={busy}
+                      >
+                        <Mail className="mr-2 size-4" />
+                        {t('actions.sendReminder')}
+                      </Button>
+                      <Button asChild type="button" size="sm" variant="outline">
+                        <Link href={`/admin/bookings/${encodeURIComponent(String(b.id))}`}>
+                          <Pencil className="mr-2 size-4" />
+                          {t('admin.common.edit')}
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   };
@@ -495,6 +649,15 @@ export const BookingsList: React.FC<BookingsListProps> = ({ items, loading }) =>
                 >
                   {t('list.views.cards')}
                 </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={view === 'calendar' ? 'secondary' : 'ghost'}
+                  onClick={() => setView('calendar')}
+                  disabled={busy}
+                >
+                  {t('list.views.calendar')}
+                </Button>
               </div>
 
               {busy ? <Badge variant="secondary">{t('states.loadingInline')}</Badge> : null}
@@ -502,7 +665,9 @@ export const BookingsList: React.FC<BookingsListProps> = ({ items, loading }) =>
           </div>
           <CardDescription>{t('list.description')}</CardDescription>
         </CardHeader>
-        <CardContent>{view === 'table' ? renderTable() : renderCards()}</CardContent>
+        <CardContent>
+          {view === 'table' ? renderTable() : view === 'cards' ? renderCards() : renderCalendar()}
+        </CardContent>
       </Card>
 
       <DecisionDialog />

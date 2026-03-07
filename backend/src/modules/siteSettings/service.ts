@@ -181,6 +181,10 @@ async function getGlobalSettingValue(key: string): Promise<string | null> {
   return anyRow?.[0]?.value != null ? String(anyRow[0].value) : null;
 }
 
+export async function getSettingValue(key: string): Promise<string | null> {
+  return getGlobalSettingValue(key);
+}
+
 // ---------------------------------------------------------------------------
 // LOW-LEVEL READERS (locale-aware)
 // ---------------------------------------------------------------------------
@@ -583,6 +587,86 @@ export async function getStorageSettings(locale?: string | null): Promise<Storag
 }
 
 // ---------------------------------------------------------------------------
+// PAYMENT (PayPal + Bank Transfer)
+// ---------------------------------------------------------------------------
+
+export const PAYMENT_KEYS = [
+  'paypal_enabled',
+  'paypal_mode',
+  'paypal_client_id',
+  'paypal_client_secret',
+  'paypal_webhook_id',
+  'bank_transfer_enabled',
+  'bank_account_name',
+  'bank_iban',
+  'bank_name',
+  'bank_branch',
+  'bank_swift',
+] as const;
+
+export type PaymentConfig = {
+  paypal: {
+    enabled: boolean;
+    mode: 'sandbox' | 'production';
+    clientId: string | null;
+    clientSecret: string | null;
+    webhookId: string | null;
+    baseUrl: string;
+  };
+  bankTransfer: {
+    enabled: boolean;
+    accountName: string | null;
+    iban: string | null;
+    bankName: string | null;
+    branch: string | null;
+    swift: string | null;
+  };
+};
+
+export async function getPaymentConfig(): Promise<PaymentConfig> {
+  const map = await loadSettingsMap({ keys: PAYMENT_KEYS, localeCandidates: [GLOBAL_LOCALE] });
+
+  const paypalEnabledRaw = map.get('paypal_enabled');
+  const paypalEnabledDb = paypalEnabledRaw != null ? toBool(paypalEnabledRaw) : null;
+
+  const clientId = normalizeStr(map.get('paypal_client_id')) ?? normalizeStr(env.PAYPAL_CLIENT_ID) ?? null;
+  const clientSecret = normalizeStr(map.get('paypal_client_secret')) ?? normalizeStr(env.PAYPAL_CLIENT_SECRET) ?? null;
+
+  const paypalActive =
+    paypalEnabledDb !== null ? paypalEnabledDb : Boolean(clientId && clientSecret);
+  const enabled = paypalActive && Boolean(clientId && clientSecret);
+
+  const modeRaw = normalizeStr(map.get('paypal_mode')) ?? normalizeStr(env.PAYPAL_MODE) ?? 'sandbox';
+  const mode: 'sandbox' | 'production' = modeRaw === 'production' ? 'production' : 'sandbox';
+  const baseUrl =
+    normalizeStr(env.PAYPAL_BASE_URL) ??
+    (mode === 'production' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com');
+
+  const bankEnabledRaw = map.get('bank_transfer_enabled');
+  const bankEnabled =
+    bankEnabledRaw != null ? toBool(bankEnabledRaw) : env.BANK_TRANSFER_ENABLED;
+
+  return {
+    paypal: {
+      enabled,
+      mode,
+      clientId,
+      clientSecret,
+      webhookId: normalizeStr(map.get('paypal_webhook_id')) ?? normalizeStr(env.PAYPAL_WEBHOOK_ID) ?? null,
+      baseUrl,
+    },
+    bankTransfer: {
+      enabled: bankEnabled,
+      accountName: normalizeStr(map.get('bank_account_name')) ?? normalizeStr(env.BANK_ACCOUNT_NAME) ?? null,
+      iban: normalizeStr(map.get('bank_iban')) ?? normalizeStr(env.BANK_IBAN) ?? null,
+      bankName: normalizeStr(map.get('bank_name')) ?? normalizeStr(env.BANK_NAME) ?? null,
+      branch: normalizeStr(map.get('bank_branch')) ?? normalizeStr(env.BANK_BRANCH) ?? null,
+      swift: normalizeStr(map.get('bank_swift')) ?? normalizeStr(env.BANK_SWIFT) ?? null,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
 // GOOGLE
 // ---------------------------------------------------------------------------
 
@@ -684,6 +768,7 @@ export async function getCookieConsentConfig(locale?: string | null): Promise<Co
 
 const CHAT_AI_KEYS = [
   'chat_ai_enabled',
+  'chat_ai_default_provider',
   'chat_ai_provider_order',
   'chat_ai_system_prompt',
   'chat_ai_offer_url',
@@ -706,6 +791,7 @@ const CHAT_AI_KEYS = [
 
 export type ChatAiSettings = {
   enabled: boolean;
+  defaultProvider: "auto" | "openai" | "anthropic" | "grok";
   providerOrder: string;
   systemPrompt: string | null;
   appointmentUrl: string | null;
@@ -728,6 +814,7 @@ export async function getChatAiSettings(): Promise<ChatAiSettings> {
 
   return {
     enabled: toBool(map.get('chat_ai_enabled') ?? 'true'),
+    defaultProvider: (normalizeStr(map.get('chat_ai_default_provider')) as any) || 'auto',
     providerOrder: normalizeStr(map.get('chat_ai_provider_order')) ?? '',
     systemPrompt: normalizeStr(map.get('chat_ai_system_prompt')),
     appointmentUrl: normalizeStr(map.get('chat_ai_offer_url')),

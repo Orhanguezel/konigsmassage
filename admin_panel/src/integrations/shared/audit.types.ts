@@ -19,6 +19,7 @@ export type AuditRequestLogDto = {
   ip: string;
   user_agent: string | null;
   referer: string | null;
+  body_snapshot: string | null;
 
   user_id: string | null;
   is_admin: number;

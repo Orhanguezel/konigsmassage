@@ -30,6 +30,7 @@ import {
   useTakeOverChatThreadAdminMutation,
   useReleaseToAiChatThreadAdminMutation,
   useSetAiProviderChatThreadAdminMutation,
+  useGetMyProfileQuery,
 } from '@/integrations/hooks';
 import type {
   ChatThread,
@@ -87,7 +88,9 @@ function ThreadItem({
 
 function MessagePanel({ thread }: { thread: ChatThread }) {
   const t = useAdminT('admin.chat');
+  const { data: myProfile } = useGetMyProfileQuery();
   const [tabVisible, setTabVisible] = React.useState(true);
+  const AI_ASSISTANT_USER_ID = '00000000-0000-0000-0000-00000000a11f';
 
   React.useEffect(() => {
     const handler = () => setTabVisible(document.visibilityState === 'visible');
@@ -220,20 +223,26 @@ function MessagePanel({ thread }: { thread: ChatThread }) {
               </p>
             ) : (
               messages.map((msg) => {
-                const isSystem = msg.sender_user_id === 'system' || msg.sender_user_id === 'ai';
+                const isAi = msg.sender_user_id === AI_ASSISTANT_USER_ID;
+                const isMine = !!myProfile?.id && msg.sender_user_id === myProfile.id;
+                const isLeft = isAi || !isMine;
                 return (
                   <div
                     key={msg.id}
-                    className={`flex gap-2 ${isSystem ? '' : 'justify-end'}`}
+                    className={`flex gap-2 ${isLeft ? '' : 'justify-end'}`}
                   >
-                    {isSystem && (
+                    {isLeft && (
                       <div className="shrink-0 mt-1">
-                        <Bot className="h-4 w-4 text-muted-foreground" />
+                        {isAi ? (
+                          <Bot className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <User className="h-4 w-4 text-muted-foreground" />
+                        )}
                       </div>
                     )}
                     <div
                       className={`rounded-lg px-3 py-2 text-sm max-w-[80%] ${
-                        isSystem
+                        isLeft
                           ? 'bg-muted text-foreground'
                           : 'bg-primary text-primary-foreground'
                       }`}
@@ -243,7 +252,7 @@ function MessagePanel({ thread }: { thread: ChatThread }) {
                         {toLocalDate(msg.created_at)}
                       </p>
                     </div>
-                    {!isSystem && (
+                    {!isLeft && (
                       <div className="shrink-0 mt-1">
                         <User className="h-4 w-4 text-muted-foreground" />
                       </div>

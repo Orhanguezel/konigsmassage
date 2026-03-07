@@ -55,6 +55,18 @@ export async function registerAuth(app: FastifyInstance) {
   );
   app.get(`${BASE}/google/callback`, g.googleCallback);
 
+  // E-posta doğrulama
+  app.post(
+    `${BASE}/email-verification/send`,
+    { config: { rateLimit: { max: 5, timeWindow: "1 minute" } } },
+    c.sendEmailVerification,
+  );
+  app.post(
+    `${BASE}/email-verification/confirm`,
+    { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } },
+    c.confirmEmailVerification,
+  );
+
   // Authenticated-ish
   app.get(`${BASE}/user`, c.me);
   app.get(`${BASE}/status`, c.status);

@@ -5,6 +5,7 @@
 
 import AdminNotificationDetailClient from '../_components/admin-notification-detail-client';
 
-export default function Page({ params }: { params: { id: string } }) {
-  return <AdminNotificationDetailClient id={params.id} />;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <AdminNotificationDetailClient id={id} />;
 }

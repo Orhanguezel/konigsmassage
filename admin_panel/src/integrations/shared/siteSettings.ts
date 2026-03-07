@@ -24,6 +24,7 @@ export type SiteSettingRow = {
   id?: string;
   key: string;
   value: unknown; // normalize edilip SettingValue'a dönüştürülecek
+  locale?: string | null;
   value_type?: ValueType | null;
   group?: string | null;
   description?: string | null;

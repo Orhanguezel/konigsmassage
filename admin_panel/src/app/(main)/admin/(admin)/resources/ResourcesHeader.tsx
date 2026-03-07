@@ -5,13 +5,14 @@
 // =============================================================
 
 import React from 'react';
+import Link from 'next/link';
 import type { ResourceType } from '@/integrations/shared/resources.types';
 
 export type ResourcesFilters = {
   q: string;
   type: '' | ResourceType;
   status: 'all' | 'active' | 'inactive';
-  sort: 'updated_at' | 'created_at' | 'title' | 'type';
+  sort: 'updated_at' | 'created_at' | 'title' | 'type' | 'capacity';
   order: 'desc' | 'asc';
 };
 
@@ -67,9 +68,12 @@ export const ResourcesHeader: React.FC<ResourcesHeaderProps> = ({
                 <label className="form-label small mb-1">Tür</label>
                 <select
                   className="form-select form-select-sm"
-                  value={filters.type}
+                  value={filters.type || ALL}
                   onChange={(e) =>
-                    onFiltersChange({ ...filters, type: (e.target.value as any) || '' })
+                    onFiltersChange({
+                      ...filters,
+                      type: e.target.value === ALL ? '' : (e.target.value as any),
+                    })
                   }
                 >
                   <option value={ALL}>Tümü</option>
@@ -105,6 +109,7 @@ export const ResourcesHeader: React.FC<ResourcesHeaderProps> = ({
                   <option value="created_at">Oluşturma</option>
                   <option value="title">Ad</option>
                   <option value="type">Tür</option>
+                  <option value="capacity">Kapasite</option>
                 </select>
               </div>
             </div>
@@ -135,14 +140,19 @@ export const ResourcesHeader: React.FC<ResourcesHeaderProps> = ({
               </div>
 
               {onRefresh ? (
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={onRefresh}
-                  disabled={!!loading}
-                >
-                  Yenile
-                </button>
+                <div className="d-flex gap-2">
+                  <Link href="/admin/resources/new" className="btn btn-primary btn-sm">
+                    Yeni Kaynak
+                  </Link>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary btn-sm"
+                    onClick={onRefresh}
+                    disabled={!!loading}
+                  >
+                    Yenile
+                  </button>
+                </div>
               ) : null}
             </div>
 

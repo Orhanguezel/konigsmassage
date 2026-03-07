@@ -7,7 +7,7 @@ import SiteSettingsDetailClient from '../_components/admin-site_settings-detail-
 
 type Params = { id: string };
 
-export default async function Page({ params }: { params: Promise<Params> | Params }) {
-  const p = (await params) as Params;
+export default async function Page({ params }: { params: Promise<Params> }) {
+  const p = await params;
   return <SiteSettingsDetailClient id={p.id} />;
 }

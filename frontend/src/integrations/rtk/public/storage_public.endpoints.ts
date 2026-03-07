@@ -10,7 +10,7 @@ import type {
   StorageSignMultipartBody,
   StorageSignMultipartResponse,
 } from '@/integrations/shared';
-import { sanitizeFilename, compactFiles } from '@/integrations/shared';
+import { sanitizeFilename, compactFiles, optimizeImageFileForUpload } from '@/integrations/shared';
 
 export const storagePublicApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -36,8 +36,9 @@ export const storagePublicApi = baseApi.injectEndpoints({
 
           for (const [i, file] of files.entries()) {
             const fd = new FormData();
-            const filename = sanitizeFilename(file.name || `file-${i}`);
-            fd.append('file', file, filename);
+            const optimizedFile = await optimizeImageFileForUpload(file);
+            const filename = sanitizeFilename(optimizedFile.name || `file-${i}`);
+            fd.append('file', optimizedFile, filename);
 
             const qs = new URLSearchParams();
             if (args.path) qs.set('path', args.path);

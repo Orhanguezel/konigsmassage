@@ -81,6 +81,32 @@ export const resourceSlots = mysqlTable(
 export type ResourceSlotRow = typeof resourceSlots.$inferSelect;
 export type NewResourceSlotRow = typeof resourceSlots.$inferInsert;
 
+export const resourceRecurringOverrides = mysqlTable(
+  'resource_recurring_overrides',
+  {
+    id: char('id', { length: 36 }).primaryKey().notNull(),
+    resource_id: char('resource_id', { length: 36 }).notNull(),
+    dow: tinyint('dow', { unsigned: true }).notNull(), // 1..7
+    is_active: tinyint('is_active', { unsigned: true }).notNull().default(1),
+    created_at: datetime('created_at', { fsp: 3 })
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP(3)`),
+    updated_at: datetime('updated_at', { fsp: 3 })
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP(3)`)
+      .$onUpdateFn(() => new Date()),
+  },
+  (t) => [
+    uniqueIndex('ux_resource_recurring_overrides_unique').on(t.resource_id, t.dow),
+    index('rro_resource_idx').on(t.resource_id),
+    index('rro_dow_idx').on(t.dow),
+    index('rro_active_idx').on(t.is_active),
+  ],
+);
+
+export type ResourceRecurringOverrideRow = typeof resourceRecurringOverrides.$inferSelect;
+export type NewResourceRecurringOverrideRow = typeof resourceRecurringOverrides.$inferInsert;
+
 export const slotReservations = mysqlTable(
   'slot_reservations',
   {

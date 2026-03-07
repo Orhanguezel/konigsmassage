@@ -7,12 +7,13 @@ import { randomUUID } from 'crypto';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import { db } from '@/db/client';
 
-import { resourceSlots, slotReservations, resourceWorkingHours } from './schema';
+import { resourceSlots, slotReservations, resourceWorkingHours, resourceRecurringOverrides } from './schema';
 import { resources } from '@/modules/resources/schema';
 
 import type {
   AvailabilityExistsResult,
   MoveResult,
+  RecurringOverrideRowDTO,
   ReleaseResult,
   ReserveResult,
   SlotRowDTO,
@@ -24,6 +25,12 @@ import type {
 import {safeTrim} from '@/modules/_shared';
 
 type Executor = any;
+
+function dowFromYmd(ymd: string): number {
+  const d = new Date(`${ymd}T00:00:00`);
+  const js = d.getDay();
+  return js === 0 ? 7 : js;
+}
 
 
 /* -------------------- SQL time helpers -------------------- */
@@ -182,6 +189,8 @@ export async function getDailyPlanMerged(args: {
 
   const wh = await listWorkingHoursForDate({ resource_id: resourceId, dateYmd });
   const plan = buildDailyPlanFromWorkingHours(wh, resourceCap);
+  const recurring = await getRecurringOverrideForDateEx(db, { resource_id: resourceId, dateYmd });
+  const recurringInactive = recurring === 0;
 
   const existing = await listSlotsForDate({ resource_id: resourceId, dateYmd });
 
@@ -207,6 +216,13 @@ export async function getDailyPlanMerged(args: {
     p.is_active = isActive;
     p.reserved_count = reserved;
     p.available = isActive === 1 && cap > 0 && reserved < cap;
+  }
+
+  if (recurringInactive) {
+    for (const p of plan) {
+      p.is_active = 0;
+      p.available = false;
+    }
   }
 
   return plan;
@@ -286,6 +302,54 @@ async function findAlignedWorkingHourForTimeEx(
   return null;
 }
 
+export async function listRecurringOverrides(args: {
+  resource_id: string;
+}): Promise<RecurringOverrideRowDTO[]> {
+  const resourceId = safeTrim(args.resource_id);
+  if (!resourceId) return [];
+
+  const rows = await db
+    .select()
+    .from(resourceRecurringOverrides)
+    .where(eq(resourceRecurringOverrides.resource_id, resourceId))
+    .orderBy(asc(resourceRecurringOverrides.dow));
+
+  return rows as unknown as RecurringOverrideRowDTO[];
+}
+
+async function getRecurringOverrideForDowEx(
+  ex: Executor,
+  args: { resource_id: string; dow: number },
+): Promise<0 | 1 | null> {
+  const resourceId = safeTrim(args.resource_id);
+  const dow = Number(args.dow ?? 0);
+  if (!resourceId || dow < 1 || dow > 7) return null;
+
+  const [row] = await ex
+    .select({ is_active: resourceRecurringOverrides.is_active })
+    .from(resourceRecurringOverrides)
+    .where(
+      and(
+        eq(resourceRecurringOverrides.resource_id, resourceId),
+        eq(resourceRecurringOverrides.dow, dow),
+      ),
+    )
+    .limit(1);
+
+  if (!row) return null;
+  return Number((row as any).is_active ?? 0) === 1 ? 1 : 0;
+}
+
+async function getRecurringOverrideForDateEx(
+  ex: Executor,
+  args: { resource_id: string; dateYmd: string },
+): Promise<0 | 1 | null> {
+  const resourceId = safeTrim(args.resource_id);
+  const dateYmd = safeTrim(args.dateYmd);
+  if (!resourceId || !dateYmd) return null;
+  return await getRecurringOverrideForDowEx(ex, { resource_id: resourceId, dow: dowFromYmd(dateYmd) });
+}
+
 /* -------------------- SLOT ROW ENSURE (aligned) -------------------- */
 
 export async function ensureResourceSlotTx(
@@ -328,6 +392,8 @@ export async function ensureResourceSlotTx(
 
   const resourceCap = await getResourceCapacityEx(ex, resourceId);
   const cap = effectiveCapacity(resourceCap, wh.capacity);
+  const recurring = await getRecurringOverrideForDateEx(ex, { resource_id: resourceId, dateYmd });
+  const isActive = recurring === 0 ? 0 : 1;
 
   const slotId = randomUUID();
   const now = new Date() as any;
@@ -338,12 +404,12 @@ export async function ensureResourceSlotTx(
     slot_date: sql`${slotDateSql}` as any,
     slot_time: sql`${slotTimeSql}` as any,
     capacity: cap,
-    is_active: 1,
+    is_active: isActive,
     created_at: now,
     updated_at: now,
   });
 
-  return { id: slotId, capacity: cap, is_active: 1 as any };
+  return { id: slotId, capacity: cap, is_active: isActive as any };
 }
 
 /* -------------------- reservations (tx-safe) -------------------- */
@@ -558,10 +624,12 @@ export async function getAvailability(args: {
     .limit(1);
 
   const r = rows[0] as any;
+  const recurring = await getRecurringOverrideForDateEx(db, { resource_id: resourceId, dateYmd });
+  const recurringInactive = recurring === 0;
   if (r) {
     const reserved = Number(r.reserved_count ?? 0);
     const cap = effectiveCapacity(resourceCap, Number(r.capacity ?? 1));
-    const active = Number(r.is_active ?? 0) === 1;
+    const active = Number(r.is_active ?? 0) === 1 && !recurringInactive;
 
     return {
       exists: true,
@@ -584,10 +652,10 @@ export async function getAvailability(args: {
   const cap = effectiveCapacity(resourceCap, wh.capacity);
   return {
     exists: false,
-    is_active: cap > 0 ? 1 : 0,
+    is_active: cap > 0 && !recurringInactive ? 1 : 0,
     capacity: cap,
     reserved_count: 0,
-    available: cap > 0,
+    available: cap > 0 && !recurringInactive,
   };
 }
 
@@ -658,6 +726,9 @@ export async function getWeeklyPlanFromWorkingHours(args: { resource_id: string 
   if (!rid) return [];
 
   const resourceCap = await getResourceCapacityEx(db, rid);
+  const recurring = await listRecurringOverrides({ resource_id: rid });
+  const recurringByDow = new Map<number, 0 | 1>();
+  for (const row of recurring) recurringByDow.set(Number((row as any).dow), Number((row as any).is_active) === 1 ? 1 : 0);
 
   const wh = await db
     .select()
@@ -708,7 +779,12 @@ export async function getWeeklyPlanFromWorkingHours(args: { resource_id: string 
     }
 
     const slot_times = Array.from(slotSet).sort((a, b) => a.localeCompare(b));
-    out.push({ dow, slot_times, ranges });
+    const dayActive = recurringByDow.get(dow) !== 0;
+    out.push({
+      dow,
+      slot_times: dayActive ? slot_times : [],
+      ranges: dayActive ? ranges : ranges.map((range) => ({ ...range, is_active: 0 as 0 | 1 })),
+    });
   }
 
   return out;
@@ -856,4 +932,61 @@ export async function overrideSingleSlot(args: {
   });
 }
 
+export async function upsertRecurringOverride(args: {
+  id?: string;
+  resource_id: string;
+  dow: number;
+  is_active: 0 | 1;
+}): Promise<RecurringOverrideRowDTO | null> {
+  const id = safeTrim(args.id) || randomUUID();
+  const resourceId = safeTrim(args.resource_id);
+  const dow = Number(args.dow ?? 0);
+  const isActive = Number(args.is_active) === 1 ? 1 : 0;
+  if (!resourceId || dow < 1 || dow > 7) return null;
+
+  const now = new Date() as any;
+  await db
+    .insert(resourceRecurringOverrides)
+    .values({
+      id,
+      resource_id: resourceId,
+      dow,
+      is_active: isActive,
+      created_at: now,
+      updated_at: now,
+    } as any)
+    .onDuplicateKeyUpdate({
+      set: {
+        is_active: isActive,
+        updated_at: now,
+      } as any,
+    });
+
+  const [saved] = await db
+    .select()
+    .from(resourceRecurringOverrides)
+    .where(eq(resourceRecurringOverrides.id, id))
+    .limit(1);
+
+  if (saved) return saved as unknown as RecurringOverrideRowDTO;
+
+  const [byUnique] = await db
+    .select()
+    .from(resourceRecurringOverrides)
+    .where(
+      and(
+        eq(resourceRecurringOverrides.resource_id, resourceId),
+        eq(resourceRecurringOverrides.dow, dow),
+      ),
+    )
+    .limit(1);
+
+  return (byUnique as unknown as RecurringOverrideRowDTO | undefined) ?? null;
+}
+
+export async function deleteRecurringOverrideById(id: string) {
+  const safeId = safeTrim(id);
+  if (!safeId) return;
+  await db.delete(resourceRecurringOverrides).where(eq(resourceRecurringOverrides.id, safeId));
+}
 

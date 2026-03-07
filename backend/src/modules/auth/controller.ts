@@ -23,7 +23,10 @@ import { profiles } from "@/modules/profiles/schema";
 import {
   sendWelcomeMail,
   sendPasswordChangedMail,
+  sendEmailVerificationMail,
+  sendPasswordResetMail,
 } from "@/modules/mail/service";
+import { writeAuthAuditEvent } from "@/modules/audit/service";
 import {
   notifications,
   type NotificationInsert,
@@ -36,7 +39,7 @@ interface JWTPayload {
   sub: string;
   email?: string;
   role?: Role;
-  purpose?: "password_reset";
+  purpose?: "password_reset" | "email_verification";
   iat?: number;
   exp?: number;
 }
@@ -264,6 +267,20 @@ const passwordResetConfirmBody = z.object({
 export function makeAuthController(app: FastifyInstance) {
   const jwt = getJWT(app);
   const adminEmails = parseAdminEmailAllowlist();
+  const logAuthEvent = (
+    req: FastifyRequest,
+    event: "login_success" | "login_failed" | "logout",
+    extra?: { userId?: string | null; email?: string | null },
+  ) => {
+    void writeAuthAuditEvent({
+      req,
+      event,
+      userId: extra?.userId ?? null,
+      email: extra?.email ?? null,
+    }).catch((err) => {
+      req.log?.warn?.({ err, event }, "audit_auth_event_failed");
+    });
+  };
 
   return {
     /* ------------------------------ SIGNUP ------------------------------ */
@@ -343,6 +360,21 @@ export function makeAuthController(app: FastifyInstance) {
         req.log?.error?.(err, "welcome_mail_failed");
       });
 
+      // ✅ Email verification mail (async)
+      const verificationToken = jwt.sign(
+        { sub: id, email, purpose: "email_verification" as const },
+        { expiresIn: "24h" },
+      );
+      const feUrl = frontendRedirectDefault();
+      const verificationLink = `${feUrl}/verify-email?token=${verificationToken}`;
+      void sendEmailVerificationMail({
+        to: email,
+        user_name: userNameForMail,
+        verification_link: verificationLink,
+      }).catch((err) => {
+        req.log?.error?.(err, "email_verification_mail_failed");
+      });
+
       const u = (
         await db
           .select()
@@ -390,6 +422,7 @@ export function makeAuthController(app: FastifyInstance) {
         .limit(1);
       const u = found[0];
       if (!u || !(await verifyPasswordSmart(u.password_hash, password))) {
+        logAuthEvent(req, "login_failed", { email });
         return reply
           .status(401)
           .send({ error: { message: "invalid_credentials" } });
@@ -407,6 +440,7 @@ export function makeAuthController(app: FastifyInstance) {
 
       setAccessCookie(reply, access);
       setRefreshCookie(reply, refresh);
+      logAuthEvent(req, "login_success", { userId: u.id, email: u.email });
 
       return reply.send({
         access_token: access,
@@ -534,10 +568,22 @@ export function makeAuthController(app: FastifyInstance) {
         { expiresIn: "1h" },
       );
 
-      // FE bu token'ı mail template'inde kullanacak.
+      // Şifre sıfırlama e-postası gönder
+      const feUrl = frontendRedirectDefault();
+      const resetLink = `${feUrl}/password-reset?token=${resetToken}`;
+      const userName = u.full_name || u.email?.split("@")[0] || "User";
+
+      void sendPasswordResetMail({
+        to: u.email,
+        reset_link: resetLink,
+      }).catch((err) => {
+        req.log?.error?.(err, "password_reset_mail_failed");
+      });
+
       return reply.send({
         success: true,
-        token: resetToken,
+        message:
+          "Eğer bu e-posta ile bir hesap varsa, şifre sıfırlama bağlantısı gönderildi.",
       });
     },
 
@@ -769,6 +815,19 @@ export function makeAuthController(app: FastifyInstance) {
     },
 
     logout: async (req: FastifyRequest, reply: FastifyReply) => {
+      let auditUserId: string | null = null;
+      let auditEmail: string | null = null;
+      const token = bearerFrom(req);
+      if (token) {
+        try {
+          const p = jwt.verify(token);
+          auditUserId = p.sub ?? null;
+          auditEmail = p.email ?? null;
+        } catch {
+          // ignore invalid access token during logout
+        }
+      }
+
       const raw = (req.cookies?.refresh_token ?? "").trim();
       if (raw.includes(".")) {
         const jti = raw.split(".", 1)[0] ?? "";
@@ -777,8 +836,141 @@ export function makeAuthController(app: FastifyInstance) {
           .set({ revoked_at: new Date() })
           .where(eq(refresh_tokens.id, jti));
       }
+      logAuthEvent(req, "logout", { userId: auditUserId, email: auditEmail });
       clearAuthCookies(reply);
       return reply.status(204).send();
+    },
+
+    /* ------------------------------ EMAIL VERIFICATION ------------------------------ */
+
+    // POST /auth/email-verification/send
+    sendEmailVerification: async (
+      req: FastifyRequest,
+      reply: FastifyReply,
+    ) => {
+      const token = bearerFrom(req);
+      if (!token) {
+        return reply
+          .status(401)
+          .send({ error: { message: "no_token" } });
+      }
+
+      let p: JWTPayload;
+      try {
+        p = jwt.verify(token);
+      } catch {
+        return reply
+          .status(401)
+          .send({ error: { message: "invalid_token" } });
+      }
+
+      const u = (
+        await db
+          .select()
+          .from(users)
+          .where(eq(users.id, p.sub))
+          .limit(1)
+      )[0];
+      if (!u) {
+        return reply
+          .status(404)
+          .send({ error: { message: "user_not_found" } });
+      }
+
+      if (u.email_verified === 1) {
+        return reply.send({
+          success: true,
+          message: "email_already_verified",
+        });
+      }
+
+      // 24 saat geçerli doğrulama token'ı
+      const verificationToken = jwt.sign(
+        {
+          sub: u.id,
+          email: u.email ?? undefined,
+          purpose: "email_verification" as const,
+        },
+        { expiresIn: "24h" },
+      );
+
+      const frontendUrl = frontendRedirectDefault();
+      const verificationLink = `${frontendUrl}/verify-email?token=${verificationToken}`;
+
+      const userName = u.full_name || u.email?.split("@")[0] || "User";
+
+      void sendEmailVerificationMail({
+        to: u.email,
+        user_name: userName,
+        verification_link: verificationLink,
+      }).catch((err) => {
+        req.log?.error?.(err, "email_verification_mail_failed");
+      });
+
+      return reply.send({
+        success: true,
+        message: "verification_email_sent",
+      });
+    },
+
+    // POST /auth/email-verification/confirm
+    confirmEmailVerification: async (
+      req: FastifyRequest,
+      reply: FastifyReply,
+    ) => {
+      const body = z
+        .object({ token: z.string().min(10) })
+        .safeParse(req.body);
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send({ success: false, error: "invalid_body" });
+      }
+
+      let payload: JWTPayload;
+      try {
+        payload = jwt.verify(body.data.token);
+      } catch {
+        return reply
+          .status(400)
+          .send({ success: false, error: "invalid_or_expired_token" });
+      }
+
+      if (payload.purpose !== "email_verification" || !payload.sub) {
+        return reply
+          .status(400)
+          .send({ success: false, error: "invalid_token_payload" });
+      }
+
+      const u = (
+        await db
+          .select()
+          .from(users)
+          .where(eq(users.id, payload.sub))
+          .limit(1)
+      )[0];
+      if (!u) {
+        return reply
+          .status(404)
+          .send({ success: false, error: "user_not_found" });
+      }
+
+      if (u.email_verified === 1) {
+        return reply.send({
+          success: true,
+          message: "email_already_verified",
+        });
+      }
+
+      await db
+        .update(users)
+        .set({ email_verified: 1, updated_at: new Date() })
+        .where(eq(users.id, payload.sub));
+
+      return reply.send({
+        success: true,
+        message: "email_verified",
+      });
     },
   };
 }

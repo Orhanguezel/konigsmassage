@@ -23,7 +23,12 @@ import type {
 const BASE = 'admin/audit';
 
 type ClearAuditTarget = 'requests' | 'auth' | 'all';
-type ClearAuditResponse = { ok: boolean; deletedRequests: number; deletedAuth: number };
+type ClearAuditResponse = {
+  ok: boolean;
+  deletedRequests: number;
+  deletedAuth: number;
+  deletedEvents: number;
+};
 
 export const auditAdminApi = baseApi.injectEndpoints({
   overrideExisting: false,

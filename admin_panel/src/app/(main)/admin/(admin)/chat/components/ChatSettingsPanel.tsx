@@ -23,10 +23,12 @@ import {
 import { Save, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import {
   useListSiteSettingsAdminQuery,
   useBulkUpsertSiteSettingsAdminMutation,
+  useUpdateSiteSettingAdminMutation,
 } from '@/integrations/hooks';
 import type { SiteSettingRow, UpsertSettingBody, ValueType } from '@/integrations/shared';
 
@@ -39,9 +41,6 @@ const CHAT_KEYS = [
   'chat_ai_provider_order',
   'chat_ai_system_prompt',
   'chat_ai_offer_url',
-  'chat_ai_welcome_message_de',
-  'chat_ai_welcome_message_tr',
-  'chat_ai_welcome_message_en',
   // Groq
   'chat_ai_groq_api_key',
   'chat_ai_groq_model',
@@ -75,9 +74,6 @@ const defaults: ChatSettingsModel = {
   chat_ai_provider_order: 'grok,openai,anthropic',
   chat_ai_system_prompt: '',
   chat_ai_offer_url: '',
-  chat_ai_welcome_message_de: '',
-  chat_ai_welcome_message_tr: '',
-  chat_ai_welcome_message_en: '',
   // Groq
   chat_ai_groq_api_key: '',
   chat_ai_groq_model: 'llama-3.3-70b-versatile',
@@ -146,10 +142,13 @@ function ApiKeyInput({
 
 export default function ChatSettingsPanel() {
   const t = useAdminT('admin.chat');
+  const { localeOptions, defaultLocaleFromDb, coerceLocale } = useAdminLocales();
   const { data: rows, isLoading, isFetching } = useListSiteSettingsAdminQuery(undefined);
   const [bulkUpsert, { isLoading: saving }] = useBulkUpsertSiteSettingsAdminMutation();
+  const [updateSetting, updateState] = useUpdateSiteSettingAdminMutation();
 
   const [model, setModel] = React.useState<ChatSettingsModel>(defaults);
+  const [welcomeByLocale, setWelcomeByLocale] = React.useState<Record<string, string>>({});
   const [initialized, setInitialized] = React.useState(false);
 
   React.useEffect(() => {
@@ -158,7 +157,9 @@ export default function ChatSettingsPanel() {
     const m: ChatSettingsModel = { ...defaults };
 
     for (const item of rows as SiteSettingRow[]) {
-      const k = String(item.key ?? '') as ChatKey;
+      const rawKey = String(item.key ?? '').trim();
+      if (rawKey === 'chat_ai_welcome_message') continue;
+      const k = rawKey as ChatKey;
       if (!CHAT_KEYS.includes(k)) continue;
 
       const v: unknown = item.value;
@@ -170,9 +171,18 @@ export default function ChatSettingsPanel() {
       }
     }
 
+    const localeMap: Record<string, string> = {};
+    for (const item of rows as SiteSettingRow[]) {
+      if (String(item.key ?? '') !== 'chat_ai_welcome_message') continue;
+      const locale = coerceLocale(item.locale, defaultLocaleFromDb);
+      if (!locale) continue;
+      localeMap[locale] = item.value == null ? '' : String(item.value);
+    }
+
     setModel(m);
+    setWelcomeByLocale(localeMap);
     setInitialized(true);
-  }, [rows, initialized]);
+  }, [rows, initialized, coerceLocale, defaultLocaleFromDb]);
 
   const initialLoading = !initialized && (isLoading || isFetching);
 
@@ -197,6 +207,19 @@ export default function ChatSettingsPanel() {
       }));
 
       await bulkUpsert({ items }).unwrap();
+      const localesToSave = localeOptions.length
+        ? localeOptions.map((opt) => opt.value)
+        : [coerceLocale('', defaultLocaleFromDb)].filter(Boolean);
+
+      await Promise.all(
+        localesToSave.map((locale) =>
+          updateSetting({
+            key: 'chat_ai_welcome_message',
+            locale,
+            value: String(welcomeByLocale[locale] ?? '').trim(),
+          }).unwrap(),
+        ),
+      );
       toast.success(t('settings.saved'));
     } catch (e) {
       console.error(e);
@@ -429,43 +452,32 @@ export default function ChatSettingsPanel() {
           <CardTitle className="text-sm">{t('settings.welcomeTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-1">
-            <Label>Deutsch (DE)</Label>
-            <Textarea
-              rows={2}
-              value={model.chat_ai_welcome_message_de}
-              onChange={(e) => setStr('chat_ai_welcome_message_de', e.target.value)}
-              placeholder="Willkommen bei König Energetik! Wie kann ich Ihnen helfen?"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <Label>Türkçe (TR)</Label>
-            <Textarea
-              rows={2}
-              value={model.chat_ai_welcome_message_tr}
-              onChange={(e) => setStr('chat_ai_welcome_message_tr', e.target.value)}
-              placeholder="König Energetik'e hoş geldiniz! Size nasıl yardımcı olabilirim?"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <Label>English (EN)</Label>
-            <Textarea
-              rows={2}
-              value={model.chat_ai_welcome_message_en}
-              onChange={(e) => setStr('chat_ai_welcome_message_en', e.target.value)}
-              placeholder="Welcome to König Energetik! How can I help you?"
-            />
-          </div>
+          {(localeOptions.length ? localeOptions : [{ value: coerceLocale('', defaultLocaleFromDb), label: 'Default' }])
+            .filter((opt) => !!opt.value)
+            .map((opt) => (
+              <div className="space-y-1" key={opt.value}>
+                <Label>{opt.label || opt.value.toUpperCase()}</Label>
+                <Textarea
+                  rows={2}
+                  value={welcomeByLocale[opt.value] ?? ''}
+                  onChange={(e) =>
+                    setWelcomeByLocale((prev) => ({
+                      ...prev,
+                      [opt.value]: e.target.value,
+                    }))
+                  }
+                  placeholder="Willkommen bei König Energetik! Wie kann ich Ihnen helfen?"
+                />
+              </div>
+            ))}
         </CardContent>
       </Card>
 
       {/* Save button */}
       <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={saving} className="gap-2">
+        <Button onClick={handleSave} disabled={saving || updateState.isLoading} className="gap-2">
           <Save className="h-4 w-4" />
-          {saving ? t('settings.saving') : t('settings.save')}
+          {saving || updateState.isLoading ? t('settings.saving') : t('settings.save')}
         </Button>
       </div>
     </div>

@@ -8,6 +8,7 @@ import {
   createEmailTemplateAdmin,
   updateEmailTemplateAdmin,
   deleteEmailTemplateAdmin,
+  sendTestEmailAdmin,
 } from "./admin.controller";
 import { requireAuth } from "@/common/middleware/auth";
 
@@ -19,4 +20,5 @@ export async function registerEmailTemplatesAdmin(app: FastifyInstance) {
   app.post(base, { preHandler: [requireAuth] }, createEmailTemplateAdmin);
   app.patch(`${base}/:id`, { preHandler: [requireAuth] }, updateEmailTemplateAdmin);
   app.delete(`${base}/:id`, { preHandler: [requireAuth] }, deleteEmailTemplateAdmin);
+  app.post(`${base}/:id/send-test`, { preHandler: [requireAuth] }, sendTestEmailAdmin);
 }

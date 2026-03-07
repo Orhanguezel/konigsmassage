@@ -67,6 +67,7 @@ export const createResourceAdminHandler: RouteHandler = async (req, reply) => {
       capacity,
       external_ref_id: body.external_ref_id ? String(body.external_ref_id) : null,
       is_active: isActive,
+      i18n: body.i18n,
     });
 
     return reply.code(201).send(created);
@@ -113,6 +114,9 @@ export const updateResourceAdminHandler: RouteHandler = async (req, reply) => {
     if (typeof body.is_active !== 'undefined') {
       const a = toActive01(body.is_active);
       if (typeof a !== 'undefined') patch.is_active = a;
+    }
+    if (Object.prototype.hasOwnProperty.call(body, 'i18n')) {
+      patch.i18n = body.i18n;
     }
 
     const updated = await updateResourceByIdAdmin(id, patch);

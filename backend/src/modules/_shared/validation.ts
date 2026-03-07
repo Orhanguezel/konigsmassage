@@ -50,3 +50,23 @@ export const UuidArrayLike = z
     return null;
   })
   .refine((v) => v === null || Array.isArray(v), 'Format geçersiz (array veya JSON string olmalı)');
+
+/**
+ * Boş string'i null'a çeviren Zod preprocessor
+ * Kullanım: emptyToNull(z.string().optional().nullable())
+ */
+export const emptyToNull = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((v) => (v === '' ? null : v), schema);
+
+/**
+ * URL veya relative path kabul eden validator
+ * http://, https:// veya / ile başlayabilir
+ */
+export const urlOrRelativePath = z
+  .string()
+  .min(1)
+  .max(2000)
+  .refine(
+    (s) => s.startsWith('http://') || s.startsWith('https://') || s.startsWith('/'),
+    'URL veya relative path olmalı (/, http://, https://)',
+  );

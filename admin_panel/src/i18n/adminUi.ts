@@ -44,6 +44,12 @@ function normalizeAdminLocaleJson(raw: unknown): PlainObject {
     admin.mail = base.mail as PlainObject;
   if (!isPlainObject(admin.availability) && isPlainObject(base.availability))
     admin.availability = base.availability as PlainObject;
+  if (!isPlainObject(admin.wallet) && isPlainObject(base.wallet))
+    admin.wallet = base.wallet as PlainObject;
+  if (!isPlainObject(admin.gutschein) && isPlainObject(base.gutschein))
+    admin.gutschein = base.gutschein as PlainObject;
+  if (!isPlainObject(admin.popups) && isPlainObject(base.popups))
+    admin.popups = base.popups as PlainObject;
 
   // tr.json gibi: admin.db.siteSettings / admin.db.audit (yanlış yerde)
   const adminDb = isPlainObject(admin.db) ? (admin.db as PlainObject) : null;

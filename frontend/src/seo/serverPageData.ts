@@ -12,7 +12,7 @@ import type {
   CustomPageDto,
   ApiCustomPage,
 } from '@/integrations/shared';
-import { normalizeService, mapApiCustomPageToDto } from '@/integrations/shared';
+import { normalizeArrayResponse, normalizeService, mapApiCustomPageToDto } from '@/integrations/shared';
 import { getDefaultLocale } from '@/i18n/server';
 import { getServerApiBase } from '@/i18n/apiBase.server';
 import { normLocaleShort } from '@/integrations/shared';
@@ -56,6 +56,25 @@ export const fetchServicePublicBySlug = cache(
     );
 
     return raw ? normalizeService(raw) : null;
+  },
+);
+
+export const fetchPrimaryServicePublic = cache(
+  async (args: { locale: string }): Promise<ServiceDto | null> => {
+    const defaultLocale = await getDefaultLocale();
+    const locale = normLocaleShort(args.locale, defaultLocale);
+
+    const qs = new URLSearchParams({
+      locale,
+      default_locale: defaultLocale,
+      limit: '1',
+      order: 'display_order.asc',
+    });
+
+    const raw = await fetchApiJson<unknown>(`/services?${qs.toString()}`, { revalidate: 300 });
+    const first = normalizeArrayResponse<ApiServicePublic>(raw)[0];
+
+    return first ? normalizeService(first) : null;
   },
 );
 

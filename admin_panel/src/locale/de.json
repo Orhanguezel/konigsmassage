@@ -800,6 +800,40 @@
     "dashboard": {
       "title": "Dashboard",
       "subtitle": "Übersicht der Datensätze im System",
+      "analytics": {
+        "subtitle": "Überblick über Buchungen, Umsatztrend und Service-Performance.",
+        "ranges": {
+          "7d": "Letzte 7 Tage",
+          "30d": "Letzte 30 Tage",
+          "90d": "Letzte 90 Tage"
+        },
+        "kpi": {
+          "bookings": "Buchungen",
+          "confirmed": "Bestätigt",
+          "revenue": "Umsatz",
+          "reservedSlots": "Reservierte Slots"
+        },
+        "revenueChart": {
+          "title": "Umsatztrend",
+          "description": "Zeitreihe auf Basis nicht stornierter Buchungen."
+        },
+        "servicesChart": {
+          "title": "Buchungen nach Service",
+          "description": "Welcher Service wie viele Buchungen erhalten hat."
+        },
+        "servicesTable": {
+          "title": "Service-Performance",
+          "description": "Buchungsanzahl und Umsatz pro Service.",
+          "bookings": "{count} Buchungen"
+        },
+        "modules": {
+          "title": "Modulzähler",
+          "description": "Schnellzugriff für wichtige Admin-Module."
+        },
+        "states": {
+          "empty": "Für diesen Zeitraum wurden keine Analytics-Daten gefunden."
+        }
+      },
       "items": {
         "db": "Datenbank",
         "audit": "Audit-Protokolle",
@@ -824,7 +858,12 @@
         "mail": "E-Mail",
         "telegram": "Telegram",
         "chat": "Chat & KI",
-        "dashboard": "Übersicht"
+        "dashboard": "Übersicht",
+        "orders": "Bestellungen",
+        "wallet": "Wallet",
+        "gutschein": "Gutscheine",
+        "payment_settings": "Zahlungen",
+        "popups": "Popups"
       },
       "stats": {
         "deliveredOrders": "Gelieferte Bestellungen",
@@ -1313,9 +1352,7 @@
         },
         "dateLabel": "Datum",
         "resourceIdLabel": "Ressourcen-ID",
-        "resourceIdPlaceholder": "(optional)",
-        "serviceIdLabel": "Service-ID",
-        "serviceIdPlaceholder": "(optional)"
+        "resourceIdPlaceholder": "(optional)"
       },
       "badges": {
         "unread": "Ungelesen"
@@ -1337,7 +1374,12 @@
         "description": "Buchungen verwalten und schnelle Aktionen ausführen.",
         "views": {
           "table": "Tabelle",
-          "cards": "Karten"
+          "cards": "Karten",
+          "calendar": "Kalender"
+        },
+        "calendar": {
+          "count": "{count} Buchung(en)",
+          "contact": "Kontakt"
         },
         "columns": {
           "status": "Status",
@@ -1368,6 +1410,7 @@
         "accepting": "Akzeptiert...",
         "reject": "Ablehnen",
         "rejecting": "Lehnt ab...",
+        "sendReminder": "Erinnerung senden",
         "markRead": "Als gelesen markieren",
         "backToList": "Zurück zur Liste"
       },
@@ -1393,6 +1436,7 @@
         "markedRead": "Als gelesen markiert.",
         "accepted": "Buchung akzeptiert. (E-Mail + Benachrichtigung ausgelöst)",
         "rejected": "Buchung abgelehnt. (E-Mail + Benachrichtigung ausgelöst)",
+        "reminderSent": "Erinnerungs-E-Mail gesendet.",
         "loadError": "Eintrag konnte nicht geladen werden.",
         "genericError": "Aktion fehlgeschlagen. Bitte erneut versuchen."
       },
@@ -1808,6 +1852,22 @@
           "templateFallback": "Diese Vorlage",
           "cancel": "Abbrechen",
           "delete": "Löschen"
+        },
+        "preview": {
+          "showButton": "Vorschau",
+          "hideButton": "Vorschau ausblenden",
+          "title": "HTML-Vorschau"
+        },
+        "testSend": {
+          "title": "Test-E-Mail senden",
+          "showButton": "Anzeigen",
+          "hideButton": "Ausblenden",
+          "emailLabel": "Empfänger-E-Mail-Adresse",
+          "emailPlaceholder": "test@example.com",
+          "sendButton": "Test senden",
+          "sent": "Test-E-Mail erfolgreich gesendet.",
+          "failed": "Test-E-Mail konnte nicht gesendet werden.",
+          "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein."
         }
       }
     },
@@ -1918,7 +1978,8 @@
         "requests": "Anfragen",
         "auth": "Authentifizierung",
         "metrics": "Metriken",
-        "map": "Karte"
+        "map": "Karte",
+        "stream": "Live-Stream"
       },
       "requests": {
         "filtersTitle": "Filter",
@@ -1930,7 +1991,17 @@
         "sortDate": "Datum",
         "sortResponseTime": "Antwortzeit",
         "sortStatusCode": "Status-Code",
-        "logsTitle": "Anfrage-Logs"
+        "logsTitle": "Anfrage-Logs",
+        "bodySnapshot": "Body-Snapshot",
+        "compare": "Vergleichen",
+        "compareSelected": "{count} Einträge ausgewählt",
+        "compareAction": "Snapshots vergleichen"
+      },
+      "compare": {
+        "title": "Request-Snapshots vergleichen",
+        "description": "Zwei ausgewählte Request-Bodys werden zeilenweise nebeneinander angezeigt.",
+        "needTwo": "Bitte genau zwei Einträge für den Vergleich auswählen.",
+        "close": "Schließen"
       },
       "auth": {
         "filtersTitle": "Filter",
@@ -1951,6 +2022,21 @@
       "map": {
         "title": "Geografische Verteilung",
         "description": "Anfragen nach Standort der letzten {days} Tage."
+      },
+      "stream": {
+        "title": "Live-Ereignisstream",
+        "description": "Echtzeit-App-Events aus dem Audit-SSE-Stream.",
+        "recentCount": "{count} Ereignisse im lokalen Verlauf",
+        "clearLocal": "Verlauf leeren",
+        "empty": "Noch keine Live-Ereignisse empfangen.",
+        "unknownTopic": "Unbekanntes Thema",
+        "noMessage": "Keine Nachricht",
+        "status": {
+          "connecting": "Verbindung wird aufgebaut",
+          "open": "Verbunden",
+          "closed": "Geschlossen",
+          "error": "Verbindungsfehler"
+        }
       },
       "common": {
         "from": "Von",
@@ -1995,7 +2081,48 @@
         "list": "Liste (Sprache)",
         "globalList": "Liste (Global *)",
         "locales": "Sprachen",
-        "branding": "Branding"
+        "branding": "Branding",
+        "payment": "Zahlungen"
+      },
+      "payment": {
+        "title": "Zahlungseinstellungen",
+        "description": "PayPal und Banküberweisung konfigurieren.",
+        "paypal": {
+          "title": "PayPal",
+          "enabled": "PayPal aktivieren",
+          "mode": "Modus",
+          "modeSandbox": "Sandbox (Test)",
+          "modeProduction": "Live (Produktion)",
+          "clientId": "Client ID",
+          "clientIdPh": "AXxxxx...",
+          "clientSecret": "Client Secret",
+          "clientSecretPh": "ELxxxx...",
+          "webhookId": "Webhook ID (optional)",
+          "webhookIdPh": "WH-xxxx..."
+        },
+        "bankTransfer": {
+          "title": "Banküberweisung",
+          "enabled": "Banküberweisung aktivieren",
+          "accountName": "Kontoinhaber",
+          "accountNamePh": "Max Mustermann GmbH",
+          "iban": "IBAN",
+          "ibanPh": "DE89 3704 0044 0532 0130 00",
+          "bankName": "Bank",
+          "bankNamePh": "Deutsche Bank",
+          "branch": "Filiale",
+          "branchPh": "Frankfurt am Main",
+          "swift": "SWIFT / BIC",
+          "swiftPh": "DEUTDEDBXXX"
+        },
+        "bookingPayment": {
+          "title": "Online-Zahlung für Termine",
+          "description": "Wenn aktiviert, erhalten Kunden einen Zahlungslink in ihrer Terminbestätigungs-E-Mail.",
+          "enabled": "Online-Zahlung für Termine aktivieren",
+          "activeNote": "Aktiv: Terminbestätigungs-E-Mails enthalten einen Zahlungslink. Die Terminseite zeigt nach der Buchung eine Schaltfläche \"Jetzt bezahlen\".",
+          "inactiveNote": "Inaktiv: Terminbestätigungs-E-Mails bestätigen nur den Termin ohne Zahlungslink."
+        },
+        "saved": "Zahlungseinstellungen gespeichert.",
+        "saveError": "Fehler beim Speichern."
       },
       "filters": {
         "title": "Filter",
@@ -2653,6 +2780,125 @@
         "loading": "Lädt...",
         "noName": "(kein Name)",
         "noRef": "(keine Ref)"
+      },
+      "weekly": {
+        "title": "Wöchentliche Arbeitszeiten",
+        "description": "Diese Zeitfenster sind die Grundlage für die tägliche Slot-Erzeugung.",
+        "empty": "Es gibt noch keine Arbeitszeitfenster. Unten können Sie ein neues Fenster hinzufügen.",
+        "addTitle": "Neues Arbeitszeitfenster hinzufügen",
+        "days": {
+          "1": "Montag",
+          "2": "Dienstag",
+          "3": "Mittwoch",
+          "4": "Donnerstag",
+          "5": "Freitag",
+          "6": "Samstag",
+          "7": "Sonntag"
+        },
+        "columns": {
+          "day": "Tag",
+          "start": "Beginn",
+          "end": "Ende",
+          "session": "Sitzung (Min.)",
+          "break": "Pause (Min.)",
+          "capacity": "Kapazität",
+          "active": "Aktiv"
+        },
+        "actions": {
+          "edit": "Bearbeiten",
+          "save": "Speichern",
+          "delete": "Löschen",
+          "add": "Hinzufügen",
+          "editDayHint": "Tages-Slots für diesen Tag bearbeiten"
+        },
+        "messages": {
+          "invalidRange": "Ungültige Start-/Endzeit. Die Endzeit muss nach der Startzeit liegen.",
+          "added": "Arbeitszeitfenster hinzugefügt.",
+          "addFailed": "Arbeitszeitfenster konnte nicht hinzugefügt werden.",
+          "updated": "Arbeitszeitfenster aktualisiert.",
+          "updateFailed": "Arbeitszeitfenster konnte nicht aktualisiert werden.",
+          "deleted": "Arbeitszeitfenster gelöscht.",
+          "deleteFailed": "Arbeitszeitfenster konnte nicht gelöscht werden.",
+          "deleteConfirm": "Sie sind dabei, dieses Arbeitszeitfenster zu löschen.\n\nTag: {day}\nZeit: {start} - {end}\n\nFortfahren?"
+        }
+      },
+      "recurring": {
+        "title": "Wiederkehrende Tages-Overrides",
+        "description": "Definieren Sie ein wöchentliches Override-Muster, z.B. jeden Freitag geschlossen oder einen Tag dauerhaft offen.",
+        "modes": {
+          "default": "Wochenplan verwenden",
+          "open": "Immer offen",
+          "closed": "Immer geschlossen",
+          "defaultDesc": "Kein wiederkehrendes Override. Die wöchentlichen Arbeitszeiten gelten weiter.",
+          "openDesc": "Dieser Tag bleibt jede Woche offen, sofern Arbeitszeiten vorhanden sind.",
+          "closedDesc": "Dieser Tag wird jede Woche als geschlossen behandelt."
+        },
+        "preview": {
+          "closedByRecurring": "Dieser Tag ist durch ein wiederkehrendes Wochen-Override geschlossen. Entfernen Sie das Override oder stellen Sie es auf offen, um wieder Zeitfenster in der Vorschau zu sehen."
+        },
+        "messages": {
+          "saved": "Wiederkehrendes Override gespeichert.",
+          "deleted": "Wiederkehrendes Override entfernt.",
+          "saveFailed": "Wiederkehrendes Override konnte nicht gespeichert werden."
+        }
+      },
+      "daily": {
+        "title": "Tagesplan",
+        "description": "Für den ausgewählten Tag werden Slots aus dem Wochenplan abgeleitet. Verwenden Sie Slot-Erzeugung, um sie zu speichern.",
+        "fields": {
+          "date": "Datum",
+          "dayOfWeek": "Tag: {dow} (1=Mo ... 7=So)"
+        },
+        "actions": {
+          "generate": "Slots erzeugen",
+          "closeDay": "Tag schließen",
+          "openDay": "Tag öffnen",
+          "closeSlot": "Schließen",
+          "openSlot": "Öffnen"
+        },
+        "notes": {
+          "capacityCheck": "Die Kapazität wird bei der Bestätigung gemäß Backend-Regeln erneut geprüft."
+        },
+        "preview": {
+          "title": "Vorschau der Sitzungen (aus Wochenplan)",
+          "description": "Die Vorschau dient nur der UI. Für öffentliche buchbare Zeiten ist ein DB-Plan erforderlich.",
+          "noRanges": "Für diesen Tag gibt es kein aktives Wochenzeitfenster.",
+          "rangeLabel": "Arbeitszeitfenster",
+          "rangePlaceholder": "Zeitfenster auswählen",
+          "rangeHelp": "Wenn es mehrere Zeitfenster an einem Tag gibt, verwalten Sie die Sitzungen fensterweise.",
+          "selectRange": "Wählen Sie ein Zeitfenster für die Vorschau aus.",
+          "noPreview": "Für das ausgewählte Zeitfenster konnten keine Sitzungen erzeugt werden."
+        },
+        "dbPlan": {
+          "title": "DB-Plan (Slot-Einträge)",
+          "description": "Die öffentlichen verfügbaren Zeiten werden von hier gelesen.",
+          "empty": "Der DB-Plan ist leer. Wenn Sie eine Vorschau sehen, erzeugen Sie zuerst Slots."
+        },
+        "columns": {
+          "time": "Uhrzeit",
+          "capacity": "Kapazität",
+          "status": "Status",
+          "range": "Zeitfenster"
+        },
+        "capacityLegend": "(reserviert/gesamt)",
+        "statusOpen": "Offen",
+        "statusFull": "Voll",
+        "statusClosed": "Geschlossen",
+        "rules": {
+          "title": "Regel",
+          "weekly": "Der Wochenplan ist die Quelle der Slot-Erzeugung.",
+          "db": "Der DB-Plan ist die tatsächliche öffentliche Quelle der verfügbaren Zeiten.",
+          "empty": "Wenn der Plan leer ist, werden öffentlich keine Zeiten angezeigt."
+        },
+        "messages": {
+          "generateSuccess": "Slot-Erzeugung abgeschlossen. Erstellt={created}, Geplant={planned}",
+          "generateFailed": "Slot-Erzeugung fehlgeschlagen.",
+          "dayUpdated": "Tag aktualisiert. Aktualisiert={updated}",
+          "dayUpdateFailed": "Tages-Override fehlgeschlagen.",
+          "reservationWarning": "Dieser Slot hat {reserved} bestätigte Reservierung(en).\nBeim Schließen kann Nacharbeit für diese Buchungen nötig sein.\n\nFortfahren?",
+          "slotUpdated": "Slot aktualisiert.",
+          "slotUpdateFailed": "Slot konnte nicht aktualisiert werden."
+        }
       }
     },
     "telegram": {
@@ -2831,6 +3077,288 @@
         "deleted": "Eintrag gelöscht.",
         "saveError": "Speichern fehlgeschlagen.",
         "deleteError": "Löschen fehlgeschlagen."
+      }
+    },
+    "wallet": {
+      "title": "Wallet & Zahlungen",
+      "description": "Wallet-Guthaben, Einzahlungsanfragen und Zahlungsfreigaben",
+      "wallets": {
+        "title": "Wallets",
+        "desc": "Benutzerguthaben und Statusverwaltung",
+        "empty": "Keine Einträge gefunden",
+        "table": {
+          "user": "Benutzer",
+          "balance": "Guthaben",
+          "earnings": "Gesamteingang",
+          "withdrawn": "Gesamtausgang",
+          "status": "Status",
+          "actions": "Aktionen"
+        },
+        "actions": {
+          "transactions": "Transaktionen"
+        }
+      },
+      "deposits": {
+        "title": "Einzahlungsanfragen",
+        "desc": "PayPal und Banküberweisungen genehmigen oder ablehnen",
+        "empty": "Keine Einträge gefunden",
+        "filters": {
+          "status": "Status",
+          "method": "Methode",
+          "userId": "Benutzer-ID",
+          "userIdPh": "Nach UUID filtern"
+        },
+        "table": {
+          "user": "Benutzer",
+          "amount": "Betrag",
+          "method": "Methode",
+          "status": "Status",
+          "createdAt": "Datum",
+          "actions": "Aktionen"
+        },
+        "actions": {
+          "approve": "Genehmigen",
+          "reject": "Ablehnen"
+        }
+      },
+      "transactions": {
+        "title": "Wallet-Transaktionen",
+        "empty": "Keine Einträge gefunden",
+        "table": {
+          "type": "Typ",
+          "amount": "Betrag",
+          "method": "Methode",
+          "status": "Status",
+          "purpose": "Zweck",
+          "createdAt": "Datum"
+        }
+      },
+      "actions": {
+        "refresh": "Aktualisieren",
+        "prev": "Zurück",
+        "next": "Weiter",
+        "search": "Suchen"
+      },
+      "labels": {
+        "page": "Seite {page}"
+      },
+      "messages": {
+        "walletStatusUpdated": "Wallet-Status aktualisiert",
+        "depositApproved": "Einzahlung genehmigt",
+        "depositRejected": "Einzahlung abgelehnt",
+        "operationFailed": "Vorgang fehlgeschlagen",
+        "rejectPrompt": "Ablehnungsgrund (optional):"
+      }
+    },
+    "popups": {
+      "title": "Popup-Verwaltung",
+      "description": "Popup-Inhalte, Reihenfolge und Sichtbarkeit verwalten",
+      "list": {
+        "title": "Popup-Liste",
+        "desc": "Popups mit Aktiv/Passiv-Filtern verwalten"
+      },
+      "filters": {
+        "search": "Titel oder Inhalt suchen",
+        "typeAll": "Alle Typen",
+        "statusAll": "Alle",
+        "statusActive": "Aktiv",
+        "statusPassive": "Passiv"
+      },
+      "types": {
+        "topbar": "Top-Leiste",
+        "sidebarTop": "Sidebar oben",
+        "sidebarCenter": "Sidebar mitte",
+        "sidebarBottom": "Sidebar unten"
+      },
+      "frequency": {
+        "always": "Immer",
+        "once": "Einmal",
+        "daily": "Täglich"
+      },
+      "linkTargets": {
+        "self": "Gleicher Tab",
+        "blank": "Neuer Tab"
+      },
+      "textBehavior": {
+        "marquee": "Lauftext",
+        "static": "Statisch"
+      },
+      "badges": {
+        "active": "Aktiv",
+        "passive": "Passiv"
+      },
+      "table": {
+        "title": "Titel",
+        "type": "Typ",
+        "order": "Reihenfolge",
+        "active": "Status",
+        "actions": "Aktionen"
+      },
+      "states": {
+        "empty": "Keine Einträge gefunden"
+      },
+      "actions": {
+        "refresh": "Aktualisieren",
+        "create": "Neu",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "prev": "Zurück",
+        "next": "Weiter",
+        "cancel": "Abbrechen",
+        "save": "Speichern"
+      },
+      "labels": {
+        "page": "Seite {page}"
+      },
+      "messages": {
+        "titleRequired": "Titel ist erforderlich",
+        "saved": "Gespeichert",
+        "failed": "Vorgang fehlgeschlagen",
+        "deleteConfirm": "Möchten Sie diesen Eintrag wirklich löschen?",
+        "deleted": "Gelöscht",
+        "statusUpdated": "Status aktualisiert"
+      },
+      "modal": {
+        "edit": "Popup bearbeiten",
+        "new": "Popup erstellen"
+      },
+      "form": {
+        "title": "Titel",
+        "locale": "Sprache",
+        "content": "Inhalt",
+        "type": "Typ",
+        "frequency": "Frequenz",
+        "order": "Reihenfolge",
+        "buttonText": "Button-Text",
+        "linkUrl": "Link",
+        "linkTarget": "Link-Ziel",
+        "textBehavior": "Textverhalten",
+        "scrollSpeed": "Scroll-Geschwindigkeit",
+        "imageUrl": "Bild-URL",
+        "imageAsset": "Bild-Asset-ID",
+        "alt": "Alt-Text",
+        "bgColor": "Hintergrundfarbe",
+        "textColor": "Textfarbe",
+        "buttonColor": "Button-Farbe",
+        "buttonHoverColor": "Button-Hover-Farbe",
+        "buttonTextColor": "Button-Textfarbe",
+        "start": "Start",
+        "end": "Ende",
+        "delay": "Verzögerung (Sek.)",
+        "active": "Aktiv",
+        "closeable": "Schließbar"
+      }
+    },
+    "gutschein": {
+      "title": "Gutscheine",
+      "description": "Gutscheine verwalten – erstellen, aktivieren, stornieren oder Details anzeigen.",
+      "actions": {
+        "create": "Neuer Gutschein",
+        "products": "Produkte",
+        "activate": "Aktivieren",
+        "cancel": "Stornieren",
+        "refresh": "Aktualisieren"
+      },
+      "filters": {
+        "searchLabel": "Suche (Code / E-Mail / Name)",
+        "searchPlaceholder": "KM-XXXX-XXXX oder E-Mail...",
+        "statusLabel": "Status",
+        "all": "Alle"
+      },
+      "table": {
+        "code": "Code",
+        "value": "Wert",
+        "status": "Status",
+        "payment": "Zahlung",
+        "recipient": "Empfänger",
+        "purchaser": "Käufer",
+        "expires": "Läuft ab",
+        "actions": "Aktionen",
+        "empty": "Keine Gutscheine gefunden."
+      },
+      "labels": {
+        "admin": "Admin",
+        "total": "Gesamt: {total}",
+        "created": "Erstellt",
+        "expires": "Läuft ab",
+        "recipient": "Empfänger"
+      },
+      "create": {
+        "title": "Gutschein erstellen",
+        "description": "Admin-erstellte Gutscheine werden sofort als bezahlt markiert.",
+        "template": "Vorlagenprodukt (optional)",
+        "templatePlaceholder": "Produkt auswählen...",
+        "templateNone": "— Individuell (keine Vorlage) —",
+        "value": "Wert",
+        "currency": "Währung",
+        "validityDays": "Gültigkeit (Tage)",
+        "recipientName": "Empfängername",
+        "recipientEmail": "Empfänger-E-Mail",
+        "purchaserName": "Käufername",
+        "purchaserEmail": "Käufer-E-Mail",
+        "note": "Interne Notiz",
+        "notePlaceholder": "Optionale interne Notiz...",
+        "submit": "Gutschein erstellen",
+        "cancel": "Abbrechen"
+      },
+      "cancelDialog": {
+        "title": "Gutschein stornieren",
+        "description": "Sind Sie sicher, dass Sie {code} stornieren möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirm": "Karte stornieren",
+        "keep": "Behalten"
+      },
+      "messages": {
+        "created": "Gutschein erstellt.",
+        "cancelled": "Gutschein storniert.",
+        "activated": "Gutschein aktiviert.",
+        "createError": "Gutschein konnte nicht erstellt werden.",
+        "cancelError": "Stornierung fehlgeschlagen.",
+        "activateError": "Aktivierung fehlgeschlagen.",
+        "valueRequired": "Bitte einen gültigen Wert eingeben.",
+        "updated": "Gutschein aktualisiert.",
+        "updateError": "Gutschein konnte nicht aktualisiert werden."
+      },
+      "products": {
+        "title": "Gutschein-Produkte",
+        "description": "Gutscheinvorlagen mit voreingestellten Werten und Gültigkeitszeiträumen definieren.",
+        "create": "Neues Produkt",
+        "empty": "Noch keine Produkte. Erstellen Sie eines, um zu beginnen.",
+        "table": {
+          "name": "Name",
+          "value": "Wert",
+          "validity": "Gültigkeit",
+          "order": "Reihenfolge",
+          "active": "Aktiv",
+          "created": "Erstellt",
+          "actions": "Aktionen"
+        },
+        "form": {
+          "title": "Produkt erstellen",
+          "editTitle": "Produkt bearbeiten",
+          "description": "Eine neue Gutscheinvorlage erstellen, die Kunden kaufen können.",
+          "editDescription": "Die Gutscheinvorlage aktualisieren.",
+          "name": "Name",
+          "namePlaceholder": "Gutschein 50 €",
+          "value": "Wert",
+          "valuePlaceholder": "50.00",
+          "currency": "Währung",
+          "validityDays": "Gültigkeit (Tage)",
+          "displayOrder": "Anzeigereihenfolge",
+          "productDescription": "Beschreibung",
+          "descriptionPlaceholder": "Optionale Beschreibung...",
+          "isActive": "Aktiv (für Kunden sichtbar)",
+          "save": "Änderungen speichern",
+          "create": "Produkt erstellen",
+          "cancel": "Abbrechen"
+        },
+        "messages": {
+          "created": "Produkt erstellt.",
+          "updated": "Produkt aktualisiert.",
+          "error": "Produkt konnte nicht gespeichert werden.",
+          "toggleError": "Status konnte nicht aktualisiert werden.",
+          "nameRequired": "Name ist erforderlich.",
+          "valueRequired": "Bitte einen gültigen Wert eingeben."
+        }
       }
     }
   },

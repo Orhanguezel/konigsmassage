@@ -7,9 +7,32 @@
 
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { db } from '@/db/client';
-import { auditRequestLogs } from './schema';
+import { auditAuthEvents, auditRequestLogs } from './schema';
 import { emitAppEvent } from '@/common/events/bus';
 import geoip from 'geoip-lite';
+import type { AuditAuthEvent } from './validation';
+
+const BODY_SNAPSHOT_MAX_CHARS = 4000;
+const REDACT_KEYS = new Set([
+  'password',
+  'password_confirmation',
+  'current_password',
+  'new_password',
+  'confirm_password',
+  'token',
+  'access_token',
+  'refresh_token',
+  'id_token',
+  'authorization',
+  'cookie',
+  'secret',
+  'client_secret',
+  'api_secret',
+  'smtp_password',
+  'paypal_client_secret',
+  'telegram_bot_token',
+  'reset_token',
+]);
 
 /* -------------------- helper: headers -------------------- */
 function firstHeader(req: FastifyRequest, name: string): string {
@@ -122,6 +145,63 @@ function normalizeGeo(req: FastifyRequest, ip: string): { country: string | null
   return { country: null, city: null };
 }
 
+function isMultipartLike(req: FastifyRequest): boolean {
+  const ct = firstHeader(req, 'content-type').toLowerCase();
+  return ct.includes('multipart/form-data') || ct.includes('application/octet-stream');
+}
+
+function redactValue(input: unknown, depth = 0): unknown {
+  if (depth > 5) return '[depth_limit]';
+  if (input == null) return input;
+
+  if (Array.isArray(input)) {
+    return input.slice(0, 20).map((v) => redactValue(v, depth + 1));
+  }
+
+  if (typeof input === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(input as Record<string, unknown>).slice(0, 50)) {
+      const key = String(k).toLowerCase();
+      out[k] = REDACT_KEYS.has(key) || key.includes('password') || key.includes('token') || key.includes('secret')
+        ? '[redacted]'
+        : redactValue(v, depth + 1);
+    }
+    return out;
+  }
+
+  if (typeof input === 'string') {
+    return input.length > 500 ? `${input.slice(0, 500)}…` : input;
+  }
+
+  return input;
+}
+
+function normalizeBodySnapshot(req: FastifyRequest): string | null {
+  const method = String(req.method || '').toUpperCase();
+  if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return null;
+  if (isMultipartLike(req)) return '[multipart omitted]';
+
+  const body = (req as any).body;
+  if (typeof body === 'undefined') return null;
+  if (typeof body === 'string') {
+    const trimmed = body.trim();
+    if (!trimmed) return null;
+    return trimmed.length > BODY_SNAPSHOT_MAX_CHARS
+      ? `${trimmed.slice(0, BODY_SNAPSHOT_MAX_CHARS)}…`
+      : trimmed;
+  }
+
+  try {
+    const redacted = redactValue(body);
+    const json = JSON.stringify(redacted, null, 2);
+    return json.length > BODY_SNAPSHOT_MAX_CHARS
+      ? `${json.slice(0, BODY_SNAPSHOT_MAX_CHARS)}…`
+      : json;
+  } catch {
+    return '[unserializable body]';
+  }
+}
+
 /* -------------------- writer -------------------- */
 export async function writeRequestAuditLog(args: {
   req: FastifyRequest;
@@ -142,6 +222,7 @@ export async function writeRequestAuditLog(args: {
 
   const ua = normalizeUserAgent(req);
   const referer = normalizeReferer(req);
+  const bodySnapshot = normalizeBodySnapshot(req);
   const geo = normalizeGeo(req, ip);
 
   await db.insert(auditRequestLogs).values({
@@ -154,6 +235,7 @@ export async function writeRequestAuditLog(args: {
     ip,
     user_agent: ua,
     referer,
+    body_snapshot: bodySnapshot,
     user_id: userId,
     is_admin: isAdmin,
     country: geo.country,
@@ -174,6 +256,44 @@ export async function writeRequestAuditLog(args: {
       response_time_ms: Math.max(0, Math.round(Number(args.responseTimeMs || 0))),
       user_id: userId,
       is_admin: isAdmin,
+    },
+    entity: null,
+  });
+}
+
+export async function writeAuthAuditEvent(args: {
+  req: FastifyRequest;
+  event: AuditAuthEvent;
+  userId?: string | null;
+  email?: string | null;
+}) {
+  const { req, event } = args;
+  const ip = normalizeClientIp(req);
+  const ua = normalizeUserAgent(req);
+  const geo = normalizeGeo(req, ip);
+
+  await db.insert(auditAuthEvents).values({
+    event,
+    user_id: args.userId ? String(args.userId) : null,
+    email: args.email ? String(args.email) : null,
+    ip,
+    user_agent: ua,
+    country: geo.country,
+    city: geo.city,
+    created_at: new Date() as any,
+  } as any);
+
+  emitAppEvent({
+    level: event === 'login_failed' ? 'warn' : 'info',
+    topic: `auth.${event}`,
+    message: event,
+    actor_user_id: args.userId ? String(args.userId) : null,
+    ip,
+    meta: {
+      event,
+      email: args.email ? String(args.email) : null,
+      country: geo.country,
+      city: geo.city,
     },
     entity: null,
   });

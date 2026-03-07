@@ -8,7 +8,7 @@ import AdminFaqsDetailClient from '../admin-faqs-detail-client';
 
 type Params = { id: string };
 
-export default async function Page({ params }: { params: Promise<Params> | Params }) {
-  const p = (await params) as Params;
+export default async function Page({ params }: { params: Promise<Params> }) {
+  const p = await params;
   return <AdminFaqsDetailClient id={p.id} />;
 }

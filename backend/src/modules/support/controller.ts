@@ -17,6 +17,8 @@ import {
   notifications,
   type NotificationInsert,
 } from "@/modules/notifications/schema";
+import { createUserNotification } from "@/modules/notifications/service";
+import { getSettingValue } from "@/modules/siteSettings/service";
 import { randomUUID } from "crypto";
 import { eq } from "drizzle-orm";
 
@@ -168,6 +170,22 @@ export const SupportController = {
         message: body.message,
         priority: body.priority as any,
       });
+
+      // Admin notification (best-effort)
+      try {
+        const adminUserId = ((await getSettingValue('booking_admin_user_id')) ?? '').trim();
+        if (adminUserId && adminUserId.length === 36) {
+          await createUserNotification({
+            userId: adminUserId,
+            type: 'custom',
+            title: 'Yeni destek talebi',
+            message: `${body.subject}`,
+          });
+        }
+      } catch (notifErr) {
+        req.log.error({ err: notifErr }, "support_ticket_notification_failed");
+      }
+
       reply.code(201);
       return created;
     } catch (err) {

@@ -12,10 +12,14 @@ import {
   getBookingTotals,
   getBookingTrend,
   getBookingAggByResource,
+  getBookingAggByService,
+  getRevenueTotals,
+  getRevenueTrend,
 } from './_queries/bookings.analytics';
 import { getSlotsTotals, getSlotsAggByResource } from './_queries/availability.analytics';
 import { getModuleCounts, getUnreadContactCount } from './_queries/module.counts';
 import { getResourceNameMap } from './_queries/resources.lookup';
+import { getServiceNameMap } from './_queries/services.lookup';
 
 function safeText(v: unknown, fb = '—') {
   const s = String(v ?? '').trim();
@@ -31,6 +35,9 @@ export const getDashboardAnalyticsAdmin: RouteHandler = async (req, reply) => {
     const bookingTotals = await getBookingTotals(fromYmd, toYmdExclusive);
     const trend = await getBookingTrend(fromYmd, toYmdExclusive, bucket);
     const bookingAggByResource = await getBookingAggByResource(fromYmd, toYmdExclusive);
+    const bookingAggByService = await getBookingAggByService(fromYmd, toYmdExclusive);
+    const revenueTotals = await getRevenueTotals(fromYmd, toYmdExclusive);
+    const revenueTrend = await getRevenueTrend(fromYmd, toYmdExclusive, bucket);
 
     // 2) slots
     const slotTotals = await getSlotsTotals(fromYmd, toYmdExclusive);
@@ -46,6 +53,10 @@ export const getDashboardAnalyticsAdmin: RouteHandler = async (req, reply) => {
 
     const resourceNameMap = await getResourceNameMap(resourceIds);
     const slotAggMap = await getSlotsAggByResource(fromYmd, toYmdExclusive, resourceIds);
+    const serviceIds = Array.from(
+      new Set(bookingAggByService.map((r) => String(r.service_id || '').trim()).filter(Boolean)),
+    );
+    const serviceNameMap = await getServiceNameMap(serviceIds);
 
     const resources = bookingAggByResource
       .filter((r) => String(r.resource_id || '').trim())
@@ -67,6 +78,15 @@ export const getDashboardAnalyticsAdmin: RouteHandler = async (req, reply) => {
       })
       .sort((a, b) => b.bookings_total - a.bookings_total);
 
+    const services = bookingAggByService
+      .map((r) => ({
+        service_id: r.service_id,
+        service_name: safeText(serviceNameMap.get(r.service_id), '—'),
+        bookings_total: r.bookings_total,
+        revenue_total: r.revenue_total,
+      }))
+      .sort((a, b) => b.bookings_total - a.bookings_total);
+
     const payload: DashboardAnalyticsDto = {
       range,
       fromYmd,
@@ -75,6 +95,7 @@ export const getDashboardAnalyticsAdmin: RouteHandler = async (req, reply) => {
 
       totals: {
         ...bookingTotals,
+        ...revenueTotals,
         ...slotTotals,
 
         ...moduleCounts,
@@ -83,7 +104,9 @@ export const getDashboardAnalyticsAdmin: RouteHandler = async (req, reply) => {
       },
 
       resources,
+      services,
       trend,
+      revenueTrend,
     };
 
     return reply.send(payload);

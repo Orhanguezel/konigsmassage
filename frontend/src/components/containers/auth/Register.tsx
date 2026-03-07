@@ -78,7 +78,11 @@ const Register: React.FC = () => {
 
       const resp = await signup(payload).unwrap();
       if (resp.access_token) tokenStore.set(resp.access_token);
-      router.push(homeHref);
+      router.push(
+        `${localizePath(locale, '/verify-email')}?mode=pending&email=${encodeURIComponent(
+          email.trim(),
+        )}`,
+      );
     } catch {
       // Error handled by signupState
     }

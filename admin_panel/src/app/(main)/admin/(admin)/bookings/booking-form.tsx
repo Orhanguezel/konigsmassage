@@ -24,6 +24,7 @@ import {
   useGetDailyPlanAdminQuery,
   useGetSlotAvailabilityAdminQuery,
   useListResourcesAdminQuery,
+  useListServicesAdminQuery,
   useRejectBookingAdminMutation,
 } from '@/integrations/hooks';
 
@@ -219,6 +220,37 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     [resourcesData],
   );
 
+  const {
+    data: servicesData,
+    isLoading: servicesLoading,
+    isFetching: servicesFetching,
+  } = useListServicesAdminQuery(
+    {
+      limit: 1,
+      offset: 0,
+      order: 'asc',
+      sort: 'display_order',
+    } as any,
+    { refetchOnMountOrArgChange: true } as any,
+  );
+
+  const primaryService = React.useMemo(() => {
+    const items = Array.isArray((servicesData as any)?.items) ? (servicesData as any).items : [];
+    return (items[0] as any) ?? null;
+  }, [servicesData]);
+
+  const primaryServiceId = norm(primaryService?.id);
+  const primaryServiceLabel =
+    norm(primaryService?.name) || norm(primaryService?.title) || primaryServiceId;
+
+  React.useEffect(() => {
+    if (!primaryServiceId) return;
+    setValues((prev) => {
+      if (norm(prev.service_id)) return prev;
+      return { ...prev, service_id: primaryServiceId };
+    });
+  }, [primaryServiceId]);
+
   // Plan query
   const planArgs = React.useMemo(() => {
     const rid = norm(values.resource_id);
@@ -288,7 +320,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       locale: normLocale(values.locale, 'de'),
       customer_message: norm(values.customer_message),
       resource_id: norm(values.resource_id),
-      service_id: norm(values.service_id),
+      service_id: norm(values.service_id || primaryServiceId),
       appointment_date: norm(values.appointment_date),
       appointment_time: norm(values.appointment_time),
       admin_note: norm(values.admin_note),
@@ -350,6 +382,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
   const planBusy = planLoading || planFetching;
   const resBusy = resLoading || resFetching;
+  const servicesBusy = servicesLoading || servicesFetching;
 
   const availableSlots = React.useMemo(() => {
     return planned
@@ -516,11 +549,16 @@ export const BookingForm: React.FC<BookingFormProps> = ({
             <div className="space-y-2">
               <Label>{t('form.fields.serviceId')}</Label>
               <Input
-                value={values.service_id}
-                onChange={(e) => setValues((p) => ({ ...p, service_id: e.target.value }))}
+                value={primaryServiceLabel || values.service_id}
+                readOnly
                 placeholder={t('form.placeholders.serviceId')}
-                disabled={actionBusy}
+                disabled={actionBusy || servicesBusy}
               />
+              <div className="text-xs text-muted-foreground">
+                {primaryServiceId
+                  ? primaryServiceId
+                  : t('states.loadingInline')}
+              </div>
             </div>
 
             <div className="space-y-2 md:col-span-2">

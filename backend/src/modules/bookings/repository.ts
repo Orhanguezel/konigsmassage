@@ -23,7 +23,7 @@ import type {
 } from '@/modules/_shared';
 import { isActiveForCapacity } from './validation';
 
-import { resources } from '@/modules/resources/schema';
+import { resources, resourcesI18n } from '@/modules/resources/schema';
 import { servicesI18n } from '@/modules/services/schema';
 
 import {
@@ -54,7 +54,7 @@ function normalizeLocales(locale?: string | null) {
   return { loc, def };
 }
 
-function mergedSelect(sReq: any, sDef: any) {
+function mergedSelect(rReq: any, rDef: any, sReq: any, sDef: any) {
   return {
     id: bookings.id,
     name: bookings.name,
@@ -87,7 +87,7 @@ function mergedSelect(sReq: any, sDef: any) {
     created_at: bookings.created_at,
     updated_at: bookings.updated_at,
 
-    resource_title: resources.title,
+    resource_title: sql<string>`COALESCE(${rReq.title}, ${rDef.title}, ${resources.title})`.as('resource_title'),
 
     service_title: sql<string>`COALESCE(${sReq.name}, ${sDef.name})`.as('service_title'),
   };
@@ -341,13 +341,17 @@ export async function getBookingMergedByIdEx(
 
   const { loc, def } = normalizeLocales(args.locale);
 
+  const rReq = alias(resourcesI18n, 'ri_req');
+  const rDef = alias(resourcesI18n, 'ri_def');
   const sReq = alias(servicesI18n, 'si_req');
   const sDef = alias(servicesI18n, 'si_def');
 
   const rows = await ex
-    .select(mergedSelect(sReq, sDef))
+    .select(mergedSelect(rReq, rDef, sReq, sDef))
     .from(bookings)
     .leftJoin(resources, eq(resources.id, bookings.resource_id))
+    .leftJoin(rReq, and(eq(rReq.resource_id, bookings.resource_id), eq(rReq.locale, loc)))
+    .leftJoin(rDef, and(eq(rDef.resource_id, bookings.resource_id), eq(rDef.locale, def)))
     .leftJoin(sReq, and(eq(sReq.service_id, bookings.service_id), eq(sReq.locale, loc)))
     .leftJoin(sDef, and(eq(sDef.service_id, bookings.service_id), eq(sDef.locale, def)))
     .where(eq(bookings.id, id))
@@ -437,6 +441,8 @@ export async function listBookingsMerged(filters: BookingListFilters, opts: List
 
   const { loc, def } = normalizeLocales(filters.locale);
 
+  const rReq = alias(resourcesI18n, 'ri_req');
+  const rDef = alias(resourcesI18n, 'ri_def');
   const sReq = alias(servicesI18n, 'si_req');
   const sDef = alias(servicesI18n, 'si_def');
 
@@ -464,16 +470,18 @@ export async function listBookingsMerged(filters: BookingListFilters, opts: List
         like(bookings.name, q),
         like(bookings.email, q),
         like(bookings.phone, q),
-        like(resources.title, q),
+        like(sql`COALESCE(${rReq.title}, ${rDef.title}, ${resources.title})`, q),
         like(sql`COALESCE(${sReq.name}, ${sDef.name})`, q),
       ) as any,
     );
   }
 
   const base = db
-    .select(mergedSelect(sReq, sDef))
+    .select(mergedSelect(rReq, rDef, sReq, sDef))
     .from(bookings)
     .leftJoin(resources, eq(resources.id, bookings.resource_id))
+    .leftJoin(rReq, and(eq(rReq.resource_id, bookings.resource_id), eq(rReq.locale, loc)))
+    .leftJoin(rDef, and(eq(rDef.resource_id, bookings.resource_id), eq(rDef.locale, def)))
     .leftJoin(sReq, and(eq(sReq.service_id, bookings.service_id), eq(sReq.locale, loc)))
     .leftJoin(sDef, and(eq(sDef.service_id, bookings.service_id), eq(sDef.locale, def)))
     .orderBy(desc(bookings.created_at))

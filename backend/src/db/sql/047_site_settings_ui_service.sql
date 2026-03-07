@@ -20,31 +20,31 @@ VALUES
   'tr',
   CAST(JSON_OBJECT(
 
-    'ui_services_page_title',                'Hizmetler',
-    'ui_services_detail_page_title',         'Hizmet Detayı',
+    'ui_services_page_title',                'Enerjetik Rahatlama Masaji',
+    'ui_services_detail_page_title',         'Enerjetik Rahatlama Masaji',
 
-    'ui_services_meta_title',                'Hizmetler | KÖNIG ENERGETIK',
-    'ui_services_meta_description',          'Bonn’da enerjetik masaj seansları: Enerjetik Rahatlama Masajı, Thai Yoga Masajı, Sırt & Boyun Rahatlatma, Aroma Enerji Masajı, Ayak Refleks & Enerji Noktaları, Sezgisel Enerjetik Seans.',
+    'ui_services_meta_title',                'Enerjetik Rahatlama Masaji | KÖNIG ENERGETIK',
+    'ui_services_meta_description',          'Bonn''da enerjetik rahatlama masaji. Derin gevseme, dikkatli dokunus, net sinirlar ve kisiye gore ayrilan zaman.',
     'ui_services_og_image',                  '',
     'ui_services_detail_meta_title',         'Hizmet Detayı | KÖNIG ENERGETIK',
     'ui_services_detail_meta_description',   'Masajın kapsamı, süre seçenekleri ve uygulama detayları. Size uygun seansı seçmek için masaj detaylarını inceleyin.',
 
     'ui_services_subprefix',                 'KÖNIG ENERGETIK',
-    'ui_services_sublabel',                  'Hizmetler',
-    'ui_services_title',                     'Hangi seans size iyi gelir?',
-    'ui_services_page_description',          'Enerjetik masaj ve seans seçeneklerimizi inceleyin. Sakin bir ritim ve net sınırlar içinde derin gevşemeye alan açın.',
+    'ui_services_sublabel',                  'Masaj',
+    'ui_services_title',                     'Enerjetik Rahatlama Masaji',
+    'ui_services_page_description',          'Sakin bir ritim, dikkatli dokunus ve derin gevseme icin acilan guvenli bir alan.',
 
     'ui_services_placeholder_title',         'Masaj',
     'ui_services_placeholder_summary',       'Bu masajın açıklaması yakında eklenecektir.',
     'ui_services_details_aria',              'masaj detaylarını görüntüle',
 
-    'ui_services_more_subtitle',             'Diğer hizmetleri keşfedin',
-    'ui_services_more_title',                'İlginizi çekebilecek diğer masajlar',
+    'ui_services_more_subtitle',             '',
+    'ui_services_more_title',                '',
 
     'ui_services_detail_title',              'Masaj',
     'ui_services_not_found_title',           'Masaj bulunamadı',
     'ui_services_not_found_desc',            'Aradığınız masaj bulunamadı veya artık yayında değil.',
-    'ui_services_back_to_list',              'Masaj çeşitlerine geri dön',
+    'ui_services_back_to_list',              'Masaj sayfasina geri don',
 
     'ui_services_price_label',               'Fiyat',
     'ui_services_includes_label',            'Seans kapsamı',
@@ -85,7 +85,7 @@ VALUES
     'ui_services_cta_more_info',             'Bu masaj hakkında detaylı bilgi ve uygunluk için ekibimizle iletişime geçebilirsiniz.',
     'ui_services_cta_whatsapp',              'WhatsApp üzerinden yazın',
     'ui_services_cta_request_quote',         'Bu masaj için randevu talep et',
-    'ui_services_other_title',               'Diğer hizmetler',
+    'ui_services_other_title',               '',
     'ui_services_view_all',                  'Tümünü gör',
     'ui_services_details_empty',             'Henüz detay yok.'
   ) AS CHAR),
@@ -98,31 +98,31 @@ VALUES
   'en',
   CAST(JSON_OBJECT(
 
-    'ui_services_page_title',                'Treatments',
-    'ui_services_detail_page_title',         'Treatment Detail',
+    'ui_services_page_title',                'Energetic Relaxation Massage',
+    'ui_services_detail_page_title',         'Energetic Relaxation Massage',
 
-    'ui_services_meta_title',                'Treatments | KÖNIG ENERGETIK',
-    'ui_services_meta_description',          'Energetic massage sessions in Bonn: Energetic Relaxation Massage, Thai Yoga Massage, Back & Neck Release, Aroma Energy Massage, Foot Reflex & Energy Points, Intuitive Energetic Session.',
+    'ui_services_meta_title',                'Energetic Relaxation Massage | KÖNIG ENERGETIK',
+    'ui_services_meta_description',          'Energetic relaxation massage in Bonn. Mindful touch, deep relaxation, clear boundaries, and enough time to truly arrive.',
     'ui_services_og_image',                  '',
     'ui_services_detail_meta_title',         'Treatment Detail | KÖNIG ENERGETIK',
     'ui_services_detail_meta_description',   'Massage scope, duration options and session details. Review the massage detail to choose the right session.',
 
     'ui_services_subprefix',                 'KÖNIG ENERGETIK',
-    'ui_services_sublabel',                  'Treatments',
-    'ui_services_title',                     'Which session suits you?',
-    'ui_services_page_description',          'Explore our energetic massage and session options. A calm rhythm, clear boundaries, and space for deep relaxation.',
+    'ui_services_sublabel',                  'Massage',
+    'ui_services_title',                     'Energetic Relaxation Massage',
+    'ui_services_page_description',          'A calm rhythm, mindful touch, and a protected space for deep relaxation.',
 
     'ui_services_placeholder_title',         'Massage',
     'ui_services_placeholder_summary',       'Massage description will be added soon.',
     'ui_services_details_aria',              'view massage details',
 
-    'ui_services_more_subtitle',             'Discover other treatments',
-    'ui_services_more_title',                'Other massages you may like',
+    'ui_services_more_subtitle',             '',
+    'ui_services_more_title',                '',
 
     'ui_services_detail_title',              'Massage',
     'ui_services_not_found_title',           'Massage not found',
     'ui_services_not_found_desc',            'The massage you are looking for could not be found or is no longer available.',
-    'ui_services_back_to_list',              'Back to massage types',
+    'ui_services_back_to_list',              'Back to massage page',
 
     'ui_services_price_label',               'Price',
     'ui_services_includes_label',            'Session includes',
@@ -163,7 +163,7 @@ VALUES
     'ui_services_cta_more_info',             'Contact our team for more details and availability for this massage.',
     'ui_services_cta_whatsapp',              'Message us on WhatsApp',
     'ui_services_cta_request_quote',         'Request an appointment for this massage',
-    'ui_services_other_title',               'Other treatments',
+    'ui_services_other_title',               '',
     'ui_services_view_all',                  'View all',
     'ui_services_details_empty',             'No details yet.'
   ) AS CHAR),
@@ -176,31 +176,31 @@ VALUES
   'de',
   CAST(JSON_OBJECT(
 
-    'ui_services_page_title',                'Behandlungen',
-    'ui_services_detail_page_title',         'Behandlungsdetails',
+    'ui_services_page_title',                'Energetische Entspannungsmassage',
+    'ui_services_detail_page_title',         'Energetische Entspannungsmassage',
 
-    'ui_services_meta_title',                'Behandlungen | KÖNIG ENERGETIK',
-    'ui_services_meta_description',          'Energetische Massage in Bonn: Energetische Entspannungsmassage, Thai Yoga Massage, Rücken & Nacken Release, Aroma-Energie Massage, Fußreflex & Energiepunkte, Intuitive Energetik Session.',
+    'ui_services_meta_title',                'Energetische Entspannungsmassage | KÖNIG ENERGETIK',
+    'ui_services_meta_description',          'Energetische Entspannungsmassage in Bonn. Achtsame Beruehrung, tiefe Entspannung, klare Grenzen und genügend Zeit zum Ankommen.',
     'ui_services_og_image',                  '',
     'ui_services_detail_meta_title',         'Behandlungsdetails | KÖNIG ENERGETIK',
     'ui_services_detail_meta_description',   'Umfang, Daueroptionen und Details zur Behandlung. Lesen Sie die Massage-Details, um die passende Sitzung zu wählen.',
 
     'ui_services_subprefix',                 'KÖNIG ENERGETIK',
-    'ui_services_sublabel',                  'Behandlungen',
-    'ui_services_title',                     'Welche Sitzung passt zu Ihnen?',
-    'ui_services_page_description',          'Entdecken Sie energetische Massage und Behandlungsoptionen. Ruhiger Rhythmus, klare Grenzen und Raum zum Loslassen.',
+    'ui_services_sublabel',                  'Massage',
+    'ui_services_title',                     'Energetische Entspannungsmassage',
+    'ui_services_page_description',          'Ruhiger Rhythmus, achtsame Beruehrung und ein geschuetzter Raum zum Loslassen.',
 
     'ui_services_placeholder_title',         'Massage',
     'ui_services_placeholder_summary',       'Die Beschreibung dieser Massage wird in Kürze hinzugefügt.',
     'ui_services_details_aria',              'Massage-Details anzeigen',
 
-    'ui_services_more_subtitle',             'Weitere Behandlungen entdecken',
-    'ui_services_more_title',                'Weitere Massagen, die Sie interessieren könnten',
+    'ui_services_more_subtitle',             '',
+    'ui_services_more_title',                '',
 
     'ui_services_detail_title',              'Massage',
     'ui_services_not_found_title',           'Massage nicht gefunden',
     'ui_services_not_found_desc',            'Die gesuchte Massage wurde nicht gefunden oder ist nicht mehr verfügbar.',
-    'ui_services_back_to_list',              'Zurück zu den Massagearten',
+    'ui_services_back_to_list',              'Zurueck zur Massage-Seite',
 
     'ui_services_price_label',               'Preis',
     'ui_services_includes_label',            'Sitzungsumfang',
@@ -241,7 +241,7 @@ VALUES
     'ui_services_cta_more_info',             'Kontaktieren Sie unser Team für weitere Details und Verfügbarkeit für diese Massage.',
     'ui_services_cta_whatsapp',              'Per WhatsApp schreiben',
     'ui_services_cta_request_quote',         'Terminanfrage für diese Massage senden',
-    'ui_services_other_title',               'Weitere Behandlungen',
+    'ui_services_other_title',               '',
     'ui_services_view_all',                  'Alle ansehen',
     'ui_services_details_empty',             'Noch keine Details.'
   ) AS CHAR),
