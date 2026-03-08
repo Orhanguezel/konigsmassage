@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const branding = await fetchBrandingConfig();
 
   return {
-    metadataBase: new URL(branding.meta.og_url || 'https://admin.konigsmassage.de'),
+    metadataBase: new URL(branding.meta.og_url || 'https://panel.energetische-massage-bonn.de'),
     title: branding.meta.title,
     description: branding.meta.description,
     icons: {

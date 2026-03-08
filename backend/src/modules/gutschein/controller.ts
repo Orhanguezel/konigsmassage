@@ -366,7 +366,8 @@ export const printGutschein: RouteHandler = async (req, reply) => {
   }
 
   const { getSiteBranding } = await import('./email');
-  const branding = await getSiteBranding();
+  const locale = (req.query as any)?.locale || 'de';
+  const branding = await getSiteBranding(locale);
 
   const html = buildGutscheinHtml(
     {

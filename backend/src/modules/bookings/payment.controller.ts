@@ -279,7 +279,7 @@ export const payBooking: RouteHandler = async (req, reply) => {
     } as any).where(eq(gutscheins.id, gutscheinRow.id));
   }
 
-  const frontendUrl = (env.FRONTEND_URL || 'https://konigsmassage.de').replace(/\/+$/, '');
+  const frontendUrl = (env.FRONTEND_URL || 'https://energetische-massage-bonn.de').replace(/\/+$/, '');
   const returnUrl = safeStr(body?.return_url) || `${frontendUrl}/${locale}/booking-payment/${bookingId}?paypal=capture`;
   const cancelUrl = safeStr(body?.cancel_url) || `${frontendUrl}/${locale}/booking-payment/${bookingId}?paypal=cancel`;
 

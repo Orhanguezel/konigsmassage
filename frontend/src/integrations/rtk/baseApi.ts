@@ -43,7 +43,7 @@ function guessDevBackend(): string {
   } catch {
     /* noop */
   }
-  return 'https://www.konigsmassage.de/api';
+  return 'https://www.energetische-massage-bonn.de/api';
 }
 
 const BASE_URL = trimSlash(

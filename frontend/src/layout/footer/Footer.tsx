@@ -61,7 +61,7 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
     const name = (brandVal.name as string) || (contact.companyName as string) || 'konigsmassage';
 
     const site =
-      (brandVal.website as string) || (contact.website as string) || 'https://www.konigsmassage.de';
+      (brandVal.website as string) || (contact.website as string) || 'https://www.energetische-massage-bonn.de';
 
     const phoneVal =
       (brandVal.phone as string | undefined) ||

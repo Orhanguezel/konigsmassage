@@ -6,7 +6,7 @@ import { sendMailRaw } from '@/modules/mail/service';
 import { renderEmailTemplateByKey } from '@/modules/email-templates/service';
 import { db } from '@/db/client';
 import { siteSettings } from '@/modules/siteSettings/schema';
-import { eq, and } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 
 export type GutscheinEmailData = {
   code: string;
@@ -27,26 +27,56 @@ type SiteBranding = {
   logo_url: string | null;
 };
 
-export async function getSiteBranding(): Promise<SiteBranding> {
-  const keys = ['site_title', 'footer_company_name', 'site_logo'];
-  const rows = await db
-    .select({ key: siteSettings.key, value: siteSettings.value })
-    .from(siteSettings)
-    .where(
-      and(
-        eq(siteSettings.locale, '*'),
-      ),
-    );
+export async function getSiteBranding(locale?: string): Promise<SiteBranding> {
+  // Fetch global (*) + locale-specific settings in one query
+  const locales = ['*'];
+  if (locale && locale !== '*') locales.push(locale);
 
-  const map = new Map<string, string>();
+  const rows = await db
+    .select({ key: siteSettings.key, locale: siteSettings.locale, value: siteSettings.value })
+    .from(siteSettings)
+    .where(inArray(siteSettings.locale, locales));
+
+  // Locale-specific values override global ones
+  const global = new Map<string, string>();
+  const localized = new Map<string, string>();
   for (const r of rows) {
-    if (r.key && r.value) map.set(r.key, String(r.value));
+    if (!r.key || !r.value) continue;
+    const target = r.locale === '*' ? global : localized;
+    target.set(r.key, String(r.value));
+  }
+
+  const get = (key: string) => localized.get(key) || global.get(key) || '';
+
+  // site_logo is JSON {"url":"...","alt":"..."} — extract URL
+  let logoUrl: string | null = null;
+  const logoRaw = get('site_logo');
+  if (logoRaw) {
+    try {
+      const parsed = JSON.parse(logoRaw);
+      logoUrl = parsed?.url || null;
+    } catch {
+      // plain string fallback
+      if (logoRaw.startsWith('http')) logoUrl = logoRaw;
+    }
+  }
+
+  // site_url from public_base_url or env
+  const siteUrl = get('public_base_url') || process.env.FRONTEND_URL || 'https://www.energetische-massage-bonn.de';
+
+  // site_name from site_title, company_brand name, or fallback
+  let siteName = get('site_title');
+  if (!siteName) {
+    const brandRaw = get('company_brand');
+    if (brandRaw) {
+      try { siteName = JSON.parse(brandRaw)?.name || ''; } catch {}
+    }
   }
 
   return {
-    site_name: map.get('site_title') || map.get('footer_company_name') || 'Energetische Massage',
-    site_url: process.env.FRONTEND_URL || 'https://energetische-massage-bonn.de',
-    logo_url: map.get('site_logo') || null,
+    site_name: siteName || 'Energetische Massage',
+    site_url: siteUrl,
+    logo_url: logoUrl,
   };
 }
 
@@ -224,11 +254,43 @@ export function buildGutscheinHtml(data: GutscheinEmailData, branding: SiteBrand
 export async function sendGutscheinEmail(
   data: GutscheinEmailData,
   toEmail: string,
+  locale?: string,
 ): Promise<void> {
-  const branding = await getSiteBranding();
-  const html = buildGutscheinHtml(data, branding);
+  const branding = await getSiteBranding(locale);
   const formattedValue = formatCurrency(data.value, data.currency);
 
+  // Try DB email template first
+  const templateParams = {
+    site_name: branding.site_name,
+    site_url: branding.site_url,
+    code: data.code,
+    value: data.value,
+    currency: data.currency,
+    formatted_value: formattedValue,
+    purchaser_name: data.purchaser_name ?? '',
+    recipient_name: data.recipient_name ?? '',
+    personal_message: data.personal_message ?? '',
+    issued_date: formatDate(data.issued_at),
+    expires_date: formatDate(data.expires_at),
+  };
+
+  const rendered = await renderEmailTemplateByKey('gutschein_purchased', templateParams, {
+    locale: locale || 'de',
+    defaultLocale: 'de',
+    allowMissing: true,
+  }).catch(() => null);
+
+  if (rendered) {
+    await sendMailRaw({
+      to: toEmail,
+      subject: rendered.subject,
+      html: rendered.html,
+    });
+    return;
+  }
+
+  // Fallback to hardcoded HTML
+  const html = buildGutscheinHtml(data, branding);
   await sendMailRaw({
     to: toEmail,
     subject: `Ihr Gutschein über ${formattedValue} – ${branding.site_name}`,

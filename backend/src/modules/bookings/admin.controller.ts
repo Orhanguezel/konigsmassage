@@ -617,7 +617,7 @@ async function sendDecisionEmailAndNotify(args: {
   if (args.templateKey === 'booking_accepted_customer') {
     const payEnabled = await isBookingPaymentEnabled();
     if (payEnabled) {
-      const frontendUrl = (env.FRONTEND_URL || 'https://konigsmassage.de').replace(/\/+$/, '');
+      const frontendUrl = (env.FRONTEND_URL || 'https://energetische-massage-bonn.de').replace(/\/+$/, '');
       paymentSection = buildPaymentSectionHtml(customerLocale, frontendUrl, String(b.id));
     }
   }
