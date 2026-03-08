@@ -9,7 +9,7 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import {
-  Gift, Loader2, Plus, RefreshCcw, Search, CheckCircle2, Ban, Eye,
+  Gift, Loader2, Plus, RefreshCcw, Search, CheckCircle2, Ban, Eye, Mail, Printer, Trash2,
 } from 'lucide-react';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
@@ -46,8 +46,11 @@ import {
   useActivateGutscheinAdminMutation,
   useUpdateGutscheinAdminMutation,
   useListGutscheinProductsAdminQuery,
+  useSendGutscheinEmailAdminMutation,
+  useDeleteGutscheinAdminMutation,
 } from '@/integrations/hooks';
 import { cn } from '@/lib/utils';
+import { BASE_URL } from '@/integrations/baseApi';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -211,6 +214,8 @@ export default function AdminGutscheinClient() {
   const [cancelGutschein,  { isLoading: cancelling }]  = useCancelGutscheinAdminMutation();
   const [activateGutschein,{ isLoading: activating }]  = useActivateGutscheinAdminMutation();
   const [updateGutschein,  { isLoading: updating }]    = useUpdateGutscheinAdminMutation();
+  const [sendEmail,        { isLoading: sendingEmail }] = useSendGutscheinEmailAdminMutation();
+  const [deleteGutschein,  { isLoading: deleting }]    = useDeleteGutscheinAdminMutation();
 
   const items    = result?.data ?? [];
   const total    = result?.total ?? 0;
@@ -218,12 +223,14 @@ export default function AdminGutscheinClient() {
 
   const [cancelDialogOpen, setCancelDialogOpen] = React.useState(false);
   const [itemToCancel,     setItemToCancel]     = React.useState<GutscheinDto | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [itemToDelete,     setItemToDelete]     = React.useState<GutscheinDto | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
   const [createForm,       setCreateForm]       = React.useState<CreateForm>(EMPTY_CREATE);
   const [detailItem,       setDetailItem]       = React.useState<GutscheinDto | null>(null);
   const [editForm,         setEditForm]         = React.useState<EditForm | null>(null);
 
-  const busy = isLoading || isFetching || creating || cancelling || activating || updating;
+  const busy = isLoading || isFetching || creating || cancelling || activating || updating || sendingEmail || deleting;
 
   React.useEffect(() => {
     if (!createForm.product_id) return;
@@ -253,6 +260,24 @@ export default function AdminGutscheinClient() {
       refetch();
     } catch (err) {
       toast.error(getErrMsg(err, t('messages.cancelError', {}, 'Failed to cancel.')));
+    }
+  };
+
+  const handleDeleteClick = (item: GutscheinDto) => {
+    setItemToDelete(item);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+    try {
+      await deleteGutschein({ id: itemToDelete.id }).unwrap();
+      toast.success(t('messages.deleted', {}, 'Gift card deleted.'));
+      setDeleteDialogOpen(false);
+      setItemToDelete(null);
+      refetch();
+    } catch (err) {
+      toast.error(getErrMsg(err, t('messages.deleteError', {}, 'Failed to delete.')));
     }
   };
 
@@ -331,6 +356,25 @@ export default function AdminGutscheinClient() {
     } catch (err) {
       toast.error(getErrMsg(err, t('messages.updateError', {}, 'Failed to update.')));
     }
+  };
+
+  const handleSendEmail = async (item: GutscheinDto) => {
+    const targetEmail = item.recipient_email || item.purchaser_email;
+    if (!targetEmail) {
+      toast.error(t('messages.noEmail', {}, 'No email address available.'));
+      return;
+    }
+    try {
+      const res = await sendEmail({ id: item.id }).unwrap();
+      toast.success(t('messages.emailSent', { email: res.sent_to }, `Email sent to ${res.sent_to}`));
+    } catch (err) {
+      toast.error(getErrMsg(err, t('messages.emailError', {}, 'Failed to send email.')));
+    }
+  };
+
+  const handlePrint = (item: GutscheinDto) => {
+    const printUrl = `${BASE_URL}/gutscheins/${encodeURIComponent(item.id)}/print`;
+    window.open(printUrl, '_blank', 'width=700,height=900');
   };
 
   return (
@@ -484,6 +528,16 @@ export default function AdminGutscheinClient() {
                           <Button variant="ghost" size="icon-sm" title={t('actions.edit', {}, 'Details')} onClick={() => openDetail(item)} disabled={busy}>
                             <Eye className="size-4" />
                           </Button>
+                          {(item.status === 'active' || item.status === 'redeemed' || item.is_admin_created) && (
+                            <>
+                              <Button variant="ghost" size="icon-sm" title={t('actions.sendEmail', {}, 'E-Mail senden')} onClick={() => handleSendEmail(item)} disabled={busy}>
+                                <Mail className="size-4 text-blue-600" />
+                              </Button>
+                              <Button variant="ghost" size="icon-sm" title={t('actions.print', {}, 'Drucken')} onClick={() => handlePrint(item)} disabled={busy}>
+                                <Printer className="size-4" />
+                              </Button>
+                            </>
+                          )}
                           {item.status === 'pending' && (
                             <Button variant="ghost" size="icon-sm" title={t('actions.activate', {}, 'Activate')} onClick={() => handleActivate(item)} disabled={busy}>
                               <CheckCircle2 className="size-4 text-green-600" />
@@ -494,6 +548,9 @@ export default function AdminGutscheinClient() {
                               <Ban className="size-4 text-destructive" />
                             </Button>
                           )}
+                          <Button variant="ghost" size="icon-sm" title={t('actions.delete', {}, 'Delete')} onClick={() => handleDeleteClick(item)} disabled={busy}>
+                            <Trash2 className="size-4 text-destructive" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -549,6 +606,16 @@ export default function AdminGutscheinClient() {
                     <Button variant="outline" size="sm" onClick={() => openDetail(item)} disabled={busy} className="gap-1.5">
                       <Eye className="size-3.5" />{t('actions.edit', {}, 'Details')}
                     </Button>
+                    {(item.status === 'active' || item.status === 'redeemed' || item.is_admin_created) && (
+                      <>
+                        <Button variant="outline" size="sm" onClick={() => handleSendEmail(item)} disabled={busy} className="gap-1.5">
+                          <Mail className="size-3.5 text-blue-600" />{t('actions.sendEmail', {}, 'E-Mail')}
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handlePrint(item)} disabled={busy} className="gap-1.5">
+                          <Printer className="size-3.5" />{t('actions.print', {}, 'Drucken')}
+                        </Button>
+                      </>
+                    )}
                     {item.status === 'pending' && (
                       <Button variant="outline" size="sm" onClick={() => handleActivate(item)} disabled={busy} className="gap-1.5">
                         <CheckCircle2 className="size-3.5 text-green-600" />{t('actions.activate', {}, 'Activate')}
@@ -559,6 +626,9 @@ export default function AdminGutscheinClient() {
                         <Ban className="size-3.5 text-destructive" />{t('actions.cancel', {}, 'Cancel')}
                       </Button>
                     )}
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteClick(item)} disabled={busy} className="gap-1.5">
+                      <Trash2 className="size-3.5 text-destructive" />{t('actions.delete', {}, 'Delete')}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -580,6 +650,24 @@ export default function AdminGutscheinClient() {
             <AlertDialogCancel>{t('cancelDialog.keep', {}, 'Keep')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleCancelConfirm} className="bg-destructive text-destructive-foreground">
               {t('cancelDialog.confirm', {}, 'Cancel Card')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('deleteDialog.title', {}, 'Delete Gift Card')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('deleteDialog.description', { code: itemToDelete?.code ?? '' }, `Permanently delete ${itemToDelete?.code}? This cannot be undone.`)}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('deleteDialog.keep', {}, 'Keep')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground">
+              {t('deleteDialog.confirm', {}, 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -771,12 +859,24 @@ export default function AdminGutscheinClient() {
                 </div>
               </div>
 
-              <DialogFooter>
-                <Button variant="outline" onClick={() => { setDetailItem(null); setEditForm(null); }} disabled={updating}>{t('detail.close', {}, 'Close')}</Button>
-                <Button onClick={handleSaveEdit} disabled={updating} className="gap-2">
-                  {updating && <Loader2 className="size-4 animate-spin" />}
-                  {t('detail.saveChanges', {}, 'Save Changes')}
-                </Button>
+              <DialogFooter className="flex-col gap-2 sm:flex-row">
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => handleSendEmail(detailItem)} disabled={sendingEmail || !detailItem.recipient_email && !detailItem.purchaser_email} className="gap-1.5">
+                    {sendingEmail ? <Loader2 className="size-3.5 animate-spin" /> : <Mail className="size-3.5" />}
+                    {t('detail.sendEmail', {}, 'E-Mail senden')}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handlePrint(detailItem)} className="gap-1.5">
+                    <Printer className="size-3.5" />
+                    {t('detail.print', {}, 'Drucken')}
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => { setDetailItem(null); setEditForm(null); }} disabled={updating}>{t('detail.close', {}, 'Close')}</Button>
+                  <Button onClick={handleSaveEdit} disabled={updating} className="gap-2">
+                    {updating && <Loader2 className="size-4 animate-spin" />}
+                    {t('detail.saveChanges', {}, 'Save Changes')}
+                  </Button>
+                </div>
               </DialogFooter>
             </>
           )}

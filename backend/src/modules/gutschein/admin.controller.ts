@@ -9,6 +9,7 @@ import {
   adminCreateSchema,
   adminUpdateSchema,
 } from './validation';
+import { sendGutscheinEmail } from './email';
 
 function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -125,11 +126,7 @@ export const updateProductAdmin: RouteHandler = async (req, reply) => {
 
 export const deleteProductAdmin: RouteHandler = async (req, reply) => {
   const { id } = req.params as { id: string };
-  await db
-    .update(gutscheinProducts)
-    .set({ is_active: 0 })
-    .where(eq(gutscheinProducts.id, id));
-
+  await db.delete(gutscheinProducts).where(eq(gutscheinProducts.id, id));
   return reply.send({ success: true });
 };
 
@@ -334,4 +331,60 @@ export const activateGutscheinAdmin: RouteHandler = async (req, reply) => {
     .where(eq(gutscheins.id, id));
 
   return reply.send({ success: true });
+};
+
+export const deleteGutscheinAdmin: RouteHandler = async (req, reply) => {
+  const { id } = req.params as { id: string };
+  const [row] = await db
+    .select({ id: gutscheins.id })
+    .from(gutscheins)
+    .where(eq(gutscheins.id, id))
+    .limit(1);
+
+  if (!row) return reply.code(404).send({ error: 'gutschein_not_found' });
+
+  await db.delete(gutscheins).where(eq(gutscheins.id, id));
+  return reply.send({ success: true });
+};
+
+// ── POST /gutscheins/:id/send-email ────────────────────────────────────────
+export const sendGutscheinEmailAdmin: RouteHandler = async (req, reply) => {
+  const { id } = req.params as { id: string };
+  const body = (req.body ?? {}) as { to?: string };
+
+  const [row] = await db
+    .select()
+    .from(gutscheins)
+    .where(eq(gutscheins.id, id))
+    .limit(1);
+
+  if (!row) return reply.code(404).send({ error: 'gutschein_not_found' });
+
+  // Determine target email: explicit body.to > recipient_email > purchaser_email
+  const targetEmail = body.to?.trim() || row.recipient_email || row.purchaser_email;
+  if (!targetEmail) {
+    return reply.code(400).send({ error: 'no_email_address' });
+  }
+
+  try {
+    await sendGutscheinEmail(
+      {
+        code: row.code,
+        value: row.value,
+        currency: row.currency,
+        purchaser_name: row.purchaser_name,
+        purchaser_email: row.purchaser_email,
+        recipient_name: row.recipient_name,
+        recipient_email: row.recipient_email,
+        personal_message: row.personal_message,
+        expires_at: row.expires_at,
+        issued_at: row.issued_at,
+      },
+      targetEmail,
+    );
+    return reply.send({ success: true, sent_to: targetEmail });
+  } catch (err: any) {
+    req.log.error({ err: err?.message ?? err }, 'gutschein_email_failed');
+    return reply.code(500).send({ error: 'email_send_failed', message: err?.message });
+  }
 };

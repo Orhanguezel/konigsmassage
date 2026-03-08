@@ -9,6 +9,7 @@ import { createPaypalOrder, capturePaypalOrder } from '@/modules/wallet/paypal.s
 import type { PaypalCredentials } from '@/modules/wallet/paypal.service';
 import { getPaymentConfig } from '@/modules/siteSettings/service';
 import { env } from '@/core/env';
+import { sendGutscheinEmail, buildGutscheinHtml } from './email';
 
 function getUser(req: { user?: unknown }) {
   const u = req.user as Record<string, unknown> | undefined;
@@ -295,15 +296,42 @@ export const captureGutscheinPaypal: RouteHandler = async (req, reply) => {
     const capture = await capturePaypalOrder(order_id, ppCredentials);
 
     if (capture.captureStatus === 'COMPLETED' || capture.orderStatus === 'COMPLETED') {
+      const issuedAt = new Date();
       await db
         .update(gutscheins)
         .set({
           payment_status:         'paid',
           status:                 'active',
-          issued_at:              new Date(),
+          issued_at:              issuedAt,
           payment_transaction_id: capture.captureId ?? order_id,
         } as any)
         .where(eq(gutscheins.id, gutscheinId));
+
+      // Auto-send gutschein email to purchaser (and recipient if different)
+      const emailData = {
+        code: row.code,
+        value: row.value,
+        currency: row.currency,
+        purchaser_name: row.purchaser_name,
+        purchaser_email: row.purchaser_email,
+        recipient_name: row.recipient_name,
+        recipient_email: row.recipient_email,
+        personal_message: row.personal_message,
+        expires_at: row.expires_at,
+        issued_at: issuedAt,
+      };
+
+      // Send in background — don't block the response
+      if (row.purchaser_email) {
+        sendGutscheinEmail(emailData, row.purchaser_email).catch((e) =>
+          req.log.error({ err: e?.message ?? e }, 'gutschein_email_to_purchaser_failed'),
+        );
+      }
+      if (row.recipient_email && row.recipient_email !== row.purchaser_email) {
+        sendGutscheinEmail(emailData, row.recipient_email).catch((e) =>
+          req.log.error({ err: e?.message ?? e }, 'gutschein_email_to_recipient_failed'),
+        );
+      }
 
       return reply.send({
         success:        true,
@@ -319,4 +347,44 @@ export const captureGutscheinPaypal: RouteHandler = async (req, reply) => {
   } catch (err: any) {
     return reply.code(500).send({ error: 'paypal_capture_failed', message: err?.message });
   }
+};
+
+// ── GET /gutscheins/:id/print ────────────────────────────────────────────────
+export const printGutschein: RouteHandler = async (req, reply) => {
+  const gutscheinId = (req.params as { id: string }).id;
+
+  const [row] = await db
+    .select()
+    .from(gutscheins)
+    .where(eq(gutscheins.id, gutscheinId))
+    .limit(1);
+
+  if (!row) return reply.code(404).send({ error: 'gutschein_not_found' });
+
+  if (row.payment_status !== 'paid' && !row.is_admin_created) {
+    return reply.code(400).send({ error: 'gutschein_not_paid' });
+  }
+
+  const { getSiteBranding } = await import('./email');
+  const branding = await getSiteBranding();
+
+  const html = buildGutscheinHtml(
+    {
+      code: row.code,
+      value: row.value,
+      currency: row.currency,
+      purchaser_name: row.purchaser_name,
+      purchaser_email: row.purchaser_email,
+      recipient_name: row.recipient_name,
+      recipient_email: row.recipient_email,
+      personal_message: row.personal_message,
+      expires_at: row.expires_at,
+      issued_at: row.issued_at,
+    },
+    branding,
+    { forPrint: true },
+  );
+
+  reply.header('Content-Type', 'text/html; charset=utf-8');
+  return reply.send(html);
 };

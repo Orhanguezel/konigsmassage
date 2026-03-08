@@ -8,7 +8,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { ArrowLeft, Loader2, Pencil, Plus, RefreshCcw, Save, X } from 'lucide-react';
+import { ArrowLeft, Loader2, Pencil, Plus, RefreshCcw, Save, Trash2, X } from 'lucide-react';
 
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
@@ -45,7 +45,12 @@ import {
   useListGutscheinProductsAdminQuery,
   useCreateGutscheinProductAdminMutation,
   useUpdateGutscheinProductAdminMutation,
+  useDeleteGutscheinProductAdminMutation,
 } from '@/integrations/hooks';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 
 function fmtDate(val: string | null | undefined, locale?: string) {
@@ -108,6 +113,7 @@ export default function AdminGutscheinProductsClient() {
   const { data: result, isLoading, isFetching, refetch } = useListGutscheinProductsAdminQuery();
   const [createProduct, { isLoading: creating }] = useCreateGutscheinProductAdminMutation();
   const [updateProduct, { isLoading: updating }] = useUpdateGutscheinProductAdminMutation();
+  const [deleteProduct, { isLoading: deletingProduct }] = useDeleteGutscheinProductAdminMutation();
 
   const items = result?.data ?? [];
   const total = result?.total ?? 0;
@@ -115,8 +121,10 @@ export default function AdminGutscheinProductsClient() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editItem, setEditItem] = React.useState<GutscheinProductDto | null>(null);
   const [form, setForm] = React.useState<ProductForm>(EMPTY_FORM);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [itemToDelete, setItemToDelete] = React.useState<GutscheinProductDto | null>(null);
 
-  const busy = isLoading || isFetching || creating || updating;
+  const busy = isLoading || isFetching || creating || updating || deletingProduct;
 
   const openCreate = () => {
     setEditItem(null);
@@ -163,6 +171,24 @@ export default function AdminGutscheinProductsClient() {
       refetch();
     } catch (err) {
       toast.error(getErrMsg(err, t('products.messages.error', {}, 'Failed to save product.')));
+    }
+  };
+
+  const handleDeleteClick = (item: GutscheinProductDto) => {
+    setItemToDelete(item);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+    try {
+      await deleteProduct({ id: itemToDelete.id }).unwrap();
+      toast.success(t('products.messages.deleted', {}, 'Product deleted.'));
+      setDeleteDialogOpen(false);
+      setItemToDelete(null);
+      refetch();
+    } catch (err) {
+      toast.error(getErrMsg(err, t('products.messages.deleteError', {}, 'Failed to delete.')));
     }
   };
 
@@ -280,16 +306,27 @@ export default function AdminGutscheinProductsClient() {
                         {fmtDate(item.created_at, adminUiLocale)}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openEdit(item)}
-                          disabled={busy}
-                          className="gap-2"
-                        >
-                          <Pencil className="size-3.5" />
-                          {t('admin.common.edit', {}, 'Edit')}
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openEdit(item)}
+                            disabled={busy}
+                            className="gap-2"
+                          >
+                            <Pencil className="size-3.5" />
+                            {t('admin.common.edit', {}, 'Edit')}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            title={t('actions.delete', {}, 'Delete')}
+                            onClick={() => handleDeleteClick(item)}
+                            disabled={busy}
+                          >
+                            <Trash2 className="size-4 text-destructive" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -336,22 +373,51 @@ export default function AdminGutscheinProductsClient() {
                   {item.description && (
                     <p className="text-sm text-muted-foreground">{item.description}</p>
                   )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openEdit(item)}
-                    disabled={busy}
-                    className="w-full gap-2"
-                  >
-                    <Pencil className="size-3.5" />
-                    {t('admin.common.edit', {}, 'Edit')}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openEdit(item)}
+                      disabled={busy}
+                      className="flex-1 gap-2"
+                    >
+                      <Pencil className="size-3.5" />
+                      {t('admin.common.edit', {}, 'Edit')}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteClick(item)}
+                      disabled={busy}
+                      className="gap-1.5"
+                    >
+                      <Trash2 className="size-3.5 text-destructive" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))
           )}
         </div>
       </div>
+
+      {/* Delete dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('products.deleteDialog.title', {}, 'Delete Product')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('products.deleteDialog.description', { name: itemToDelete?.name ?? '' }, `Permanently delete "${itemToDelete?.name}"? This cannot be undone.`)}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('products.deleteDialog.keep', {}, 'Keep')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground">
+              {t('products.deleteDialog.confirm', {}, 'Delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Create / Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

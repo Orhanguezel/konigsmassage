@@ -71,6 +71,7 @@ import { registerOrders } from '@/modules/orders/router';
 import { registerOrdersAdmin } from '@/modules/orders/admin.routes';
 import { registerWallet } from '@/modules/wallet/router';
 import { registerWalletAdmin } from '@/modules/wallet/admin.routes';
+import { registerPaypalWebhook } from '@/modules/wallet/webhook.router';
 import { registerGutschein } from '@/modules/gutschein/router';
 import { registerGutscheinAdmin } from '@/modules/gutschein/admin.routes';
 
@@ -207,6 +208,7 @@ export async function createApp() {
       await registerOrders(api);
       await registerWallet(api);
       await registerGutschein(api);
+      await registerPaypalWebhook(api);
     },
     { prefix: '/api' },
   );

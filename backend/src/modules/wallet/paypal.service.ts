@@ -164,3 +164,98 @@ export function paypalEnabled() {
   const creds = getEnvCredentials();
   return Boolean(creds.clientId && creds.clientSecret);
 }
+
+// ── Webhook Signature Verification ──────────────────────────────────────────
+
+export type PaypalWebhookHeaders = {
+  'paypal-transmission-id': string;
+  'paypal-transmission-time': string;
+  'paypal-transmission-sig': string;
+  'paypal-cert-url': string;
+  'paypal-auth-algo': string;
+};
+
+export async function verifyWebhookSignature(
+  webhookId: string,
+  headers: PaypalWebhookHeaders,
+  rawBody: string,
+  credentials?: PaypalCredentials,
+): Promise<boolean> {
+  const creds = credentials ?? getEnvCredentials();
+  const token = await getAccessToken(creds);
+  const url = `${creds.baseUrl}/v1/notifications/verify-webhook-signature`;
+
+  const payload = {
+    auth_algo: headers['paypal-auth-algo'],
+    cert_url: headers['paypal-cert-url'],
+    transmission_id: headers['paypal-transmission-id'],
+    transmission_sig: headers['paypal-transmission-sig'],
+    transmission_time: headers['paypal-transmission-time'],
+    webhook_id: webhookId,
+    webhook_event: JSON.parse(rawBody),
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) return false;
+
+  const data = (await res.json()) as { verification_status: string };
+  return data.verification_status === 'SUCCESS';
+}
+
+// ── Get PayPal Order Details ────────────────────────────────────────────────
+
+export async function getPaypalOrderDetails(orderId: string, credentials?: PaypalCredentials) {
+  const creds = credentials ?? getEnvCredentials();
+  const token = await getAccessToken(creds);
+  const url = `${creds.baseUrl}/v2/checkout/orders/${encodeURIComponent(orderId)}`;
+
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`paypal_get_order_failed:${res.status}:${txt}`);
+  }
+
+  const data = (await res.json()) as PayPalCaptureOrderResponse & {
+    purchase_units?: Array<{
+      reference_id?: string;
+      custom_id?: string;
+      payments?: {
+        captures?: Array<{
+          id: string;
+          status: string;
+          amount?: { value: string; currency_code: string };
+          custom_id?: string;
+        }>;
+      };
+    }>;
+  };
+
+  const pu = data.purchase_units?.[0];
+  const capture = pu?.payments?.captures?.[0];
+
+  return {
+    orderId: data.id,
+    orderStatus: data.status,
+    referenceId: pu?.reference_id ?? null,
+    customId: pu?.custom_id ?? capture?.custom_id ?? null,
+    captureId: capture?.id ?? null,
+    captureStatus: capture?.status ?? null,
+    amount: capture?.amount?.value ?? null,
+    currency: capture?.amount?.currency_code ?? null,
+  };
+}

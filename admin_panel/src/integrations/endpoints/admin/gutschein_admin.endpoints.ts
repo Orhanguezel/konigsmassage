@@ -70,6 +70,14 @@ export const gutscheinAdminApi = baseApi.injectEndpoints({
       ],
     }),
 
+    deleteGutscheinProductAdmin: b.mutation<{ success: boolean }, { id: string }>({
+      query: ({ id }) => ({
+        url: `${BASE_PRODUCTS}/${encodeURIComponent(id)}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [{ type: 'GutscheinProducts' as const, id: 'LIST' }],
+    }),
+
     // ===== Gutscheins =====
 
     listGutscheinsAdmin: b.query<GutscheinListResp, GutscheinListQuery | void>({
@@ -136,6 +144,26 @@ export const gutscheinAdminApi = baseApi.injectEndpoints({
         { type: 'Gutscheins' as const, id: 'LIST' },
       ],
     }),
+
+    deleteGutscheinAdmin: b.mutation<{ success: boolean }, { id: string }>({
+      query: ({ id }) => ({
+        url: `${BASE_GUTSCHEINS}/${encodeURIComponent(id)}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [{ type: 'Gutscheins' as const, id: 'LIST' }],
+    }),
+
+    sendGutscheinEmailAdmin: b.mutation<{ success: boolean; sent_to: string }, { id: string; to?: string }>({
+      query: ({ id, to }) => ({
+        url: `${BASE_GUTSCHEINS}/${encodeURIComponent(id)}/send-email`,
+        method: 'POST',
+        body: to ? { to } : {},
+      }),
+      transformResponse: (res: unknown) => ({
+        success: (res as any)?.success === true || true,
+        sent_to: (res as any)?.sent_to ?? '',
+      }),
+    }),
   }),
   overrideExisting: true,
 });
@@ -145,10 +173,13 @@ export const {
   useGetGutscheinProductAdminQuery,
   useCreateGutscheinProductAdminMutation,
   useUpdateGutscheinProductAdminMutation,
+  useDeleteGutscheinProductAdminMutation,
   useListGutscheinsAdminQuery,
   useGetGutscheinAdminQuery,
   useCreateGutscheinAdminMutation,
   useUpdateGutscheinAdminMutation,
+  useDeleteGutscheinAdminMutation,
   useCancelGutscheinAdminMutation,
   useActivateGutscheinAdminMutation,
+  useSendGutscheinEmailAdminMutation,
 } = gutscheinAdminApi;

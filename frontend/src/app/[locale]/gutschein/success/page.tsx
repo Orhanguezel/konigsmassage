@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCaptureGutscheinPaypalMutation } from '@/integrations/rtk/hooks';
 import { useLocaleShort } from '@/i18n';
 import { localizePath } from '@/integrations/shared';
+import { BASE_URL } from '@/integrations/rtk/constants';
 
 function tl(locale: string, key: string): string {
   const dict: Record<string, Record<string, string>> = {
@@ -16,6 +17,7 @@ function tl(locale: string, key: string): string {
       code: 'Gutschein-Code',
       backHome: 'Zur Startseite',
       buyMore: 'Weiteren Gutschein kaufen',
+      print: 'Gutschein drucken / als PDF speichern',
       errorTitle: 'Zahlung fehlgeschlagen',
       errorBody: 'Die Zahlung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.',
       retry: 'Erneut versuchen',
@@ -27,6 +29,7 @@ function tl(locale: string, key: string): string {
       code: 'Hediye Çeki Kodu',
       backHome: 'Ana Sayfaya Dön',
       buyMore: 'Başka Bir Çek Al',
+      print: 'Hediye çekini yazdır / PDF olarak kaydet',
       errorTitle: 'Ödeme Başarısız',
       errorBody: 'Ödeme tamamlanamadı. Lütfen tekrar deneyin.',
       retry: 'Tekrar Dene',
@@ -38,6 +41,7 @@ function tl(locale: string, key: string): string {
       code: 'Voucher Code',
       backHome: 'Back to Home',
       buyMore: 'Buy Another Voucher',
+      print: 'Print voucher / Save as PDF',
       errorTitle: 'Payment Failed',
       errorBody: 'The payment could not be completed. Please try again.',
       retry: 'Try Again',
@@ -111,6 +115,18 @@ export default function GutscheinSuccessPage() {
                 <p className="text-xs text-text-muted mb-1">{tl(locale, 'code')}</p>
                 <p className="text-2xl font-mono font-bold tracking-widest text-brand-primary">{code}</p>
               </div>
+            )}
+            {id && (
+              <button
+                type="button"
+                onClick={() => {
+                  const printUrl = `${BASE_URL}/gutscheins/${encodeURIComponent(id)}/print`;
+                  window.open(printUrl, '_blank', 'width=700,height=900');
+                }}
+                className="mb-4 w-full rounded-lg border-2 border-dashed border-brand-primary/30 px-5 py-3 text-sm font-medium text-brand-primary hover:bg-brand-primary/5 transition-colors"
+              >
+                🖨️ {tl(locale, 'print')}
+              </button>
             )}
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link
