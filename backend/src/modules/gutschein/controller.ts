@@ -9,7 +9,7 @@ import { createPaypalOrder, capturePaypalOrder } from '@/modules/wallet/paypal.s
 import type { PaypalCredentials } from '@/modules/wallet/paypal.service';
 import { getPaymentConfig } from '@/modules/siteSettings/service';
 import { env } from '@/core/env';
-import { sendGutscheinEmail, buildGutscheinHtml } from './email';
+import { sendGutscheinEmail, buildGutscheinHtml, notifyAdminGutscheinPurchased } from './email';
 
 function getUser(req: { user?: unknown }) {
   const u = req.user as Record<string, unknown> | undefined;
@@ -332,6 +332,11 @@ export const captureGutscheinPaypal: RouteHandler = async (req, reply) => {
           req.log.error({ err: e?.message ?? e }, 'gutschein_email_to_recipient_failed'),
         );
       }
+
+      // Admin notification (DB + email + telegram)
+      notifyAdminGutscheinPurchased(emailData).catch((e) =>
+        req.log.error({ err: e?.message ?? e }, 'gutschein_admin_notify_failed'),
+      );
 
       return reply.send({
         success:        true,

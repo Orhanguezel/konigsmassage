@@ -15,7 +15,7 @@ import {
 import { walletTransactions } from './schema';
 import { applyCompletedDeposit } from './service';
 import { gutscheins } from '@/modules/gutschein/schema';
-import { sendGutscheinEmail } from '@/modules/gutschein/email';
+import { sendGutscheinEmail, notifyAdminGutscheinPurchased } from '@/modules/gutschein/email';
 
 type WebhookEvent = {
   id: string;
@@ -242,6 +242,11 @@ async function handleGutscheinPayment(
       req.log.error({ err: e?.message ?? e }, 'webhook_gutschein_email_recipient_failed'),
     );
   }
+
+  // Admin notification (DB + email + telegram)
+  notifyAdminGutscheinPurchased(emailData).catch((e) =>
+    req.log.error({ err: e?.message ?? e }, 'webhook_gutschein_admin_notify_failed'),
+  );
 
   return true;
 }

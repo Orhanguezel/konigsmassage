@@ -4,6 +4,8 @@
 
 import { sendMailRaw } from '@/modules/mail/service';
 import { renderEmailTemplateByKey } from '@/modules/email-templates/service';
+import { createUserNotification } from '@/modules/notifications/service';
+import { telegramNotify } from '@/modules/telegram/telegram.notifier';
 import { db } from '@/db/client';
 import { siteSettings } from '@/modules/siteSettings/schema';
 import { inArray } from 'drizzle-orm';
@@ -296,4 +298,87 @@ export async function sendGutscheinEmail(
     subject: `Ihr Gutschein über ${formattedValue} – ${branding.site_name}`,
     html,
   });
+}
+
+// ── Admin Notification on Gutschein Purchase ──────────────────────────────
+
+async function getSettingValue(key: string): Promise<string | null> {
+  const [row] = await db
+    .select({ value: siteSettings.value })
+    .from(siteSettings)
+    .where(inArray(siteSettings.key, [key]))
+    .limit(1);
+  const val = row?.value == null ? null : String(row.value).trim();
+  return val || null;
+}
+
+async function getAdminEmail(): Promise<string | null> {
+  return (
+    (await getSettingValue('booking_admin_email')) ||
+    (await getSettingValue('contact_receiver_email')) ||
+    (await getSettingValue('footer_company_email')) ||
+    null
+  );
+}
+
+async function getAdminUserId(): Promise<string | null> {
+  const v = (await getSettingValue('booking_admin_user_id'))?.trim() ?? '';
+  return v.length === 36 ? v : null;
+}
+
+export async function notifyAdminGutscheinPurchased(data: GutscheinEmailData): Promise<void> {
+  const formattedValue = formatCurrency(data.value, data.currency);
+  const purchaser = data.purchaser_name || data.purchaser_email || 'Unbekannt';
+  const recipient = data.recipient_name || '-';
+  const summary = `Gutschein ${data.code} • ${formattedValue} • Von: ${purchaser} • Für: ${recipient}`;
+
+  // 1) Admin DB notification
+  const adminUserId = await getAdminUserId();
+  if (adminUserId) {
+    try {
+      await createUserNotification({
+        userId: adminUserId,
+        type: 'custom',
+        title: 'Neuer Gutschein gekauft',
+        message: summary,
+      });
+    } catch {
+      // best-effort
+    }
+  }
+
+  // 2) Admin email
+  const adminEmail = await getAdminEmail();
+  if (adminEmail) {
+    try {
+      await sendMailRaw({
+        to: adminEmail,
+        subject: `Neuer Gutschein: ${data.code} – ${formattedValue}`,
+        html: `<div style="font-family:sans-serif;font-size:14px;color:#1f2937;max-width:600px;">
+  <h2 style="color:#92400e;margin:0 0 16px;">Neuer Gutschein gekauft</h2>
+  <table style="border-collapse:collapse;width:100%;font-size:14px;">
+    <tr><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Code</td><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;">${escapeHtml(data.code)}</td></tr>
+    <tr><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Betrag</td><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;">${escapeHtml(formattedValue)}</td></tr>
+    <tr><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Käufer</td><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">${escapeHtml(data.purchaser_name ?? '-')} (${escapeHtml(data.purchaser_email ?? '-')})</td></tr>
+    <tr><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Empfänger</td><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">${escapeHtml(data.recipient_name ?? '-')} (${escapeHtml(data.recipient_email ?? '-')})</td></tr>
+    <tr><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Gültig bis</td><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">${formatDate(data.expires_at)}</td></tr>
+    ${data.personal_message ? `<tr><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;">Nachricht</td><td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-style:italic;">${escapeHtml(data.personal_message)}</td></tr>` : ''}
+  </table>
+</div>`,
+      });
+    } catch {
+      // best-effort
+    }
+  }
+
+  // 3) Telegram notification
+  try {
+    await telegramNotify({
+      title: 'Neuer Gutschein gekauft',
+      message: summary,
+      type: 'gutschein_purchased',
+    });
+  } catch {
+    // best-effort
+  }
 }
