@@ -33,6 +33,11 @@ function tl(locale: string, key: string): string {
       errorEmail: 'Ungültige E-Mail-Adresse',
       errorAmount: 'Betrag zwischen 5 und 5.000 €',
       noProducts: 'Derzeit sind keine Gutscheine verfügbar.',
+      purchaseError: 'Der Kauf konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut.',
+      purchasePaypalRestricted: 'Die Zahlung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns.',
+      purchasePaypalFailed: 'Die Verbindung zum Zahlungsanbieter konnte nicht hergestellt werden. Bitte versuchen Sie es erneut.',
+      purchaseProductNotFound: 'Der gewählte Gutschein ist nicht mehr verfügbar.',
+      purchaseValidation: 'Bitte überprüfen Sie Ihre Eingaben.',
       customTitle: 'Wunschbetrag',
       customDesc: 'Geben Sie Ihren gewünschten Betrag ein (5 – 5.000 €).',
       customAmountLabel: 'Betrag (€)',
@@ -74,6 +79,11 @@ function tl(locale: string, key: string): string {
       errorEmail: 'Geçersiz e-posta adresi',
       errorAmount: 'Tutar 5 ile 5.000 € arasında olmalıdır',
       noProducts: 'Şu anda hediye çeki bulunmamaktadır.',
+      purchaseError: 'Satın alma işlemi tamamlanamadı. Lütfen daha sonra tekrar deneyin.',
+      purchasePaypalRestricted: 'Ödeme şu anda kullanılamamaktadır. Lütfen daha sonra tekrar deneyin veya bizimle iletişime geçin.',
+      purchasePaypalFailed: 'Ödeme sağlayıcısına bağlanılamadı. Lütfen tekrar deneyin.',
+      purchaseProductNotFound: 'Seçilen hediye çeki artık mevcut değil.',
+      purchaseValidation: 'Lütfen bilgilerinizi kontrol edin.',
       customTitle: 'Özel Tutar',
       customDesc: 'İstediğiniz tutarı girin (5 – 5.000 €).',
       customAmountLabel: 'Tutar (€)',
@@ -115,6 +125,11 @@ function tl(locale: string, key: string): string {
       errorEmail: 'Invalid e-mail address',
       errorAmount: 'Amount must be between 5 and 5,000 €',
       noProducts: 'No gift vouchers are currently available.',
+      purchaseError: 'The purchase could not be completed. Please try again later.',
+      purchasePaypalRestricted: 'Payment is currently unavailable. Please try again later or contact us.',
+      purchasePaypalFailed: 'Could not connect to the payment provider. Please try again.',
+      purchaseProductNotFound: 'The selected gift voucher is no longer available.',
+      purchaseValidation: 'Please check your details.',
       customTitle: 'Custom Amount',
       customDesc: 'Enter your desired amount (5 – 5,000 €).',
       customAmountLabel: 'Amount (€)',
@@ -283,6 +298,7 @@ function PurchaseModal({
 }) {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [submitError, setSubmitError] = useState('');
   const [purchase, { isLoading }] = usePurchaseGutscheinMutation();
 
   const isCustom = selected.type === 'custom';
@@ -319,6 +335,7 @@ function PurchaseModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    setSubmitError('');
 
     try {
       const body = isCustom
@@ -347,8 +364,20 @@ function PurchaseModal({
       } else {
         window.location.href = `/${locale}/gutschein/success?id=${res.gutschein_id}`;
       }
-    } catch {
-      // error shown by RTK
+    } catch (err: any) {
+      const code = err?.data?.error ?? err?.data?.error?.code ?? '';
+      const msg = err?.data?.message ?? '';
+      if (code === 'paypal_order_failed' && msg.includes('PAYEE_ACCOUNT_RESTRICTED')) {
+        setSubmitError(tl(locale, 'purchasePaypalRestricted'));
+      } else if (code === 'paypal_order_failed') {
+        setSubmitError(tl(locale, 'purchasePaypalFailed'));
+      } else if (code === 'product_not_found') {
+        setSubmitError(tl(locale, 'purchaseProductNotFound'));
+      } else if (code === 'validation_error') {
+        setSubmitError(tl(locale, 'purchaseValidation'));
+      } else {
+        setSubmitError(tl(locale, 'purchaseError'));
+      }
     }
   };
 
@@ -432,6 +461,12 @@ function PurchaseModal({
           </div>
 
           <p className="text-xs text-text-muted">{tl(locale, 'paypalHint')}</p>
+
+          {submitError && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+              <p className="text-sm text-red-700">{submitError}</p>
+            </div>
+          )}
 
           <div className="flex justify-end gap-3 pt-1">
             <button

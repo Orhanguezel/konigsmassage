@@ -198,13 +198,13 @@ VALUES
     'shortName','EM',
     'website','https://www.energetische-massage-bonn.de',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
       'width',120,
       'height',120,
       'alt','Energetische Massage Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -288,13 +288,13 @@ VALUES
     'shortName','EM',
     'website','https://www.energetische-massage-bonn.de',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
       'width',120,
       'height',120,
       'alt','Energetische Massage Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -370,13 +370,13 @@ VALUES
     'shortName','EM',
     'website','https://www.energetische-massage-bonn.de',
     'logo',JSON_OBJECT(
-      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+      'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
       'width',120,
       'height',120,
       'alt','Energetische Massage Logo'
     ),
     'images',JSON_ARRAY(
-      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp')
+      JSON_OBJECT('type','logo','url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp')
     )
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -455,7 +455,7 @@ VALUES
   'site_logo',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
     'alt','Energetische Massage Logo'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -466,7 +466,7 @@ VALUES
   'site_logo_dark',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
     'alt','Energetische Massage Logo (Dark)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
@@ -477,7 +477,7 @@ VALUES
   'site_logo_light',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1772919136/site-media/energetische_massage_logo_transparent.webp',
+    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
     'alt','Energetische Massage Logo (Light)'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
