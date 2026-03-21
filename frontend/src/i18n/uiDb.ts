@@ -420,6 +420,8 @@ const SECTION_KEYS: Record<UiSectionKey, readonly string[]> = {
     'ui_appointment_meta_title',
     'ui_appointment_meta_description',
     'ui_appointment_og_image',
+    'ui_appointment_home_visit_title',
+    'ui_appointment_home_visit_text',
   ],
   ui_chat: [
     'ui_chat_title',

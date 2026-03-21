@@ -120,6 +120,10 @@ VALUES
     'ui_appointment_weekly_wh_loading',   'Yükleniyor...',
     'ui_appointment_weekly_wh_error',     'Çalışma saatleri yüklenemedi.',
 
+    'ui_appointment_home_visit_title',    'Ev Ziyareti Hizmeti',
+    'ui_appointment_home_visit_text',
+      'Şu anda masaj hizmetlerimizi yalnızca ev ziyareti olarak sunmaktayız. Terapistimiz belirlenen randevu saatinde adresinize gelir.',
+
     'ui_appointment_info_title',          'Önemli Bilgi',
     'ui_appointment_info_text',
       'Randevularınızın kesinleşmesi için onay SMS/E-posta beklemeniz gerekmektedir. İptal işlemlerini en geç 24 saat önceden bildiriniz.',
@@ -279,6 +283,10 @@ VALUES
     'ui_appointment_weekly_wh_loading',  'Loading...',
     'ui_appointment_weekly_wh_error',    'Working hours could not be loaded.',
 
+    'ui_appointment_home_visit_title',   'Home Visit Service',
+    'ui_appointment_home_visit_text',
+      'We currently offer our massage services exclusively as home visits. Our therapist will come to your address at the scheduled time.',
+
     'ui_appointment_info_title',         'Important',
     'ui_appointment_info_text',
       'Your appointment is confirmed after approval via SMS/email. Please notify cancellations at least 24 hours in advance.',
@@ -437,6 +445,10 @@ VALUES
     'ui_appointment_weekly_pick_therapist','Wählen Sie einen Therapeuten, um den Wochenplan zu sehen.',
     'ui_appointment_weekly_wh_loading',  'Wird geladen...',
     'ui_appointment_weekly_wh_error',    'Arbeitszeiten konnten nicht geladen werden.',
+
+    'ui_appointment_home_visit_title',   'Hausbesuch-Service',
+    'ui_appointment_home_visit_text',
+      'Derzeit bieten wir unsere Massagen ausschließlich als Hausbesuch an. Unsere Therapeutin kommt zum vereinbarten Termin zu Ihnen nach Hause.',
 
     'ui_appointment_info_title',         'Wichtiger Hinweis',
     'ui_appointment_info_text',

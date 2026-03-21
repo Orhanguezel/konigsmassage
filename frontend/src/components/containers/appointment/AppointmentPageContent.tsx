@@ -435,6 +435,26 @@ export const AppointmentPageContent: React.FC = () => {
           </div>
         </div>
 
+        {/* Home visit notice */}
+        {isValidUiText(ui('ui_appointment_home_visit_text', ''), 'ui_appointment_home_visit_text') && (
+          <div className="mb-8 flex items-start gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4" data-aos="fade-up">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-amber-600 border border-amber-200 shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </div>
+            <div>
+              <div className="font-bold text-amber-900">
+                {t('ui_appointment_home_visit_title', 'Hausbesuch')}
+              </div>
+              <div className="text-sm text-amber-800 leading-relaxed">
+                {t('ui_appointment_home_visit_text', '')}
+              </div>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             {/* Step 1 (smaller) */}

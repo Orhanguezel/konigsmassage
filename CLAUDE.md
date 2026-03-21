@@ -37,6 +37,12 @@ bun run build && bun run start                 # Prod
 bun run check:fix                              # Biome lint+format
 ```
 
+## Portfolio Metadata Rule
+
+- Bu proje kokunde `project.portfolio.json` dosyasi zorunludur.
+- Yeni moduller, stack degisiklikleri, repo/live URL veya proje ozeti degisirse once bu dosya guncellenir.
+- `/home/orhan/Documents/Projeler` altinda portfolio seedleri bu dosyadan uretildigi icin metadata guncellenmeden is tamamlanmis sayilmaz.
+
 ## Proje Yapısı
 
 ```
