@@ -168,3 +168,91 @@ ON DUPLICATE KEY UPDATE
   `button_text` = VALUES(`button_text`),
   `alt` = VALUES(`alt`),
   `updated_at` = CURRENT_TIMESTAMP(3);
+
+-- ============================================================
+-- Popup #3 (bottombar — home visit notice, marquee)
+-- ============================================================
+INSERT INTO `popups` (
+  `uuid`,
+  `type`,
+  `title`,
+  `content`,
+  `background_color`,
+  `text_color`,
+  `button_text`,
+  `button_color`,
+  `button_hover_color`,
+  `button_text_color`,
+  `link_url`,
+  `link_target`,
+  `target_paths`,
+  `text_behavior`,
+  `scroll_speed`,
+  `closeable`,
+  `delay_seconds`,
+  `display_frequency`,
+  `is_active`,
+  `display_order`,
+  `start_at`,
+  `end_at`
+) VALUES (
+  'c4a2e9d1-7b38-4f6a-9c15-3e8d1a5f7b20',
+  'bottombar',
+  'Wir kommen zu Ihnen nach Hause!',
+  'Unsere Massagen finden derzeit ausschliesslich bei Ihnen zu Hause statt — bequem, entspannt und ganz privat.',
+  '#fef3c7',
+  '#92400e',
+  'Termin buchen',
+  '#92400e',
+  '#78350f',
+  '#ffffff',
+  '/de/appointment',
+  '_self',
+  JSON_ARRAY('/', '/appointment', '/services', '/services/*'),
+  'marquee',
+  35,
+  1,
+  0,
+  'always',
+  1,
+  5,
+  NULL,
+  NULL
+) ON DUPLICATE KEY UPDATE
+  `type` = VALUES(`type`),
+  `title` = VALUES(`title`),
+  `content` = VALUES(`content`),
+  `background_color` = VALUES(`background_color`),
+  `text_color` = VALUES(`text_color`),
+  `button_text` = VALUES(`button_text`),
+  `button_color` = VALUES(`button_color`),
+  `button_hover_color` = VALUES(`button_hover_color`),
+  `button_text_color` = VALUES(`button_text_color`),
+  `link_url` = VALUES(`link_url`),
+  `link_target` = VALUES(`link_target`),
+  `target_paths` = VALUES(`target_paths`),
+  `text_behavior` = VALUES(`text_behavior`),
+  `scroll_speed` = VALUES(`scroll_speed`),
+  `closeable` = VALUES(`closeable`),
+  `delay_seconds` = VALUES(`delay_seconds`),
+  `display_frequency` = VALUES(`display_frequency`),
+  `is_active` = VALUES(`is_active`),
+  `display_order` = VALUES(`display_order`),
+  `start_at` = VALUES(`start_at`),
+  `end_at` = VALUES(`end_at`);
+
+SET @POPUP_BOTTOMBAR_ID := (
+  SELECT `id` FROM `popups` WHERE `uuid` = 'c4a2e9d1-7b38-4f6a-9c15-3e8d1a5f7b20' LIMIT 1
+);
+
+INSERT INTO `popups_i18n` (`popup_id`, `locale`, `title`, `content`, `button_text`, `alt`)
+VALUES
+  (@POPUP_BOTTOMBAR_ID, 'de', 'Wir kommen zu Ihnen nach Hause!', 'Unsere Massagen finden derzeit ausschliesslich bei Ihnen zu Hause statt — bequem, entspannt und ganz privat.', 'Termin buchen', 'Hausbesuch-Hinweis'),
+  (@POPUP_BOTTOMBAR_ID, 'tr', 'Masajimiz evinize gelir!', 'Masaj hizmetlerimizi su anda yalnizca ev ziyareti olarak sunuyoruz — rahat, huzurlu ve tamamen ozel.', 'Randevu al', 'Ev ziyareti bildirimi'),
+  (@POPUP_BOTTOMBAR_ID, 'en', 'We come to your home!', 'Our massage services are currently offered exclusively as home visits — comfortable, relaxed and completely private.', 'Book appointment', 'Home visit notice')
+ON DUPLICATE KEY UPDATE
+  `title` = VALUES(`title`),
+  `content` = VALUES(`content`),
+  `button_text` = VALUES(`button_text`),
+  `alt` = VALUES(`alt`),
+  `updated_at` = CURRENT_TIMESTAMP(3);

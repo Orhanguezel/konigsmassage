@@ -234,6 +234,66 @@ function TopbarPopup({
   );
 }
 
+function BottombarPopup({
+  popup,
+  onClose,
+}: {
+  popup: PopupPublicDto;
+  onClose: (id: string) => void;
+}) {
+  return (
+    <div
+      className="fixed bottom-0 inset-x-0 z-50"
+      style={cardStyle(popup)}
+      role="banner"
+    >
+      <div className="mx-auto flex min-h-10 max-w-screen-2xl items-center gap-3 px-4 py-2">
+        <div className="min-w-0 flex-1">
+          {popup.text_behavior === 'marquee' ? (
+            <div className="overflow-hidden whitespace-nowrap">
+              <div
+                className="inline-block km-popup-marquee"
+                style={{ animationDuration: `${Math.max(10, popup.scroll_speed)}s` }}
+              >
+                <span className="mr-10 text-sm font-medium">{popup.title}</span>
+                {popup.content ? <span className="opacity-90 text-sm">{popup.content}</span> : null}
+              </div>
+            </div>
+          ) : (
+            <div className="truncate text-sm text-center">
+              <span className="font-semibold">{popup.title}</span>
+              {popup.content ? <span className="ml-2 opacity-90">{popup.content}</span> : null}
+            </div>
+          )}
+        </div>
+
+        {popup.link_url && popup.button_text ? (
+          <a
+            href={popup.link_url}
+            target={popup.link_target}
+            rel={popup.link_target === '_blank' ? 'noreferrer noopener' : undefined}
+            className="shrink-0 rounded px-2.5 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90"
+            style={popupLinkStyle(popup)}
+          >
+            {popup.button_text}
+          </a>
+        ) : null}
+
+        {popup.closeable ? (
+          <button
+            type="button"
+            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded bg-white/20 hover:bg-white/30"
+            onClick={() => onClose(popup.id)}
+            aria-label="close popup"
+          >
+            <X size={14} />
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function SitePopups() {
   const locale = useLocaleShort();
   const pathname = usePathname();
@@ -309,7 +369,8 @@ export default function SitePopups() {
   }, [data, visible]);
 
   const topbars = visiblePopups.filter((p) => p.type === 'topbar');
-  const sidebars = visiblePopups.filter((p) => p.type !== 'topbar');
+  const bottombars = visiblePopups.filter((p) => p.type === 'bottombar');
+  const sidebars = visiblePopups.filter((p) => p.type !== 'topbar' && p.type !== 'bottombar');
 
   const closePopup = (id: string) => {
     const popup = visiblePopups.find((p) => p.id === id);
@@ -330,6 +391,10 @@ export default function SitePopups() {
           ))}
         </div>
       ) : null}
+
+      {bottombars.map((popup) => (
+        <BottombarPopup key={popup.id} popup={popup} onClose={closePopup} />
+      ))}
 
       {sidebars.map((popup) => (
         <SidebarPopupCard key={popup.id} popup={popup} onClose={closePopup} />

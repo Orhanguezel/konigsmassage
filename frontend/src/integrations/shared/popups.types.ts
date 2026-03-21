@@ -1,6 +1,6 @@
 import { safeStr } from './common';
 
-export type PopupType = 'topbar' | 'sidebar_top' | 'sidebar_center' | 'sidebar_bottom';
+export type PopupType = 'topbar' | 'bottombar' | 'sidebar_top' | 'sidebar_center' | 'sidebar_bottom';
 export type PopupDisplayFrequency = 'always' | 'once' | 'daily';
 export type PopupSortField = 'display_order' | 'created_at' | 'updated_at';
 export type PopupSortOrder = 'asc' | 'desc';
@@ -75,7 +75,7 @@ const asBool = (v: unknown): boolean =>
 
 const toType = (v: unknown): PopupType => {
   const x = safeStr(v) as PopupType;
-  if (x === 'sidebar_top' || x === 'sidebar_center' || x === 'sidebar_bottom') return x;
+  if (x === 'bottombar' || x === 'sidebar_top' || x === 'sidebar_center' || x === 'sidebar_bottom') return x;
   return 'topbar';
 };
 
