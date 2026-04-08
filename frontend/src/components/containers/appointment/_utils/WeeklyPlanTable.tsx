@@ -183,7 +183,7 @@ export const WeeklyPlanTable: React.FC<WeeklyPlanTableProps> = ({
 
   if (!rid) {
     return (
-      <div className="bg-sand-50 border border-sand-200 px-4 py-3 rounded-sm text-text-secondary text-sm">
+      <div className="bg-bg-card border border-border-light px-4 py-3 rounded-sm text-text-secondary text-sm">
         {t('ui_appointment_weekly_pick_therapist', 'Select a therapist to view the weekly plan.')}
       </div>
     );
@@ -215,7 +215,7 @@ export const WeeklyPlanTable: React.FC<WeeklyPlanTableProps> = ({
                 'px-3 py-2 rounded-xl text-sm font-bold border transition-colors',
                 isActive
                   ? 'bg-brand-primary/10 border-brand-primary/25 text-text-primary'
-                  : 'bg-sand-50 border-sand-200 text-text-secondary hover:text-text-primary hover:border-sand-300',
+                  : 'bg-bg-card border-border-light text-text-secondary hover:text-text-primary hover:border-border-medium',
               ].join(' ')}
               aria-pressed={isActive}
             >
@@ -225,8 +225,8 @@ export const WeeklyPlanTable: React.FC<WeeklyPlanTableProps> = ({
         })}
       </div>
 
-      <div className="mt-4 bg-bg-secondary border border-sand-200 rounded-2xl p-5 shadow-soft">
-        <div className="flex items-center justify-between mb-4 border-b border-sand-100 pb-3">
+      <div className="mt-4 bg-bg-secondary border border-border-light rounded-2xl p-5 shadow-soft">
+        <div className="flex items-center justify-between mb-4 border-b border-border-light pb-3">
           <div className="text-base font-bold text-text-primary">
             {dowLabels[activeDow] || String(activeDow)}
           </div>
@@ -238,7 +238,7 @@ export const WeeklyPlanTable: React.FC<WeeklyPlanTableProps> = ({
             {sessions.map((tm) => (
               <span
                 key={tm}
-                className="inline-flex items-center justify-center px-3 py-1.5 bg-brand-primary/5 text-text-primary text-xs font-bold rounded-xl border border-brand-primary/10"
+                className="inline-flex items-center justify-center px-3 py-1.5 bg-brand-primary/5 text-text-primary text-xs font-bold border border-brand-primary/10"
               >
                 {tm}
               </span>

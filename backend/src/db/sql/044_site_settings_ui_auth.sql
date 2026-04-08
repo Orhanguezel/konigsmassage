@@ -1,5 +1,5 @@
 -- =============================================================
--- 044_site_settings_ui_auth.sql  (Auth pages – login/register/logout)
+-- 044_site_settings_ui_auth.sql  (Auth pages - login/register/logout)
 --  - Key: ui_auth
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de

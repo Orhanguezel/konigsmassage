@@ -1,46 +1,28 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Cormorant_Garamond, Outfit } from 'next/font/google';
 
-// Legacy Styles (Try to preserve existing look)
-// Note: If these rely on Bootstrap mixins, they might fail to compile since Bootstrap was removed.
-// In that case, remove these imports and refactor components to use Tailwind.
-// import '@/styles/index-four.scss';
-// import '@/styles/main.scss';
-
-// Note: avoid heavy global CSS for performance; animations/icons are implemented via Tailwind + inline SVGs.
 import { Providers } from '../providers';
 import ClientLayout from '../ClientLayout';
 import { buildMetadataFromSeo, fetchSeoObject } from '@/seo/server';
-// import 'bootstrap/dist/css/bootstrap.min.css'; // Removed, but might be needed if styles break heavily. 
-// For now, allow broken styles to migrate structure, or keep it if I want safety. 
-// User asked for "better format", suggesting we move away. But immediate breakage is bad.
-// I will keep it commented out and rely on Tailwind/Global styles. 
-// Wait, global styles imported 'bootstrap' in _app.tsx.
-// If I remove it, existing components break.
-// I'll re-add it for now to ensure components render, then removal is a separate step.
-// Actually, I cannot easily import bootstrap here if I removed the package.
-// I removed bootstrap package earlier! So I cannot import it.
-// I must proceed without bootstrap.
-// import '@fortawesome/fontawesome-free/css/all.min.css';
-// import { Providers } from './providers';
-// import ClientLayout from './ClientLayout';
+import JsonLd from '@/seo/JsonLd';
+import { graph, org, website, localBusiness } from '@/seo/jsonld';
 
-// Configure fonts
-const inter = Inter({
+const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-sans',
-  display: 'optional',
-  weight: ['400', '600', '700'],
-  fallback: ['system-ui', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+  display: 'swap',
+  weight: ['300', '400', '500', '600'],
+  fallback: ['system-ui', '-apple-system', 'sans-serif'],
 });
 
-const playfair = Playfair_Display({
+const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   variable: '--font-serif',
-  display: 'optional',
-  weight: ['400', '600', '700'],
-  fallback: ['Georgia', 'Times New Roman', 'serif'],
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  fallback: ['Georgia', 'serif'],
 });
 
 export async function generateMetadata({
@@ -53,6 +35,8 @@ export async function generateMetadata({
   return await buildMetadataFromSeo(seo, { locale, pathname: '/' });
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.energetische-massage-bonn.de';
+
 export default async function RootLayout({
   children,
   params,
@@ -61,8 +45,50 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+
+  const jsonLdData = graph([
+    org({
+      id: `${SITE_URL}/#org`,
+      name: 'Energetische Massage',
+      url: SITE_URL,
+      logo: 'https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
+    }),
+    website({
+      id: `${SITE_URL}/#website`,
+      name: 'Energetische Massage Bonn',
+      url: SITE_URL,
+      publisherId: `${SITE_URL}/#org`,
+    }),
+    localBusiness({
+      id: `${SITE_URL}/#business`,
+      name: 'Energetische Massage Bonn',
+      alternateName: 'Königs Massage',
+      description:
+        locale === 'tr'
+          ? 'Bonn\'da enerjetik masaj seansları: bilinçli dokunuş, net sınırlar ve derin gevşeme. Randevu ile.'
+          : locale === 'en'
+            ? 'Energetic massage sessions in Bonn: mindful touch, clear boundaries and deep relaxation. By appointment.'
+            : 'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung. Termine nach Vereinbarung.',
+      url: SITE_URL,
+      telephone: '+49 176 41107158',
+      email: 'info@energetische-massage-bonn.de',
+      address: {
+        addressLocality: 'Bonn',
+        addressRegion: 'NRW',
+        addressCountry: 'DE',
+      },
+      geo: { latitude: 50.7374, longitude: 7.0982 },
+      founder: { name: 'Anastasia König' },
+      priceRange: '€€',
+      image: 'https://res.cloudinary.com/dbozv7wqd/image/upload/v1773003525/site-media/ChatGPT_Image_8_Mar_2026_21_57_57.webp',
+      serviceType: 'Energetische Entspannungsmassage',
+      areaServed: 'Bonn',
+    }),
+  ]);
+
   return (
-      <div className={`font-sans antialiased text-text-primary bg-bg-primary ${inter.variable} ${playfair.variable}`}>
+      <div className={`font-sans antialiased text-text-primary bg-bg-primary ${outfit.variable} ${cormorant.variable}`}>
+        <JsonLd data={jsonLdData} id="site-graph" />
         <Providers>
           <Suspense fallback={null}>
             <ClientLayout locale={locale}>

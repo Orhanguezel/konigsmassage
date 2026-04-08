@@ -14,7 +14,7 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
-import { users } from '../auth/schema';
+import { users } from '@vps/shared-backend/modules/auth/schema';
 
 // ── 1. Gutschein Products (Vorlagen / Wertklassen) ───────────────────────────
 export const gutscheinProducts = mysqlTable(

@@ -37,6 +37,26 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         userAgent: '*',
         allow: '/',
       },
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'ClaudeBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Google-Extended',
+        allow: '/',
+      },
+      {
+        userAgent: 'Bytespider',
+        disallow: '/',
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };

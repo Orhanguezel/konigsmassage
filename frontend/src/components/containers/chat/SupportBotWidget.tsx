@@ -19,24 +19,24 @@ import { useLocaleShort } from "@/i18n/useLocaleShort";
 import { useUiSection } from "@/i18n/uiDb";
 import { useCreateContactPublicMutation, useGetSiteSettingByKeyQuery } from "@/integrations/rtk/hooks";
 
-/* ─── Theme tokens (globals.css @theme ile senkron) ────────── */
+/* ─── Theme tokens (dark+gold premium) ────────── */
 const C = {
-  rose900: "#5e352a",
-  rose800: "#7f4a3b",
-  rose700: "#a6604f",
-  rose600: "#c77665",
-  rose200: "#fbd5cd",
-  rose100: "#ffe8e3",
-  rose50: "#fff5f3",
-  sand900: "#2d2520",
-  sand800: "#4a4139",
-  sand600: "#7b6f63",
-  sand300: "#e3ddd5",
-  sand200: "#f0ebe6",
-  sand100: "#f9f7f4",
-  sand50: "#fdfcfb",
-  white: "#ffffff",
-  charcoal: "#1a1512",
+  rose900: "#C9A96E",
+  rose800: "#B8944F",
+  rose700: "#DFC9A0",
+  rose600: "#A88B4A",
+  rose200: "rgba(201,169,110,0.2)",
+  rose100: "#F5F0E8",
+  rose50: "rgba(201,169,110,0.05)",
+  sand900: "#F5F0E8",
+  sand800: "#A09888",
+  sand600: "#6B6358",
+  sand300: "rgba(201,169,110,0.12)",
+  sand200: "rgba(201,169,110,0.08)",
+  sand100: "#1A1815",
+  sand50: "#141210",
+  white: "#0C0B09",
+  charcoal: "#0C0B09",
 } as const;
 
 const SUPPORT_CONTEXT_ID_FALLBACK = "11111111-1111-1111-1111-111111111111";
@@ -443,7 +443,7 @@ export default function SupportBotWidget() {
           zIndex: 9999,
           background: open ? headerGradient : C.white,
           color: open ? C.white : C.rose900,
-          boxShadow: `0 8px 28px rgba(94,53,42,0.22)`,
+          boxShadow: `0 8px 28px rgba(0,0,0,0.4), 0 0 20px rgba(201,169,110,0.1)`,
           display: "grid",
           placeItems: "center",
           padding: 0,
@@ -482,7 +482,7 @@ export default function SupportBotWidget() {
             borderRadius: isMobile ? 14 : 16,
             background: C.white,
             zIndex: 9999,
-            boxShadow: `0 20px 60px rgba(94,53,42,0.18), 0 0 0 1px ${C.sand300}`,
+            boxShadow: `0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px ${C.sand300}`,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",

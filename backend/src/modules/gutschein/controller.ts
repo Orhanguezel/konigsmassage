@@ -5,9 +5,9 @@ import { db } from '@/db/client';
 import { gutscheins, gutscheinProducts } from './schema';
 import { eq, and } from 'drizzle-orm';
 import { checkCodeSchema, purchaseSchema, redeemSchema } from './validation';
-import { createPaypalOrder, capturePaypalOrder } from '@/modules/wallet/paypal.service';
-import type { PaypalCredentials } from '@/modules/wallet/paypal.service';
-import { getPaymentConfig } from '@/modules/siteSettings/service';
+import { createPaypalOrder, capturePaypalOrder } from '@vps/shared-backend/modules/wallet/paypal.service';
+import type { PaypalCredentials } from '@vps/shared-backend/modules/wallet/paypal.service';
+import { getPaymentConfig } from './local-helpers';
 import { env } from '@/core/env';
 import { sendGutscheinEmail, buildGutscheinHtml, notifyAdminGutscheinPurchased } from './email';
 

@@ -71,7 +71,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
       'ui_contact_subprefix',                'Energetische Massage',
       'ui_contact_sublabel',                 'İletişim',
       'ui_contact_title_left',               'Konuşalım',
-      'ui_contact_tagline',                  'Sorularınız ve randevu talepleriniz için bize yazın. Seanslar Bonn’da, ön görüşme ve onay ile planlanır.',
+      'ui_contact_tagline',                  'Sorularınız ve randevu talepleriniz için bize yazın. Seanslar Bonn''da, ön görüşme ve onay ile planlanır.',
 
       'ui_contact_quick_email_placeholder',  'E-posta adresiniz',
       'ui_contact_quick_email_aria',         'E-postayı forma aktar',
@@ -118,7 +118,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
       'ui_contact_map_title',                'Konum',
 
       'ui_contact_meta_title',               'İletişim | Energetische Massage',
-      'ui_contact_meta_description',         'Energetische Massage ile iletişime geçin: Bonn’da enerjetik masaj seansları için randevu ve sorular.'
+      'ui_contact_meta_description',         'Energetische Massage ile iletişime geçin: Bonn''da enerjetik masaj seansları için randevu ve sorular.'
     )
     AS CHAR CHARACTER SET utf8mb4
   ),
@@ -201,7 +201,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
       'ui_contact_subprefix',                'Energetische Massage',
       'ui_contact_sublabel',                 'Kontakt',
       'ui_contact_title_left',               'Lassen Sie uns sprechen',
-      'ui_contact_tagline',                  'Für Fragen und Terminanfragen schreiben Sie uns. Sitzungen finden in Bonn statt – nach kurzem Vorgespräch und Einverständnis.',
+      'ui_contact_tagline',                  'Für Fragen und Terminanfragen schreiben Sie uns. Sitzungen finden in Bonn statt - nach kurzem Vorgespräch und Einverständnis.',
 
       'ui_contact_quick_email_placeholder',  'Ihre E-Mail-Adresse',
       'ui_contact_quick_email_aria',         'E-Mail übernehmen',

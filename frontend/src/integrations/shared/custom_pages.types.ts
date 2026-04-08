@@ -141,11 +141,26 @@ type ContentJson = { html?: string; [key: string]: unknown };
 
 const unpackContent = (raw: string | null): string => {
   if (!raw) return '';
+  const trimmed = raw.trim();
+
+  // Fast path: doesn't look like JSON wrapper
+  if (!trimmed.startsWith('{')) return raw;
+
+  // Try standard JSON parse first
   try {
-    const parsed = JSON.parse(raw) as ContentJson;
+    const parsed = JSON.parse(trimmed) as ContentJson;
     if (typeof parsed.html === 'string') return parsed.html;
     return raw;
   } catch {
+    // JSON parse failed (e.g. unescaped quotes inside value)
+    // Fallback: extract html value with regex
+    const match = trimmed.match(/^\{"html"\s*:\s*"([\s\S]*)"\s*\}$/);
+    if (match?.[1]) {
+      return match[1]
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\');
+    }
     return raw;
   }
 };

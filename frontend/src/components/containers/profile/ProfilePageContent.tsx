@@ -228,10 +228,10 @@ export default function ProfilePageContent() {
   return (
     <section className="bg-bg-primary py-20 min-h-screen">
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl rounded-xl border border-sand-200 bg-white shadow-sm">
+        <div className="mx-auto max-w-6xl border border-border-light bg-bg-card shadow-sm">
           <div className="grid lg:grid-cols-[260px_1fr]">
-            <aside className="border-b lg:border-b-0 lg:border-r border-sand-200 p-4 lg:p-6">
-              <h1 className="text-2xl font-serif font-bold text-text-primary">Hesabım</h1>
+            <aside className="border-b lg:border-b-0 lg:border-r border-border-light p-4 lg:p-6">
+              <h1 className="text-2xl font-serif font-light text-text-primary">Hesabım</h1>
               <p className="mt-1 text-sm text-text-muted">{user?.email || ''}</p>
 
               <nav className="mt-6 space-y-2">
@@ -243,7 +243,7 @@ export default function ProfilePageContent() {
                     className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
                       activeTab === tab.key
                         ? 'bg-brand-primary text-white'
-                        : 'bg-sand-50 text-text-secondary hover:bg-sand-100'
+                        : 'bg-bg-card text-text-secondary hover:bg-bg-card-hover'
                     }`}
                   >
                     {tab.label}
@@ -307,7 +307,7 @@ export default function ProfilePageContent() {
                     <div>
                       <label className="mb-1 block text-sm font-medium">Ad Soyad</label>
                       <input
-                        className="w-full rounded border border-sand-200 px-3 py-2"
+                        className="w-full rounded border border-border-light px-3 py-2"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                       />
@@ -315,7 +315,7 @@ export default function ProfilePageContent() {
                     <div>
                       <label className="mb-1 block text-sm font-medium">Telefon</label>
                       <input
-                        className="w-full rounded border border-sand-200 px-3 py-2"
+                        className="w-full rounded border border-border-light px-3 py-2"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                       />
@@ -326,7 +326,7 @@ export default function ProfilePageContent() {
                     <div>
                       <label className="mb-1 block text-sm font-medium">Adres Satırı 1</label>
                       <input
-                        className="w-full rounded border border-sand-200 px-3 py-2"
+                        className="w-full rounded border border-border-light px-3 py-2"
                         value={addressLine1}
                         onChange={(e) => setAddressLine1(e.target.value)}
                       />
@@ -334,7 +334,7 @@ export default function ProfilePageContent() {
                     <div>
                       <label className="mb-1 block text-sm font-medium">Adres Satırı 2</label>
                       <input
-                        className="w-full rounded border border-sand-200 px-3 py-2"
+                        className="w-full rounded border border-border-light px-3 py-2"
                         value={addressLine2}
                         onChange={(e) => setAddressLine2(e.target.value)}
                       />
@@ -345,7 +345,7 @@ export default function ProfilePageContent() {
                     <div>
                       <label className="mb-1 block text-sm font-medium">Şehir</label>
                       <input
-                        className="w-full rounded border border-sand-200 px-3 py-2"
+                        className="w-full rounded border border-border-light px-3 py-2"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                       />
@@ -353,7 +353,7 @@ export default function ProfilePageContent() {
                     <div>
                       <label className="mb-1 block text-sm font-medium">Ülke</label>
                       <input
-                        className="w-full rounded border border-sand-200 px-3 py-2"
+                        className="w-full rounded border border-border-light px-3 py-2"
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                       />
@@ -361,7 +361,7 @@ export default function ProfilePageContent() {
                     <div>
                       <label className="mb-1 block text-sm font-medium">Posta Kodu</label>
                       <input
-                        className="w-full rounded border border-sand-200 px-3 py-2"
+                        className="w-full rounded border border-border-light px-3 py-2"
                         value={postalCode}
                         onChange={(e) => setPostalCode(e.target.value)}
                       />
@@ -385,7 +385,7 @@ export default function ProfilePageContent() {
                     <label className="mb-1 block text-sm font-medium">Mevcut Şifre</label>
                     <input
                       type="password"
-                      className="w-full rounded border border-sand-200 px-3 py-2"
+                      className="w-full rounded border border-border-light px-3 py-2"
                       value={oldPassword}
                       onChange={(e) => setOldPassword(e.target.value)}
                     />
@@ -394,7 +394,7 @@ export default function ProfilePageContent() {
                     <label className="mb-1 block text-sm font-medium">Yeni Şifre</label>
                     <input
                       type="password"
-                      className="w-full rounded border border-sand-200 px-3 py-2"
+                      className="w-full rounded border border-border-light px-3 py-2"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                     />
@@ -403,7 +403,7 @@ export default function ProfilePageContent() {
                     <label className="mb-1 block text-sm font-medium">Yeni Şifre (Tekrar)</label>
                     <input
                       type="password"
-                      className="w-full rounded border border-sand-200 px-3 py-2"
+                      className="w-full rounded border border-border-light px-3 py-2"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
@@ -427,23 +427,23 @@ export default function ProfilePageContent() {
                   <h2 className="text-xl font-semibold text-text-primary">Wallet</h2>
 
                   <div className="grid gap-4 md:grid-cols-3">
-                    <div className="rounded-lg bg-sand-50 p-4 border border-sand-200">
+                    <div className="rounded-lg bg-bg-card p-4 border border-border-light">
                       <p className="text-sm text-text-muted">Bakiye</p>
                       <p className="mt-1 text-lg font-bold">
                         {money(wallet?.balance ?? profile?.wallet_balance ?? 0, walletCurrency)}
                       </p>
                     </div>
-                    <div className="rounded-lg bg-sand-50 p-4 border border-sand-200">
+                    <div className="rounded-lg bg-bg-card p-4 border border-border-light">
                       <p className="text-sm text-text-muted">Toplam Giriş</p>
                       <p className="mt-1 text-lg font-bold">{money(wallet?.total_earnings ?? 0, walletCurrency)}</p>
                     </div>
-                    <div className="rounded-lg bg-sand-50 p-4 border border-sand-200">
+                    <div className="rounded-lg bg-bg-card p-4 border border-border-light">
                       <p className="text-sm text-text-muted">Toplam Çıkış</p>
                       <p className="mt-1 text-lg font-bold">{money(wallet?.total_withdrawn ?? 0, walletCurrency)}</p>
                     </div>
                   </div>
 
-                  <form onSubmit={onCreateDeposit} className="rounded-lg border border-sand-200 p-4 space-y-3">
+                  <form onSubmit={onCreateDeposit} className="rounded-lg border border-border-light p-4 space-y-3">
                     <h3 className="font-semibold">Para Yatır</h3>
                     <div className="grid gap-3 sm:grid-cols-3">
                       <div className="sm:col-span-1">
@@ -452,7 +452,7 @@ export default function ProfilePageContent() {
                           type="number"
                           min={1}
                           step="0.01"
-                          className="w-full rounded border border-sand-200 px-3 py-2"
+                          className="w-full rounded border border-border-light px-3 py-2"
                           value={depositAmount}
                           onChange={(e) => setDepositAmount(e.target.value)}
                         />
@@ -460,7 +460,7 @@ export default function ProfilePageContent() {
                       <div className="sm:col-span-1">
                         <label className="mb-1 block text-sm font-medium">Yöntem</label>
                         <select
-                          className="w-full rounded border border-sand-200 px-3 py-2"
+                          className="w-full rounded border border-border-light px-3 py-2"
                           value={depositMethod}
                           onChange={(e) => setDepositMethod(e.target.value as 'paypal' | 'bank_transfer')}
                         >
@@ -471,7 +471,7 @@ export default function ProfilePageContent() {
                       <div className="sm:col-span-1">
                         <label className="mb-1 block text-sm font-medium">Referans (Opsiyonel)</label>
                         <input
-                          className="w-full rounded border border-sand-200 px-3 py-2"
+                          className="w-full rounded border border-border-light px-3 py-2"
                           value={bankTransferRef}
                           onChange={(e) => setBankTransferRef(e.target.value)}
                           disabled={depositMethod !== 'bank_transfer'}
@@ -482,7 +482,7 @@ export default function ProfilePageContent() {
                     {depositHint ? <p className="text-sm text-red-600">{depositHint}</p> : null}
 
                     {depositMethod === 'bank_transfer' && bankInfo?.enabled ? (
-                      <div className="rounded bg-sand-50 border border-sand-200 p-3 text-sm">
+                      <div className="rounded bg-bg-card border border-border-light p-3 text-sm">
                         <p><strong>Hesap:</strong> {bankInfo.account_name || '-'}</p>
                         <p><strong>IBAN:</strong> {bankInfo.iban || '-'}</p>
                         <p><strong>Banka:</strong> {bankInfo.bank_name || '-'}</p>
@@ -499,7 +499,7 @@ export default function ProfilePageContent() {
                     </button>
                   </form>
 
-                  <div className="rounded-lg border border-sand-200 p-4">
+                  <div className="rounded-lg border border-border-light p-4">
                     <div className="mb-3 flex items-center justify-between">
                       <h3 className="font-semibold">İşlem Geçmişi</h3>
                       <button onClick={() => refetchTx()} className="text-sm font-medium text-brand-primary hover:underline">
@@ -509,7 +509,7 @@ export default function ProfilePageContent() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-sand-200 text-left">
+                          <tr className="border-b border-border-light text-left">
                             <th className="py-2 pr-2">Tarih</th>
                             <th className="py-2 pr-2">Tür</th>
                             <th className="py-2 pr-2">Yöntem</th>
@@ -526,7 +526,7 @@ export default function ProfilePageContent() {
                             </tr>
                           ) : (
                             txs.map((tx) => (
-                              <tr key={tx.id} className="border-b border-sand-100">
+                              <tr key={tx.id} className="border-b border-border-light">
                                 <td className="py-2 pr-2">{fmtDate(tx.created_at, locale)}</td>
                                 <td className="py-2 pr-2">{tx.type}</td>
                                 <td className="py-2 pr-2">{tx.payment_method}</td>
@@ -554,7 +554,7 @@ export default function ProfilePageContent() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-sand-200 text-left">
+                          <tr className="border-b border-border-light text-left">
                             <th className="py-2 pr-2">Sipariş No</th>
                             <th className="py-2 pr-2">Tarih</th>
                             <th className="py-2 pr-2">Toplam</th>
@@ -564,7 +564,7 @@ export default function ProfilePageContent() {
                         </thead>
                         <tbody>
                           {myOrders.map((order) => (
-                            <tr key={order.id} className="border-b border-sand-100">
+                            <tr key={order.id} className="border-b border-border-light">
                               <td className="py-2 pr-2 font-mono text-xs">{order.order_number}</td>
                               <td className="py-2 pr-2">{order.created_at ? fmtDate(order.created_at, locale) : '-'}</td>
                               <td className="py-2 pr-2 font-medium">{money(order.total_amount, order.currency)}</td>
@@ -573,7 +573,7 @@ export default function ProfilePageContent() {
                                   order.status === 'completed' ? 'bg-green-100 text-green-800' :
                                   order.status === 'cancelled' || order.status === 'refunded' ? 'bg-red-100 text-red-800' :
                                   order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                  'bg-sand-100 text-text-secondary'
+                                  'bg-bg-card-hover text-text-secondary'
                                 }`}>
                                   {order.status}
                                 </span>
@@ -582,7 +582,7 @@ export default function ProfilePageContent() {
                                 <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${
                                   order.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
                                   order.payment_status === 'failed' ? 'bg-red-100 text-red-800' :
-                                  'bg-sand-100 text-text-secondary'
+                                  'bg-bg-card-hover text-text-secondary'
                                 }`}>
                                   {order.payment_status}
                                 </span>

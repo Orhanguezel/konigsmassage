@@ -30,7 +30,7 @@ export default function ErrorPage({
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-serif font-bold text-text-primary mb-6 animate-fade-in-delay-300">
+        <h1 className="text-4xl md:text-5xl font-serif font-light text-text-primary mb-6 animate-fade-in-delay-300">
           {ui('ui_500_title', 'Internal Server Error')}
         </h1>
 
@@ -41,7 +41,7 @@ export default function ErrorPage({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-delay-500">
           <button
             onClick={() => reset()}
-            className="flex items-center gap-2 px-8 py-4 bg-brand-primary text-white rounded-full font-semibold shadow-medium hover:bg-brand-hover transition-all transform hover:-translate-y-1"
+            className="flex items-center gap-2 px-8 py-4 bg-brand-primary text-white rounded-full font-semibold shadow-medium hover:bg-brand-hover transition-all transform "
           >
             <RefreshCcw className="w-5 h-5" />
             {ui('ui_500_try_again', 'Try Again')}

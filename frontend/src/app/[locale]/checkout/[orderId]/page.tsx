@@ -166,7 +166,7 @@ export default function CheckoutPage() {
       <Banner title={t.banner} />
       <section className="bg-bg-primary py-16">
         <div className="container mx-auto max-w-2xl px-4">
-          <div className="rounded-xl border border-sand-200 bg-white p-6 shadow-sm space-y-6">
+          <div className="border border-border-light bg-bg-card p-6 shadow-sm space-y-6">
             {/* Order Summary */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm">

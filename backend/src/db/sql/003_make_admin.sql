@@ -1,6 +1,6 @@
 -- 003_make_admin.sql
 -- Uygulamaya tam yetkili bir ADMIN kullanıcı seed eder
--- Placeholder'lar seeder script'i üzerinden ENV'den dolduruluyor:
+-- Placeholder''lar seeder script''i üzerinden ENV''den dolduruluyor:
 --   - src/db/index.ts (bun run db:seed)
 --   - dist/db/index.js (bun run build sonrası)
 --   {{ADMIN_ID}}, {{ADMIN_EMAIL}}, {{ADMIN_PASSWORD_HASH}}
@@ -10,7 +10,7 @@ SET collation_connection = utf8mb4_unicode_ci;
 
 -- =============================================================
 -- ADMIN USER UPSERT (users)
--- 001_auth_schema.sql'deki kolonlara birebir uyumlu
+-- 001_auth_schema.sql''deki kolonlara birebir uyumlu
 -- =============================================================
 INSERT INTO users (
   id,

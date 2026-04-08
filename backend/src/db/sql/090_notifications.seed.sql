@@ -49,7 +49,7 @@ VALUES
 ),
 (
   '22222222-2222-2222-2222-222222222222',
-  '{{ADMIN_ID}}',  -- admin kullanıcının ID’si
+  '{{ADMIN_ID}}',  -- admin kullanıcının ID''si
   'İlk sipariş fırsatı',
   'İlk siparişinizde ekstra indirim kazandınız. Sepette kupon kullanmayı unutmayın.',
   'custom',

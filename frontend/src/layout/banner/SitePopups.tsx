@@ -129,7 +129,7 @@ function SidebarPopupCard({
   return (
     <aside
       className={cn(
-        'fixed right-4 z-[70] w-[min(92vw,360px)] rounded-xl shadow-2xl ring-1 ring-black/10 overflow-hidden',
+        'fixed right-4 z-[70] w-[min(92vw,360px)] shadow-medium ring-1 ring-black/10 overflow-hidden',
         positionClass,
       )}
       style={cardStyle(popup)}
@@ -165,7 +165,7 @@ function SidebarPopupCard({
           {popup.closeable ? (
             <button
               type="button"
-              className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-md bg-white/20 hover:bg-white/30"
+              className="ml-auto inline-flex h-8 w-8 items-center justify-center bg-bg-card/20 hover:bg-bg-card/30"
               onClick={() => onClose(popup.id)}
               aria-label="close popup"
             >
@@ -222,7 +222,7 @@ function TopbarPopup({
         {popup.closeable ? (
           <button
             type="button"
-            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded bg-white/20 hover:bg-white/30"
+            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded bg-bg-card/20 hover:bg-bg-card/30"
             onClick={() => onClose(popup.id)}
             aria-label="close popup"
           >
@@ -282,7 +282,7 @@ function BottombarPopup({
         {popup.closeable ? (
           <button
             type="button"
-            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded bg-white/20 hover:bg-white/30"
+            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded bg-bg-card/20 hover:bg-bg-card/30"
             onClick={() => onClose(popup.id)}
             aria-label="close popup"
           >

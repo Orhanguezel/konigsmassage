@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 190_slider.sql
--- Slider – parent + i18n (slider + slider_i18n)
+-- Slider - parent + i18n (slider + slider_i18n)
 -- Drizzle şeması ile birebir uyumlu
 -- =============================================================
 

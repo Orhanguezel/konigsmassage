@@ -77,7 +77,7 @@ function SheetContent({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "bg-white position-fixed z-50 d-flex flex-column shadow-lg",
+          "bg-bg-card position-fixed z-50 d-flex flex-column shadow-medium",
           basePos,
           baseSize,
           className,

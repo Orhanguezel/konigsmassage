@@ -142,12 +142,12 @@ export default function CookieSettingsModal({
       }}
     >
       <div
-        className="w-full max-w-lg rounded-2xl bg-white border border-sand-200 shadow-2xl overflow-hidden"
+        className="w-full max-w-lg rounded-2xl bg-bg-card border border-border-light shadow-medium overflow-hidden"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 p-6 border-b border-sand-200">
+        <div className="flex items-start justify-between gap-4 p-6 border-b border-border-light">
           <div className="min-w-0">
-            <p id={titleId} className="text-lg font-serif font-bold text-text-primary leading-snug">
+            <p id={titleId} className="text-lg font-serif font-light text-text-primary leading-snug">
               {finalTitle}
             </p>
             <p id={descId} className="mt-2 text-sm text-text-secondary leading-relaxed">
@@ -157,7 +157,7 @@ export default function CookieSettingsModal({
 
           <button
             type="button"
-            className="shrink-0 w-9 h-9 rounded-full border border-sand-200 text-text-secondary hover:text-text-primary hover:bg-sand-50 transition-colors"
+            className="shrink-0 w-9 h-9 rounded-full border border-border-light text-text-secondary hover:text-text-primary hover:bg-bg-card transition-colors"
             onClick={onClose}
             aria-label={finalAriaClose}
             title={finalAriaClose}
@@ -172,12 +172,12 @@ export default function CookieSettingsModal({
               <p className="font-bold text-text-primary">{finalLabelNecessary}</p>
               <p className="mt-1 text-sm text-text-secondary leading-relaxed">{finalDescNecessary}</p>
             </div>
-            <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-brand-primary/10 text-brand-dark border border-brand-primary/15">
+            <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-brand-primary/10 text-text-primary border border-brand-primary/15">
               {ui('cc_pill_on', 'On')}
             </span>
           </div>
 
-          <div className="h-px bg-sand-200" />
+          <div className="h-px bg-bg-card-hover" />
 
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
@@ -193,8 +193,8 @@ export default function CookieSettingsModal({
                 onChange={(e) => setAnalytics(e.target.checked)}
                 className="sr-only peer"
               />
-              <span className="relative w-12 h-7 rounded-full bg-sand-300 peer-checked:bg-brand-primary transition-colors border border-sand-300 peer-checked:border-brand-primary">
-                <span className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5" />
+              <span className="relative w-12 h-7 rounded-full bg-sand-300 peer-checked:bg-brand-primary transition-colors border border-border-medium peer-checked:border-brand-primary">
+                <span className="absolute top-0.5 left-0.5 w-6 h-6 bg-bg-card shadow-sm transition-transform peer-checked:translate-x-5" />
               </span>
             </label>
           </div>
@@ -203,7 +203,7 @@ export default function CookieSettingsModal({
         <div className="p-6 pt-0 flex flex-col sm:flex-row gap-3 sm:justify-end">
           <button
             type="button"
-            className="inline-flex justify-center items-center px-4 py-2.5 rounded-lg border border-sand-200 text-sm font-bold text-text-primary hover:bg-sand-50 transition-colors"
+            className="inline-flex justify-center items-center px-4 py-2.5 rounded-lg border border-border-light text-sm font-bold text-text-primary hover:bg-bg-card transition-colors"
             onClick={onClose}
           >
             {finalBtnCancel}

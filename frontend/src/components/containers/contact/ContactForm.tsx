@@ -159,8 +159,8 @@ export default function ContactForm({ locale, t }: Props) {
     `${INPUT_CLS} ${field && hasError(field) ? INPUT_ERR : INPUT_OK}`;
 
   return (
-    <div className="bg-bg-secondary rounded-xl shadow-soft border border-border-light p-6 md:p-8">
-      <h3 className="text-xl font-bold font-serif text-text-primary mb-6">{t.formTitle}</h3>
+    <div className="bg-bg-secondary shadow-soft border border-border-light p-6 md:p-8">
+      <h3 className="text-xl font-light font-serif text-text-primary mb-6">{t.formTitle}</h3>
 
       <form onSubmit={onSubmit} noValidate className="space-y-5">
         {/* Honeypot */}
@@ -325,7 +325,7 @@ export default function ContactForm({ locale, t }: Props) {
           <button
             type="submit"
             disabled={isLoading}
-            className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-brand-primary text-text-on-dark font-bold uppercase tracking-widest hover:bg-brand-hover transition-all duration-300 shadow-soft rounded-sm disabled:opacity-60"
+            className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-brand-primary text-text-on-dark font-normal uppercase tracking-[0.2em] hover:bg-brand-hover transition-all duration-300 shadow-soft rounded-sm disabled:opacity-60"
           >
             {isLoading ? t.sending : t.submit}
           </button>

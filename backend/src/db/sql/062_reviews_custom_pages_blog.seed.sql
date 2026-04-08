@@ -89,12 +89,12 @@ SET @SQL_REVIEW_I18N := IF(@HAS_REVIEW_I18N > 0,
 VALUES
   ('44440101-4444-4444-8444-444444441103', @REV_BLOG_1, 'de',
    'Sehr verständlich und alltagstauglich',
-   'Der Beitrag ist klar strukturiert und praxisnah. Die Hinweise zu Wasser, Ballaststoffen und fermentierten Lebensmitteln lassen sich gut in den Alltag integrieren – die Idee vom „zweiten Gehirn“ ist ein starker Denkanstoß.',
+   'Der Beitrag ist klar strukturiert und praxisnah. Die Hinweise zu Wasser, Ballaststoffen und fermentierten Lebensmitteln lassen sich gut in den Alltag integrieren – die Idee vom zweiten Gehirn ist ein starker Denkanstoß.',
    NULL, NOW(3), NOW(3)),
 
   ('44440102-4444-4444-8444-444444442203', @REV_BLOG_2, 'de',
    'Nachhaltige Energie ohne Koffein',
-   'Sehr gute, realistische Empfehlungen. Schlafrhythmus, Morgenlicht und sanfte Bewegung sind verständlich erklärt – ohne „Wunderlösungen“. Die Kräutertee-Ideen passen perfekt dazu.',
+   'Sehr gute, realistische Empfehlungen. Schlafrhythmus, Morgenlicht und sanfte Bewegung sind verständlich erklärt – ohne Wunderlösungen. Die Kräutertee-Ideen passen perfekt dazu.',
    NULL, NOW(3), NOW(3)),
 
   ('44440103-4444-4444-8444-444444443303', @REV_BLOG_3, 'de',
@@ -109,7 +109,7 @@ VALUES
 
   ('44440105-4444-4444-8444-444444445503', @REV_BLOG_5, 'de',
    'Klare, hilfreiche Einordnung',
-   'Sehr wertvoll, wie deutlich „was es ist / was es nicht ist“ beschrieben wird. Einverständnis, Kommunikation und Grenzen werden ruhig und respektvoll in den Mittelpunkt gestellt.',
+   'Sehr wertvoll, wie deutlich was es ist / was es nicht ist beschrieben wird. Einverständnis, Kommunikation und Grenzen werden ruhig und respektvoll in den Mittelpunkt gestellt.',
    NULL, NOW(3), NOW(3)),
 
   ('44440106-4444-4444-8444-444444446603', @REV_BLOG_6, 'de',

@@ -65,3 +65,24 @@ ON DUPLICATE KEY UPDATE
  height=VALUES(height),
  provider_format=VALUES(provider_format),
  updated_at=VALUES(updated_at);
+
+-- Anastasia König — Hakkımızda görseli
+SET @ASSET_ANAS3_ID := (SELECT id FROM storage_assets WHERE bucket='public' AND `path`='uploads/anas-3.jpg' LIMIT 1);
+SET @ASSET_ANAS3_ID := COALESCE(@ASSET_ANAS3_ID, UUID());
+INSERT INTO storage_assets
+(id, user_id, `name`, bucket, `path`, folder, mime, size, width, height, url, hash,
+ provider, provider_public_id, provider_resource_type, provider_format, provider_version, etag, metadata, created_at, updated_at)
+VALUES
+(@ASSET_ANAS3_ID, NULL, 'anas-3.jpg', 'public', 'uploads/anas-3.jpg', 'uploads',
+ 'image/jpeg', 138165, 1280, 960,
+ '/uploads/anas-3.jpg', NULL,
+ 'local', NULL, 'image', 'jpg', 1, NULL, NULL, NOW(3), NOW(3))
+ON DUPLICATE KEY UPDATE
+ mime=VALUES(mime),
+ size=VALUES(size),
+ url=VALUES(url),
+ width=VALUES(width),
+ height=VALUES(height),
+ provider=VALUES(provider),
+ provider_format=VALUES(provider_format),
+ updated_at=VALUES(updated_at);

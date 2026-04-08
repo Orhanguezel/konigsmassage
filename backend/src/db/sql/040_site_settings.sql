@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 040_site_settings.sql (energetische-massage-bonn) – MULTI-LOCALE (Dynamic) [FINAL]
+-- FILE: 040_site_settings.sql (energetische-massage-bonn) - MULTI-LOCALE (Dynamic) [FINAL]
 --  - app_locales + default_locale => locale='*'
 --  - localized settings => locale in ('tr','en','de')
 --  - cookie_consent => LOCALIZED (tr/en/de)
@@ -182,9 +182,9 @@ VALUES
   'company_profile',
   'tr',
   CAST(JSON_OBJECT(
-    'headline','Bonn’da Enerjetik Masaj',
+    'headline','Bonn''da Enerjetik Masaj',
     'subline','Kalpten dokunuş, bilinçli varlık ve güvenli bir alanla derin gevşeme.',
-    'body','Energetische Massage, Anastasia König’in Bonn’da sunduğu enerjetik masaj seanslarını bir araya getirir. Tayland’da ve farklı ülkelerde edindiği masaj tekniklerini, sezgisel yaklaşımı ve dikkatli dokunuşla birleştirir. Her seans kişiye özel, saygılı ve net sınırlar içinde ilerler. Amaç; beden farkındalığını desteklemek, iç huzuru güçlendirmek ve gündelik yükleri geride bırakmanıza yardımcı olmaktır. Terminler ön görüşme ile, randevuya göre planlanır.'
+    'body','Energetische Massage, Anastasia König''in Bonn''da sunduğu enerjetik masaj seanslarını bir araya getirir. Tayland''da ve farklı ülkelerde edindiği masaj tekniklerini, sezgisel yaklaşımı ve dikkatli dokunuşla birleştirir. Her seans kişiye özel, saygılı ve net sınırlar içinde ilerler. Amaç; beden farkındalığını desteklemek, iç huzuru güçlendirmek ve gündelik yükleri geride bırakmanıza yardımcı olmaktır. Terminler ön görüşme ile, randevuya göre planlanır.'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -502,7 +502,7 @@ VALUES
     'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222471/site-media/about.png',
     'width',1200,
     'height',630,
-    'alt','Energetische Massage – Energetische Massage in Bonn'
+    'alt','Energetische Massage - Energetische Massage in Bonn'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -512,10 +512,10 @@ VALUES
   'site_appointment_cover',
   '*',
   CAST(JSON_OBJECT(
-    'url','https://res.cloudinary.com/dbozv7wqd/image/upload/v1771038160/site-media/termin_portrait.jpg',
+    'url','/uploads/anas-3.jpg',
     'width',1200,
     'height',800,
-    'alt','Energetische Massage – Termin-Titelbild'
+    'alt','Energetische Massage - Termin-Titelbild'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)

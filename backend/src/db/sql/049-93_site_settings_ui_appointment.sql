@@ -30,7 +30,7 @@ VALUES
     'ui_appointment_subprefix',          'Energetische Massage',
     'ui_appointment_sublabel',           'Randevu',
 
-    'ui_appointment_cover_image',        '',
+    'ui_appointment_cover_image',        '/uploads/anas-3.jpg',
     'ui_appointment_cover_image_alt',    'Energetische Massage — Termin',
 
     'ui_appointment_home_cta_title',     'Randevu Al',
@@ -193,7 +193,7 @@ VALUES
     'ui_appointment_subprefix',         'Energetische Massage',
     'ui_appointment_sublabel',          'Appointment',
 
-    'ui_appointment_cover_image',       '',
+    'ui_appointment_cover_image',       '/uploads/anas-3.jpg',
     'ui_appointment_cover_image_alt',   'Energetische Massage — Appointment',
 
     'ui_appointment_home_cta_title',    'Book Appointment',
@@ -278,7 +278,7 @@ VALUES
     'ui_appointment_therapist_unknown',  'Unknown',
 
     'ui_appointment_weekly_title',       'Weekly Schedule',
-    'ui_appointment_weekly_desc',        'You can view the selected therapist’s weekly working hours below.',
+    'ui_appointment_weekly_desc',        'You can view the selected therapist''s weekly working hours below.',
     'ui_appointment_weekly_pick_therapist','Select a therapist to view the weekly schedule.',
     'ui_appointment_weekly_wh_loading',  'Loading...',
     'ui_appointment_weekly_wh_error',    'Working hours could not be loaded.',
@@ -356,7 +356,7 @@ VALUES
     'ui_appointment_subprefix',         'Energetische Massage',
     'ui_appointment_sublabel',          'Termin',
 
-    'ui_appointment_cover_image',       '',
+    'ui_appointment_cover_image',       '/uploads/anas-3.jpg',
     'ui_appointment_cover_image_alt',   'Energetische Massage — Termin',
 
     'ui_appointment_home_cta_title',    'Termin buchen',

@@ -8,10 +8,9 @@ import BlogHomeSection from '@/components/containers/blog/BlogHomeSection';
 import Feedback from '@/components/containers/feedback/Feedback';
 import AppointmentHomeCta from '@/components/containers/appointment/AppointmentHomeCta';
 import GutscheinHomeCta from '@/components/containers/gutschein/GutscheinHomeCta';
+import HomeIntroSection from '@/components/containers/home/HomeIntroSection';
 
-type Props = {
-  locale?: string;
-};
+type Props = { locale?: string };
 
 export default function HomeContent({ locale }: Props) {
   return (
@@ -19,15 +18,15 @@ export default function HomeContent({ locale }: Props) {
       <Hero locale={locale} />
       <About locale={locale} />
       <ServiceSection locale={locale} />
-      <BlogHomeSection locale={locale} />
+      <HomeIntroSection locale={locale} />
       <Feedback locale={locale} />
+      <BlogHomeSection locale={locale} />
 
-      <section className="w-full bg-brand-light py-20 lg:py-28">
-        <div className="container mx-auto px-4 flex flex-col gap-8">
-          <GutscheinHomeCta locale={locale} />
-          <AppointmentHomeCta locale={locale} />
-        </div>
+      <section className="py-28 lg:py-36" style={{ padding: '7rem 4%' }}>
+        <GutscheinHomeCta locale={locale} />
       </section>
+
+      <AppointmentHomeCta locale={locale} />
     </main>
   );
 }

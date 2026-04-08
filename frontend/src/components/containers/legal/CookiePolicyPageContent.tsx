@@ -43,23 +43,23 @@ const CookiePolicyPageContent: React.FC = () => {
     <section className="bg-bg-primary relative min-h-[60vh] py-20 lg:py-32">
       {/* Background Decor */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-96 h-96 bg-sand-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50" />
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-bg-card-hover rounded-full mix-blend-multiply filter blur-3xl opacity-50" />
         <div className="absolute top-40 -left-20 w-72 h-72 bg-rose-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         {isLoading && (
           <div className="max-w-4xl mx-auto space-y-4">
-            <div className="h-4 bg-sand-200 rounded w-full animate-pulse" />
-            <div className="h-4 bg-sand-200 rounded w-5/6 animate-pulse" />
-            <div className="h-4 bg-sand-200 rounded w-4/6 animate-pulse" />
+            <div className="h-4 bg-bg-card-hover rounded w-full animate-pulse" />
+            <div className="h-4 bg-bg-card-hover rounded w-5/6 animate-pulse" />
+            <div className="h-4 bg-bg-card-hover rounded w-4/6 animate-pulse" />
           </div>
         )}
 
         {!isLoading && (isError || !page) && (
           <div className="max-w-4xl mx-auto">
             <div
-              className="bg-sand-50 border border-sand-200 text-brand-dark px-6 py-4 rounded-xl"
+              className="bg-bg-card border border-border-light text-text-primary px-6 py-4 rounded-xl"
               role="alert"
             >
               {ui('ui_cookie_policy_empty', 'Content not found.')}
@@ -72,7 +72,7 @@ const CookiePolicyPageContent: React.FC = () => {
             <style>{CMS_FALLBACK_CSS}</style>
 
             <div className="mb-12 text-center">
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-brand-dark mb-4">
+              <h1 className="text-4xl md:text-5xl font-serif font-light text-text-primary mb-4">
                 {title}
               </h1>
               <div className="h-1 w-24 bg-brand-primary mx-auto rounded-full" />
@@ -80,12 +80,12 @@ const CookiePolicyPageContent: React.FC = () => {
 
             {html ? (
               <article
-                className="prose prose-stone prose-lg max-w-none bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-sand-200 cms-html"
+                className="prose prose-stone prose-lg max-w-none bg-bg-card p-8 md:p-12 shadow-sm border border-border-light cms-html"
                 dangerouslySetInnerHTML={{ __html: html }}
               />
             ) : (
               <div
-                className="bg-sand-50 border border-sand-200 text-brand-dark px-6 py-4 rounded-xl"
+                className="bg-bg-card border border-border-light text-text-primary px-6 py-4 rounded-xl"
                 role="alert"
               >
                 {ui('ui_cookie_policy_empty_text', 'Content coming soon.')}

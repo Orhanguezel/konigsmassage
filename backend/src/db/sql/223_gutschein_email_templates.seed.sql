@@ -16,7 +16,7 @@ INSERT INTO `email_templates`
 (`id`, `template_key`, `variables`, `is_active`, `created_at`, `updated_at`)
 VALUES
 
-('g0c0a111-gut1-4111-8111-gutschein0001',
+('g0c0a111-gut1-4111-8111-gutschein01',
  'gutschein_purchased',
  JSON_ARRAY('site_name','code','value','currency','formatted_value','purchaser_name','recipient_name','personal_message','issued_date','expires_date','site_url'),
  1, NOW(3), NOW(3))
@@ -37,8 +37,8 @@ VALUES
 
 -- ===================== gutschein_purchased DE =====================
 
-('g1c0a111-gut1-4111-8111-gutschein0de1',
- 'g0c0a111-gut1-4111-8111-gutschein0001',
+('g1c0a111-gut1-4111-8111-gutsche0de1',
+ 'g0c0a111-gut1-4111-8111-gutschein01',
  'de',
  'Gutschein erhalten',
  'Ihr Gutschein uber {{formatted_value}} - {{site_name}}',
@@ -84,8 +84,8 @@ VALUES
 
 -- ===================== gutschein_purchased TR =====================
 
-('g1c0a111-gut1-4111-8111-gutschein0tr1',
- 'g0c0a111-gut1-4111-8111-gutschein0001',
+('g1c0a111-gut1-4111-8111-gutsche0tr1',
+ 'g0c0a111-gut1-4111-8111-gutschein01',
  'tr',
  'Hediye Ceki',
  'Hediye cekiniz: {{formatted_value}} - {{site_name}}',
@@ -131,8 +131,8 @@ VALUES
 
 -- ===================== gutschein_purchased EN =====================
 
-('g1c0a111-gut1-4111-8111-gutschein0en1',
- 'g0c0a111-gut1-4111-8111-gutschein0001',
+('g1c0a111-gut1-4111-8111-gutsche0en1',
+ 'g0c0a111-gut1-4111-8111-gutschein01',
  'en',
  'Gift Voucher',
  'Your gift voucher: {{formatted_value}} - {{site_name}}',

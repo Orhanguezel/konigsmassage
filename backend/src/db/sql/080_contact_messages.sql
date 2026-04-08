@@ -27,7 +27,7 @@ CREATE TABLE `contact_messages` (
 
   PRIMARY KEY (`id`),
 
-  -- Drizzle'daki index isimleriyle uyumlu
+  -- Drizzle''daki index isimleriyle uyumlu
   KEY `idx_contact_created_at` (`created_at`),
   KEY `idx_contact_status`     (`status`),
   KEY `idx_contact_resolved`   (`is_resolved`),

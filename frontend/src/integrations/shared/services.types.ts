@@ -128,6 +128,8 @@ export interface ServiceDto {
   // i18n
   slug: string | null;
   name: string | null;
+  summary: string | null;
+  content: string | null;
   description: string | null;
   material: string | null;
   price: string | null;
@@ -418,6 +420,8 @@ export const normalizeService = (
 
   slug: row.slug,
   name: row.name,
+  summary: (row as any).summary ?? null,
+  content: (row as any).content ?? null,
   description: row.description,
   material: row.material,
   price: row.price,

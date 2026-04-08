@@ -116,3 +116,94 @@ export function breadcrumb(items: Array<{ name: string; item: string }>): Thing 
     })),
   };
 }
+
+export function localBusiness(input: {
+  id?: string;
+  name: string;
+  alternateName?: string;
+  description: string;
+  url: string;
+  telephone?: string;
+  email?: string;
+  address?: {
+    streetAddress?: string;
+    addressLocality: string;
+    addressRegion?: string;
+    postalCode?: string;
+    addressCountry: string;
+  };
+  geo?: { latitude: number; longitude: number };
+  founder?: { name: string };
+  priceRange?: string;
+  image?: string;
+  logo?: string;
+  sameAs?: string[];
+  openingHours?: string[];
+  serviceType?: string;
+  areaServed?: string;
+}): Thing {
+  return {
+    '@type': ['HealthAndBeautyBusiness', 'LocalBusiness'],
+    ...(input.id ? { '@id': input.id } : {}),
+    name: input.name,
+    ...(input.alternateName ? { alternateName: input.alternateName } : {}),
+    description: input.description,
+    url: input.url,
+    ...(input.telephone ? { telephone: input.telephone } : {}),
+    ...(input.email ? { email: input.email } : {}),
+    ...(input.address
+      ? {
+          address: {
+            '@type': 'PostalAddress',
+            ...input.address,
+          },
+        }
+      : {}),
+    ...(input.geo
+      ? {
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: input.geo.latitude,
+            longitude: input.geo.longitude,
+          },
+        }
+      : {}),
+    ...(input.founder
+      ? { founder: { '@type': 'Person', name: input.founder.name } }
+      : {}),
+    ...(input.priceRange ? { priceRange: input.priceRange } : {}),
+    ...(input.image ? { image: input.image } : {}),
+    ...(input.logo ? { logo: input.logo } : {}),
+    ...(input.sameAs?.length ? { sameAs: input.sameAs } : {}),
+    ...(input.openingHours?.length ? { openingHoursSpecification: input.openingHours } : {}),
+    ...(input.serviceType
+      ? {
+          makesOffer: {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              serviceType: input.serviceType,
+              ...(input.areaServed
+                ? { areaServed: { '@type': 'City', name: input.areaServed } }
+                : {}),
+            },
+          },
+        }
+      : {}),
+  };
+}
+
+export function faqPage(items: Array<{ question: string; answer: string }>): Thing {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((it) => ({
+      '@type': 'Question',
+      name: it.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: it.answer,
+      },
+    })),
+  };
+}

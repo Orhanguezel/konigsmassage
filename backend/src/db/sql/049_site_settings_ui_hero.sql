@@ -1,6 +1,6 @@
 -- =============================================================
 -- 049_site_settings_ui_hero.sql (FINAL — Energetische Massage)
--- energetische-massage-bonn – UI Hero (site_settings.ui_hero)
+-- energetische-massage-bonn - UI Hero (site_settings.ui_hero)
 --  - Key: ui_hero
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
@@ -17,14 +17,15 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
   CAST(JSON_OBJECT(
     'ui_hero_variant', 'v3',
     'ui_hero_kicker_prefix', '',
-    'ui_hero_kicker_brand',  'Bonn’da Enerjetik Masaj',
+    'ui_hero_kicker_brand',  'Bonn''da Enerjetik Masaj',
 
     'ui_hero_title_fallback',
-      'Kendinize alan açın — enerjetik dokunuşla derin gevşeme',
+      'Evinize gelen rahatlama',
     'ui_hero_desc_fallback',
-      'Sakin bir atmosferde, net sınırlar içinde ilerleyen kişiye özel seanslar. Uygun günü ve saati seçin, randevu talebinizi kolayca gönderin.',
-
+      'Kendi evinizde profesyonel enerjetik masaj — bilinçli dokunuş, derin huzur ve hissedilir bir iyilik hali.',
+    'ui_hero_badge', 'Bonn ve Çevresinde Ev Ziyareti',
     'ui_hero_cta', 'Randevu Al',
+    'ui_hero_cta_secondary', 'Daha Fazla',
 
     'ui_hero_prev', 'Önceki slayt',
     'ui_hero_next', 'Sonraki slayt'
@@ -42,11 +43,12 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_hero_kicker_brand',  'Energetic Massage in Bonn',
 
     'ui_hero_title_fallback',
-      'Make space for yourself — deep relaxation with mindful touch',
+      'Relaxation that comes to your home',
     'ui_hero_desc_fallback',
-      'Individual sessions in a calm atmosphere, held within clear boundaries. Choose a date and time and submit your appointment request easily.',
-
+      'Professional energetic massage in your familiar environment — mindful touch, deep calm and tangible well-being.',
+    'ui_hero_badge', 'Home Visit in Bonn & Surroundings',
     'ui_hero_cta', 'Book Appointment',
+    'ui_hero_cta_secondary', 'Learn More',
 
     'ui_hero_prev', 'Previous slide',
     'ui_hero_next', 'Next slide'
@@ -64,11 +66,12 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_hero_kicker_brand',  'Energetische Massage in Bonn',
 
     'ui_hero_title_fallback',
-      'Zeit für sich — tiefe Entspannung durch achtsame Berührung',
+      'Entspannung, die zu Ihnen nach Hause kommt',
     'ui_hero_desc_fallback',
-      'Individuelle Sitzungen in ruhiger Atmosphäre, achtsam und klar abgegrenzt. Datum und Uhrzeit wählen und Terminanfrage einfach senden.',
-
-    'ui_hero_cta', 'Termin buchen',
+      'Professionelle energetische Massage in Ihrer vertrauten Umgebung — achtsame Berührung, tiefe Ruhe und spürbares Wohlbefinden.',
+    'ui_hero_badge', 'Hausbesuch in Bonn & Umgebung',
+    'ui_hero_cta', 'Termin Buchen',
+    'ui_hero_cta_secondary', 'Mehr Erfahren',
 
     'ui_hero_prev', 'Vorherige Folie',
     'ui_hero_next', 'Nächste Folie'

@@ -93,7 +93,7 @@ export function extractHtmlFromAny(page: any): string {
 
 export function isRemoteUrl(src: unknown): src is string {
   if (typeof src !== 'string') return false;
-  return /^https?:\/\//i.test(src) || /^\/\//.test(src);
+  return /^https?:\/\//i.test(src) || /^\/\//.test(src) || /^\/uploads\//i.test(src);
 }
 
 /* ------------------------------------------------------------------

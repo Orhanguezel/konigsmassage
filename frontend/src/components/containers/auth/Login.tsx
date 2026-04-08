@@ -117,14 +117,14 @@ const Login: React.FC = () => {
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-sand-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-bg-card-hover/20 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-md mx-auto bg-white p-8 md:p-12 rounded-lg shadow-soft">
+        <div className="max-w-md mx-auto bg-bg-card p-8 md:p-12 rounded-lg shadow-soft">
           
           <div className="text-center mb-8">
-            <h3 className="text-3xl font-serif font-bold text-text-primary mb-3">
+            <h3 className="text-3xl font-serif font-light text-text-primary mb-3">
               {ui('login_title', 'Sign In')}
             </h3>
             <p className="text-text-secondary leading-relaxed">
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
               <input
                 id="login-email"
                 type="email"
-                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                className="w-full px-4 py-3 border border-border-light rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-bg-card placeholder:text-text-muted text-text-primary"
                 placeholder={ui('login_email_placeholder', 'example@konigsmassage.com')}
                 autoComplete="email"
                 value={email}
@@ -175,7 +175,7 @@ const Login: React.FC = () => {
               <input
                 id="login-password"
                 type="password"
-                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                className="w-full px-4 py-3 border border-border-light rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-bg-card placeholder:text-text-muted text-text-primary"
                 placeholder={ui('login_password_placeholder', 'Your password')}
                 autoComplete="current-password"
                 value={password}
@@ -190,7 +190,7 @@ const Login: React.FC = () => {
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-brand-primary focus:ring-brand-primary border-sand-300 rounded cursor-pointer accent-brand-primary"
+                  className="h-4 w-4 text-brand-primary focus:ring-brand-primary border-border-medium rounded cursor-pointer accent-brand-primary"
                   disabled={isLoading}
                 />
                 <label
@@ -210,7 +210,7 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full bg-brand-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-brand-hover transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center uppercase tracking-widest text-sm"
+              className="w-full bg-brand-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-brand-hover transition-all duration-300 shadow-soft hover:shadow-medium disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center uppercase tracking-widest text-sm"
               disabled={isLoading}
             >
               {loginState.isLoading
@@ -221,10 +221,10 @@ const Login: React.FC = () => {
 
           <div className="relative my-8 text-center">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-sand-200" />
+              <div className="w-full border-t border-border-light" />
             </div>
             <div className="relative">
-              <span className="px-3 bg-white text-text-muted text-sm uppercase tracking-wider font-medium">
+              <span className="px-3 bg-bg-card text-text-muted text-sm uppercase tracking-wider font-medium">
                 {ui('login_or', 'or')}
               </span>
             </div>
@@ -232,7 +232,7 @@ const Login: React.FC = () => {
 
           <button
             type="button"
-            className="w-full border border-sand-200 bg-sand-50 text-text-primary font-bold py-3 px-4 rounded-sm hover:bg-white hover:border-sand-300 transition-all flex justify-center items-center gap-3 group"
+            className="w-full border border-border-light bg-bg-card text-text-primary font-bold py-3 px-4 rounded-sm hover:bg-bg-card hover:border-border-medium transition-all flex justify-center items-center gap-3 group"
             onClick={handleGoogleLogin}
             disabled={isLoading}
           >

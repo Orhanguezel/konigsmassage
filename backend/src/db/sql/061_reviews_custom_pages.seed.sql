@@ -89,7 +89,7 @@ VALUES
 
   ('44440202-4444-4444-8444-444444442201', @REV_ABOUT_2, 'tr',
    'Net sınırlar ve çok iyi bir atmosfer',
-   'Kendimi güvende hissettim. Her şey sakindi; acele yoktu. Tam da ihtiyacım olan “durup nefes alma” alanıydı.',
+   'Kendimi güvende hissettim. Her şey sakindi; acele yoktu. Tam da ihtiyacım olan durup nefes alma alanıydı.',
    NULL, NOW(3), NOW(3)),
   ('44440202-4444-4444-8444-444444442202', @REV_ABOUT_2, 'en',
    'Clear boundaries, peaceful atmosphere',

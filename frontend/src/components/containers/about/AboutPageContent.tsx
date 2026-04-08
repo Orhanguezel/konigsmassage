@@ -101,12 +101,12 @@ const AboutPageContent: React.FC = () => {
         {/* Header */}
         <div className="mb-12 text-center">
           <div className="mb-4">
-            <span className="block text-brand-primary font-bold uppercase tracking-wide mb-2 text-sm md:text-base">
+            <span className="block text-brand-primary font-normal uppercase tracking-[0.15em] mb-2 text-sm md:text-base">
               <span>{headerSubtitlePrefix}</span>
               {headerSubtitleLabel ? ` ${headerSubtitleLabel}` : null}
             </span>
 
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-text-primary leading-tight">
+            <h2 className="text-3xl md:text-4xl font-serif font-light text-text-primary leading-tight">
               {headerTitle}
             </h2>
 
@@ -119,9 +119,9 @@ const AboutPageContent: React.FC = () => {
         {/* Loading */}
         {isLoading && (
           <div className="mb-10 max-w-4xl mx-auto">
-            <div className="h-4 bg-gray-200 rounded w-full mb-2.5 animate-pulse" aria-hidden />
-            <div className="h-4 bg-gray-200 rounded w-4/5 mb-2.5 animate-pulse" aria-hidden />
-            <div className="h-4 bg-gray-200 rounded w-3/5 animate-pulse" aria-hidden />
+            <div className="h-4 bg-bg-card-hover rounded w-full mb-2.5 animate-pulse" aria-hidden />
+            <div className="h-4 bg-bg-card-hover rounded w-4/5 mb-2.5 animate-pulse" aria-hidden />
+            <div className="h-4 bg-bg-card-hover rounded w-3/5 animate-pulse" aria-hidden />
           </div>
         )}
 
@@ -143,7 +143,7 @@ const AboutPageContent: React.FC = () => {
                 data-aos="fade-up"
                 data-aos-delay={100}
               >
-                <div className="relative rounded-2xl overflow-hidden shadow-medium bg-bg-secondary border border-border-light">
+                <div className="relative overflow-hidden shadow-medium bg-bg-secondary border border-border-light">
                   <div className="w-full aspect-16/7 md:aspect-16/6 relative">
                     <Image
                       src={imgSrc}
@@ -203,7 +203,7 @@ const AboutPageContent: React.FC = () => {
                   {galleryThumbs.map((src, i) => (
                     <div
                       key={src}
-                      className={`relative rounded-xl overflow-hidden border border-border-light bg-bg-secondary shadow-soft
+                      className={`relative overflow-hidden border border-border-light bg-bg-secondary shadow-soft
                         transition-transform duration-500 hover:scale-[1.02] hover:shadow-medium
                         ${galleryThumbs.length === 3 && i === 0 ? 'col-span-2 md:col-span-1' : ''}`}
                     >

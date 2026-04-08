@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 051.5_custom_pages_kvkk.seed.sql (FINAL — Energetische Massage, rerunnable)
--- Energetische Massage – Custom Page: Datenschutz / KVKK (TR/EN/DE)
+-- Energetische Massage - Custom Page: Datenschutz / KVKK (TR/EN/DE)
 -- ✅ custom_pages.module_key = 'kvkk'
 -- Category/SubCategory: optional (NULL) — admin panelden düzenlenir
 -- NOT: Bu dosyada BLOK YORUM (/* */) YOKTUR. Sadece "--" kullanılır.
@@ -287,7 +287,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">4. Rechtsgrundlagen</h2>',
           '<p class="text-slate-700">',
-            'Die Verarbeitung kann auf Grundlage vertraglicher Erforderlichkeit, berechtigter Interessen, gesetzlicher Pflichten und – sofern erforderlich – Einwilligung erfolgen. ',
+            'Die Verarbeitung kann auf Grundlage vertraglicher Erforderlichkeit, berechtigter Interessen, gesetzlicher Pflichten und - sofern erforderlich - Einwilligung erfolgen. ',
             'Die Rechtsgrundlage kann je nach Prozess variieren.',
           '</p>',
         '</div>',

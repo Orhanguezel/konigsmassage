@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 051.7_custom_pages_cookie.seed.sql (FINAL — Energetische Massage)
--- Energetische Massage – Custom Page: Çerez Politikası / Cookie Policy (TR/EN/DE)
+-- Energetische Massage - Custom Page: Çerez Politikası / Cookie Policy (TR/EN/DE)
 -- ✅ module_key artık PARENT: custom_pages.module_key = 'cookies'
 -- Category: LEGAL (aaaa7101)
 -- SubCategory: Çerez Politikası (bbbb7008)

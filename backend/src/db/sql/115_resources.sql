@@ -48,7 +48,7 @@ CREATE TABLE `resources` (
   CONSTRAINT `chk_resources_title_nonempty` CHECK (CHAR_LENGTH(`title`) >= 1)
 
   -- Optional FK examples (only if external_ref_id points to a known table):
-  -- e.g. users(id) or doctors(id). Keep OFF unless you’re sure.
+  -- e.g. users(id) or doctors(id). Keep OFF unless you''re sure.
   -- ,CONSTRAINT `fk_resources_external_user`
   --   FOREIGN KEY (`external_ref_id`) REFERENCES `users`(`id`)
   --   ON DELETE SET NULL ON UPDATE CASCADE

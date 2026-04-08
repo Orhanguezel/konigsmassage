@@ -12,6 +12,8 @@ import React, { useMemo, useState, useEffect, useId, useCallback } from 'react';
 import { useListFaqsQuery } from '@/integrations/rtk/hooks';
 import type { FaqDto } from '@/integrations/shared';
 import { normalizeFaq, safeStr } from '@/integrations/shared';
+import { faqPage } from '@/seo/jsonld';
+import JsonLd from '@/seo/JsonLd';
 
 // i18n
 import { useLocaleShort, useUiSection } from '@/i18n';
@@ -76,6 +78,17 @@ const FaqsPageContent: React.FC = () => {
 
   const hasFaqs = faqs.length > 0;
 
+  // FAQPage JSON-LD schema
+  const faqSchema = useMemo(() => {
+    if (!hasFaqs) return null;
+    return faqPage(
+      faqs.map((f) => ({
+        question: safeStr(f.question) || '',
+        answer: safeStr(f.answer) || '',
+      })),
+    );
+  }, [faqs, hasFaqs]);
+
   // open state (first item auto-open)
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -90,6 +103,7 @@ const FaqsPageContent: React.FC = () => {
 
   return (
     <section className="bg-bg-primary py-20 min-h-screen">
+      {faqSchema && <JsonLd data={faqSchema} id="faq-page" />}
       <div className="container mx-auto px-4">
         {/* HEADER */}
         <div className="text-center mb-16 max-w-3xl mx-auto" data-aos="fade-up">
@@ -97,7 +111,7 @@ const FaqsPageContent: React.FC = () => {
             <span>{kickerPrefix}</span> {kickerLabel}
           </span>
 
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-text-primary mb-6">
+          <h2 className="text-4xl md:text-5xl font-serif font-light text-text-primary mb-6">
             {titlePrefix}{' '}
             <span className="text-brand-primary border-b-2 border-brand-primary/20 pb-1">
               {titleMark}
@@ -112,7 +126,7 @@ const FaqsPageContent: React.FC = () => {
           <div className="space-y-4">
             {/* EMPTY */}
             {!isLoading && !hasFaqs && (
-              <div className="bg-white p-8 rounded-xl shadow-soft text-center border border-sand-100">
+              <div className="bg-bg-card p-8 shadow-soft text-center border border-border-light">
                 <p className="text-text-muted">{emptyText}</p>
               </div>
             )}
@@ -123,10 +137,10 @@ const FaqsPageContent: React.FC = () => {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="bg-white p-6 rounded-xl border border-sand-100 shadow-soft animate-pulse"
+                    className="bg-bg-card p-6 border border-border-light shadow-soft animate-pulse"
                   >
-                    <div className="h-6 bg-sand-100 rounded w-2/3 mb-4" />
-                    <div className="h-4 bg-sand-100 rounded w-full" />
+                    <div className="h-6 bg-bg-card-hover rounded w-2/3 mb-4" />
+                    <div className="h-4 bg-bg-card-hover rounded w-full" />
                   </div>
                 ))}
               </div>
@@ -145,7 +159,7 @@ const FaqsPageContent: React.FC = () => {
 
               return (
                 <div
-                  className="bg-white border border-sand-100 rounded-xl shadow-soft overflow-hidden transition-all duration-300 hover:border-brand-primary/20 hover:shadow-medium"
+                  className="bg-bg-card border border-border-light shadow-soft overflow-hidden transition-all duration-300 hover:border-brand-primary/20 hover:shadow-medium"
                   key={id}
                 >
                   <h2>
@@ -161,7 +175,7 @@ const FaqsPageContent: React.FC = () => {
                     >
                       <span className="font-serif">{q}</span>
                       <span
-                        className={`ml-4 transform transition-transform duration-300 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-sand-50 ${isOpen ? 'rotate-180 bg-brand-primary/10 text-brand-primary' : 'text-text-muted'}`}
+                        className={`ml-4 transform transition-transform duration-300 flex-shrink-0 w-8 h-8 flex items-center justify-center bg-bg-card ${isOpen ? 'rotate-180 bg-brand-primary/10 text-brand-primary' : 'text-text-muted'}`}
                       >
                         <svg
                           className="w-4 h-4"
@@ -182,12 +196,12 @@ const FaqsPageContent: React.FC = () => {
 
                   <div
                     id={panelId}
-                    className={`transition-all duration-300 ease-in-out overflow-hidden bg-sand-50/50 ${
+                    className={`transition-all duration-300 ease-in-out overflow-hidden bg-bg-card/50 ${
                       isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
                     }`}
                     aria-labelledby={headingId}
                   >
-                    <div className="p-6 pt-2 text-text-secondary leading-relaxed border-t border-sand-100/50">
+                    <div className="p-6 pt-2 text-text-secondary leading-relaxed border-t border-border-light/50">
                       {a ? (
                         <div
                           className="prose prose-rose max-w-none"
@@ -205,7 +219,7 @@ const FaqsPageContent: React.FC = () => {
 
           {/* FOOTER NOTE */}
           {footerNote && (
-            <div className="text-center mt-12 bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-sand-200">
+            <div className="text-center mt-12 bg-bg-card/50 backdrop-blur-sm p-6 border border-border-light">
               <p className="text-text-secondary font-medium mb-0">{footerNote}</p>
             </div>
           )}

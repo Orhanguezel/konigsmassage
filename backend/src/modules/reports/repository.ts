@@ -3,9 +3,8 @@
 // ===================================================================
 
 import { db } from '@/db/client';
-import { bookings } from '@/modules/bookings/schema';
-import { resources, resourcesI18n } from '@/modules/resources/schema';
-import { getDefaultLocale } from '@/modules/siteSettings/service';
+import { bookings, resources, resourcesI18n } from './local-schemas';
+import { getDefaultLocale } from '@vps/shared-backend/modules/siteSettings/service';
 import { sql, and, gte, lte, eq, type SQL } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/mysql-core';
 

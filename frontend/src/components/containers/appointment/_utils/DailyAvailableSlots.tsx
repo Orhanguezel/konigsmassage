@@ -77,7 +77,7 @@ export const DailyAvailableSlots: React.FC<DailyAvailableSlotsProps> = ({
       </div>
 
       {statusText ? (
-        <div className="bg-sand-50 border border-sand-200 rounded-sm p-4 text-center text-text-secondary text-sm font-medium">
+        <div className="bg-bg-card border border-border-light rounded-sm p-4 text-center text-text-secondary text-sm font-medium">
           {statusText}
         </div>
       ) : (
@@ -95,7 +95,7 @@ export const DailyAvailableSlots: React.FC<DailyAvailableSlotsProps> = ({
                   ${
                     selected
                       ? 'bg-brand-primary text-white border-brand-primary shadow-sm'
-                      : 'bg-white text-brand-dark border-sand-200 hover:border-brand-primary hover:text-brand-primary hover:bg-sand-50'
+                      : 'bg-bg-card text-text-primary border-border-light hover:border-brand-primary hover:text-brand-primary hover:bg-bg-card'
                   }
                 `}
                 onClick={() => onPickTime(time)}

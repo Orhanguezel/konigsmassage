@@ -49,15 +49,15 @@ export default function OtherServicesSidebar({
 
   return (
     <aside
-      className={`bg-bg-secondary p-6 rounded-xl shadow-soft border border-border-light ${className}`}
+      className={`bg-bg-secondary p-6 shadow-soft border border-border-light ${className}`}
     >
       <div className="flex items-baseline justify-between gap-3 mb-6 border-b border-border-light pb-2">
-        <h3 className="text-xl font-bold font-serif text-text-primary">
+        <h3 className="text-xl font-light font-serif text-text-primary">
           {ui('ui_services_other_title', 'Other services')}
         </h3>
         <Link
           href={listHref}
-          className="text-xs font-bold uppercase tracking-wide text-brand-primary hover:underline"
+          className="text-xs font-normal uppercase tracking-[0.15em] text-brand-primary hover:underline"
         >
           {ui('ui_services_view_all', 'View all')}
         </Link>
@@ -66,7 +66,7 @@ export default function OtherServicesSidebar({
       <ul className="space-y-3">
         {isLoading
           ? Array.from({ length: Math.min(6, limit) }).map((_, i) => (
-              <li key={i} className="h-4 bg-sand-100 rounded animate-pulse" />
+              <li key={i} className="h-4 bg-bg-card-hover rounded animate-pulse" />
             ))
           : items.map((s: any) => {
               const slug = safeStr(s?.slug);

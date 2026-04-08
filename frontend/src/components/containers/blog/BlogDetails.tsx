@@ -207,9 +207,36 @@ export default function BlogDetails() {
   const title = safeStr(post?.title);
 
   const rawHtml = useMemo(() => {
-    return (
-      safeStr((post as any)?.content_html) || safeStr(((post as any)?.content as any)?.html) || ''
-    );
+    const html = safeStr((post as any)?.content_html);
+    if (html) return html;
+
+    const raw = (post as any)?.content;
+    if (!raw) return '';
+
+    // content might be a JSON string like '{"html":"<h2>..."}'
+    if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      if (trimmed.startsWith('{')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          return safeStr(parsed?.html) || '';
+        } catch {
+          // JSON parse failed — try regex extraction
+          const match = trimmed.match(/^\{"html"\s*:\s*"([\s\S]*)"\s*\}$/);
+          if (match?.[1]) {
+            return match[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+          }
+        }
+      }
+      return trimmed;
+    }
+
+    // content might be an object { html: "..." }
+    if (typeof raw === 'object' && raw?.html) {
+      return safeStr(raw.html);
+    }
+
+    return '';
   }, [post]);
 
   const contentHtml = useMemo(() => stripPresentationAttrs(rawHtml), [rawHtml]);
@@ -278,8 +305,8 @@ export default function BlogDetails() {
     return (
       <div className="py-20 text-center bg-bg-primary">
         <div className="animate-pulse">
-          <div className="h-4 bg-sand-200 rounded w-48 mx-auto mb-4" />
-          <div className="h-64 bg-sand-200 rounded w-full max-w-4xl mx-auto" />
+          <div className="h-4 bg-bg-card-hover rounded w-48 mx-auto mb-4" />
+          <div className="h-64 bg-bg-card-hover rounded w-full max-w-4xl mx-auto" />
         </div>
       </div>
     );
@@ -307,8 +334,8 @@ export default function BlogDetails() {
                 <OtherServicesSidebar />
 
                 {otherBlogs.length > 0 && (
-                  <div className="bg-bg-secondary p-6 rounded-xl shadow-soft border border-border-light">
-                    <h3 className="text-xl font-bold font-serif text-text-primary mb-6 border-b border-border-light pb-2">
+                  <div className="bg-bg-secondary p-6 shadow-soft border border-border-light">
+                    <h3 className="text-xl font-light font-serif text-text-primary mb-6 border-b border-border-light pb-2">
                       {t.otherBlogsTitle}
                     </h3>
                     <ul className="space-y-4">
@@ -340,20 +367,20 @@ export default function BlogDetails() {
               <div className="mb-8">
                 <Link
                   href={blogListHref}
-                  className="inline-flex items-center text-text-muted hover:text-brand-primary transition-colors text-sm font-bold uppercase tracking-wide group mb-6"
+                  className="inline-flex items-center text-text-muted hover:text-brand-primary transition-colors text-sm font-normal uppercase tracking-[0.15em] group mb-6"
                 >
                   <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span>{' '}
                   {t.backToList}
                 </Link>
 
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-text-primary leading-tight mb-6">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-light text-text-primary leading-tight mb-6">
                   {title}
                 </h1>
               </div>
 
               {/* HERO */}
               {heroSrc && (
-                <div className="mb-8 rounded-xl overflow-hidden shadow-medium bg-sand-100 relative group">
+                <div className="mb-8 overflow-hidden shadow-medium bg-bg-card-hover relative group">
                   <div
                     className="aspect-video relative cursor-pointer"
                     onClick={() => setLightboxOpen(true)}
@@ -384,7 +411,7 @@ export default function BlogDetails() {
                       'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
                       liked
                         ? 'bg-brand-primary text-white border-brand-primary'
-                        : 'bg-bg-secondary text-text-primary border-border-light hover:bg-sand-100',
+                        : 'bg-bg-secondary text-text-primary border-border-light hover:bg-bg-card-hover',
                     ].join(' ')}
                     aria-pressed={liked}
                   >
@@ -394,7 +421,7 @@ export default function BlogDetails() {
 
                   <a
                     href="#comments"
-                    className="inline-flex items-center gap-2 rounded-full border border-border-light bg-bg-secondary px-4 py-2 text-sm font-semibold text-text-primary hover:bg-sand-100 transition-colors"
+                    className="inline-flex items-center gap-2 rounded-full border border-border-light bg-bg-secondary px-4 py-2 text-sm font-semibold text-text-primary hover:bg-bg-card-hover transition-colors"
                   >
                     <span aria-hidden="true">💬</span>
                     <span>{t.commentsTitle}</span>
@@ -439,8 +466,8 @@ export default function BlogDetails() {
               )}
 
               {/* Content */}
-              <div className="bg-bg-secondary p-8 md:p-10 rounded-xl shadow-soft border border-border-light">
-                <div className="prose prose-lg prose-rose max-w-none prose-headings:font-serif prose-headings:text-text-primary prose-a:text-brand-primary prose-p:text-base prose-p:leading-[1.8] prose-li:text-base prose-li:leading-[1.8] prose-ul:mb-6 prose-ol:mb-6 prose-p:mb-6">
+              <div className="bg-bg-secondary p-8 md:p-10 shadow-soft border border-border-light">
+                <div className="prose prose-lg prose-invert max-w-none prose-headings:font-serif prose-headings:font-light prose-headings:text-text-primary prose-a:text-brand-primary prose-p:text-text-secondary prose-p:font-light prose-p:text-base prose-p:leading-[1.8] prose-li:text-text-secondary prose-li:font-light prose-li:text-base prose-li:leading-[1.8] prose-ul:mb-6 prose-ol:mb-6 prose-p:mb-6 prose-strong:text-text-primary prose-em:text-brand-primary/80">
                   {contentHtml ? (
                     <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
                   ) : (

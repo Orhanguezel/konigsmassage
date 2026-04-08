@@ -1,6 +1,6 @@
 // src/modules/gutschein/router.ts
 import type { FastifyInstance } from 'fastify';
-import { requireAuth } from '@/common/middleware/auth';
+import { requireAuth } from '@vps/shared-backend/middleware/auth';
 import { listProducts, checkCode, purchaseGutschein, redeemGutschein, captureGutscheinPaypal, printGutschein } from './controller';
 
 export async function registerGutschein(app: FastifyInstance) {

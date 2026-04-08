@@ -92,7 +92,7 @@ export const fetchCustomPagePublicBySlug = cache(
     });
 
     const raw = await fetchApiJson<ApiCustomPage>(
-      `/custom_pages/by-slug/${encodeURIComponent(slug)}?${qs.toString()}`,
+      `/custom-pages/by-slug/${encodeURIComponent(slug)}?${qs.toString()}`,
       { revalidate: 300 },
     );
 

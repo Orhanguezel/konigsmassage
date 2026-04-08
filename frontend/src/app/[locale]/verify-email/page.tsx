@@ -66,7 +66,7 @@ export default function VerifyEmailPage() {
   return (
     <section className="bg-bg-primary py-20 min-h-screen flex items-center justify-center">
       <div className="container mx-auto px-4">
-        <div className="max-w-md mx-auto bg-white p-8 md:p-12 rounded-lg shadow-soft text-center">
+        <div className="max-w-md mx-auto bg-bg-card p-8 md:p-12 rounded-lg shadow-soft text-center">
           {mode === 'pending' && !token ? (
             <>
               <div className="w-16 h-16 bg-brand-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -74,7 +74,7 @@ export default function VerifyEmailPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-serif font-bold text-text-primary mb-3">{titleText}</h2>
+              <h2 className="text-2xl font-serif font-light text-text-primary mb-3">{titleText}</h2>
               <p className="text-text-secondary mb-2">
                 {locale === 'de'
                   ? 'Wir haben Ihnen eine Bestätigungs-E-Mail gesendet.'
@@ -107,7 +107,7 @@ export default function VerifyEmailPage() {
                 </button>
                 <Link
                   href={localizePath(locale, '/profile')}
-                  className="inline-block w-full border border-sand-200 bg-sand-50 text-text-primary font-semibold py-3 px-6 rounded-sm hover:bg-sand-100 transition-all"
+                  className="inline-block w-full border border-border-light bg-bg-card text-text-primary font-semibold py-3 px-6 rounded-sm hover:bg-bg-card-hover transition-all"
                 >
                   {locale === 'de' ? 'Zum Profil' : locale === 'tr' ? 'Profile Git' : 'Go to Profile'}
                 </Link>
@@ -132,7 +132,7 @@ export default function VerifyEmailPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-serif font-bold text-text-primary mb-3">
+              <h2 className="text-2xl font-serif font-light text-text-primary mb-3">
                 {locale === 'de'
                   ? 'E-Mail bestätigt!'
                   : locale === 'tr'
@@ -160,7 +160,7 @@ export default function VerifyEmailPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-serif font-bold text-text-primary mb-3">
+              <h2 className="text-2xl font-serif font-light text-text-primary mb-3">
                 {locale === 'de'
                   ? 'Ungültiger Link'
                   : locale === 'tr'
@@ -188,7 +188,7 @@ export default function VerifyEmailPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-serif font-bold text-text-primary mb-3">
+              <h2 className="text-2xl font-serif font-light text-text-primary mb-3">
                 {locale === 'de'
                   ? 'Verifizierung fehlgeschlagen'
                   : locale === 'tr'

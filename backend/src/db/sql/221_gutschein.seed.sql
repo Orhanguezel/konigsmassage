@@ -12,7 +12,7 @@ VALUES
     100.00,
     'EUR',
     365,
-    'Verschenken Sie Entspannung – einlösbar für alle Massageleistungen.',
+    'Verschenken Sie Entspannung - einlösbar für alle Massageleistungen.',
     1,
     10
   ),

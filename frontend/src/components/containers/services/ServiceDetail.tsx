@@ -126,9 +126,24 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
   const [open, setOpen] = useState(false);
 
   const heroSrc = gallery[idx] || hero;
+  const rawContent = useMemo(() => {
+    // Try content first (new schema), then description (legacy)
+    const raw = (service as any)?.content || (service as any)?.description || '';
+    if (!raw) return '';
+    const str = safeStr(raw);
+    // content might be JSON string like '{"html":"<h2>..."}'
+    if (typeof str === 'string' && str.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(str);
+        return safeStr(parsed?.html) || str;
+      } catch { /* not JSON */ }
+    }
+    return str;
+  }, [service]);
+
   const contentBlocks = useMemo(
-    () => parseContentBlocks(safeStr((service as any)?.description)),
-    [service],
+    () => parseContentBlocks(rawContent),
+    [rawContent],
   );
 
   if (!slug || isLoading) {
@@ -139,12 +154,13 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
     return <div className="py-20 text-center">Not found</div>;
   }
 
+  const summaryText = safeStr((service as any)?.summary);
   const details = [
-    { label: ui('ui_services_duration_label', 'Duration'), value: safeStr((service as any)?.duration) },
-    { label: ui('ui_services_area_label', 'Area'), value: safeStr((service as any)?.area) },
-    { label: ui('ui_services_season_label', 'Season'), value: safeStr((service as any)?.season) },
-    { label: ui('ui_services_equipment_label', 'Equipment'), value: safeStr((service as any)?.equipment) },
-  ].filter((x) => x.value);
+    { label: ui('ui_services_type_label', 'Behandlung'), value: 'Energetische Entspannungsmassage' },
+    { label: ui('ui_services_duration_label', locale === 'de' ? 'Dauer' : locale === 'tr' ? 'Sure' : 'Duration'), value: locale === 'de' ? 'Mind. 120 Min.' : locale === 'tr' ? 'En az 120 dk.' : 'At least 120 min.' },
+    { label: ui('ui_services_location_label', locale === 'de' ? 'Ort' : locale === 'tr' ? 'Konum' : 'Location'), value: locale === 'de' ? 'Hausbesuch' : locale === 'tr' ? 'Ev ziyareti' : 'Home visit' },
+    { label: ui('ui_services_area_label', locale === 'de' ? 'Gebiet' : locale === 'tr' ? 'Bolge' : 'Area'), value: 'Bonn & Umgebung' },
+  ];
 
   return (
     <>
@@ -156,8 +172,8 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
               <div className="sticky top-24 space-y-8">
                 <OtherServicesSidebar currentSlug={slug} />
 
-                <div className="bg-bg-secondary p-6 rounded-xl shadow-soft border border-border-light">
-                  <h3 className="text-xl font-serif font-bold mb-6 border-b border-border-light pb-2">
+                <div className="bg-bg-secondary p-6 shadow-soft border border-border-light">
+                  <h3 className="text-xl font-serif font-light mb-6 border-b border-border-light pb-2">
                     {ui('ui_services_sidebar_info_title', 'Service details')}
                   </h3>
 
@@ -185,7 +201,7 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
                 {hideBackLink ? <div /> : (
                   <Link
                     href={servicesHref}
-                    className="inline-flex text-sm font-bold uppercase tracking-wide text-text-muted hover:text-brand-primary"
+                    className="inline-flex text-sm font-normal uppercase tracking-[0.15em] text-text-muted hover:text-brand-primary"
                   >
                     ← {ui('ui_services_back_to_list', 'Back')}
                   </Link>
@@ -193,19 +209,19 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
 
                 <Link
                   href={appointmentHref}
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-brand-primary text-white text-sm font-bold uppercase tracking-wide hover:bg-brand-hover transition-colors"
+                  className="inline-flex items-center justify-center px-5 py-2.5 bg-brand-primary text-white text-sm font-normal uppercase tracking-[0.15em] hover:bg-brand-hover transition-colors"
                 >
                   {ui('ui_services_cta_request_quote', 'Book appointment')}
                 </Link>
               </div>
 
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-6">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-light mb-6">
                 {title}
               </h1>
 
               {/* HERO BLOG STYLE */}
               {heroSrc && (
-                <div className="mb-8 rounded-xl overflow-hidden shadow-medium bg-sand-100">
+                <div className="mb-8 overflow-hidden shadow-medium bg-bg-card-hover">
                   <div
                     className="aspect-video relative cursor-pointer"
                     onClick={() => setOpen(true)}
@@ -241,14 +257,14 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
               )}
 
               {/* CONTENT BLOG STYLE */}
-              <div className="bg-bg-secondary p-8 md:p-10 rounded-xl shadow-soft border border-border-light">
+              <div className="bg-bg-secondary p-8 md:p-10 shadow-soft border border-border-light">
                 <div className="space-y-6">
                   {contentBlocks.length ? contentBlocks.map((block, blockIndex) => {
                     if (block.type === 'heading') {
                       return (
                         <h2
                           key={`block-${blockIndex}`}
-                          className="text-2xl font-serif font-bold text-text-primary pt-2"
+                          className="text-2xl font-serif font-light text-text-primary pt-2"
                         >
                           {block.text}
                         </h2>
@@ -259,7 +275,7 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
                       return (
                         <ul
                           key={`block-${blockIndex}`}
-                          className="space-y-3 rounded-xl bg-white/70 p-5 text-base leading-7 text-text-primary"
+                          className="space-y-3 rounded-xl bg-bg-card/70 p-5 text-base leading-7 text-text-primary"
                         >
                           {block.items.map((item) => (
                             <li key={item} className="flex items-start gap-3">
@@ -280,9 +296,7 @@ export default function ServiceDetail({ forcedSlug, hideBackLink = false }: Serv
                       </p>
                     );
                   }) : (
-                    <p className="text-base leading-8 text-text-primary">
-                      {safeStr((service as any)?.description)}
-                    </p>
+                    <div className="text-base leading-8 text-text-secondary prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: rawContent }} />
                   )}
                 </div>
               </div>

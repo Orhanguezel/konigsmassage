@@ -32,6 +32,13 @@ CREATE TABLE IF NOT EXISTS `reviews` (
 
   `submitted_locale` VARCHAR(10)   NOT NULL DEFAULT 'tr',
 
+  -- Testimonial alanlari
+  `role`             VARCHAR(255)           DEFAULT NULL,
+  `company`          VARCHAR(255)           DEFAULT NULL,
+  `avatar_url`       VARCHAR(500)           DEFAULT NULL,
+  `logo_url`         VARCHAR(500)           DEFAULT NULL,
+  `profile_href`     VARCHAR(500)           DEFAULT NULL,
+
   `created_at`       DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at`       DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
                                           ON UPDATE CURRENT_TIMESTAMP(3),

@@ -2,12 +2,12 @@
 // Gutschein HTML email + printable document generator
 // Uses DB email template (gutschein_purchased) with fallback to hardcoded HTML
 
-import { sendMailRaw } from '@/modules/mail/service';
-import { renderEmailTemplateByKey } from '@/modules/email-templates/service';
-import { createUserNotification } from '@/modules/notifications/service';
-import { telegramNotify } from '@/modules/telegram/telegram.notifier';
+import { sendMailRaw } from '@vps/shared-backend/modules/mail/service';
+import { renderEmailTemplateByKey } from '@vps/shared-backend/modules/emailTemplates/service';
+import { createUserNotification } from '@vps/shared-backend/modules/notifications/service';
+import { telegramNotify } from '@vps/shared-backend/modules/telegram/helpers/telegram.notifier';
 import { db } from '@/db/client';
-import { siteSettings } from '@/modules/siteSettings/schema';
+import { siteSettings } from '@vps/shared-backend/modules/siteSettings/schema';
 import { inArray } from 'drizzle-orm';
 
 export type GutscheinEmailData = {
@@ -276,11 +276,12 @@ export async function sendGutscheinEmail(
     expires_date: formatDate(data.expires_at),
   };
 
-  const rendered = await renderEmailTemplateByKey('gutschein_purchased', templateParams, {
-    locale: locale || 'de',
-    defaultLocale: 'de',
-    allowMissing: true,
-  }).catch(() => null);
+  const rendered = await renderEmailTemplateByKey(
+    'gutschein_purchased',
+    templateParams,
+    locale || 'de',
+    'de',
+  ).catch(() => null);
 
   if (rendered) {
     await sendMailRaw({

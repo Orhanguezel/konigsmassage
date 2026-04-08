@@ -120,7 +120,7 @@ export const SiteLogo: React.FC<SiteLogoProps> = ({
     return (
       <span className={frameClass} aria-label={alt}>
         <span
-          className="w-full h-10 rounded-md bg-sand-100 border border-sand-200 animate-pulse"
+          className="w-full h-10 bg-bg-card-hover border border-border-light animate-pulse"
           aria-hidden="true"
         />
       </span>

@@ -182,7 +182,7 @@ function ProductCard({
   onSelect: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-border-light bg-white p-6 shadow-sm transition hover:shadow-md">
+    <div className="flex flex-col gap-4 border border-border-light bg-bg-card p-6 shadow-sm transition hover:shadow-md">
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-lg font-semibold leading-tight text-text-primary">{product.name}</h3>
         <span className="shrink-0 rounded-full bg-brand-primary px-3 py-1 text-sm font-bold text-white">
@@ -208,10 +208,10 @@ function ProductCard({
 
 function CustomAmountCard({ locale, onSelect }: { locale: string; onSelect: () => void }) {
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-dashed border-brand-primary/40 bg-white p-6 shadow-sm transition hover:shadow-md">
+    <div className="flex flex-col gap-4 border border-dashed border-brand-primary/40 bg-bg-card p-6 shadow-sm transition hover:shadow-md">
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-lg font-semibold leading-tight text-text-primary">{tl(locale, 'customTitle')}</h3>
-        <span className="shrink-0 rounded-full bg-brand-light border border-brand-primary/40 px-3 py-1 text-sm font-bold text-brand-dark">
+        <span className="shrink-0 rounded-full bg-brand-light border border-brand-primary/40 px-3 py-1 text-sm font-light text-text-primary">
           ✦
         </span>
       </div>
@@ -260,7 +260,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-border-medium bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+        className="w-full rounded-lg border border-border-medium bg-bg-card px-3 py-2 text-sm text-text-primary outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
       />
       {error && <p className="text-xs text-red-600">{error}</p>}
     </div>
@@ -386,7 +386,7 @@ function PurchaseModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-lg rounded-2xl bg-bg-card p-6 shadow-medium max-h-[90vh] overflow-y-auto">
         <div className="mb-5 flex items-start justify-between gap-2">
           <div>
             <h2 className="text-lg font-semibold text-text-primary">{tl(locale, 'formTitle')}</h2>
@@ -456,7 +456,7 @@ function PurchaseModal({
               value={form.personal_message}
               onChange={(e) => set('personal_message', e.target.value)}
               rows={3}
-              className="w-full resize-none rounded-lg border border-border-medium bg-white px-3 py-2 text-sm text-text-primary outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+              className="w-full resize-none rounded-lg border border-border-medium bg-bg-card px-3 py-2 text-sm text-text-primary outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
             />
           </div>
 
@@ -472,7 +472,7 @@ function PurchaseModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-secondary hover:bg-sand-100 transition-colors"
+              className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-secondary hover:bg-bg-card-hover transition-colors"
             >
               {tl(locale, 'cancel')}
             </button>
@@ -557,7 +557,7 @@ function GutscheinRedeemSection({ locale }: { locale: string }) {
           <p className="mt-2 text-sm text-text-muted">{tl(locale, 'redeemSubtitle')}</p>
         </div>
 
-        <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-4">
+        <div className="border bg-bg-card p-6 shadow-sm space-y-4">
           {redeemed ? (
             <div className="text-center space-y-3">
               <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -624,7 +624,7 @@ function GutscheinRedeemSection({ locale }: { locale: string }) {
 
                   {!isAuthenticated ? (
                     <div className="text-center space-y-2">
-                      <p className="text-sm text-gray-600">{tl(locale, 'redeemLoginHint')}</p>
+                      <p className="text-sm text-text-secondary">{tl(locale, 'redeemLoginHint')}</p>
                       <a
                         href={`/${locale}/login`}
                         className="inline-block rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-primary/90 transition-colors"
@@ -637,7 +637,7 @@ function GutscheinRedeemSection({ locale }: { locale: string }) {
                       <button
                         type="button"
                         onClick={handleReset}
-                        className="flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium hover:bg-gray-50 transition"
+                        className="flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium hover:bg-bg-card transition"
                       >
                         {tl(locale, 'cancel')}
                       </button>
@@ -695,7 +695,7 @@ export default function GutscheinPageContent() {
           {isLoading && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-52 animate-pulse rounded-2xl bg-sand-200" />
+                <div key={i} className="h-52 animate-pulse rounded-2xl bg-bg-card-hover" />
               ))}
             </div>
           )}

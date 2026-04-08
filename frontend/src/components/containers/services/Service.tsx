@@ -78,15 +78,15 @@ const Service: React.FC = () => {
   return (
     <div className="bg-bg-primary relative py-20 lg:py-32 min-h-screen">
        {/* Decor */}
-      <div className="absolute top-0 right-0 w-1/4 h-full bg-sand-50/50 skew-x-12 translate-x-1/2 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-1/4 h-full bg-bg-card/50 skew-x-12 translate-x-1/2 pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-16 max-w-2xl mx-auto">
-            <span className="inline-block py-1 px-3 rounded-full bg-sand-100 text-brand-dark text-xs font-bold uppercase tracking-widest mb-4">
+            <span className="inline-block py-1 px-3 bg-bg-card-hover text-text-primary text-xs font-normal uppercase tracking-[0.2em] mb-4">
                  {ui('ui_services_subprefix', 'Königs Massage')} {ui('ui_services_sublabel', 'Services')}
             </span>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-text-primary leading-tight mb-6">
+            <h2 className="text-4xl md:text-5xl font-serif font-light text-text-primary leading-tight mb-6">
               {ui('ui_services_title', 'Our Treatments')}
             </h2>
             <p className="text-text-secondary text-lg">
@@ -98,12 +98,12 @@ const Service: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up">
         {(!mounted || (isLoading && cards.length === 0)) ? (
                  Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="flex w-full flex-col bg-white rounded-2xl border border-sand-200 overflow-hidden h-112.5">
-                        <div className="h-56 bg-sand-100 animate-pulse" />
+                    <div key={i} className="flex w-full flex-col bg-bg-card border border-border-light overflow-hidden h-112.5">
+                        <div className="h-56 bg-bg-card-hover animate-pulse" />
                         <div className="p-8 space-y-4">
-                            <div className="h-6 bg-sand-100 rounded w-3/4 animate-pulse" />
-                            <div className="h-4 bg-sand-100 rounded w-full animate-pulse" />
-                            <div className="h-4 bg-sand-100 rounded w-5/6 animate-pulse" />
+                            <div className="h-6 bg-bg-card-hover rounded w-3/4 animate-pulse" />
+                            <div className="h-4 bg-bg-card-hover rounded w-full animate-pulse" />
+                            <div className="h-4 bg-bg-card-hover rounded w-5/6 animate-pulse" />
                         </div>
                     </div>
                  ))
@@ -114,8 +114,8 @@ const Service: React.FC = () => {
                     : localizePath(locale, '/service');
 
                     return (
-                    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-sand-200 hover:border-sand-300 flex flex-col" key={it.id}>
-                        <div className="relative h-64 overflow-hidden bg-sand-100">
+                    <div className="group bg-bg-card overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 border border-border-light hover:border-border-medium flex flex-col" key={it.id}>
+                        <div className="relative h-64 overflow-hidden bg-bg-card-hover">
                              <Image 
                                 src={it.src} 
                                 alt={it.title}
@@ -126,13 +126,13 @@ const Service: React.FC = () => {
                             />
                             <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
                             
-                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur p-2 rounded-full text-brand-primary shadow-sm z-20 transform transition-transform group-hover:scale-110">
+                            <div className="absolute top-4 right-4 bg-bg-card/90 backdrop-blur p-2 rounded-full text-brand-primary shadow-sm z-20 transform transition-transform group-hover:scale-110">
                                 <ServiceIcon label={it.title} size={24} />
                             </div>
                         </div>
 
                         <div className="p-8 flex flex-col flex-1">
-                            <h3 className="text-2xl font-serif font-bold mb-3 text-brand-dark group-hover:text-brand-primary transition-colors">
+                            <h3 className="text-2xl font-serif font-light mb-3 text-text-primary group-hover:text-brand-primary transition-colors">
                                 <Link href={href} className="focus:outline-none">
                                     <span className="absolute inset-0 z-0" />
                                     {it.title}
@@ -142,8 +142,8 @@ const Service: React.FC = () => {
                                 {it.summary}
                             </p>
                             
-                            <div className="pt-4 border-t border-sand-100 flex justify-between items-center text-brand-dark group-hover:text-brand-primary transition-colors mt-auto">
-                                <span className="text-sm font-bold uppercase tracking-wider">
+                            <div className="pt-4 border-t border-border-light flex justify-between items-center text-text-primary group-hover:text-brand-primary transition-colors mt-auto">
+                                <span className="text-sm font-normal uppercase tracking-[0.15em]r">
                                     {ui('ui_services_btn_detail', 'Details')}
                                 </span>
                                 <IconArrowRight className="transform group-hover:translate-x-1 transition-transform" size={18} />

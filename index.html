@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Energetische Massage Bonn – Premium Massage bei Ihnen zu Hause</title>
+<meta name="description" content="Energetische Massage Bonn – Professionelle Massagen direkt bei Ihnen zu Hause. Entspannung, Erholung und Wohlbefinden auf höchstem Niveau.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A96E;
+    --gold-light: #DFC9A0;
+    --gold-dark: #A88B4A;
+    --bg-deep: #0C0B09;
+    --bg-dark: #141210;
+    --bg-card: #1A1815;
+    --bg-card-hover: #211F1A;
+    --text-primary: #F5F0E8;
+    --text-secondary: #A09888;
+    --text-muted: #6B6358;
+    --cream: #F5F0E8;
+    --cream-dark: #E8DFD0;
+    --border: rgba(201, 169, 110, 0.12);
+    --border-hover: rgba(201, 169, 110, 0.3);
+    --shadow-gold: 0 0 60px rgba(201, 169, 110, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-dark) var(--bg-deep);
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  ::selection {
+    background: var(--gold);
+    color: var(--bg-deep);
+  }
+
+  /* ─── PRELOADER ─── */
+  .preloader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg-deep);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  .preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .preloader-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem; font-weight: 300; letter-spacing: 0.3em;
+    color: var(--gold);
+    animation: preloaderPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes preloaderPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* ─── NAVBAR ─── */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 1.4rem 4%;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .navbar.scrolled {
+    background: rgba(12, 11, 9, 0.92);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    padding: 0.9rem 4%;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 1rem;
+    text-decoration: none;
+  }
+  .nav-logo {
+    width: 48px; height: 48px; border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--gold);
+    transition: transform 0.3s ease;
+  }
+  .nav-logo:hover { transform: scale(1.08); }
+  .nav-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-weight: 400; letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none; color: var(--text-secondary);
+    font-size: 0.82rem; font-weight: 400; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute;
+    bottom: -4px; left: 0; width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    padding: 0.65rem 1.8rem;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold) !important;
+    border-radius: 0;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.15em !important;
+    text-transform: uppercase;
+    transition: all 0.4s ease !important;
+    cursor: pointer;
+  }
+  .nav-cta:hover {
+    background: var(--gold) !important;
+    color: var(--bg-deep) !important;
+  }
+  .nav-cta::after { display: none !important; }
+
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .hamburger span {
+    width: 26px; height: 1.5px; background: var(--gold);
+    transition: all 0.3s ease;
+  }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(4px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4px, -5px); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; height: 100vh; min-height: 700px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: url('https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp') center/cover no-repeat;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg,
+        rgba(12,11,9,0.5) 0%,
+        rgba(12,11,9,0.3) 40%,
+        rgba(12,11,9,0.6) 70%,
+        rgba(12,11,9,0.95) 100%
+      );
+  }
+  .hero-grain {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center; padding: 0 2rem;
+    max-width: 800px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 0.5rem 1.6rem;
+    border: 1px solid var(--border-hover);
+    margin-bottom: 2.5rem;
+    font-size: 0.72rem; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--gold);
+    opacity: 0; animation: heroFadeUp 1s 0.5s ease forwards;
+  }
+  .hero-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold);
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%, 100% { opacity: 0.4; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 300; line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+    opacity: 0; animation: heroFadeUp 1s 0.7s ease forwards;
+  }
+  .hero h1 em {
+    font-style: italic; color: var(--gold);
+    font-weight: 400;
+  }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--text-secondary);
+    max-width: 520px; margin: 0 auto 2.8rem;
+    font-weight: 300; line-height: 1.8;
+    opacity: 0; animation: heroFadeUp 1s 0.9s ease forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 1.2rem;
+    justify-content: center; flex-wrap: wrap;
+    opacity: 0; animation: heroFadeUp 1s 1.1s ease forwards;
+  }
+  @keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    padding: 1rem 2.6rem;
+    background: var(--gold);
+    color: var(--bg-deep);
+    text-decoration: none;
+    font-size: 0.78rem; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gold-dark);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-primary:hover::before { transform: scaleX(1); transform-origin: left; }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    padding: 1rem 2.6rem;
+    background: transparent;
+    border: 1px solid var(--border-hover);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.78rem; font-weight: 400;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    transition: all 0.4s ease;
+  }
+  .btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201, 169, 110, 0.05);
+  }
+
+  .hero-scroll {
+    position: absolute; bottom: 3rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    color: var(--text-muted);
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    animation: heroFadeUp 1s 1.5s ease forwards;
+    opacity: 0;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0%, 100% { transform: scaleY(1); opacity: 0.5; }
+    50% { transform: scaleY(0.5); opacity: 1; }
+  }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 7rem 4%; }
+
+  .section-label {
+    display: inline-flex; align-items: center; gap: 1rem;
+    font-size: 0.7rem; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .section-label::before {
+    content: ''; width: 40px; height: 1px;
+    background: var(--gold);
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    font-weight: 300; line-height: 1.2;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-desc {
+    font-size: 1rem; color: var(--text-secondary);
+    max-width: 560px; line-height: 1.8;
+    font-weight: 300;
+  }
+
+  /* ─── ABOUT ─── */
+  .about {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+    max-width: 1300px; margin: 0 auto;
+  }
+  .about-visual {
+    position: relative;
+  }
+  .about-img-wrap {
+    position: relative; overflow: hidden;
+    aspect-ratio: 3/4;
+  }
+  .about-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.85) contrast(1.05);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .about-img-wrap:hover img { transform: scale(1.04); }
+  .about-accent {
+    position: absolute; top: -1.5rem; right: -1.5rem;
+    width: 120px; height: 120px;
+    border: 1px solid var(--gold);
+    opacity: 0.3;
+  }
+  .about-accent-2 {
+    position: absolute; bottom: -1.5rem; left: -1.5rem;
+    width: 80px; height: 80px;
+    border: 1px solid var(--gold);
+    opacity: 0.15;
+  }
+  .about-text { padding: 1rem 0; }
+  .about-text p {
+    color: var(--text-secondary); margin-bottom: 1.5rem;
+    font-weight: 300; line-height: 1.9;
+  }
+  .about-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem; font-weight: 300;
+    color: var(--gold); line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+  .stat-label {
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+
+  /* ─── SERVICES ─── */
+  .services-section { background: var(--bg-dark); }
+  .services-header {
+    text-align: center; max-width: 600px;
+    margin: 0 auto 4rem;
+  }
+  .services-header .section-desc { margin: 0 auto; }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; max-width: 1300px; margin: 0 auto;
+  }
+  .service-card {
+    padding: 2.8rem 2.2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: default;
+  }
+  .service-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .service-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-icon {
+    font-size: 2rem; margin-bottom: 1.5rem;
+    display: block;
+  }
+  .service-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 400;
+    margin-bottom: 0.8rem; letter-spacing: 0.02em;
+  }
+  .service-card p {
+    font-size: 0.9rem; color: var(--text-secondary);
+    line-height: 1.8; margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  .service-meta {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+  }
+  .service-duration { color: var(--text-muted); letter-spacing: 0.05em; }
+  .service-price {
+    color: var(--gold); font-weight: 500;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+  }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-section {
+    max-width: 1100px; margin: 0 auto;
+  }
+  .how-header {
+    text-align: center; max-width: 600px;
+    margin: 0 auto 4.5rem;
+  }
+  .how-header .section-desc { margin: 0 auto; }
+  .how-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; position: relative;
+  }
+  .how-steps::before {
+    content: ''; position: absolute;
+    top: 32px; left: 12%; right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold), transparent);
+    opacity: 0.25;
+  }
+  .how-step { text-align: center; padding: 0 1rem; position: relative; }
+  .step-num {
+    width: 64px; height: 64px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; color: var(--gold);
+    background: var(--bg-deep);
+    position: relative; z-index: 1;
+    transition: all 0.4s ease;
+  }
+  .how-step:hover .step-num {
+    background: var(--gold);
+    color: var(--bg-deep);
+    box-shadow: 0 0 30px rgba(201, 169, 110, 0.2);
+  }
+  .how-step h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 400;
+    margin-bottom: 0.6rem;
+  }
+  .how-step p {
+    font-size: 0.85rem; color: var(--text-muted);
+    line-height: 1.7; font-weight: 300;
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials-section { background: var(--bg-dark); }
+  .testimonials-header {
+    text-align: center; max-width: 600px;
+    margin: 0 auto 4rem;
+  }
+  .testimonials-header .section-desc { margin: 0 auto; }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+  }
+  .testimonial-card {
+    padding: 2.5rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    transition: all 0.4s ease;
+  }
+  .testimonial-card:hover { border-color: var(--border-hover); }
+  .testimonial-stars {
+    display: flex; gap: 3px; margin-bottom: 1.2rem;
+    color: var(--gold); font-size: 0.85rem;
+  }
+  .testimonial-card blockquote {
+    font-size: 0.95rem; color: var(--text-secondary);
+    line-height: 1.8; font-weight: 300;
+    font-style: italic; margin-bottom: 1.5rem;
+  }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  .author-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 500; color: var(--bg-deep);
+  }
+  .author-name {
+    font-size: 0.85rem; font-weight: 400;
+    color: var(--text-primary);
+  }
+  .author-loc {
+    font-size: 0.72rem; color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── GUTSCHEIN / GIFT ─── */
+  .gift-section {
+    max-width: 1100px; margin: 0 auto;
+  }
+  .gift-card {
+    display: grid; grid-template-columns: 1fr 1fr;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .gift-visual {
+    position: relative;
+    background: linear-gradient(135deg, rgba(201,169,110,0.12), rgba(201,169,110,0.03));
+    display: flex; align-items: center; justify-content: center;
+    padding: 4rem;
+    min-height: 400px;
+  }
+  .gift-icon-wrap {
+    position: relative;
+  }
+  .gift-box {
+    font-size: 5rem;
+    animation: giftFloat 3s ease-in-out infinite;
+  }
+  @keyframes giftFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .gift-sparkle {
+    position: absolute;
+    font-size: 1.4rem;
+    animation: sparkle 2s ease-in-out infinite;
+  }
+  .gift-sparkle:nth-child(2) { top: -20px; right: -30px; animation-delay: 0.3s; }
+  .gift-sparkle:nth-child(3) { bottom: -10px; left: -25px; animation-delay: 0.7s; }
+  .gift-sparkle:nth-child(4) { top: 10px; left: -35px; animation-delay: 1.1s; }
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+  .gift-text { padding: 4rem 3.5rem; display: flex; flex-direction: column; justify-content: center; }
+  .gift-text h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem; font-weight: 300;
+    margin-bottom: 1rem;
+  }
+  .gift-text h3 em { font-style: italic; color: var(--gold); }
+  .gift-text p {
+    color: var(--text-secondary); line-height: 1.8;
+    font-weight: 300; margin-bottom: 2rem;
+  }
+
+  /* ─── CTA / BOOKING ─── */
+  .cta-section {
+    text-align: center;
+    padding: 8rem 4%;
+    position: relative;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute; top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.2;
+  }
+  .cta-section .section-title {
+    max-width: 700px; margin: 0 auto 1rem;
+  }
+  .cta-section .section-desc {
+    margin: 0 auto 2.5rem;
+    text-align: center;
+  }
+  .cta-contact-info {
+    display: flex; justify-content: center; gap: 3rem;
+    margin-top: 3rem; flex-wrap: wrap;
+  }
+  .contact-item {
+    display: flex; align-items: center; gap: 0.8rem;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .contact-item:hover { color: var(--gold); }
+  .contact-icon {
+    width: 44px; height: 44px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+  }
+  .contact-item:hover .contact-icon {
+    border-color: var(--gold);
+    background: rgba(201, 169, 110, 0.08);
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    padding: 3.5rem 4% 2rem;
+    border-top: 1px solid var(--border);
+    max-width: 1300px; margin: 0 auto;
+  }
+  .footer-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 3rem;
+    flex-wrap: wrap; gap: 2rem;
+  }
+  .footer-brand .nav-title { margin-bottom: 0.8rem; }
+  .footer-tagline {
+    color: var(--text-muted); font-size: 0.85rem;
+    max-width: 300px; line-height: 1.6;
+  }
+  .footer-links {
+    display: flex; gap: 3rem;
+  }
+  .footer-col h5 {
+    font-size: 0.72rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.5rem; }
+  .footer-col a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 0.85rem; transition: color 0.3s ease;
+  }
+  .footer-col a:hover { color: var(--gold); }
+  .footer-bottom {
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem; color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .footer-social {
+    display: flex; gap: 1rem;
+  }
+  .footer-social a {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+  }
+  .footer-social a:hover {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(201, 169, 110, 0.05);
+  }
+
+  /* ─── SCROLL ANIMATIONS ─── */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 1024px) {
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .how-steps { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
+    .how-steps::before { display: none; }
+  }
+  @media (max-width: 768px) {
+    section { padding: 5rem 6%; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav-links.open {
+      display: flex; flex-direction: column;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: rgba(12, 11, 9, 0.97);
+      backdrop-filter: blur(20px);
+      padding: 2rem 6%;
+      border-bottom: 1px solid var(--border);
+      gap: 1.2rem;
+    }
+    .about { grid-template-columns: 1fr; gap: 3rem; }
+    .about-visual { order: -1; }
+    .services-grid { grid-template-columns: 1fr; }
+    .how-steps { grid-template-columns: 1fr; gap: 2rem; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .gift-card { grid-template-columns: 1fr; }
+    .gift-visual { min-height: 250px; padding: 2.5rem; }
+    .gift-text { padding: 2.5rem 2rem; }
+    .cta-contact-info { flex-direction: column; align-items: center; }
+    .footer-top { flex-direction: column; }
+    .footer-links { gap: 2rem; flex-wrap: wrap; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div class="preloader" id="preloader">
+  <div class="preloader-logo">ENERGETISCHE MASSAGE</div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="#" class="nav-brand">
+    <img src="https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp" alt="Energetische Massage Logo" class="nav-logo">
+    <span class="nav-title">Energetische Massage</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">Über Uns</a></li>
+    <li><a href="#services">Leistungen</a></li>
+    <li><a href="#ablauf">Ablauf</a></li>
+    <li><a href="#bewertungen">Bewertungen</a></li>
+    <li><a href="#gutschein">Gutschein</a></li>
+    <li><a href="#kontakt" class="nav-cta">Termin Buchen</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menü">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Hausbesuch in Bonn & Umgebung
+    </div>
+    <h1>Entspannung, die<br>zu Ihnen <em>nach Hause</em> kommt</h1>
+    <p class="hero-sub">Professionelle energetische Massage in Ihrer vertrauten Umgebung — für tiefe Entspannung, neue Energie und spürbares Wohlbefinden.</p>
+    <div class="hero-actions">
+      <a href="#kontakt" class="btn-primary"><span>Termin Vereinbaren</span></a>
+      <a href="#services" class="btn-outline">Unsere Leistungen</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="padding-top:8rem; padding-bottom:8rem;">
+  <div class="about">
+    <div class="about-visual reveal">
+      <div class="about-img-wrap">
+        <img src="https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp" alt="Energetische Massage Behandlung">
+      </div>
+      <div class="about-accent"></div>
+      <div class="about-accent-2"></div>
+    </div>
+    <div class="about-text reveal reveal-delay-2">
+      <span class="section-label">Über Uns</span>
+      <h2 class="section-title">Heilende Hände,<br><em>spürbare Wirkung</em></h2>
+      <p>Energetische Massage verbindet traditionelle Massagetechniken mit ganzheitlicher Energiearbeit. Unser Ziel ist es, Körper, Geist und Seele in Einklang zu bringen — direkt bei Ihnen zu Hause in Bonn und Umgebung.</p>
+      <p>Mit jahrelanger Erfahrung und tiefer Leidenschaft bieten wir Ihnen eine Behandlung, die weit über gewöhnliche Massage hinausgeht. Jede Sitzung wird individuell auf Ihre Bedürfnisse abgestimmt.</p>
+      <div class="about-stats">
+        <div>
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Zufriedene Kunden</div>
+        </div>
+        <div>
+          <div class="stat-num">10+</div>
+          <div class="stat-label">Jahre Erfahrung</div>
+        </div>
+        <div>
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Mobiler Service</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="services-section">
+  <div class="services-header reveal">
+    <span class="section-label">Unsere Leistungen</span>
+    <h2 class="section-title">Premium Massage <em>bei Ihnen zu Hause</em></h2>
+    <p class="section-desc">Wählen Sie aus unserem Angebot die Behandlung, die am besten zu Ihnen passt. Alles bequem in Ihrer vertrauten Umgebung.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal reveal-delay-1">
+      <span class="service-icon">✦</span>
+      <h3>Energetische Ganzkörpermassage</h3>
+      <p>Tiefenwirksame Ganzkörperbehandlung mit energetischer Ausrichtung. Löst Blockaden, fördert den Energiefluss und bringt Körper und Geist in Balance.</p>
+      <div class="service-meta">
+        <span class="service-duration">60 – 90 Min.</span>
+        <span class="service-price">ab 89 €</span>
+      </div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <span class="service-icon">◈</span>
+      <h3>Rücken- & Nackenmassage</h3>
+      <p>Gezielte Behandlung von Verspannungen im Rücken- und Nackenbereich. Ideal für Menschen mit Büroarbeit oder körperlicher Belastung.</p>
+      <div class="service-meta">
+        <span class="service-duration">30 – 45 Min.</span>
+        <span class="service-price">ab 59 €</span>
+      </div>
+    </div>
+    <div class="service-card reveal reveal-delay-3">
+      <span class="service-icon">❋</span>
+      <h3>Entspannungsmassage</h3>
+      <p>Sanfte, fließende Bewegungen für tiefe Entspannung und Stressabbau. Perfekt zum Abschalten und neue Kraft zu tanken.</p>
+      <div class="service-meta">
+        <span class="service-duration">60 Min.</span>
+        <span class="service-price">ab 75 €</span>
+      </div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <span class="service-icon">◇</span>
+      <h3>Sportmassage</h3>
+      <p>Intensive Behandlung für aktive Menschen. Beschleunigt die Regeneration, verbessert die Beweglichkeit und beugt Verletzungen vor.</p>
+      <div class="service-meta">
+        <span class="service-duration">45 – 60 Min.</span>
+        <span class="service-price">ab 79 €</span>
+      </div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <span class="service-icon">✧</span>
+      <h3>Fußreflexzonenmassage</h3>
+      <p>Durch gezielte Druckpunkte an den Füßen werden Organe und Körperbereiche stimuliert. Fördert die Selbstheilung und das allgemeine Wohlbefinden.</p>
+      <div class="service-meta">
+        <span class="service-duration">45 Min.</span>
+        <span class="service-price">ab 55 €</span>
+      </div>
+    </div>
+    <div class="service-card reveal reveal-delay-3">
+      <span class="service-icon">⬡</span>
+      <h3>Paar-Massage</h3>
+      <p>Gemeinsam entspannen — das perfekte Erlebnis für Paare. Zwei Therapeuten behandeln Sie gleichzeitig in Ihrem Zuhause.</p>
+      <div class="service-meta">
+        <span class="service-duration">60 – 90 Min.</span>
+        <span class="service-price">ab 159 €</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="ablauf">
+  <div class="how-section">
+    <div class="how-header reveal">
+      <span class="section-label">So einfach geht's</span>
+      <h2 class="section-title">Massage buchen in <em>4 Schritten</em></h2>
+      <p class="section-desc">Kein Anfahrtsweg, kein Stress — wir bringen die Entspannung direkt zu Ihnen.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <h4>Termin wählen</h4>
+        <p>Wählen Sie online oder telefonisch Ihren Wunschtermin aus.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <h4>Massage wählen</h4>
+        <p>Entscheiden Sie sich für die Behandlung, die zu Ihnen passt.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <h4>Wir kommen zu Ihnen</h4>
+        <p>Unser Therapeut kommt mit allem Equipment direkt zu Ihnen nach Hause.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-4">
+        <div class="step-num">04</div>
+        <h4>Genießen & Entspannen</h4>
+        <p>Lehnen Sie sich zurück und genießen Sie Ihre professionelle Massage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="bewertungen" class="testimonials-section">
+  <div class="testimonials-header reveal">
+    <span class="section-label">Kundenstimmen</span>
+    <h2 class="section-title">Was unsere Kunden <em>sagen</em></h2>
+    <p class="section-desc">Echte Erfahrungen unserer zufriedenen Kunden aus Bonn und Umgebung.</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+      <blockquote>„Eine unglaublich wohltuende Erfahrung. Die Massage in meinem eigenen Wohnzimmer war so viel entspannender als in einem Studio. Absolute Empfehlung!"</blockquote>
+      <div class="testimonial-author">
+        <div class="author-avatar">SK</div>
+        <div>
+          <div class="author-name">Sandra K.</div>
+          <div class="author-loc">Bonn-Beuel</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+      <blockquote>„Professionell, einfühlsam und unglaublich wirkungsvoll. Nach der energetischen Massage fühlte ich mich wie neugeboren. Der Hausbesuch war perfekt organisiert."</blockquote>
+      <div class="testimonial-author">
+        <div class="author-avatar">MR</div>
+        <div>
+          <div class="author-name">Markus R.</div>
+          <div class="author-loc">Bad Godesberg</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-3">
+      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
+      <blockquote>„Die Paar-Massage war das schönste Geschenk, das wir uns machen konnten. Alles war perfekt vorbereitet — wir mussten uns um nichts kümmern."</blockquote>
+      <div class="testimonial-author">
+        <div class="author-avatar">LT</div>
+        <div>
+          <div class="author-name">Lisa & Thomas</div>
+          <div class="author-loc">Bonn-Zentrum</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUTSCHEIN -->
+<section id="gutschein">
+  <div class="gift-section reveal">
+    <div class="gift-card">
+      <div class="gift-visual">
+        <div class="gift-icon-wrap">
+          <span class="gift-box">🎁</span>
+          <span class="gift-sparkle">✨</span>
+          <span class="gift-sparkle">✨</span>
+          <span class="gift-sparkle">✨</span>
+        </div>
+      </div>
+      <div class="gift-text">
+        <span class="section-label">Verschenken</span>
+        <h3>Entspannung <em>verschenken</em></h3>
+        <p>Bereiten Sie jemandem eine Freude mit einem Gutschein für unsere Massagen und Wellnessbehandlungen. Wählen Sie einen Festbetrag oder geben Sie Ihren Wunschbetrag ein — das perfekte Geschenk für jeden Anlass.</p>
+        <a href="https://energetische-massage-bonn.de/de/gutschein" class="btn-primary" style="align-self:flex-start;">
+          <span>🎁 &nbsp;Gutschein Kaufen</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / KONTAKT -->
+<section id="kontakt" class="cta-section">
+  <div class="reveal">
+    <span class="section-label">Kontakt</span>
+    <h2 class="section-title">Bereit für Ihre <em>persönliche Auszeit?</em></h2>
+    <p class="section-desc">Buchen Sie jetzt Ihren Termin und erleben Sie professionelle Massage in Ihrem Zuhause.</p>
+    <div class="hero-actions" style="opacity:1; animation:none;">
+      <a href="https://energetische-massage-bonn.de/de/appointment" class="btn-primary"><span>Online Termin Buchen</span></a>
+      <a href="mailto:info@koenigsmassage.com" class="btn-outline">E-Mail Schreiben</a>
+    </div>
+    <div class="cta-contact-info">
+      <a href="mailto:info@koenigsmassage.com" class="contact-item">
+        <div class="contact-icon">✉</div>
+        <span>info@koenigsmassage.com</span>
+      </a>
+      <a href="https://www.koenigsmassage.com" class="contact-item" target="_blank">
+        <div class="contact-icon">⌘</div>
+        <span>www.koenigsmassage.com</span>
+      </a>
+      <div class="contact-item">
+        <div class="contact-icon">⊛</div>
+        <span>Bonn & Umgebung</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="nav-title">Energetische Massage</div>
+      <p class="footer-tagline">Professionelle energetische Massage — mobil, persönlich und direkt bei Ihnen zu Hause in Bonn.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h5>Navigation</h5>
+        <ul>
+          <li><a href="#about">Über Uns</a></li>
+          <li><a href="#services">Leistungen</a></li>
+          <li><a href="#ablauf">Ablauf</a></li>
+          <li><a href="#bewertungen">Bewertungen</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Service</h5>
+        <ul>
+          <li><a href="https://energetische-massage-bonn.de/de/appointment">Termin Buchen</a></li>
+          <li><a href="https://energetische-massage-bonn.de/de/gutschein">Gutschein</a></li>
+          <li><a href="mailto:info@koenigsmassage.com">Kontakt</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Rechtliches</h5>
+        <ul>
+          <li><a href="#">Impressum</a></li>
+          <li><a href="#">Datenschutz</a></li>
+          <li><a href="#">AGB</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Energetische Massage Bonn. Alle Rechte vorbehalten.</span>
+    <div class="footer-social">
+      <a href="#" aria-label="Instagram">✦</a>
+      <a href="#" aria-label="Facebook">f</a>
+      <a href="#" aria-label="WhatsApp">w</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Preloader
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('preloader').classList.add('hidden');
+    }, 800);
+  });
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navLinks.classList.remove('open');
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observerOpts = { threshold: 0.12, rootMargin: '0px 0px -40px 0px' };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, observerOpts);
+  reveals.forEach(el => observer.observe(el));
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>

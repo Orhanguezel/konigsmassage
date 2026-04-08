@@ -267,10 +267,10 @@ export default function CookieConsentBanner() {
         role="region"
         aria-label={ui('cc_banner_aria_region', 'Cookie consent')}
       >
-        <div className="mx-auto max-w-5xl rounded-2xl bg-white/95 backdrop-blur-md border border-sand-200 shadow-2xl p-5 sm:p-6 relative">
+        <div className="mx-auto max-w-5xl rounded-2xl bg-bg-card/95 backdrop-blur-md border border-border-light shadow-medium p-5 sm:p-6 relative">
           <button
             type="button"
-            className="absolute right-3 top-3 w-9 h-9 rounded-full border border-sand-200 text-text-secondary hover:text-text-primary hover:bg-sand-50 transition-colors"
+            className="absolute right-3 top-3 w-9 h-9 rounded-full border border-border-light text-text-secondary hover:text-text-primary hover:bg-bg-card transition-colors"
             onClick={showRejectAll ? onRejectAll : () => setOpenSettings(true)}
             aria-label={ariaClose}
             title={ariaClose}
@@ -280,7 +280,7 @@ export default function CookieConsentBanner() {
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 pr-10">
-              <p className="text-base sm:text-lg font-serif font-bold text-text-primary leading-snug">
+              <p className="text-base sm:text-lg font-serif font-light text-text-primary leading-snug">
                 {titleText}
               </p>
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
@@ -294,7 +294,7 @@ export default function CookieConsentBanner() {
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
               <button
                 type="button"
-                className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-sand-200 text-sm font-bold text-text-primary hover:bg-sand-50 transition-colors"
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-border-light text-sm font-bold text-text-primary hover:bg-bg-card transition-colors"
                 onClick={() => setOpenSettings(true)}
               >
                 {btnSettings}

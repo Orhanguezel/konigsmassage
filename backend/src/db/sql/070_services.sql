@@ -27,6 +27,11 @@ CREATE TABLE `services` (
   `image_url`        VARCHAR(500)          DEFAULT NULL,
   `image_asset_id`   CHAR(36)              DEFAULT NULL, -- storage_assets.id
 
+  -- Fiyat & satin alma
+  `price_onetime`    DECIMAL(12,2)         DEFAULT NULL,
+  `currency`         VARCHAR(10)  NOT NULL DEFAULT 'EUR',
+  `is_purchasable`   TINYINT(1)   NOT NULL DEFAULT 0,
+
   -- Teknik alanlar (non-i18n)
   `area`             VARCHAR(255)          DEFAULT NULL,
   `duration`         VARCHAR(255)          DEFAULT NULL,
@@ -63,22 +68,10 @@ CREATE TABLE `services_i18n` (
 
   `slug`             VARCHAR(255)  NOT NULL,
   `name`             VARCHAR(255)  NOT NULL,
-  `description`      TEXT                   DEFAULT NULL,
-  `material`         VARCHAR(255)           DEFAULT NULL,
-  `price`            VARCHAR(128)           DEFAULT NULL,
-  `includes`         VARCHAR(255)           DEFAULT NULL,
-  `warranty`         VARCHAR(128)           DEFAULT NULL,
+  `summary`          TEXT                   DEFAULT NULL,
+  `content`          TEXT          NOT NULL,
   `image_alt`        VARCHAR(255)           DEFAULT NULL,
 
-  -- Optional localized "service details" (used by FE sidebar)
-  `area`             VARCHAR(255)           DEFAULT NULL,
-  `duration`         VARCHAR(255)           DEFAULT NULL,
-  `maintenance`      VARCHAR(255)           DEFAULT NULL,
-  `season`           VARCHAR(255)           DEFAULT NULL,
-  `thickness`        VARCHAR(255)           DEFAULT NULL,
-  `equipment`        VARCHAR(255)           DEFAULT NULL,
-
-  `tags`             VARCHAR(255)           DEFAULT NULL,
   `meta_title`       VARCHAR(255)           DEFAULT NULL,
   `meta_description` VARCHAR(500)           DEFAULT NULL,
   `meta_keywords`    VARCHAR(255)           DEFAULT NULL,

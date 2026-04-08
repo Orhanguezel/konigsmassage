@@ -24,10 +24,10 @@ SET @PAGE_ABOUT := '11111111-2222-3333-4444-555555555573';
 SET @MODULE_KEY := 'about';
 
 -- -------------------------------------------------------------
--- GÖRSEL URL'LERİ
+-- GÖRSEL URL''LERİ
 -- -------------------------------------------------------------
 SET @IMG_ABOUT_MAIN :=
-  'https://res.cloudinary.com/dbozv7wqd/image/upload/v1768222471/site-media/about.png';
+  '/uploads/anas-3.jpg';
 
 -- Ek görseller (seyahatler / atmosfer)
 SET @IMG_ABOUT_2 := 'https://images.unsplash.com/photo-1526779259212-939e64788e3c?auto=format&fit=crop&w=1600&q=80';
@@ -87,7 +87,7 @@ ON DUPLICATE KEY UPDATE
   `updated_at`               = VALUES(`updated_at`);
 
 -- -------------------------------------------------------------
--- I18N UPSERT – TR / EN / DE
+-- I18N UPSERT - TR / EN / DE
 -- -------------------------------------------------------------
 INSERT INTO `custom_pages_i18n`
   (`id`,
@@ -119,7 +119,7 @@ VALUES
     CONCAT(
       '<h2>Hallo, ich bin Anastasia König</h2>',
       '<p>In Bonn lade ich Sie bei <strong>Energetische Massage</strong> zu energetischen Massagen in ruhiger Atmosphäre ein. ',
-      'Mein Fokus richtet sich nach innen: ankommen, loslassen, zur Ruhe finden – ohne Erwartungen. ',
+      'Mein Fokus richtet sich nach innen: ankommen, loslassen, zur Ruhe finden - ohne Erwartungen. ',
       'Schon in meiner Weiterbildung in Thailand habe ich bemerkt, dass nicht nur die Hände für die Massage wichtig sind, ',
       'sondern die Gedanken, die man bei der Massage hat.</p>',
 
@@ -129,7 +129,7 @@ VALUES
       'und ich ein wohliges Gefühl aus dem Herzen ausstrahle.</p>',
 
       '<p>Erst dann fange ich an, für dich vom Universum zu bitten. Jede Seele braucht immer etwas anderes. ',
-      'Der eine mehr Selbstliebe – vielleicht mehr Durchhaltevermögen beim Aufhören mit dem Rauchen, ',
+      'Der eine mehr Selbstliebe - vielleicht mehr Durchhaltevermögen beim Aufhören mit dem Rauchen, ',
       'der andere mehr Selbstliebe beim Abnehmen. Jeder ist individuell, so auch die Bitten an das Universum. ',
       'Ich bitte zum Beispiel für mehr Selbstliebe, mehr Geduld, mehr Mut, mehr Klarheit, mehr Liebe, mehr Gesundheit… ',
       'Es ist immer individuell. Es ist immer das, was die Seele gerade braucht.</p>',
@@ -143,7 +143,7 @@ VALUES
 
       '<h3>Reisen & Ausbildung</h3>',
       '<p>Techniken, die ich u. a. in Thailand und auf meinen Reisen gelernt habe, fließen in meine Arbeit ein. ',
-      'Über die Jahre hat sich daraus eine intuitive, achtsame Praxis entwickelt – immer individuell und respektvoll.</p>',
+      'Über die Jahre hat sich daraus eine intuitive, achtsame Praxis entwickelt - immer individuell und respektvoll.</p>',
 
       '<h3>Klare Grenzen, Vertrauen und Hygiene</h3>',
       '<p>Mir sind <strong>klare Grenzen</strong>, Sicherheit und ein wertschätzender Umgang sehr wichtig. ',
@@ -182,7 +182,7 @@ VALUES
     CONCAT(
       '<h2>Merhaba, ben Anastasia König</h2>',
       '<p>Bonn''da <strong>Energetische Massage</strong> ile sakin bir atmosferde enerjetik masaj seansları sunuyorum. ',
-      'Odak noktam içe dönüktür: varmak, bırakmak, huzur bulmak – beklentisiz. ',
+      'Odak noktam içe dönüktür: varmak, bırakmak, huzur bulmak - beklentisiz. ',
       'Tayland''daki eğitimimde fark ettim ki masaj için sadece eller değil, ',
       'masaj sırasında taşınan düşünceler de çok önemli.</p>',
 
@@ -192,7 +192,7 @@ VALUES
       've kalpten gelen hoş bir duygu yayılıyor.</p>',
 
       '<p>Ancak o zaman senin için evrenden dilekte bulunmaya başlarım. Her ruh her zaman farklı bir şeye ihtiyaç duyar. ',
-      'Biri daha fazla özsevgi – belki sigarayı bırakmada daha fazla dayanıklılık, ',
+      'Biri daha fazla özsevgi - belki sigarayı bırakmada daha fazla dayanıklılık, ',
       'diğeri kilo vermede daha fazla özsevgi. Herkes bireyseldir, evrendeki dilekler de öyle. ',
       'Örneğin daha fazla özsevgi, daha fazla sabır, daha fazla cesaret, daha fazla netlik, daha fazla sevgi, daha fazla sağlık dilerim… ',
       'Her zaman bireyseldir. Her zaman ruhun o an neye ihtiyacı varsa odur.</p>',
@@ -206,7 +206,7 @@ VALUES
 
       '<h3>Seyahatler & eğitim</h3>',
       '<p>Tayland başta olmak üzere seyahatlerimde öğrendiğim teknikler çalışmama yansır. ',
-      'Yıllar içinde bunlardan sezgisel, dikkatli bir pratik gelişti – her zaman bireysel ve saygılı.</p>',
+      'Yıllar içinde bunlardan sezgisel, dikkatli bir pratik gelişti - her zaman bireysel ve saygılı.</p>',
 
       '<h3>Net sınırlar, güven ve hijyen</h3>',
       '<p><strong>Net sınırlar</strong>, güvenlik ve saygılı bir iletişim benim için çok önemlidir. ',
@@ -245,7 +245,7 @@ VALUES
     CONCAT(
       '<h2>Hello, I''m Anastasia König</h2>',
       '<p>In Bonn, I welcome you to <strong>Energetische Massage</strong> for energetic massage sessions in a calm atmosphere. ',
-      'My focus is directed inward: arriving, letting go, finding peace – without expectations. ',
+      'My focus is directed inward: arriving, letting go, finding peace - without expectations. ',
       'During my training in Thailand, I realized that it''s not just the hands that matter in massage, ',
       'but the thoughts you carry during the treatment.</p>',
 
@@ -255,7 +255,7 @@ VALUES
       'and a comforting feeling radiates from my heart.</p>',
 
       '<p>Only then do I begin to ask the universe on your behalf. Every soul always needs something different. ',
-      'One person needs more self-love – perhaps more perseverance in quitting smoking, ',
+      'One person needs more self-love - perhaps more perseverance in quitting smoking, ',
       'another needs more self-love in losing weight. Everyone is individual, and so are the requests to the universe. ',
       'I ask for more self-love, more patience, more courage, more clarity, more love, more health… ',
       'It is always individual. It is always what the soul needs at that moment.</p>',
@@ -269,7 +269,7 @@ VALUES
 
       '<h3>Travel & training</h3>',
       '<p>Techniques I learned in Thailand and on my other travels flow into my work. ',
-      'Over the years, an intuitive, mindful practice has developed – always individual and respectful.</p>',
+      'Over the years, an intuitive, mindful practice has developed - always individual and respectful.</p>',
 
       '<h3>Clear boundaries, trust, and hygiene</h3>',
       '<p><strong>Clear boundaries</strong>, safety, and respectful interaction are very important to me. ',

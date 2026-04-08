@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 051.4_custom_pages_privacy.seed.sql (FINAL — Energetische Massage, rerunnable)
--- Energetische Massage – Custom Page: Privacy Policy / Datenschutz (TR/EN/DE)
+-- Energetische Massage - Custom Page: Privacy Policy / Datenschutz (TR/EN/DE)
 -- ✅ PARENT: custom_pages.module_key = 'privacy'
 -- Category/SubCategory: optional (NULL) — admin panelden düzenlenir
 -- NOT: Bu dosyada BLOK YORUM (/* */) YOKTUR. Sadece "--" kullanılır.
@@ -139,7 +139,7 @@ VALUES
               '<li>Randevu: tarih, saat, seçilen hizmet/terapist (varsa), notlar</li>',
               '<li>Talep içeriği: mesajlar ve yazışmalar</li>',
               '<li>Teknik: IP, tarayıcı/cihaz, sayfa görüntüleme, erişim zamanı, güvenlik logları</li>',
-              '<li>Çerezler: tercih ve kullanım verileri (detaylar Çerez Politikası’nda)</li>',
+              '<li>Çerezler: tercih ve kullanım verileri (detaylar Çerez Politikası''nda)</li>',
             '</ul>',
           '</div>',
         '</div>',
@@ -380,7 +380,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">4. Rechtsgrundlagen</h2>',
           '<p class="text-slate-700 mb-3">',
-            'Die Verarbeitung kann auf Grundlage vertraglicher Erforderlichkeit, berechtigter Interessen, gesetzlicher Pflichten und – sofern erforderlich – Einwilligung erfolgen.',
+            'Die Verarbeitung kann auf Grundlage vertraglicher Erforderlichkeit, berechtigter Interessen, gesetzlicher Pflichten und - sofern erforderlich - Einwilligung erfolgen.',
           '</p>',
           '<p class="text-slate-700">',
             'Die Rechtsgrundlage kann je nach Prozess variieren. Gegebenenfalls stellen wir zusätzliche Hinweise bereit.',

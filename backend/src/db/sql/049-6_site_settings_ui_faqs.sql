@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 049-6_site_settings_ui_faqs.sql
--- Energetische Massage – UI FAQ / SSS (site_settings.ui_faqs) [FINAL]
+-- Energetische Massage - UI FAQ / SSS (site_settings.ui_faqs) [FINAL]
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
 --  - Upsert: ON DUPLICATE KEY UPDATE (assumes UNIQUE(key, locale))

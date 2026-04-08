@@ -132,19 +132,19 @@ export default function ContactPage() {
           {/* Sol: Bilgi + Harita */}
           <div className="lg:col-span-5">
             <div className="mb-8">
-              <div className="text-sm font-bold uppercase tracking-widest text-brand-primary mb-3">
+              <div className="text-sm font-normal uppercase tracking-[0.2em] text-brand-primary mb-3">
                 <span>{t.subprefix}</span>{' '}
                 <span className="text-text-muted">{t.sublabel}</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-serif font-bold text-text-primary mb-4">
+              <h2 className="text-3xl md:text-4xl font-serif font-light text-text-primary mb-4">
                 {t.titleLeft}
               </h2>
               <p className="text-text-secondary leading-relaxed">{t.tagline}</p>
             </div>
 
             {/* İletişim bilgileri */}
-            <div className="bg-bg-secondary rounded-xl shadow-soft border border-border-light p-6 mb-8">
-              <h3 className="text-lg font-bold font-serif text-text-primary mb-4">
+            <div className="bg-bg-secondary shadow-soft border border-border-light p-6 mb-8">
+              <h3 className="text-lg font-light font-serif text-text-primary mb-4">
                 {t.infoTitle}
               </h3>
 
@@ -186,9 +186,9 @@ export default function ContactPage() {
 
             {/* Harita */}
             {mapCfg.embed_url && (
-              <div className="bg-bg-secondary rounded-xl shadow-soft border border-border-light overflow-hidden">
+              <div className="bg-bg-secondary shadow-soft border border-border-light overflow-hidden">
                 <div className="px-6 py-4 border-b border-border-light">
-                  <h3 className="text-lg font-bold font-serif text-text-primary">{mapCfg.title}</h3>
+                  <h3 className="text-lg font-light font-serif text-text-primary">{mapCfg.title}</h3>
                 </div>
                 <iframe
                   title={mapCfg.title}

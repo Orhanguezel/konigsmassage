@@ -32,7 +32,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'menu_empty',                    '(Menü tanımlı değil)',
     'menu_loading',                  '(Menü yükleniyor...)',
 
-    -- ✅ LEGACY KEYS (keep, so older components won't break)
+    -- ✅ LEGACY KEYS (keep, so older components won''t break)
     'language_label',                'Dil',
     'login',                         'Giriş Yap',
     'register',                      'Kayıt Ol',

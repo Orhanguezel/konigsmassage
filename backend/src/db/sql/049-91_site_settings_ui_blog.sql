@@ -1,6 +1,6 @@
 -- =============================================================
 -- 049-91_site_settings_ui_blog.sql
--- konigsmassage – UI Blog (site_settings.ui_blog)
+-- konigsmassage - UI Blog (site_settings.ui_blog)
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
 --  - Extendable: clone from tr as bootstrap (collation-safe)
@@ -25,7 +25,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_no_image',                 '(Görsel yok)',
 
     'ui_blog_meta_title',               'Blog | Energetische Massage',
-    'ui_blog_meta_description',         'Energetische Massage, derin gevşeme, beden farkındalığı ve içsel denge üzerine yazılar. Energetische Massage – Bonn.',
+    'ui_blog_meta_description',         'Energetische Massage, derin gevşeme, beden farkındalığı ve içsel denge üzerine yazılar. Energetische Massage - Bonn.',
     'ui_blog_og_image',                 '',
 
     'ui_blog_loading',                  'Yükleniyor...',
@@ -39,8 +39,9 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
 
     'ui_blog_highlights_title',         'Öne Çıkanlar',
     'ui_blog_home_subprefix',           'Energetische Massage',
-    'ui_blog_home_title',               'Öne Çıkan Yazılar',
-    'ui_blog_home_lead',                'Enerjetik masaj ve iyi oluş üzerine seçilmiş iki yazı.',
+    'ui_blog_home_sublabel',            'Blog',
+    'ui_blog_home_title',               'Son Yazılar',
+    'ui_blog_home_lead',                'Enerjetik masaj ve iyi oluş üzerine seçilmiş yazılar.',
     'ui_blog_home_view_all',            'Tümünü Gör',
     'ui_blog_home_read_more',           'Devamını oku',
 
@@ -86,7 +87,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_no_image',                 '(No image)',
 
     'ui_blog_meta_title',               'Blog | Energetische Massage',
-    'ui_blog_meta_description',         'Articles on energetic massage, deep relaxation, body awareness, and inner balance. Energetische Massage – Bonn.',
+    'ui_blog_meta_description',         'Articles on energetic massage, deep relaxation, body awareness, and inner balance. Energetische Massage - Bonn.',
     'ui_blog_og_image',                 '',
 
     'ui_blog_loading',                  'Loading...',
@@ -100,9 +101,10 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
 
     'ui_blog_highlights_title',         'Highlights',
     'ui_blog_home_subprefix',           'Energetische Massage',
-    'ui_blog_home_title',               'Featured Articles',
-    'ui_blog_home_lead',                'Two selected posts about energetic massage and well-being.',
-    'ui_blog_home_view_all',            'View all',
+    'ui_blog_home_sublabel',            'Blog',
+    'ui_blog_home_title',               'Latest Posts',
+    'ui_blog_home_lead',                'Selected posts about energetic massage and well-being.',
+    'ui_blog_home_view_all',            'View All',
     'ui_blog_home_read_more',           'Read more',
 
     'ui_blog_tags_title',               'Tags:',
@@ -147,7 +149,7 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
     'ui_blog_no_image',                 '(Kein Bild)',
 
     'ui_blog_meta_title',               'Blog | Energetische Massage',
-    'ui_blog_meta_description',         'Beiträge über energetische Massage, tiefe Entspannung, Körperwahrnehmung und innere Balance. Energetische Massage – Bonn.',
+    'ui_blog_meta_description',         'Beiträge über energetische Massage, tiefe Entspannung, Körperwahrnehmung und innere Balance. Energetische Massage - Bonn.',
     'ui_blog_og_image',                 '',
 
     'ui_blog_loading',                  'Wird geladen...',
@@ -161,9 +163,10 @@ INSERT INTO site_settings (id, `key`, locale, `value`, created_at, updated_at) V
 
     'ui_blog_highlights_title',         'Highlights',
     'ui_blog_home_subprefix',           'Energetische Massage',
-    'ui_blog_home_title',               'Ausgewählte Beiträge',
-    'ui_blog_home_lead',                'Zwei ausgewählte Beiträge über energetische Massage und Wohlbefinden.',
-    'ui_blog_home_view_all',            'Alle anzeigen',
+    'ui_blog_home_sublabel',            'Blog',
+    'ui_blog_home_title',               'Aktuelle Beitraege',
+    'ui_blog_home_lead',                'Ausgewaehlte Beitraege ueber energetische Massage und Wohlbefinden.',
+    'ui_blog_home_view_all',            'Alle Beitraege',
     'ui_blog_home_read_more',           'Weiterlesen',
 
     'ui_blog_tags_title',               'Tags:',

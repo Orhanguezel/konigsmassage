@@ -47,7 +47,7 @@ function ScrollProgress() {
 
   return (
     <button
-      className={`fixed right-5 bottom-5 z-50 grid place-items-center w-11 h-11 rounded-full bg-white border border-sand-200 shadow-lg transition-all duration-200 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 ${
+      className={`fixed right-5 bottom-5 z-50 grid place-items-center w-11 h-11 bg-bg-card border border-border-light shadow-medium transition-all duration-200 hover:shadow-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 ${
         progress > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
       }`}
       onClick={onClick}

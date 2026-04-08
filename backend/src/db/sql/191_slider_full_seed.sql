@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 191_slider_full.sql (Energetische Massage — FINAL)
--- Slider – schema + seed + i18n (TR / EN / DE)
+-- Slider - schema + seed + i18n (TR / EN / DE)
 -- Tüm slaytlar Energetische Massage odaklı
 -- Idempotent seed
 -- =============================================================
@@ -93,12 +93,12 @@ VALUES
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990001-1111-4111-8111-aa9900000001'),
   'de',
-  'Energetische Entspannungsmassage',
+  'Entspannung, die zu Ihnen nach Hause kommt',
   'energetische-massage-willkommen-slider',
-  'Energetische Massage in Bonn — achtsame Berührung, klare Grenzen und ein ruhiger Raum zum Ankommen und Loslassen.',
-  'Energetische Entspannungsmassage in Bonn',
-  'Mehr erfahren',
-  '/services/energetische-massage-bonn'
+  'Professionelle energetische Massage direkt bei Ihnen zu Hause in Bonn — achtsame Berührung, klare Grenzen und tiefe Ruhe.',
+  'Energetische Massage Hausbesuch in Bonn',
+  'Termin Buchen',
+  '/appointment'
 ),
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990002-1111-4111-8111-aa9900000002'),
@@ -143,12 +143,12 @@ VALUES
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990006-1111-4111-8111-aa9900000006'),
   'de',
-  'Ihre individuelle Sitzung',
+  'Wir kommen zu Ihnen',
   'energetische-massage-individuell-slider',
-  'Jede Massage wird individuell auf Sie abgestimmt — ich bitte das Universum, genau das zu geben, was Sie heute brauchen.',
-  'Individuelle energetische Massage-Sitzung',
-  'Termin buchen',
-  '/services/energetische-massage-bonn'
+  'Jede Massage wird individuell auf Sie abgestimmt — direkt bei Ihnen zu Hause, in Ihrer vertrauten Umgebung.',
+  'Energetische Massage Hausbesuch',
+  'Termin Buchen',
+  '/appointment'
 )
 ON DUPLICATE KEY UPDATE
   `name`        = VALUES(`name`),
@@ -167,12 +167,12 @@ VALUES
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990001-1111-4111-8111-aa9900000001'),
   'tr',
-  'Enerjetik Rahatlama Masajı',
+  'Evinize gelen rahatlama',
   'enerjetik-masaj-hosgeldiniz-slider',
-  'Bonn''da enerjetik masaj — bilinçli dokunuş, net sınırlar ve derin gevşemeye alan açan sakin bir ortam.',
-  'Bonn''da enerjetik rahatlama masajı',
-  'Daha fazla bilgi',
-  '/services/enerjetik-rahatlama-masaji'
+  'Bonn''da evinizde profesyonel enerjetik masaj — bilinçli dokunuş, derin huzur ve hissedilir iyilik hali.',
+  'Bonn''da enerjetik masaj ev ziyareti',
+  'Randevu Al',
+  '/appointment'
 ),
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990002-1111-4111-8111-aa9900000002'),
@@ -217,12 +217,12 @@ VALUES
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990006-1111-4111-8111-aa9900000006'),
   'tr',
-  'Size Özel Seans',
+  'Size geliyoruz',
   'enerjetik-masaj-bireysel-slider',
-  'Her masaj size özel şekillenir — evrenden bugün tam olarak neye ihtiyacınız varsa onu vermesini isterim.',
-  'Size özel enerjetik masaj seansı',
-  'Randevu al',
-  '/services/enerjetik-rahatlama-masaji'
+  'Her masaj size özel şekillenir — doğrudan evinizde, kendi ortamınızda.',
+  'Enerjetik masaj ev ziyareti',
+  'Randevu Al',
+  '/appointment'
 )
 ON DUPLICATE KEY UPDATE
   `name`        = VALUES(`name`),
@@ -241,12 +241,12 @@ VALUES
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990001-1111-4111-8111-aa9900000001'),
   'en',
-  'Energetic Relaxation Massage',
+  'Relaxation that comes to your home',
   'energetic-massage-welcome-slider',
-  'Energetic massage in Bonn — mindful touch, clear boundaries, and a calm space to arrive and let go.',
-  'Energetic relaxation massage in Bonn',
-  'Learn more',
-  '/services/energetic-relaxation-massage'
+  'Professional energetic massage at your home in Bonn — mindful touch, deep calm and tangible well-being.',
+  'Energetic massage home visit in Bonn',
+  'Book Appointment',
+  '/appointment'
 ),
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990002-1111-4111-8111-aa9900000002'),
@@ -291,12 +291,12 @@ VALUES
 (
   (SELECT `id` FROM `slider` WHERE `uuid`='aa990006-1111-4111-8111-aa9900000006'),
   'en',
-  'Your Individual Session',
+  'We come to you',
   'energetic-massage-individual-slider',
-  'Each massage is tailored to you — I ask the universe to give exactly what you need today.',
-  'Individual energetic massage session',
-  'Book now',
-  '/services/energetic-relaxation-massage'
+  'Each massage is tailored to you — directly at your home, in your familiar environment.',
+  'Energetic massage home visit',
+  'Book Appointment',
+  '/appointment'
 )
 ON DUPLICATE KEY UPDATE
   `name`        = VALUES(`name`),

@@ -66,8 +66,8 @@ VALUES
   CONCAT(
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
-      '<h2>Bağırsak Sağlığı ve “İkinci Beyin”</h2>',
-      '<p>Bağırsaklarımız çoğu zaman “vücudun ikinci beyni” olarak anılır. Çünkü sindirim dışında; bağışıklık, enerji düzeyi, ruh hâli ve cilt sağlığı gibi birçok alanı etkileyen karmaşık bir denge sistemine sahiptir.</p>',
+      '<h2>Bağırsak Sağlığı ve "İkinci Beyin"</h2>',
+      '<p>Bağırsaklarımız çoğu zaman "vücudun ikinci beyni" olarak anılır. Çünkü sindirim dışında; bağışıklık, enerji düzeyi, ruh hâli ve cilt sağlığı gibi birçok alanı etkileyen karmaşık bir denge sistemine sahiptir.</p>',
 
       '<h3>Asidik beslenme ve yük birikimi</h3>',
       '<p>Zaman içinde bağırsaklarda çeşitli toksinler birikebilir. Şeker, beyaz un, ultra işlenmiş ürünler ve gazlı içecekler gibi asidik beslenme alışkanlıkları bu dengenin bozulmasına katkı sağlayabilir.</p>',
@@ -105,8 +105,8 @@ VALUES
   CONCAT(
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
-      '<h2>Gut Health and the “Second Brain”</h2>',
-      '<p>The gut is often called the “second brain” because it influences far more than digestion. It plays a role in immunity, energy levels, mood, and even skin health.</p>',
+      '<h2>Gut Health and the "Second Brain"</h2>',
+      '<p>The gut is often called the "second brain" because it influences far more than digestion. It plays a role in immunity, energy levels, mood, and even skin health.</p>',
 
       '<h3>Acid-forming habits and burden build-up</h3>',
       '<p>Over time, a modern diet heavy in sugar, white flour, ultra-processed foods, and soft drinks may disrupt gut balance and contribute to unnecessary burden.</p>',
@@ -144,8 +144,8 @@ VALUES
   CONCAT(
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
-      '<h2>Darmgesundheit und das „zweite Gehirn“</h2>',
-      '<p>Der Darm wird häufig als „zweites Gehirn“ bezeichnet, weil er weit mehr als nur die Verdauung beeinflusst. Er spielt eine Rolle für Immunsystem, Energie, Stimmung und sogar die Haut.</p>',
+      '<h2>Darmgesundheit und das „zweite Gehirn"</h2>',
+      '<p>Der Darm wird häufig als „zweites Gehirn" bezeichnet, weil er weit mehr als nur die Verdauung beeinflusst. Er spielt eine Rolle für Immunsystem, Energie, Stimmung und sogar die Haut.</p>',
 
       '<h3>Säurebildende Gewohnheiten und Belastung</h3>',
       '<p>Eine Ernährung mit viel Zucker, Weißmehl, stark verarbeiteten Lebensmitteln und Softdrinks kann das Gleichgewicht im Darm ungünstig beeinflussen.</p>',
@@ -409,13 +409,13 @@ VALUES
   UUID(),
   @PAGE_BLOG_3,
   'en',
-  'Seasonal Nutrition: Staying Healthy in Tune with Nature’s Rhythms',
+  'Seasonal Nutrition: Staying Healthy in Tune with Nature''s Rhythms',
   'seasonal-nutrition-natures-rhythms',
   CONCAT(
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
       '<h2>Why Eating Seasonally Matters</h2>',
-      '<p>Seasonal nutrition means choosing fresher, more nourishing foods that align with the body’s needs throughout the year. It supports health, reduces environmental impact, and is often more budget-friendly.</p>',
+      '<p>Seasonal nutrition means choosing fresher, more nourishing foods that align with the body''s needs throughout the year. It supports health, reduces environmental impact, and is often more budget-friendly.</p>',
 
       '<h3>Practical seasonal ideas</h3>',
       '<ul>',
@@ -433,7 +433,7 @@ VALUES
   'Seasonal eating supports freshness, nutrients, and sustainability. Use simple seasonal choices to stay balanced and healthy year-round.',
   'Seasonal eating and health',
   'Seasonal Nutrition | Energetische Massage',
-  'Benefits and practical tips for seasonal nutrition: local produce, balanced choices, and staying aligned with nature’s yearly rhythm.',
+  'Benefits and practical tips for seasonal nutrition: local produce, balanced choices, and staying aligned with nature''s yearly rhythm.',
   'seasonal nutrition,health,local produce,immunity,vegetables,fruit',
   NOW(3),NOW(3)
 ),
@@ -462,7 +462,7 @@ VALUES
     ), '"', '\"'), '\n', '\\n'), '\r', ''),
     '"}'
   ),
-  'Saisonal essen bedeutet mehr Frische und Nährstoffe – und oft weniger Umweltbelastung. Mit einfachen saisonalen Entscheidungen bleiben Sie das ganze Jahr im Gleichgewicht.',
+  'Saisonal essen bedeutet mehr Frische und Nährstoffe - und oft weniger Umweltbelastung. Mit einfachen saisonalen Entscheidungen bleiben Sie das ganze Jahr im Gleichgewicht.',
   'Saisonale Ernährung und Gesundheit',
   'Saisonale Ernährung | Energetische Massage',
   'Saisonale Ernährung: Vorteile und praktische Tipps für lokale Produkte, ausgewogene Auswahl und ein gesundes Jahr im Rhythmus der Natur.',
@@ -526,7 +526,7 @@ VALUES
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
       '<h2>İçe dönmek için sakin bir alan</h2>',
-      '<p>Enerjetik rahatlama masajında amaç, bedenin ve zihnin “dışarıda” değil, içeride toplanmasına alan açmaktır. Seanslar sessiz, yumuşak ve net sınırlar içinde ilerler.</p>',
+      '<p>Enerjetik rahatlama masajında amaç, bedenin ve zihnin "dışarıda" değil, içeride toplanmasına alan açmaktır. Seanslar sessiz, yumuşak ve net sınırlar içinde ilerler.</p>',
 
       '<h3>Neden gözler kapalı?</h3>',
       '<p>Uygulayıcı olarak çoğu zaman gözlerimi kapalı tutarım. Böylece dokunuşu daha bilinçli, daha yavaş ve daha duyarlı bir şekilde sürdürebilirim. Nefesin ritmini, kaslardaki gerilimi ve bedenin verdiği küçük sinyalleri daha net takip etmek kolaylaşır.</p>',
@@ -611,7 +611,7 @@ VALUES
       '<p>Bei einer energetischen Entspannungsmassage steht das nach innen gerichtete Erleben im Vordergrund. Die Behandlung ist achtsam, respektvoll und klar abgegrenzt.</p>',
 
       '<h3>Warum mit geschlossenen Augen?</h3>',
-      '<p>Als Behandlerin arbeite ich häufig mit geschlossenen Augen. Das unterstützt Präsenz und ein langsames, sensibles Tempo – und hilft, Atmung und feine Spannungssignale bewusster wahrzunehmen.</p>',
+      '<p>Als Behandlerin arbeite ich häufig mit geschlossenen Augen. Das unterstützt Präsenz und ein langsames, sensibles Tempo - und hilft, Atmung und feine Spannungssignale bewusster wahrzunehmen.</p>',
 
       '<h3>Ablauf einer Sitzung</h3>',
       '<ol>',
@@ -635,7 +635,7 @@ VALUES
   'Energetische Massage mit geschlossenen Augen: ruhiger Rhythmus, klare Grenzen und ein geschützter Raum zum Loslassen.',
   'Energetische Massage mit geschlossenen Augen',
   'Energetische Massage mit geschlossenen Augen | Energetische Massage',
-  'Was bei einer energetischen Entspannungsmassage mit geschlossenen Augen erwartet werden kann – Ablauf, Haltung und Rahmen.',
+  'Was bei einer energetischen Entspannungsmassage mit geschlossenen Augen erwartet werden kann - Ablauf, Haltung und Rahmen.',
   'energetische massage,entspannung,koerperwahrnehmung,atmung,bonn,sitzung',
   NOW(3),NOW(3)
 )
@@ -713,7 +713,7 @@ VALUES
       '</ul>',
 
       '<h3>Onay her zaman geçerlidir</h3>',
-      '<p>Seans boyunca “dur” deme hakkın her zaman vardır. Konforun, sınırların ve güvenin her şeyden önce gelir.</p>'
+      '<p>Seans boyunca "dur" deme hakkın her zaman vardır. Konforun, sınırların ve güvenin her şeyden önce gelir.</p>'
     ), '"', '\"'), '\n', '\\n'), '\r', ''),
     '"}'
   ),
@@ -728,7 +728,7 @@ VALUES
   UUID(),
   @PAGE_BLOG_5,
   'en',
-  'Clear Boundaries and a Safe Space: What Energetic Massage Is (and Isn’t)',
+  'Clear Boundaries and a Safe Space: What Energetic Massage Is (and Isn''t)',
   'energetic-massage-boundaries',
   CONCAT(
     '{"html":"',
@@ -743,11 +743,11 @@ VALUES
       '<li>Individual and respectful — shaped to your day</li>',
       '</ul>',
 
-      '<h3>What it isn’t</h3>',
+      '<h3>What it isn''t</h3>',
       '<ul>',
       '<li>Not medical diagnosis or treatment</li>',
       '<li>Not boundary-free or ambiguous</li>',
-      '<li>Not something you need to “perform” for</li>',
+      '<li>Not something you need to "perform" for</li>',
       '</ul>',
 
       '<h3>Consent is always valid</h3>',
@@ -758,7 +758,7 @@ VALUES
   'Energetic massage is grounded in clear boundaries, open communication, and consent. A short guide to the session framework.',
   'Boundaries in energetic massage',
   'Energetic Massage Boundaries | Energetische Massage',
-  'Why clear boundaries and consent matter in energetic massage sessions — what it is, what it isn’t, and how a safe space is created.',
+  'Why clear boundaries and consent matter in energetic massage sessions — what it is, what it isn''t, and how a safe space is created.',
   'energetic massage,boundaries,consent,safe space,bonn,ethics',
   NOW(3),NOW(3)
 ),
@@ -778,7 +778,7 @@ VALUES
       '<ul>',
       '<li>Achtsame Berührung in ruhigem Rhythmus</li>',
       '<li>Raum für Atmung, Körperwahrnehmung und Entspannung</li>',
-      '<li>Individuell und respektvoll – angepasst an Ihren Tag</li>',
+      '<li>Individuell und respektvoll - angepasst an Ihren Tag</li>',
       '</ul>',
 
       '<h3>Was es nicht ist</h3>',
@@ -796,7 +796,7 @@ VALUES
   'Energetische Massage lebt von klaren Grenzen, offener Kommunikation und Einverständnis. Ein kurzer Überblick zum Rahmen der Sitzung.',
   'Grenzen in der energetischen Massage',
   'Energetische Massage: Grenzen & Sicherheit | Energetische Massage',
-  'Warum klare Grenzen und Einverständnis wichtig sind – was energetische Massage ist, was sie nicht ist und wie ein sicherer Raum entsteht.',
+  'Warum klare Grenzen und Einverständnis wichtig sind - was energetische Massage ist, was sie nicht ist und wie ein sicherer Raum entsteht.',
   'energetische massage,grenzen,einverstaendnis,sicherheit,bonn,ethik',
   NOW(3),NOW(3)
 )
@@ -857,18 +857,18 @@ VALUES
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
       '<h2>Rahatlama, bedende başlar</h2>',
-      '<p>Gevşeme çoğu zaman “zihni susturmakla” değil, bedeni güvenli hissettirmekle başlar. Nefesin ritmi, sinir sisteminin tonunu etkileyebilir ve içeride daha yumuşak bir alan açabilir.</p>',
+      '<p>Gevşeme çoğu zaman "zihni susturmakla" değil, bedeni güvenli hissettirmekle başlar. Nefesin ritmi, sinir sisteminin tonunu etkileyebilir ve içeride daha yumuşak bir alan açabilir.</p>',
 
       '<h3>Basit bir pratik</h3>',
       '<ol>',
       '<li>Rahat bir oturuş bul.</li>',
       '<li>Burnundan nefes al, nefesi yavaşça uzat.</li>',
       '<li>Omuzları gevşet ve bedeni yerde hisset.</li>',
-      '<li>2–3 dakika boyunca sadece ritmi takip et.</li>',
+      '<li>2-3 dakika boyunca sadece ritmi takip et.</li>',
       '</ol>',
 
       '<h3>Masaj ile ilişkisi</h3>',
-      '<p>Enerjetik masajda dokunuşun temposu ve nefesin düzeni birlikte çalışır: bedenin “acele” modundan çıkıp dinlenmeye geçmesi kolaylaşır.</p>',
+      '<p>Enerjetik masajda dokunuşun temposu ve nefesin düzeni birlikte çalışır: bedenin "acele" modundan çıkıp dinlenmeye geçmesi kolaylaşır.</p>',
 
       '<p><em>Not:</em> Bu yazı genel bilgilendirme amaçlıdır; tıbbi öneri yerine geçmez.</p>'
     ), '"', '\"'), '\n', '\\n'), '\r', ''),
@@ -891,18 +891,18 @@ VALUES
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
       '<h2>Relaxation begins in the body</h2>',
-      '<p>Often, relaxation starts not by “silencing the mind,” but by helping the body feel safe. Breath rhythm can influence nervous system tone and open a softer inner space.</p>',
+      '<p>Often, relaxation starts not by "silencing the mind," but by helping the body feel safe. Breath rhythm can influence nervous system tone and open a softer inner space.</p>',
 
       '<h3>A simple practice</h3>',
       '<ol>',
       '<li>Find a comfortable seat.</li>',
       '<li>Breathe in through the nose and lengthen the exhale gently.</li>',
       '<li>Soften the shoulders and feel the ground under you.</li>',
-      '<li>Follow the rhythm for 2–3 minutes.</li>',
+      '<li>Follow the rhythm for 2-3 minutes.</li>',
       '</ol>',
 
       '<h3>How it relates to massage</h3>',
-      '<p>In energetic massage, the pace of touch and the rhythm of breathing work together—supporting a shift from “hurry mode” into rest.</p>',
+      '<p>In energetic massage, the pace of touch and the rhythm of breathing work together—supporting a shift from "hurry mode" into rest.</p>',
 
       '<p><em>Note:</em> This article is general information, not medical advice.</p>'
     ), '"', '\"'), '\n', '\\n'), '\r', ''),
@@ -925,18 +925,18 @@ VALUES
     '{"html":"',
     REPLACE(REPLACE(REPLACE(CONCAT(
       '<h2>Entspannung beginnt im Körper</h2>',
-      '<p>Entspannung startet oft nicht damit, den Kopf „still“ zu machen, sondern damit, dem Körper Sicherheit zu geben. Der Atemrhythmus kann den Tonus des Nervensystems beeinflussen.</p>',
+      '<p>Entspannung startet oft nicht damit, den Kopf „still" zu machen, sondern damit, dem Körper Sicherheit zu geben. Der Atemrhythmus kann den Tonus des Nervensystems beeinflussen.</p>',
 
       '<h3>Eine einfache Übung</h3>',
       '<ol>',
       '<li>Finden Sie einen bequemen Sitz.</li>',
       '<li>Durch die Nase einatmen, die Ausatmung sanft verlängern.</li>',
       '<li>Schultern lösen und den Boden unter sich wahrnehmen.</li>',
-      '<li>2–3 Minuten nur den Rhythmus verfolgen.</li>',
+      '<li>2-3 Minuten nur den Rhythmus verfolgen.</li>',
       '</ol>',
 
       '<h3>Bezug zur Massage</h3>',
-      '<p>In der energetischen Massage arbeiten Berührungs-Tempo und Atmung zusammen – das kann den Übergang aus dem „Eile-Modus“ in Ruhe unterstützen.</p>',
+      '<p>In der energetischen Massage arbeiten Berührungs-Tempo und Atmung zusammen - das kann den Übergang aus dem „Eile-Modus" in Ruhe unterstützen.</p>',
 
       '<p><em>Hinweis:</em> Dieser Beitrag ist allgemeine Information und ersetzt keine medizinische Beratung.</p>'
     ), '"', '\"'), '\n', '\\n'), '\r', ''),

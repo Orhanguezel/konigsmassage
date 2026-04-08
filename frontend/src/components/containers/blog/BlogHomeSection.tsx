@@ -1,11 +1,3 @@
-// =============================================================
-// FILE: src/components/containers/blog/BlogHomeSection.tsx
-// Home – Featured Blog (2 posts)
-// - Source: custom_pages (module_key="blog")
-// - Featured: parent `featured=1` filter (curated via seed/admin)
-// - Tailwind v4 Semantic Tokens
-// =============================================================
-
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -13,14 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
-import { safeStr, toCdnSrc,excerpt, formatDate} from '@/integrations/shared';
-
-
+import { safeStr, toCdnSrc, excerpt, formatDate } from '@/integrations/shared';
 import { useLocaleShort, useUiSection } from '@/i18n';
 import { localizePath } from '@/integrations/shared';
-
-const CARD_W = 900;
-const CARD_H = 560;
 
 export default function BlogHomeSection({ locale: explicitLocale }: { locale?: string }) {
   const locale = useLocaleShort(explicitLocale);
@@ -29,138 +16,123 @@ export default function BlogHomeSection({ locale: explicitLocale }: { locale?: s
   useEffect(() => { setMounted(true); }, []);
 
   const { data, isLoading } = useListCustomPagesPublicQuery({
-    module_key: 'blog',
-    locale,
-    is_published: 1,
-    featured: 1,
-    limit: 2,
-    order: 'display_order.asc',
+    module_key: 'blog', locale, is_published: 1, featured: 1, limit: 3, order: 'display_order.asc',
   }, { skip: !mounted });
 
   const posts = useMemo(() => {
     const raw = (data as any)?.items ?? [];
-    const items = Array.isArray(raw) ? raw : [];
-    return items.filter((x) => !!x && !!x.is_published);
+    return (Array.isArray(raw) ? raw : []).filter((x: any) => !!x?.is_published);
   }, [data]);
 
-  const featured = useMemo(() => posts.slice(0, 2), [posts]);
-
+  const featured = useMemo(() => posts.slice(0, 3), [posts]);
   const blogHref = useMemo(() => localizePath(locale, '/blog'), [locale]);
 
-  const title = safeStr(ui('ui_blog_home_title', '')) || safeStr(ui('ui_blog_highlights_title', 'Highlights')) || 'Highlights';
-  const lead = safeStr(ui('ui_blog_home_lead', '')) || '';
-  const viewAll = safeStr(ui('ui_blog_home_view_all', '')) || (locale === 'tr' ? 'Tümünü Gör' : locale === 'de' ? 'Alle anzeigen' : 'View all');
-  const readMore = safeStr(ui('ui_blog_home_read_more', '')) || (locale === 'tr' ? 'Devamını oku' : locale === 'de' ? 'Weiterlesen' : 'Read more');
+  const title = safeStr(ui('ui_blog_home_title', ''))
+    || (locale === 'de' ? 'Aktuelle Beitraege' : locale === 'tr' ? 'Son Yazilar' : 'Latest Posts');
+  const viewAll = safeStr(ui('ui_blog_home_view_all', ''))
+    || (locale === 'de' ? 'Alle Beitraege' : locale === 'tr' ? 'Tumunu Gor' : 'View All');
+  const readMore = safeStr(ui('ui_blog_home_read_more', ''))
+    || (locale === 'de' ? 'Weiterlesen' : locale === 'tr' ? 'Devamini oku' : 'Read more');
 
   if (!isLoading && featured.length === 0) return null;
 
   return (
-    <section className="bg-bg-primary py-20 lg:py-28">
-      <div className="container mx-auto px-4">
-        <div className="flex items-end justify-between gap-6 mb-12">
-          <div className="max-w-2xl">
-            <span className="block text-brand-primary font-bold uppercase tracking-widest text-sm mb-3">
-              {safeStr(ui('ui_blog_home_subprefix', 'Energetische Massage')) || 'Energetische Massage'}
-            </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-text-primary leading-tight">
-              {title}
-            </h2>
-            {lead ? <p className="text-text-secondary text-lg mt-4 leading-relaxed">{lead}</p> : null}
-          </div>
+    <section className="bg-bg-secondary py-28 lg:py-36" style={{ padding: '7rem 4%' }}>
+      {/* Header */}
+      <div className="text-center max-w-[600px] mx-auto mb-16 reveal">
+        <span className="section-label justify-center">
+          {safeStr(ui('ui_blog_home_sublabel', '')) || 'Blog'}
+        </span>
+        <h2 className="font-serif text-[clamp(2rem,4vw,3.4rem)] font-light leading-[1.2] mb-5">
+          {title}
+        </h2>
+      </div>
 
-          <Link
-            href={blogHref}
-            className="hidden sm:inline-flex items-center justify-center px-6 py-3 rounded-xl border border-sand-300 bg-bg-secondary text-text-primary font-bold uppercase tracking-widest text-sm hover:bg-sand-100 transition-colors shadow-soft"
-            aria-label={viewAll}
-          >
-            {viewAll}
-          </Link>
-        </div>
-
+      {/* Cards */}
+      <div className="max-w-[1300px] mx-auto">
         {isLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {[1, 2].map((i) => (
-              <div key={i} className="rounded-2xl border border-sand-200 bg-bg-secondary overflow-hidden">
-                <div className="h-64 bg-sand-100 animate-pulse" aria-hidden />
-                <div className="p-8 space-y-4">
-                  <div className="h-6 bg-sand-100 rounded w-3/4 animate-pulse" aria-hidden />
-                  <div className="h-4 bg-sand-100 rounded w-full animate-pulse" aria-hidden />
-                  <div className="h-4 bg-sand-100 rounded w-5/6 animate-pulse" aria-hidden />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-bg-card border border-border-light overflow-hidden">
+                <div className="h-56 bg-bg-card-hover animate-pulse" />
+                <div className="p-7 space-y-4">
+                  <div className="h-5 bg-bg-card-hover rounded w-3/4 animate-pulse" />
+                  <div className="h-4 bg-bg-card-hover rounded w-full animate-pulse" />
+                  <div className="h-4 bg-bg-card-hover rounded w-5/6 animate-pulse" />
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featured.map((post: any) => {
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featured.map((post: any, i: number) => {
               const slug = safeStr(post.slug);
               const href = slug ? localizePath(locale, `/blog/${encodeURIComponent(slug)}`) : blogHref;
-
-              const titleText = safeStr(post.title) || safeStr(ui('ui_blog_untitled', 'Untitled')) || 'Untitled';
-              const summaryText = excerpt(safeStr(post.summary) || safeStr(post.content_html) || '', 170);
+              const titleText = safeStr(post.title) || 'Untitled';
+              const summaryText = excerpt(safeStr(post.summary) || safeStr(post.content_html) || '', 120);
               const dateStr = formatDate(locale, post.updated_at || post.created_at);
-
               const imgRaw = safeStr(post.featured_image);
-              const imgSrc = imgRaw ? toCdnSrc(imgRaw, CARD_W, CARD_H, 'fill') || imgRaw : '';
-              const imgAlt = safeStr(post.featured_image_alt) || titleText || 'blog';
+              const imgSrc = imgRaw ? toCdnSrc(imgRaw, 600, 400, 'fill') || imgRaw : '';
+              const imgAlt = safeStr(post.featured_image_alt) || titleText;
 
               return (
                 <article
                   key={safeStr(post.id) || href}
-                  className="group rounded-2xl border border-sand-200 bg-bg-secondary overflow-hidden hover:shadow-medium transition-shadow"
+                  className={`group bg-bg-card border border-border-light overflow-hidden transition-all duration-500 hover:border-border-hover reveal reveal-delay-${i + 1}`}
                 >
-                  <div className="relative h-72 bg-sand-100 overflow-hidden">
+                  {/* Image */}
+                  <div className="relative h-56 bg-bg-card-hover overflow-hidden">
                     {imgSrc ? (
                       <Image
                         src={imgSrc}
                         alt={imgAlt}
                         fill
-                        sizes="(max-width: 1024px) 100vw, 50vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                         loading="lazy"
                         unoptimized
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-text-muted">
-                        <span className="text-sm">{safeStr(ui('ui_blog_no_image', '')) || '(No image)'}</span>
+                      <div className="absolute inset-0 flex items-center justify-center text-text-muted text-sm">
+                        (No image)
                       </div>
                     )}
-                    <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-bg-dark/35 via-transparent to-transparent" aria-hidden />
+                    {/* Top gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
                   </div>
 
-                  <div className="p-8">
-                    {dateStr ? (
-                      <p className="text-sm text-text-muted font-semibold uppercase tracking-widest mb-3">
+                  {/* Content */}
+                  <div className="p-7">
+                    {dateStr && (
+                      <p className="text-[0.7rem] tracking-[0.2em] uppercase text-text-muted mb-3">
                         {dateStr}
                       </p>
-                    ) : null}
+                    )}
 
-                    <h3 className="text-2xl md:text-3xl font-serif font-bold text-text-primary mb-4 leading-tight">
-                      <Link href={href} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 rounded-sm">
+                    <h3 className="font-serif text-xl font-light leading-[1.3] mb-3 text-text-primary group-hover:text-brand-primary transition-colors">
+                      <Link href={href} className="no-underline">
                         {titleText}
                       </Link>
                     </h3>
 
-                    {summaryText ? (
-                      <p className="text-text-secondary leading-relaxed mb-6">{summaryText}</p>
-                    ) : null}
+                    {summaryText && (
+                      <p className="text-[0.9rem] text-text-secondary font-light leading-[1.7] mb-5">
+                        {summaryText}
+                      </p>
+                    )}
 
-                    <div className="pt-5 border-t border-sand-100 flex items-center justify-between text-brand-primary font-bold uppercase tracking-widest text-sm">
-                      <span>{readMore}</span>
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="transition-transform group-hover:translate-x-1"
-                        aria-hidden="true"
+                    <div className="pt-4 border-t border-border-light">
+                      <Link
+                        href={href}
+                        className="text-[0.78rem] tracking-[0.15em] uppercase text-brand-primary hover:text-brand-hover transition-colors inline-flex items-center gap-2 no-underline"
                       >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
+                        {readMore}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                          className="transition-transform group-hover:translate-x-1">
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </Link>
                     </div>
                   </div>
                 </article>
@@ -169,12 +141,9 @@ export default function BlogHomeSection({ locale: explicitLocale }: { locale?: s
           </div>
         )}
 
-        <div className="sm:hidden mt-10">
-          <Link
-            href={blogHref}
-            className="inline-flex w-full items-center justify-center px-6 py-3 rounded-xl border border-sand-300 bg-bg-secondary text-text-primary font-bold uppercase tracking-widest text-sm hover:bg-sand-100 transition-colors shadow-soft"
-            aria-label={viewAll}
-          >
+        {/* View all button */}
+        <div className="text-center mt-12">
+          <Link href={blogHref} className="btn-outline-premium">
             {viewAll}
           </Link>
         </div>

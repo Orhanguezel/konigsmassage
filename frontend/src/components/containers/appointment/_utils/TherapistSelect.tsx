@@ -76,7 +76,7 @@ export const TherapistSelect: React.FC<TherapistSelectProps> = ({
       <div className="relative">
         <select
           id={selectId}
-          className="w-full px-4 py-3 bg-sand-50 border border-sand-200 text-brand-dark rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 bg-bg-card border border-border-light text-text-primary rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           value={rid}
           onChange={(e) => onChange(e.target.value)}
           disabled={!!disabled || isSingle || loading || fetching}

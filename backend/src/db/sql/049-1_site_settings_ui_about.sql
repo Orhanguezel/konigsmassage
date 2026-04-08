@@ -1,5 +1,5 @@
 -- =============================================================
--- FILE: 049-1_site_settings_ui_about.sql (Energetische Massage – About UI) [FINAL / CLEAN]
+-- FILE: 049-1_site_settings_ui_about.sql (Energetische Massage - About UI) [FINAL / CLEAN]
 -- site_settings.key = 'ui_about'
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
@@ -34,14 +34,14 @@ VALUES
       'ui_about_subprefix',         'Energetische Massage',
       'ui_about_sublabel',          'Hakkımda',
       'ui_about_page_lead',
-        'Bonn’da enerjetik masaj: bilinçli dokunuş, net sınırlar ve sakin bir atmosferde kişiye özel seanslar.',
+        'Bonn''da enerjetik masaj: bilinçli dokunuş, net sınırlar ve sakin bir atmosferde kişiye özel seanslar.',
 
       -- SEO (pages/about.tsx)
       'ui_about_meta_title',        'Hakkımda | Energetische Massage',
       'ui_about_meta_description',
-        'Anastasia König ve Energetische Massage: Bonn’da enerjetik masaj seansları. Achtsam dokunuş, net sınırlar ve derin gevşemeye alan.',
+        'Anastasia König ve Energetische Massage: Bonn''da enerjetik masaj seansları. Achtsam dokunuş, net sınırlar ve derin gevşemeye alan.',
       'ui_about_page_description',
-        'Energetische Massage hakkında: yaklaşım, güvenli alan ve Bonn’da enerjetik masaj seansları.',
+        'Energetische Massage hakkında: yaklaşım, güvenli alan ve Bonn''da enerjetik masaj seansları.',
       'ui_about_og_image',          '',
 
       -- AboutSection CTA
@@ -116,7 +116,7 @@ VALUES
       'ui_about_subprefix',         'Energetische Massage',
       'ui_about_sublabel',          'Über mich',
       'ui_about_page_lead',
-        'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und ruhige Atmosphäre.',
+        'Energetische Massage in Bonn - achtsame Berührung, klare Grenzen und ruhige Atmosphäre.',
 
       -- SEO
       'ui_about_meta_title',        'Über mich | Energetische Massage',

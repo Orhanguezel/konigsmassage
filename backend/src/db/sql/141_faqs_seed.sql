@@ -1,6 +1,6 @@
 -- =============================================================
 -- 141_faqs_seed.sql (FINAL)
--- Energetische Massage – Multilingual FAQs seed (faqs + faqs_i18n)
+-- Energetische Massage - Multilingual FAQs seed (faqs + faqs_i18n)
 -- ✅ 140_faqs.sql şema mevcut olmalı (DROP/CREATE yok)
 -- ✅ TR + EN + DE
 -- ✅ NO category fields
@@ -26,14 +26,16 @@ VALUES
 ('55555555-5555-5555-5555-555555555555', 1, 5, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000'),
 ('66666666-6666-6666-6666-666666666666', 1, 6, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000'),
 ('77777777-7777-7777-7777-777777777777', 1, 7, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000'),
-('88888888-8888-8888-8888-888888888888', 1, 8, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000')
+('88888888-8888-8888-8888-888888888888', 1, 8, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000'),
+('99999999-9999-9999-9999-999999999999', 1, 9, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 1, 10, '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000')
 ON DUPLICATE KEY UPDATE
   `is_active`     = VALUES(`is_active`),
   `display_order` = VALUES(`display_order`),
   `updated_at`    = VALUES(`updated_at`);
 
 -- =============================================================
--- SEED: I18N (faqs_i18n) – TR + EN + DE
+-- SEED: I18N (faqs_i18n) - TR + EN + DE
 -- Unique: (faq_id, locale)
 -- id: CHAR(36) stabil UUID (1..24)
 -- =============================================================
@@ -46,13 +48,13 @@ VALUES
 -- =============================================================
 ('00000000-0000-0000-0000-000000000001','11111111-1111-1111-1111-111111111111','tr',
 'Seans nerede gerçekleşiyor?',
-'Seanslar Bonn’da, Anastasia’nın sakin ve kişiye özel hazırlanan alanında gerçekleşir. Evde masaj hizmeti sunmuyoruz. Randevu sonrası detaylar ve konum bilgisi paylaşılır. Seans öncesinde kısa bir görüşme yapılır; ardından masajın akışı, o günkü ihtiyaca göre nazik ve net sınırlar içinde şekillenir.',
+'Seanslar Bonn''da, Anastasia''nın sakin ve kişiye özel hazırlanan alanında gerçekleşir. Evde masaj hizmeti sunmuyoruz. Randevu sonrası detaylar ve konum bilgisi paylaşılır. Seans öncesinde kısa bir görüşme yapılır; ardından masajın akışı, o günkü ihtiyaca göre nazik ve net sınırlar içinde şekillenir.',
 'seans-nerede-gerceklesiyor',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
 ('00000000-0000-0000-0000-000000000002','11111111-1111-1111-1111-111111111111','en',
 'Where does the session take place?',
-'Sessions take place in Bonn at Anastasia’s calm, private space. We do not offer at home massage. After booking, you receive the details and location. We begin with a short conversation and then the session unfolds gently, within clear boundaries, shaped around what you need that day.',
+'Sessions take place in Bonn at Anastasia''s calm, private space. We do not offer at home massage. After booking, you receive the details and location. We begin with a short conversation and then the session unfolds gently, within clear boundaries, shaped around what you need that day.',
 'where-does-the-session-take-place',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
 
@@ -207,6 +209,48 @@ VALUES
 'Wie kann ich einen Termin absagen oder verschieben?',
 'Wenn sich Ihre Planung ändert, geben Sie bitte so früh wie möglich Bescheid. Wenn möglich, bitte mindestens 24 Stunden vorher. Änderungen am selben Tag sind abhängig von der Verfügbarkeit. Für einen reibungslosen Ablauf empfiehlt es sich, die Storno und Umbuchungsregeln auf der Leistungsseite klar zu kommunizieren.',
 'termin-absagen-oder-verschieben',
+'2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
+
+-- =============================================================
+-- 9) Enerjetik masaj nedir?
+-- =============================================================
+('00000000-0000-0000-0000-000000000025','99999999-9999-9999-9999-999999999999','tr',
+'Enerjetik masaj nedir ve klasik masajdan farkı ne?',
+'Enerjetik masaj, klasik masaj tekniklerini enerji bazlı beden çalışmasıyla birleştirir. Sadece kasları gevşetmekle kalmaz, aynı zamanda enerji akışındaki blokajları çözmeyi, vücudun kendini iyileştirme mekanizmasını desteklemeyi ve derin bir rahatlama durumu yaratmayı hedefler. Seans sırasında şükran, niyet ve bilinçli dokunuş bir bütün olarak uygulanır.',
+'enerjetik-masaj-nedir',
+'2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
+
+('00000000-0000-0000-0000-000000000026','99999999-9999-9999-9999-999999999999','en',
+'What is energetic massage and how is it different from a regular massage?',
+'Energetic massage combines classical massage techniques with energy-based bodywork. It goes beyond releasing muscle tension — it aims to dissolve blockages in the energy flow, support the body''s self-healing mechanisms, and create a state of deep relaxation. During the session, gratitude, intention, and mindful touch are applied as a whole.',
+'what-is-energetic-massage',
+'2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
+
+('00000000-0000-0000-0000-000000000027','99999999-9999-9999-9999-999999999999','de',
+'Was ist energetische Massage und worin unterscheidet sie sich von einer klassischen Massage?',
+'Energetische Massage verbindet klassische Massagetechniken mit energetischer Körperarbeit. Sie geht über die reine Muskellösung hinaus und zielt darauf ab, Blockaden im Energiefluss aufzulösen, die Selbstheilungskräfte des Körpers zu unterstützen und einen Zustand tiefer Entspannung zu schaffen. Während der Sitzung werden Dankbarkeit, Intention und achtsame Berührung als Ganzes eingesetzt.',
+'was-ist-energetische-massage',
+'2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
+
+-- =============================================================
+-- 10) Hediye çeki / Gutschein
+-- =============================================================
+('00000000-0000-0000-0000-000000000028','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','tr',
+'Masaj seansı hediye edebilir miyim?',
+'Evet! Web sitemiz üzerinden hediye çeki (Gutschein) satın alabilirsiniz. Hediye çeki e-posta ile gönderilir ve istediğiniz seans süresi için kullanılabilir. Sevdiklerinize rahatlama ve kendine zaman ayırma hediyesi sunmanın harika bir yoludur.',
+'masaj-hediye-edebilir-miyim',
+'2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
+
+('00000000-0000-0000-0000-000000000029','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','en',
+'Can I gift a massage session?',
+'Yes! You can purchase a gift voucher (Gutschein) through our website. The voucher is delivered by email and can be used for your preferred session duration. It is a wonderful way to give your loved ones the gift of relaxation and time for themselves.',
+'can-i-gift-a-massage-session',
+'2026-01-01 00:00:00.000','2026-01-01 00:00:00.000'),
+
+('00000000-0000-0000-0000-000000000030','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','de',
+'Kann ich eine Massage-Sitzung verschenken?',
+'Ja! Über unsere Website können Sie einen Gutschein erwerben. Der Gutschein wird per E-Mail zugestellt und kann für die gewünschte Sitzungsdauer eingelöst werden. Eine wunderbare Möglichkeit, Ihren Liebsten Entspannung und Zeit für sich selbst zu schenken.',
+'massage-sitzung-verschenken',
 '2026-01-01 00:00:00.000','2026-01-01 00:00:00.000')
 
 ON DUPLICATE KEY UPDATE

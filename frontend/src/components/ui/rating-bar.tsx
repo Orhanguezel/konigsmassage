@@ -43,11 +43,11 @@ export function RatingBar({
       <div className="flex-1">
         <Progress
           value={percentage}
-          className={cn(getSizeClass(size), 'bg-gray-200 dark:bg-gray-700')}
+          className={cn(getSizeClass(size), 'bg-bg-card-hover dark:bg-gray-700')}
         />
         <div
           className={cn(
-            'absolute top-0 left-0 h-full rounded-full transition-all duration-500',
+            'absolute top-0 left-0 h-full transition-all duration-500',
             getSizeClass(size),
             getColorClass(score)
           )}

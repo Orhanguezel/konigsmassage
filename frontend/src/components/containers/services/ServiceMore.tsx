@@ -53,13 +53,13 @@ const ServiceMore: React.FC<ServiceMoreProps> = ({ currentSlug }) => {
   if (!items.length && !isLoading) return null;
 
   return (
-    <section className="bg-sand-50 py-20 lg:py-32 relative overflow-hidden">
+    <section className="bg-bg-card py-20 lg:py-32 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16 max-w-2xl mx-auto">
-          <span className="inline-block py-1 px-3 rounded-full bg-white border border-sand-200 text-brand-dark text-xs font-bold uppercase tracking-widest mb-4">
+          <span className="inline-block py-1 px-3 bg-bg-card border border-border-light text-text-primary text-xs font-normal uppercase tracking-[0.2em] mb-4">
             {ui('ui_services_more_subtitle', 'More Treatments')}
           </span>
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-text-primary leading-tight">
+          <h2 className="text-3xl md:text-4xl font-serif font-light text-text-primary leading-tight">
             {ui('ui_services_more_title', 'You may also like')}
           </h2>
         </div>
@@ -89,10 +89,10 @@ const ServiceMore: React.FC<ServiceMoreProps> = ({ currentSlug }) => {
 
             return (
               <div
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-sand-200 hover:border-sand-300 flex flex-col transform hover:-translate-y-1"
+                className="group bg-bg-card overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 border border-border-light hover:border-border-medium flex flex-col transform "
                 key={id}
               >
-                <div className="relative h-56 overflow-hidden bg-sand-100">
+                <div className="relative h-56 overflow-hidden bg-bg-card-hover">
                   <Image
                     src={src}
                     alt={title}
@@ -105,7 +105,7 @@ const ServiceMore: React.FC<ServiceMoreProps> = ({ currentSlug }) => {
                 </div>
 
                 <div className="p-8 flex flex-col flex-1">
-                  <h3 className="text-xl font-serif font-bold mb-3 text-brand-dark group-hover:text-brand-primary transition-colors">
+                  <h3 className="text-xl font-serif font-light mb-3 text-text-primary group-hover:text-brand-primary transition-colors">
                     <Link href={href} className="focus:outline-none">
                       <span className="absolute inset-0 z-0" />
                       {title}
@@ -116,12 +116,12 @@ const ServiceMore: React.FC<ServiceMoreProps> = ({ currentSlug }) => {
                   </p>
                 </div>
 
-                <div className="px-8 pb-8 mt-auto flex justify-between items-center border-t border-sand-100 pt-6">
-                  <span className="text-sm font-bold uppercase tracking-wider text-brand-dark group-hover:text-brand-primary transition-colors">
+                <div className="px-8 pb-8 mt-auto flex justify-between items-center border-t border-border-light pt-6">
+                  <span className="text-sm font-normal uppercase tracking-[0.15em]r text-text-primary group-hover:text-brand-primary transition-colors">
                     {ui('ui_services_btn_detail', 'Details')}
                   </span>
                   <IconArrowRight
-                    className="text-brand-dark group-hover:text-brand-primary group-hover:translate-x-1 transition-transform"
+                    className="text-text-primary group-hover:text-brand-primary group-hover:translate-x-1 transition-transform"
                     size={18}
                   />
                 </div>
@@ -133,13 +133,13 @@ const ServiceMore: React.FC<ServiceMoreProps> = ({ currentSlug }) => {
             ? Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl border border-sand-200 overflow-hidden h-96"
+                  className="bg-bg-card border border-border-light overflow-hidden h-96"
                 >
-                  <div className="h-56 bg-sand-100 animate-pulse" />
+                  <div className="h-56 bg-bg-card-hover animate-pulse" />
                   <div className="p-8 space-y-4">
-                    <div className="h-6 bg-sand-100 rounded w-3/4 animate-pulse" />
-                    <div className="h-4 bg-sand-100 rounded w-full animate-pulse" />
-                    <div className="h-4 bg-sand-100 rounded w-5/6 animate-pulse" />
+                    <div className="h-6 bg-bg-card-hover rounded w-3/4 animate-pulse" />
+                    <div className="h-4 bg-bg-card-hover rounded w-full animate-pulse" />
+                    <div className="h-4 bg-bg-card-hover rounded w-5/6 animate-pulse" />
                   </div>
                 </div>
               ))

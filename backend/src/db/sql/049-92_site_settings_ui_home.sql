@@ -17,9 +17,9 @@ VALUES
   'ui_home',
   'tr',
   CAST(JSON_OBJECT(
-    'ui_home_h1', 'Energetische Massage – Bonn’da Enerjetik Masaj',
-    'ui_home_meta_title', 'Energetische Massage – Bonn’da Enerjetik Masaj',
-    'ui_home_meta_description', 'Bonn’da enerjetik masaj seansları ve blog yazıları: rahatlama, beden farkındalığı, nefes ve günlük hayatta denge.'
+    'ui_home_h1', 'Energetische Massage - Bonn''da Evinize Gelen Masaj',
+    'ui_home_meta_title', 'Energetische Massage - Bonn''da Evinize Gelen Enerjetik Masaj',
+    'ui_home_meta_description', 'Bonn''da evinizde profesyonel enerjetik masaj: bilinçli dokunuş, derin gevşeme ve beden farkındalığı. Ev ziyareti ile. Hemen randevu alın!'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -29,9 +29,9 @@ VALUES
   'ui_home',
   'en',
   CAST(JSON_OBJECT(
-    'ui_home_h1', 'Energetische Massage – Energetic Massage in Bonn',
-    'ui_home_meta_title', 'Energetische Massage – Energetic Massage in Bonn',
-    'ui_home_meta_description', 'Energetic massage sessions in Bonn and blog posts on relaxation, body awareness, breath, and everyday balance.'
+    'ui_home_h1', 'Energetische Massage - Home Visit Massage in Bonn',
+    'ui_home_meta_title', 'Energetische Massage - Energetic Massage at Your Home in Bonn',
+    'ui_home_meta_description', 'Professional energetic massage at your home in Bonn: mindful touch, deep relaxation and body awareness. Home visit service. Book your session now!'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)
@@ -41,9 +41,9 @@ VALUES
   'ui_home',
   'de',
   CAST(JSON_OBJECT(
-    'ui_home_h1', 'Energetische Massage – Energetische Massage in Bonn',
-    'ui_home_meta_title', 'Energetische Massage – Energetische Massage in Bonn',
-    'ui_home_meta_description', 'Energetische Massage in Bonn und Blogbeiträge zu Entspannung, Körperwahrnehmung, Atmung und Balance im Alltag.'
+    'ui_home_h1', 'Energetische Massage - Hausbesuch in Bonn',
+    'ui_home_meta_title', 'Energetische Massage Bonn - Premium Massage bei Ihnen zu Hause',
+    'ui_home_meta_description', 'Energetische Massage direkt bei Ihnen zu Hause in Bonn — achtsame Berührung, tiefe Entspannung und Wohlbefinden. Hausbesuch-Service. Jetzt Termin buchen!'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3),
   NOW(3)

@@ -1,8 +1,8 @@
 -- =============================================================
 -- FILE: 051.6_custom_pages_terms.seed.sql (FINAL — Energetische Massage, rerunnable)
--- Energetische Massage – Custom Page: Terms / Nutzungsbedingungen (TR/EN/DE)
+-- Energetische Massage - Custom Page: Terms / Nutzungsbedingungen (TR/EN/DE)
 -- ✅ PARENT: custom_pages.module_key = 'terms'
--- ✅ category/subcategory YOK (schema’da yok)
+-- ✅ category/subcategory YOK (schema''da yok)
 -- ✅ images/storage_image_ids LONGTEXT JSON-string (schema uyumlu)
 -- ✅ i18n: module_key YOK
 -- ✅ deterministic i18n ids (rerunnable)
@@ -134,7 +134,7 @@ VALUES
           '<div class="bg-white border border-slate-200 rounded-2xl p-6">',
             '<h2 class="text-xl font-semibold text-slate-900 mb-3">2. İçerik ve Fikri Mülkiyet</h2>',
             '<p class="text-slate-700 mb-3">',
-              'Sitedeki metin, görsel, logo ve diğer tüm materyaller Energetische Massage’a veya hak sahiplerine aittir.',
+              'Sitedeki metin, görsel, logo ve diğer tüm materyaller Energetische Massage''a veya hak sahiplerine aittir.',
             '</p>',
             '<ul class="list-disc pl-6 text-slate-700 space-y-2">',
               '<li>İzinsiz kopyalama/çoğaltma/yayma yapılamaz</li>',
@@ -255,10 +255,10 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">5. Disclaimer</h2>',
           '<p class="text-slate-700 mb-3">',
-            'Content is provided “as is” for general information. Energetische Massage makes reasonable efforts to keep information accurate and up to date, but provides no warranty.',
+            'Content is provided "as is" for general information. Energetische Massage makes reasonable efforts to keep information accurate and up to date, but provides no warranty.',
           '</p>',
           '<p class="text-slate-700">',
-            'Any reliance on website content is at the user’s own risk.',
+            'Any reliance on website content is at the user''s own risk.',
           '</p>',
         '</div>',
 
@@ -344,7 +344,7 @@ VALUES
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">5. Haftungsausschluss</h2>',
           '<p class="text-slate-700 mb-3">',
-            'Inhalte werden „wie gesehen“ bereitgestellt. Energetische Massage bemüht sich um Aktualität, übernimmt jedoch keine Gewähr.',
+            'Inhalte werden „wie gesehen" bereitgestellt. Energetische Massage bemüht sich um Aktualität, übernimmt jedoch keine Gewähr.',
           '</p>',
           '<p class="text-slate-700">Die Nutzung der Informationen erfolgt auf eigenes Risiko.</p>',
         '</div>',

@@ -25,7 +25,7 @@ export const customPagesPublicApi = baseApi.injectEndpoints({
       CustomPageListPublicQueryParams | void
     >({
       query: (params) => ({
-        url: '/custom_pages',
+        url: '/custom-pages',
         method: 'GET',
         params: cleanParams(params as any),
       }),
@@ -51,7 +51,7 @@ export const customPagesPublicApi = baseApi.injectEndpoints({
       { id: string; locale?: string; default_locale?: string }
     >({
       query: ({ id, locale, default_locale }) => ({
-        url: `/custom_pages/${encodeURIComponent(id)}`,
+        url: `/custom-pages/${encodeURIComponent(id)}`,
         method: 'GET',
         params: cleanParams({ locale, default_locale }),
       }),
@@ -61,7 +61,7 @@ export const customPagesPublicApi = baseApi.injectEndpoints({
 
     getCustomPageBySlugPublic: build.query<CustomPageDto, CustomPageBySlugArgs>({
       query: ({ slug, locale, default_locale }) => ({
-        url: `/custom_pages/by-slug/${encodeURIComponent(slug)}`,
+        url: `/custom-pages/by-slug/${encodeURIComponent(slug)}`,
         method: 'GET',
         params: cleanParams({ locale, default_locale }),
       }),

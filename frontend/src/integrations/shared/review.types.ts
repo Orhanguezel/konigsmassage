@@ -30,7 +30,9 @@ export type ReviewDto = {
   updated_at: string;
 
   // i18n alanları (coalesced)
+  title: string | null;
   comment: string | null;
+  admin_reply: string | null;
   locale_resolved: string | null;
 
   /**

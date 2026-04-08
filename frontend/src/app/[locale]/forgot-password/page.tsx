@@ -45,13 +45,13 @@ export default function ForgotPasswordPage() {
     return (
       <section className="bg-bg-primary py-20 min-h-screen flex items-center justify-center">
         <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto bg-white p-8 md:p-12 rounded-lg shadow-soft text-center">
+          <div className="max-w-md mx-auto bg-bg-card p-8 md:p-12 rounded-lg shadow-soft text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-serif font-bold text-text-primary mb-3">
+            <h2 className="text-2xl font-serif font-light text-text-primary mb-3">
               {locale === 'de'
                 ? 'E-Mail gesendet'
                 : locale === 'tr'
@@ -81,13 +81,13 @@ export default function ForgotPasswordPage() {
     <section className="bg-bg-primary py-20 min-h-screen flex items-center justify-center relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-sand-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-bg-card-hover/20 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-md mx-auto bg-white p-8 md:p-12 rounded-lg shadow-soft">
+        <div className="max-w-md mx-auto bg-bg-card p-8 md:p-12 rounded-lg shadow-soft">
           <div className="text-center mb-8">
-            <h3 className="text-3xl font-serif font-bold text-text-primary mb-3">
+            <h3 className="text-3xl font-serif font-light text-text-primary mb-3">
               {locale === 'de'
                 ? 'Passwort vergessen'
                 : locale === 'tr'
@@ -120,7 +120,7 @@ export default function ForgotPasswordPage() {
               <input
                 id="reset-email"
                 type="email"
-                className="w-full px-4 py-3 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-sand-50 placeholder:text-text-muted text-text-primary"
+                className="w-full px-4 py-3 border border-border-light rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all bg-bg-card placeholder:text-text-muted text-text-primary"
                 placeholder={ui('login_email_placeholder', 'example@konigsmassage.com')}
                 autoComplete="email"
                 value={email}
@@ -132,7 +132,7 @@ export default function ForgotPasswordPage() {
 
             <button
               type="submit"
-              className="w-full bg-brand-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-brand-hover transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center uppercase tracking-widest text-sm"
+              className="w-full bg-brand-primary text-white font-bold py-3.5 px-4 rounded-sm hover:bg-brand-hover transition-all duration-300 shadow-soft hover:shadow-medium disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center uppercase tracking-widest text-sm"
               disabled={isLoading}
             >
               {isLoading

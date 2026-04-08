@@ -1,6 +1,6 @@
 -- =============================================================
 -- 049-93_site_settings_ui_errors.sql (UI Errors)
--- Energetische Massage – UI Errors (site_settings.ui_errors)
+-- Energetische Massage - UI Errors (site_settings.ui_errors)
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
 -- =============================================================

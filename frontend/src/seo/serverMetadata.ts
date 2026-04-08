@@ -99,9 +99,9 @@ async function resolveActiveLocales(provided?: string[]) {
  * NEW STANDARD: seo/site_seo için fallback kuralı
  * Öncelik:
  *  1) requested locale
- *  2) global '*'   (kritik: başka locale’a düşmeden önce!)
+ *  2) global '*'   (kritik: başka locale'a düşmeden önce!)
  *  3) default locale
- *  4) (opsiyonel) diğer active locale’ler
+ *  4) (opsiyonel) diğer active locale'ler
  */
 function buildSeoLocaleTryOrder(args: {
   requestedLocale: string;
@@ -184,10 +184,10 @@ export async function buildMetadataFromSeo(
   const description =
     rawDescription ||
     (locale === 'de'
-      ? 'Energetische Massage in Bonn – achtsame Berührung, klare Grenzen und tiefe Entspannung.'
+      ? "Energetische Massage in Bonn von Anastasia K\u00f6nig \u2014 achtsame Ber\u00fchrung, tiefe Entspannung und K\u00f6rperwahrnehmung. Termine nach Vereinbarung. Jetzt buchen!"
       : locale === 'tr'
-        ? 'Bonn’da enerjetik masaj seansları: bilinçli dokunuş, net sınırlar ve derin gevşeme.'
-        : 'Energetic massage sessions in Bonn with mindful touch, clear boundaries, and deep relaxation.');
+        ? "Bonn'da Anastasia K\u00f6nig ile enerjetik masaj seanslar\u0131: bilin\u00e7li dokunu\u015f, derin gev\u015feme ve beden fark\u0131ndal\u0131\u011f\u0131. Randevu ile. Hemen rezervasyon yap\u0131n!"
+        : "Energetic massage in Bonn by Anastasia K\u00f6nig: mindful touch, deep relaxation and body awareness. By appointment only. Book your session now!");
 
   // Open Graph
   const og = asObj(seo.open_graph) || {};

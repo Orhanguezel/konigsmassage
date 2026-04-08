@@ -47,11 +47,11 @@ export function NotFoundContent({ locale, homePath }: Props) {
     <div className="relative flex flex-col items-center justify-center min-h-[75vh] px-4 text-center overflow-hidden">
       <div className="max-w-2xl w-full z-10 animate-fade-in">
         <div className="relative mb-6 overflow-hidden max-w-full">
-          <h1 className="text-8xl sm:text-9xl md:text-[14rem] font-serif font-bold text-rose-100/40 select-none leading-none animate-slide-up">
+          <h1 className="text-8xl sm:text-9xl md:text-[14rem] font-serif font-light text-rose-100/40 select-none leading-none animate-slide-up">
             404
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-text-primary px-4 animate-fade-in-delay-300">
+            <h2 className="text-4xl md:text-6xl font-serif font-light text-text-primary px-4 animate-fade-in-delay-300">
               {ui('ui_404_title', 'Page Not Found')}
             </h2>
           </div>
@@ -71,7 +71,7 @@ export function NotFoundContent({ locale, homePath }: Props) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-delay-600">
           <button
             onClick={() => router.push(homePath)}
-            className="flex items-center gap-2 px-10 py-4 bg-brand-primary text-white rounded-full font-bold shadow-medium hover:bg-brand-hover transition-all transform hover:-translate-y-1 active:scale-95"
+            className="flex items-center gap-2 px-10 py-4 bg-brand-primary text-white rounded-full font-bold shadow-medium hover:bg-brand-hover transition-all transform  active:scale-95"
           >
             <Home className="w-5 h-5" />
             {ui('ui_404_back_home', 'Back to Homepage')}
@@ -79,7 +79,7 @@ export function NotFoundContent({ locale, homePath }: Props) {
 
           <button
             onClick={() => window.history.back()}
-            className="flex items-center gap-2 px-10 py-4 border-2 border-border-medium text-text-primary rounded-full font-bold hover:border-brand-primary hover:bg-white transition-all whitespace-nowrap active:scale-95"
+            className="flex items-center gap-2 px-10 py-4 border-2 border-border-medium text-text-primary rounded-full font-bold hover:border-brand-primary hover:bg-bg-card transition-all whitespace-nowrap active:scale-95"
           >
             <ArrowLeft className="w-5 h-5" />
             {locale === 'tr' ? 'Geri Dön' : (locale === 'de' ? 'Zurück' : 'Go Back')}

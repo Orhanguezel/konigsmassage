@@ -358,7 +358,7 @@ export const AppointmentPageContent: React.FC = () => {
           <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <FiCheckCircle size={40} />
           </div>
-          <h2 className="text-3xl font-serif font-bold text-brand-dark mb-4">
+          <h2 className="text-3xl font-serif font-light text-text-primary mb-4">
             {t('ui_appointment_success_title', 'Randevunuz Alındı!')}
           </h2>
           <p className="text-text-secondary leading-relaxed mb-8">
@@ -375,7 +375,7 @@ export const AppointmentPageContent: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={localizePath(locale, '/')}
-              className="inline-flex items-center justify-center px-8 py-3 bg-brand-primary text-white font-bold uppercase tracking-wider hover:bg-brand-hover transition-all rounded-sm"
+              className="inline-flex items-center justify-center px-8 py-3 bg-brand-primary text-white font-normal uppercase tracking-[0.15em]r hover:bg-brand-hover transition-all rounded-sm"
             >
               {t('ui_appointment_success_home', 'Ana Sayfaya Dön')}
             </Link>
@@ -383,7 +383,7 @@ export const AppointmentPageContent: React.FC = () => {
             {bookingPaymentEnabled && (
               <Link
                 href={localizePath(locale, '/profile')}
-                className="inline-flex items-center justify-center px-8 py-3 border-2 border-brand-primary text-brand-primary font-bold uppercase tracking-wider hover:bg-brand-primary hover:text-white transition-all rounded-sm"
+                className="inline-flex items-center justify-center px-8 py-3 border-2 border-brand-primary text-brand-primary font-normal uppercase tracking-[0.15em]r hover:bg-brand-primary hover:text-white transition-all rounded-sm"
               >
                 {t('ui_appointment_success_pay', 'Odeme Yap')}
               </Link>
@@ -403,11 +403,11 @@ export const AppointmentPageContent: React.FC = () => {
           data-aos="fade-up"
         >
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 text-brand-primary font-bold uppercase tracking-widest text-sm mb-4">
+            <span className="inline-flex items-center gap-2 text-brand-primary font-normal uppercase tracking-[0.2em] text-sm mb-4">
               {t('ui_appointment_subprefix', 'Energetische Massage')}{' '}
               {t('ui_appointment_sublabel', 'Appointment')}
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-text-primary mb-5 leading-[1.05]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-light text-text-primary mb-5 leading-[1.05]">
               {t('ui_appointment_title', 'Randevu Al')}
             </h1>
             <p className="text-text-secondary text-lg leading-relaxed">
@@ -418,7 +418,7 @@ export const AppointmentPageContent: React.FC = () => {
             </p>
           </div>
 
-          <div className="relative w-full h-72 sm:h-80 lg:h-[420px] rounded-3xl overflow-hidden border border-sand-200 shadow-medium bg-sand-100">
+          <div className="relative w-full h-72 sm:h-80 lg:h-[420px] overflow-hidden border border-border-light shadow-medium bg-bg-card-hover">
             <Image
               src={coverImage as any}
               alt={coverAlt}
@@ -439,14 +439,14 @@ export const AppointmentPageContent: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             {/* Step 1 (smaller) */}
             <div className="lg:col-span-5" data-aos="fade-right">
-              <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft border border-sand-200">
+              <div className="bg-bg-card p-6 md:p-8 shadow-soft border border-border-light">
                 {activeServiceTitle ? (
-                  <div className="bg-sand-50 border border-sand-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <div className="bg-bg-card border border-border-light p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-1">
+                      <div className="text-xs font-normal uppercase tracking-[0.2em] text-brand-primary mb-1">
                         {t('ui_appointment_selected_service_label', 'Selected service')}
                       </div>
-                      <div className="font-serif font-bold text-text-primary leading-snug">
+                      <div className="font-serif font-light text-text-primary leading-snug">
                         {activeServiceTitle ||
                           t('ui_appointment_selected_service_loading', 'Loading...')}
                       </div>
@@ -482,11 +482,11 @@ export const AppointmentPageContent: React.FC = () => {
                   </div>
                 ) : null}
 
-                <div className="pb-2 border-b border-sand-100 mb-6">
+                <div className="pb-2 border-b border-border-light mb-6">
                   <span className="text-xs font-bold text-brand-primary uppercase tracking-widest block mb-1">
                     {t('ui_appointment_step_label', 'Step')} 1
                   </span>
-                  <h2 className="text-2xl font-serif font-bold text-brand-dark">
+                  <h2 className="text-2xl font-serif font-light text-text-primary">
                     {t('ui_appointment_step1_title', 'Terapist ve Zaman')}
                   </h2>
                 </div>
@@ -513,7 +513,7 @@ export const AppointmentPageContent: React.FC = () => {
                       <input
                         id="appointment-date"
                         type="date"
-                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 text-brand-dark rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all appearance-none uppercase text-sm font-medium"
+                        className="w-full px-4 py-3 bg-bg-card border border-border-light text-text-primary rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all appearance-none uppercase text-sm font-medium"
                         value={form.appointment_date}
                         min={new Date().toISOString().split('T')[0]}
                         onChange={(e) => onPickDate(e.target.value)}
@@ -523,7 +523,7 @@ export const AppointmentPageContent: React.FC = () => {
                 </div>
 
                 {hasTherapist && hasDate ? (
-                  <div className="pt-6 mt-6 border-t border-sand-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="pt-6 mt-6 border-t border-border-light animate-in fade-in slide-in-from-top-2 duration-300">
                     <label className="block text-sm font-bold text-text-primary mb-2 uppercase tracking-wide">
                       {t('ui_appointment_time_label', 'Saat Seçimi')}
                     </label>
@@ -546,9 +546,9 @@ export const AppointmentPageContent: React.FC = () => {
 
             {/* Weekly schedule (wider) */}
             <div className="lg:col-span-7" data-aos="fade-left">
-              <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft border border-sand-200">
+              <div className="bg-bg-card p-6 md:p-8 shadow-soft border border-border-light">
                 <div className="mb-6">
-                  <h2 className="text-2xl font-serif font-bold text-brand-dark mb-2">
+                  <h2 className="text-2xl font-serif font-light text-text-primary mb-2">
                     {t('ui_appointment_weekly_title', 'Weekly Schedule')}
                   </h2>
                   <p className="text-text-secondary text-sm">
@@ -573,12 +573,12 @@ export const AppointmentPageContent: React.FC = () => {
             {/* Step 2 */}
             {selectedTimeHm ? (
               <div className="lg:col-span-12" data-aos="fade-up">
-                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft border border-sand-200">
-                  <div className="pb-2 border-b border-sand-100 mb-6">
+                <div className="bg-bg-card p-6 md:p-8 shadow-soft border border-border-light">
+                  <div className="pb-2 border-b border-border-light mb-6">
                     <span className="text-xs font-bold text-brand-primary uppercase tracking-widest block mb-1">
                       {t('ui_appointment_step_label', 'Step')} 2
                     </span>
-                    <h2 className="text-2xl font-serif font-bold text-brand-dark">
+                    <h2 className="text-2xl font-serif font-light text-text-primary">
                       {t('ui_appointment_step2_title', 'Kişisel Bilgiler')}
                     </h2>
                   </div>
@@ -595,7 +595,7 @@ export const AppointmentPageContent: React.FC = () => {
                         id="appointment-name"
                         type="text"
                         required
-                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
+                        className="w-full px-4 py-3 bg-bg-card border border-border-light rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
                         placeholder={t('ui_appointment_ph_name', 'Adınız Soyadınız')}
                         value={form.name}
                         onChange={(e) => patch('name', e.target.value)}
@@ -613,7 +613,7 @@ export const AppointmentPageContent: React.FC = () => {
                         id="appointment-phone"
                         type="tel"
                         required
-                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
+                        className="w-full px-4 py-3 bg-bg-card border border-border-light rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
                         placeholder={t('ui_appointment_ph_phone', '05xx xxx xx xx')}
                         value={form.phone}
                         onChange={(e) => patch('phone', e.target.value)}
@@ -631,7 +631,7 @@ export const AppointmentPageContent: React.FC = () => {
                         id="appointment-email"
                         type="email"
                         required
-                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
+                        className="w-full px-4 py-3 bg-bg-card border border-border-light rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50"
                         placeholder={t('ui_appointment_ph_email', 'ornek@email.com')}
                         value={form.email}
                         onChange={(e) => patch('email', e.target.value)}
@@ -648,7 +648,7 @@ export const AppointmentPageContent: React.FC = () => {
                       <textarea
                         id="appointment-note"
                         rows={3}
-                        className="w-full px-4 py-3 bg-sand-50 border border-sand-200 rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50 resize-y min-h-25"
+                        className="w-full px-4 py-3 bg-bg-card border border-border-light rounded-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all placeholder:text-text-muted/50 resize-y min-h-25"
                         placeholder={t('ui_appointment_ph_note', 'Varsa özel istekleriniz...')}
                         value={form.customer_message}
                         onChange={(e) => patch('customer_message', e.target.value)}
@@ -663,9 +663,9 @@ export const AppointmentPageContent: React.FC = () => {
                     </div>
                   ) : null}
 
-                  <div className="mt-8 pt-6 border-t border-sand-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="flex items-start gap-3 bg-sand-50 border border-sand-200 rounded-xl px-4 py-3">
-                      <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-brand-primary border border-sand-200 shrink-0">
+                  <div className="mt-8 pt-6 border-t border-border-light flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-start gap-3 bg-bg-card border border-border-light rounded-xl px-4 py-3">
+                      <div className="w-9 h-9 bg-bg-card flex items-center justify-center text-brand-primary border border-border-light shrink-0">
                         <svg
                           width="18"
                           height="18"
@@ -693,7 +693,7 @@ export const AppointmentPageContent: React.FC = () => {
                     <button
                       type="submit"
                       disabled={!canSubmit}
-                      className="px-8 py-4 bg-brand-primary text-white font-bold uppercase tracking-wider rounded-xl hover:bg-brand-hover transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                      className="px-8 py-4 bg-brand-primary text-white font-normal uppercase tracking-[0.15em]r rounded-xl hover:bg-brand-hover transition-all shadow-md hover:shadow-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                     >
                       {isSubmitting ? (
                         <span>{t('ui_appointment_btn_sending', 'Sending...')}</span>

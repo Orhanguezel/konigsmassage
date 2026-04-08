@@ -41,7 +41,7 @@ const Switch = React.forwardRef<
       }}
     >
       <SwitchPrimitives.Thumb
-        className="konigsmassage-switch-thumb bg-white rounded-circle shadow-sm"
+        className="konigsmassage-switch-thumb bg-bg-card rounded-circle shadow-sm"
         style={{
           width: 18,
           height: 18,

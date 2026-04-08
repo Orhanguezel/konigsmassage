@@ -49,12 +49,12 @@ const Logout: React.FC = () => {
     <section className="bg-bg-primary min-h-screen pt-32 pb-32 flex items-center justify-center">
       <div className="container mx-auto px-4">
         <div className="max-w-lg mx-auto text-center">
-          <div className="p-10 bg-white rounded-lg shadow-soft border border-sand-100">
+          <div className="p-10 bg-bg-card rounded-lg shadow-soft border border-border-light">
             <div className="mb-6 flex justify-center">
                <div className="w-16 h-16 border-4 border-brand-primary border-t-transparent rounded-full animate-spin" />
             </div>
             
-            <h3 className="text-2xl font-serif font-bold text-text-primary mb-4">
+            <h3 className="text-2xl font-serif font-light text-text-primary mb-4">
               {ui('logout_title', 'Signing out...')}
             </h3>
             

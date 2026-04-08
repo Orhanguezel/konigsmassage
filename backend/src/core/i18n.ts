@@ -10,7 +10,7 @@
 // =============================================================
 
 import { db } from '@/db/client';
-import { siteSettings } from '@/modules/siteSettings/schema';
+import { siteSettings } from '@vps/shared-backend/modules/siteSettings/schema';
 import { and, eq } from 'drizzle-orm';
 
 export const APP_LOCALES_SETTING_KEY = 'app_locales';

@@ -1,71 +1,71 @@
-// =============================================================
-// FILE: src/components/home/Hero.tsx
-// Public Hero – Full-width Slider background + Bottom overlay (ui_hero)
-// - FIX: İlk açılışta slider image geç gelince boş kalmasın diye fallback background ekledik
-//   (fallback URL'yi sen düzelteceksin)
-// =============================================================
-
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import Image, { type StaticImageData } from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
 
-// RTK – PUBLIC sliders
 import { useListSlidersQuery } from '@/integrations/rtk/hooks';
 import type { SliderPublicDto } from '@/integrations/shared';
-import { toCdnSrc, excerpt } from '@/integrations/shared';
+import { toCdnSrc, excerpt, localizePath } from '@/integrations/shared';
 
-// i18n
 import { useResolvedLocale, useUiSection } from '@/i18n';
-import { localizePath } from '@/integrations/shared';
-
-import { IconChevronLeft, IconChevronRight } from '@/components/ui/icons';
 
 type HeroSlide = {
   id: string;
   title: string;
   desc: string;
-  src: string | StaticImageData;
+  src: string;
   alt: string;
   buttonText?: string;
   buttonLink?: string;
 };
 
+const FALLBACK_HERO_IMAGE =
+  'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp';
+
+const FALLBACKS: Record<string, { title: string; desc: string; cta: string; ctaSecondary: string; badge: string }> = {
+  de: {
+    title: 'Entspannung, die zu Ihnen nach Hause kommt',
+    desc: 'Professionelle energetische Massage in Ihrer vertrauten Umgebung — achtsame Berührung, tiefe Ruhe und spürbares Wohlbefinden.',
+    cta: 'Termin Buchen',
+    ctaSecondary: 'Mehr Erfahren',
+    badge: 'Hausbesuch in Bonn & Umgebung',
+  },
+  en: {
+    title: 'Relaxation that comes to your home',
+    desc: 'Professional energetic massage in your familiar environment — mindful touch, deep calm and tangible well-being.',
+    cta: 'Book Appointment',
+    ctaSecondary: 'Learn More',
+    badge: 'Home Visit in Bonn & Surroundings',
+  },
+  tr: {
+    title: 'Evinize gelen rahatlama',
+    desc: 'Kendi evinizde profesyonel enerjetik masaj — bilinçli dokunuş, derin huzur ve hissedilir bir iyilik hali.',
+    cta: 'Randevu Al',
+    ctaSecondary: 'Daha Fazla',
+    badge: 'Bonn ve Çevresinde Ev Ziyareti',
+  },
+};
+
 const Hero: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
   const locale = useResolvedLocale(explicitLocale);
   const { ui } = useUiSection('ui_hero', locale);
-
-  const variantRaw = (ui('ui_hero_variant', 'v3') || '').toString().trim().toLowerCase();
-  const variant: 'v1' | 'v2' | 'v3' =
-    variantRaw === 'v1' || variantRaw === 'v2' ? variantRaw : 'v3';
-
-  // ✅ Fallback: ilk açılışta boş görünmesin (adresini sen güncelle)
-  const FALLBACK_HERO_IMAGE =
-    'https://res.cloudinary.com/dbozv7wqd/image/upload/v1748866951/uploads/anastasia/gallery/21-1748866946899-726331234.webp';
+  const fb = FALLBACKS[locale || 'de'] || FALLBACKS.de;
 
   const { data: sliderList, isLoading: slidersLoading } = useListSlidersQuery({
-    locale,
-    limit: 6,
-    sort: 'display_order',
-    order: 'asc',
+    locale, limit: 6, sort: 'display_order', order: 'asc',
   });
 
   const slides: HeroSlide[] = useMemo(() => {
     const list: SliderPublicDto[] = Array.isArray(sliderList) ? sliderList : [];
-    const active = list.filter((s) => s.isActive);
-
-    return active.map<HeroSlide>((s) => {
+    return list.filter((s) => s.isActive).map<HeroSlide>((s) => {
       const rawImage = (s.image || '').trim();
-      // Keep hero images smaller to reduce LCP payload (Cloudinary already optimizes to WebP/AVIF where possible)
-      const cdn = rawImage ? toCdnSrc(rawImage, 1440, 900, 'fill') : '';
-      const src = cdn || rawImage || FALLBACK_HERO_IMAGE;
-
+      const cdn = rawImage ? toCdnSrc(rawImage, 1920, 1080, 'fill') : '';
       return {
         id: s.id,
         title: (s.title || '').trim(),
         desc: excerpt(s.description || '', 260),
-        src,
+        src: cdn || rawImage || FALLBACK_HERO_IMAGE,
         alt: s.alt || s.title || 'hero slide',
         buttonText: (s.buttonText || '').trim() || undefined,
         buttonLink: (s.buttonLink || '').trim() || undefined,
@@ -74,246 +74,105 @@ const Hero: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
   }, [sliderList]);
 
   const hasSlides = slides.length > 0;
-
   const [activeIdx, setActiveIdx] = useState(0);
   const current = slides[activeIdx] || slides[0];
 
   useEffect(() => {
     if (!hasSlides || slides.length <= 1) return;
-
     const id = window.setInterval(() => {
       setActiveIdx((prev) => (prev + 1) % slides.length);
-    }, 5000);
-
+    }, 6000);
     return () => window.clearInterval(id);
   }, [hasSlides, slides.length]);
 
-  const h2Text =
-    (current?.title || '').trim() ||
-    ui('ui_hero_title_fallback', 'Rahatla. Yenilen. Masajla iyi hisset.');
+  const heroTitle = (current?.title || '').trim() || ui('ui_hero_title_fallback', fb.title);
+  const heroDesc = (current?.desc || '').trim() || ui('ui_hero_desc_fallback', fb.desc);
+  const ctaText = (current?.buttonText || '').trim() || ui('ui_hero_cta', fb.cta).trim() || fb.cta;
+  const ctaSecondary = ui('ui_hero_cta_secondary', fb.ctaSecondary);
+  const badgeText = ui('ui_hero_badge', fb.badge);
 
-  const text =
-    (current?.desc || '').trim() ||
-    ui(
-      'ui_hero_desc_fallback',
-      'Profesyonel masaj uygulamalarıyla kaslarını gevşet, stresini azalt, güne daha iyi devam et.',
-    );
-
-  const ctaText =
-    (current?.buttonText || '').trim() || ui('ui_hero_cta', 'Detay').trim() || 'Detay';
   const rawLink = current?.buttonLink || '/appointment';
-  const normalizedLink = rawLink.startsWith('/') ? rawLink : `/${rawLink}`;
-  const ctaHref = localizePath(locale, normalizedLink);
+  const ctaHref = localizePath(locale, rawLink.startsWith('/') ? rawLink : `/${rawLink}`);
+  const secondaryHref = localizePath(locale, '/services');
 
-  // ✅ Her durumda gösterilecek en az bir background (ilk açılışta boş kalmaz)
-  const firstBgSrc =
-    (hasSlides ? (slides[0]?.src as any) : undefined) || (FALLBACK_HERO_IMAGE as any);
-
-  const heroSrc = ((current?.src as any) || firstBgSrc) as any;
-  const heroAlt = current?.alt || ui('ui_hero_fallback_alt', 'Hero background');
-
-  const goPrev = () => {
-    if (!hasSlides || slides.length <= 1) return;
-    setActiveIdx((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goNext = () => {
-    if (!hasSlides || slides.length <= 1) return;
-    setActiveIdx((prev) => (prev + 1) % slides.length);
-  };
+  const heroSrc = (current?.src || FALLBACK_HERO_IMAGE) as string;
+  const heroAlt = current?.alt || 'Energetische Massage';
 
   return (
     <section
       data-header-overlay="true"
-      className="relative w-full h-svh min-h-screen overflow-hidden bg-bg-dark group"
+      className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden"
     >
-      {variant === 'v2' ? (
-        <>
-          {/* LIGHT / SPLIT HERO (mockup v2) */}
-          <div className="absolute inset-0 bg-bg-primary" aria-hidden="true" />
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={heroSrc}
+          alt={heroAlt}
+          fill
+          priority
+          fetchPriority="high"
+          unoptimized
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
 
-          <div className="relative z-10 h-full container mx-auto px-4 flex items-center">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 w-full items-center">
-              <div className="max-w-xl">
-                <span className="inline-flex items-center gap-2 text-text-secondary font-bold uppercase tracking-widest text-sm mb-5">
-                  {ui('ui_hero_kicker_brand', 'Energetische Massage in Bonn')}
-                </span>
+      {/* Gradient Overlay */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background: 'linear-gradient(180deg, rgba(12,11,9,0.5) 0%, rgba(12,11,9,0.3) 40%, rgba(12,11,9,0.6) 70%, rgba(12,11,9,0.95) 100%)',
+        }}
+      />
 
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-[1.05] text-text-primary mb-6">
-                  {h2Text}
-                </h1>
+      {/* Grain Texture */}
+      <div
+        className="absolute inset-0 z-[2] pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
 
-                <p className="text-lg md:text-xl text-text-secondary leading-relaxed mb-10 max-w-xl">
-                  {text}
-                </p>
+      {/* Content */}
+      <div className="relative z-[3] text-center px-8 max-w-[800px]">
+        {/* Badge */}
+        <div className="hero-fade-up hero-fade-up-1 inline-flex items-center gap-2.5 px-6 py-2 border border-border-hover mb-10 text-[0.72rem] tracking-[0.25em] uppercase text-brand-primary">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-primary dot-pulse" />
+          {badgeText}
+        </div>
 
-                <div className="flex flex-wrap items-center gap-4">
-                  <Link
-                    href={ctaHref}
-                    className="inline-flex items-center justify-center px-8 py-4 bg-brand-primary text-text-on-dark font-bold uppercase tracking-widest hover:bg-brand-hover transition-colors shadow-soft rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary"
-                    aria-label={ctaText}
-                  >
-                    {ctaText}
-                  </Link>
-                </div>
-              </div>
+        {/* Title */}
+        <h1 className="hero-fade-up hero-fade-up-2 font-serif text-[clamp(2.8rem,6vw,5.5rem)] font-light leading-[1.1] tracking-[-0.01em] mb-6 text-sand-50">
+          {heroTitle}
+        </h1>
 
-              <div className="relative w-full h-[46vh] min-h-[360px] lg:h-[64vh] rounded-3xl overflow-hidden bg-sand-200 border border-sand-300 shadow-medium">
-                <Image
-                  src={heroSrc}
-                  alt={heroAlt}
-                  fill
-                  priority={hasSlides && activeIdx === 0}
-                  fetchPriority={hasSlides && activeIdx === 0 ? 'high' : 'auto'}
-                  unoptimized
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-bg-dark/10 via-transparent to-transparent" />
-              </div>
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          {/* FULL-WIDTH BACKGROUND (v1 + v3) */}
-          <div className="absolute inset-0 w-full h-full z-0">
-            <div className="absolute inset-0 w-full h-full" aria-hidden="true">
-              <Image
-                src={heroSrc}
-                alt={heroAlt}
-                fill
-                priority={hasSlides && activeIdx === 0}
-                fetchPriority={hasSlides && activeIdx === 0 ? 'high' : 'auto'}
-                unoptimized
-                sizes="100vw"
-                className="object-cover"
-              />
+        {/* Subtitle */}
+        <p className="hero-fade-up hero-fade-up-3 text-[1.05rem] text-sand-300 max-w-[520px] mx-auto mb-11 font-light leading-[1.8]">
+          {heroDesc}
+        </p>
 
-              {/* Token-based overlay (no pure black) */}
-              <div className="absolute inset-0 bg-linear-to-b from-bg-dark/55 via-bg-dark/20 to-bg-dark/65" />
-            </div>
+        {/* Buttons */}
+        <div className="hero-fade-up hero-fade-up-4 flex gap-4 justify-center flex-wrap">
+          <Link href={ctaHref} className="btn-premium">
+            <span>{ctaText}</span>
+          </Link>
+          <Link href={secondaryHref} className="btn-outline-premium">
+            {ctaSecondary}
+          </Link>
+        </div>
+      </div>
 
-            {slidersLoading ? (
-              <div className="absolute inset-0 bg-sand-200 animate-pulse z-10" aria-hidden />
-            ) : null}
-          </div>
-
-          {variant === 'v1' ? (
-            <>
-              {/* CENTER CARD (mockup v1) */}
-              <div className="absolute inset-0 z-20 flex items-center justify-center px-4">
-                <div className="w-full max-w-5xl rounded-[2.5rem] border border-sand-300/30 bg-bg-dark/80 shadow-medium backdrop-blur-md px-6 py-14 md:px-12 md:py-16 text-center">
-                  <p className="text-text-on-dark/80 font-semibold tracking-widest uppercase text-sm mb-6">
-                    {ui('ui_hero_kicker_brand', 'Bonn’da Enerjetik Masaj')}
-                  </p>
-
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-text-on-dark leading-[1.02] mb-6">
-                    {h2Text}
-                  </h1>
-
-                  <p className="text-text-on-dark/80 text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-10">
-                    {text}
-                  </p>
-
-                  <div className="flex items-center justify-center gap-4">
-                    <Link
-                      href={ctaHref}
-                      className="inline-flex items-center justify-center px-10 py-4 bg-bg-primary text-text-primary font-bold uppercase tracking-widest hover:bg-sand-100 transition-colors shadow-soft rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-dark"
-                      aria-label={ctaText}
-                    >
-                      {ctaText}
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* OVERLAY CONTENT (BOTTOM) — v3 */}
-              <div className="absolute inset-0 z-20 flex flex-col justify-end pb-24 lg:pb-36 pointer-events-none bg-linear-to-t from-bg-dark/85 via-transparent to-transparent">
-                <div className="container mx-auto px-4 pointer-events-auto">
-                  <div className="w-full">
-                    <div className="max-w-3xl text-text-on-dark">
-                      <span
-                        data-aos="fade-up"
-                        data-aos-delay="200"
-                        className="block text-text-on-dark/90 font-bold uppercase tracking-widest mb-4"
-                      >
-                        <span>{ui('ui_hero_kicker_brand', 'Masaj & Wellness')}</span>
-                      </span>
-
-                      <h1
-                        className="text-4xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-text-on-dark"
-                      >
-                        {h2Text}
-                      </h1>
-
-                      <p
-                        data-aos="fade-up"
-                        data-aos-delay="600"
-                        className="text-lg text-text-on-dark/80 mb-8 max-w-xl"
-                      >
-                        {text}
-                      </p>
-
-                      <div
-                        className="flex flex-wrap items-center gap-6"
-                        data-aos="fade-up"
-                        data-aos-delay="800"
-                      >
-                        <Link
-                          href={ctaHref}
-                          className="inline-flex items-center justify-center px-8 py-4 bg-brand-primary text-text-on-dark font-bold uppercase tracking-widest hover:bg-bg-primary hover:text-text-primary transition-colors shadow-lg rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-dark"
-                          aria-label={ctaText}
-                        >
-                          {ctaText}
-                        </Link>
-
-                        <div className="flex items-center gap-3">
-                          <button
-                            className="w-12 h-12 flex items-center justify-center border border-text-on-dark/30 rounded-full text-text-on-dark hover:bg-bg-primary hover:text-text-primary transition-all backdrop-blur-sm cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-dark"
-                            aria-label={ui('ui_hero_prev', 'Previous slide')}
-                            type="button"
-                            onClick={goPrev}
-                            disabled={!hasSlides || slides.length <= 1}
-                          >
-                            <IconChevronLeft size={22} />
-                          </button>
-                          <button
-                            className="w-12 h-12 flex items-center justify-center border border-text-on-dark/30 rounded-full text-text-on-dark hover:bg-bg-primary hover:text-text-primary transition-all backdrop-blur-sm cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-dark"
-                            aria-label={ui('ui_hero_next', 'Next slide')}
-                            type="button"
-                            onClick={goNext}
-                            disabled={!hasSlides || slides.length <= 1}
-                          >
-                            <IconChevronRight size={22} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* WAVE TRANSITION (mockup v3) */}
-              <div className="absolute bottom-0 left-0 w-full z-30 pointer-events-none overflow-hidden leading-none">
-                <svg
-                  viewBox="0 0 1440 120"
-                  preserveAspectRatio="none"
-                  className="w-full h-20 md:h-24 text-bg-primary"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M0,64 C120,80 240,96 360,96 C480,96 600,80 720,72 C840,64 960,64 1080,72 C1200,80 1320,96 1440,88 L1440,120 L0,120 Z"
-                  />
-                </svg>
-              </div>
-            </>
-          )}
-        </>
-      )}
+      {/* Scroll Indicator */}
+      <div className="hero-fade-up absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 text-text-muted text-[0.65rem] tracking-[0.2em] uppercase z-[3]" style={{ animationDelay: '1.5s' }}>
+        <span>Scroll</span>
+        <div
+          className="w-px h-[50px]"
+          style={{
+            background: 'linear-gradient(to bottom, var(--color-gold-400), transparent)',
+            animation: 'scrollLine 2s ease-in-out infinite',
+          }}
+        />
+      </div>
     </section>
   );
 };

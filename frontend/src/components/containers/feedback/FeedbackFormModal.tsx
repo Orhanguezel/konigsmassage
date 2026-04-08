@@ -109,7 +109,7 @@ export default function FeedbackFormModal({ locale, t, onClose }: Props) {
   };
 
   const inputCls =
-    'w-full px-4 py-3 rounded-lg border border-sand-300 bg-white text-brand-dark focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all';
+    'w-full px-4 py-3 rounded-lg border border-border-medium bg-bg-card text-text-primary focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all';
 
   return (
     <div
@@ -127,17 +127,17 @@ export default function FeedbackFormModal({ locale, t, onClose }: Props) {
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
       />
 
-      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative bg-bg-card w-full max-w-lg shadow-medium overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-sand-200 flex items-center justify-between bg-sand-50">
-          <p id={MODAL_TITLE_ID} className="text-xl font-serif font-bold text-brand-dark">
+        <div className="px-6 py-5 border-b border-border-light flex items-center justify-between bg-bg-card">
+          <p id={MODAL_TITLE_ID} className="text-xl font-serif font-light text-text-primary">
             {t.modalTitle}
           </p>
           <button
             type="button"
             onClick={onClose}
             aria-label={t.close}
-            className="p-2 -mr-2 text-text-secondary hover:text-brand-dark transition-colors"
+            className="p-2 -mr-2 text-text-secondary hover:text-text-primary transition-colors"
           >
             <IconX size={20} />
           </button>
@@ -219,18 +219,18 @@ export default function FeedbackFormModal({ locale, t, onClose }: Props) {
             )}
 
             {/* Actions */}
-            <div className="pt-4 flex items-center justify-end gap-3 border-t border-sand-200">
+            <div className="pt-4 flex items-center justify-end gap-3 border-t border-border-light">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 text-sm font-medium text-text-secondary hover:text-brand-dark hover:bg-sand-100 rounded-lg transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-bg-card-hover rounded-lg transition-colors"
               >
                 {t.close}
               </button>
               <button
                 type="submit"
                 disabled={!canSubmit || isCreating}
-                className="px-6 py-2.5 text-sm font-medium bg-brand-primary text-white rounded-lg shadow hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-6 py-2.5 text-sm font-medium bg-brand-primary text-white rounded-lg shadow hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {isCreating ? t.sending : t.submit}
               </button>

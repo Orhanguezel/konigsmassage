@@ -111,7 +111,7 @@ export default function GutscheinSuccessPage() {
             <h1 className="mb-3 text-2xl font-bold text-text-primary">{tl(locale, 'successTitle')}</h1>
             <p className="mb-4 text-text-muted">{tl(locale, 'successBody')}</p>
             {code && (
-              <div className="mb-8 rounded-xl border border-border-light bg-sand-100 px-6 py-4">
+              <div className="mb-8 border border-border-light bg-bg-card-hover px-6 py-4">
                 <p className="text-xs text-text-muted mb-1">{tl(locale, 'code')}</p>
                 <p className="text-2xl font-mono font-bold tracking-widest text-brand-primary">{code}</p>
               </div>
@@ -131,7 +131,7 @@ export default function GutscheinSuccessPage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link
                 href={homePath}
-                className="rounded-lg border border-border-light px-5 py-2.5 text-sm font-medium text-text-secondary hover:bg-sand-100 transition-colors"
+                className="rounded-lg border border-border-light px-5 py-2.5 text-sm font-medium text-text-secondary hover:bg-bg-card-hover transition-colors"
               >
                 {tl(locale, 'backHome')}
               </Link>

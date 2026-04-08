@@ -115,6 +115,8 @@ VALUES
 -- ------------------------
 ('71c28444-7b6e-47ae-92be-f59206a1b820', NULL, 'footer', 'f942a930-6743-4ecc-b4b3-1fd6b77f9d77', 'custom', NULL, NULL, 0, 1), -- Privacy Policy
 ('24c49639-01d0-4274-8fb9-c31ed64d0726', NULL, 'footer', 'f942a930-6743-4ecc-b4b3-1fd6b77f9d77', 'custom', NULL, NULL, 1, 1), -- Terms
+('c3d4e5f6-a7b8-4c9d-8012-impressum001', NULL, 'footer', 'f942a930-6743-4ecc-b4b3-1fd6b77f9d77', 'custom', NULL, NULL, 2, 1), -- Impressum
+('c3d4e5f6-a7b8-4c9d-8012-cookiepol001', NULL, 'footer', 'f942a930-6743-4ecc-b4b3-1fd6b77f9d77', 'custom', NULL, NULL, 3, 1), -- Cookie Policy
 
 -- ------------------------
 -- FOOTER: SOCIAL
@@ -163,6 +165,8 @@ VALUES
 -- FOOTER: LEGAL (TR)
 (UUID(),'71c28444-7b6e-47ae-92be-f59206a1b820','tr','Gizlilik Politikası','/privacy-policy','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 (UUID(),'24c49639-01d0-4274-8fb9-c31ed64d0726','tr','Kullanım Koşulları','/terms','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'c3d4e5f6-a7b8-4c9d-8012-impressum001','tr','Yasal Bilgilendirme','/legal-notice','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'c3d4e5f6-a7b8-4c9d-8012-cookiepol001','tr','Çerez Politikası','/cookie-policy','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 
 -- FOOTER: SOCIAL (TR)
 (UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','tr','Instagram','https://www.instagram.com/energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
@@ -202,6 +206,8 @@ VALUES
 -- FOOTER: LEGAL (EN)
 (UUID(),'71c28444-7b6e-47ae-92be-f59206a1b820','en','Privacy Policy','/privacy-policy','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 (UUID(),'24c49639-01d0-4274-8fb9-c31ed64d0726','en','Terms of Use','/terms','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'c3d4e5f6-a7b8-4c9d-8012-impressum001','en','Legal Notice','/legal-notice','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'c3d4e5f6-a7b8-4c9d-8012-cookiepol001','en','Cookie Policy','/cookie-policy','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 
 -- FOOTER: SOCIAL (EN)
 (UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','en','Instagram','https://www.instagram.com/energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
@@ -241,6 +247,8 @@ VALUES
 -- FOOTER: LEGAL (DE)
 (UUID(),'71c28444-7b6e-47ae-92be-f59206a1b820','de','Datenschutzerklärung','/privacy-policy','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 (UUID(),'24c49639-01d0-4274-8fb9-c31ed64d0726','de','Nutzungsbedingungen','/terms','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'c3d4e5f6-a7b8-4c9d-8012-impressum001','de','Impressum','/legal-notice','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
+(UUID(),'c3d4e5f6-a7b8-4c9d-8012-cookiepol001','de','Cookie-Richtlinie','/cookie-policy','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),
 
 -- FOOTER: SOCIAL (DE)
 (UUID(),'a9b1c2d3-e4f5-4a66-8b11-111111111111','de','Instagram','https://www.instagram.com/energetischemassagebonn','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000'),

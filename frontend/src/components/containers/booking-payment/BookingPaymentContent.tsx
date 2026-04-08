@@ -153,10 +153,10 @@ export default function BookingPaymentContent({ bookingId }: Props) {
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-xl text-center">
           <div className="animate-pulse space-y-4">
-            <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto" />
-            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto" />
+            <div className="h-6 bg-bg-card-hover rounded w-3/4 mx-auto" />
+            <div className="h-4 bg-bg-card-hover rounded w-1/2 mx-auto" />
           </div>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-text-muted">
             {status === 'capturing'
               ? t(locale, 'Zahlung wird verarbeitet...', 'Ödeme işleniyor...', 'Processing payment...')
               : t(locale, 'Laden...', 'Yükleniyor...', 'Loading...')}
@@ -171,7 +171,7 @@ export default function BookingPaymentContent({ bookingId }: Props) {
     return (
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-xl text-center">
-          <div className="rounded-xl border border-green-200 bg-green-50 p-8">
+          <div className="border border-green-200 bg-green-50 p-8">
             <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -191,7 +191,7 @@ export default function BookingPaymentContent({ bookingId }: Props) {
     return (
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-xl text-center">
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             {t(locale, 'Online-Zahlung ist derzeit deaktiviert.', 'Online ödeme şu anda devre dışı.', 'Online payment is currently disabled.')}
           </p>
         </div>
@@ -220,10 +220,10 @@ export default function BookingPaymentContent({ bookingId }: Props) {
     return (
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-xl">
-          <div className="rounded-xl border bg-white p-8 shadow-sm space-y-4">
+          <div className="border bg-bg-card p-8 shadow-sm space-y-4">
             <BookingDetails info={info} locale={locale} />
             <div className="border-t pt-4 text-center">
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-text-secondary mb-4">
                 {t(
                   locale,
                   'Bitte melden Sie sich an, um die Zahlung abzuschließen.',
@@ -248,7 +248,7 @@ export default function BookingPaymentContent({ bookingId }: Props) {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 max-w-xl">
-        <div className="rounded-xl border bg-white p-8 shadow-sm space-y-6">
+        <div className="border bg-bg-card p-8 shadow-sm space-y-6">
           <BookingDetails info={info} locale={locale} />
 
           {/* Gutschein section */}
@@ -305,9 +305,9 @@ export default function BookingPaymentContent({ bookingId }: Props) {
 
               {/* Show discounted price */}
               {appliedGutschein && (
-                <div className="rounded-lg bg-gray-50 p-3 space-y-1">
+                <div className="rounded-lg bg-bg-card p-3 space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">{t(locale, 'Preis', 'Fiyat', 'Price')}</span>
+                    <span className="text-text-muted">{t(locale, 'Preis', 'Fiyat', 'Price')}</span>
                     <span>{originalPrice.toFixed(2)} EUR</span>
                   </div>
                   <div className="flex justify-between text-sm text-green-600">
@@ -369,7 +369,7 @@ export default function BookingPaymentContent({ bookingId }: Props) {
                 type="button"
                 disabled={busy || !canPayWallet}
                 onClick={() => handlePay('wallet')}
-                className="w-full flex items-center justify-between rounded-lg border p-4 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-between rounded-lg border p-4 hover:bg-bg-card transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
                   <svg className="h-6 w-6 text-brand" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -379,7 +379,7 @@ export default function BookingPaymentContent({ bookingId }: Props) {
                     <p className="text-sm font-medium">
                       {t(locale, 'Guthaben', 'Cüzdan', 'Wallet')}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-text-muted">
                       {t(locale, 'Verfügbar', 'Bakiye', 'Balance')}: {walletBalance.toFixed(2)} EUR
                       {appliedGutschein && ` — ${t(locale, 'Zu zahlen', 'Ödenecek', 'To pay')}: ${discountedPrice.toFixed(2)} EUR`}
                     </p>
@@ -405,7 +405,7 @@ export default function BookingPaymentContent({ bookingId }: Props) {
                 type="button"
                 disabled={busy}
                 onClick={() => handlePay('paypal')}
-                className="w-full flex items-center justify-between rounded-lg border p-4 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-between rounded-lg border p-4 hover:bg-bg-card transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
                   <svg className="h-6 w-6 text-[#003087]" viewBox="0 0 24 24" fill="currentColor">
@@ -413,7 +413,7 @@ export default function BookingPaymentContent({ bookingId }: Props) {
                   </svg>
                   <div className="text-left">
                     <p className="text-sm font-medium">PayPal</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-text-muted">
                       {t(locale, 'Mit PayPal bezahlen', 'PayPal ile öde', 'Pay with PayPal')}
                       {appliedGutschein && ` — ${discountedPrice.toFixed(2)} EUR`}
                     </p>
@@ -454,24 +454,24 @@ function BookingDetails({
         {t(locale, 'Buchungsdetails', 'Randevu Detayları', 'Booking Details')}
       </h2>
       <div className="grid grid-cols-2 gap-2 text-sm">
-        <span className="text-gray-500">{t(locale, 'Service', 'Hizmet', 'Service')}</span>
+        <span className="text-text-muted">{t(locale, 'Service', 'Hizmet', 'Service')}</span>
         <span className="font-medium">{info.service_name}</span>
 
-        <span className="text-gray-500">{t(locale, 'Datum', 'Tarih', 'Date')}</span>
+        <span className="text-text-muted">{t(locale, 'Datum', 'Tarih', 'Date')}</span>
         <span className="font-medium">{info.appointment_date}</span>
 
         {info.appointment_time && (
           <>
-            <span className="text-gray-500">{t(locale, 'Uhrzeit', 'Saat', 'Time')}</span>
+            <span className="text-text-muted">{t(locale, 'Uhrzeit', 'Saat', 'Time')}</span>
             <span className="font-medium">{info.appointment_time}</span>
           </>
         )}
 
-        <span className="text-gray-500">{t(locale, 'Kunde', 'Müşteri', 'Customer')}</span>
+        <span className="text-text-muted">{t(locale, 'Kunde', 'Müşteri', 'Customer')}</span>
         <span className="font-medium">{info.customer_name}</span>
       </div>
-      <div className="flex items-center justify-between rounded-lg bg-gray-50 p-3">
-        <span className="text-sm text-gray-600">{t(locale, 'Gesamtbetrag', 'Toplam', 'Total')}</span>
+      <div className="flex items-center justify-between rounded-lg bg-bg-card p-3">
+        <span className="text-sm text-text-secondary">{t(locale, 'Gesamtbetrag', 'Toplam', 'Total')}</span>
         <span className="text-lg font-bold text-brand">
           {info.price_display || `${info.price.toFixed(2)} ${info.currency}`}
         </span>

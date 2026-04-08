@@ -1,8 +1,8 @@
 -- =============================================================
 -- FILE: 051.8_custom_pages_privacy_notice.seed.sql (FINAL — Energetische Massage, rerunnable)
--- Energetische Massage – Custom Page: Privacy Notice / Informationspflicht (TR/EN/DE)
+-- Energetische Massage - Custom Page: Privacy Notice / Informationspflicht (TR/EN/DE)
 -- ✅ PARENT: custom_pages.module_key = 'privacy_notice'
--- ✅ category/subcategory YOK (schema’da yok)
+-- ✅ category/subcategory YOK (schema''da yok)
 -- ✅ i18n: module_key YOK
 -- ✅ deterministic i18n ids (rerunnable)
 -- =============================================================
@@ -119,7 +119,7 @@ VALUES
 
         '<div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6">',
           '<h2 class="text-xl font-semibold text-slate-900 mb-3">1. Veri Sorumlusu</h2>',
-          '<p class="text-slate-700">Veri sorumlusu Energetische Massage’tır.</p>',
+          '<p class="text-slate-700">Veri sorumlusu Energetische Massage''tır.</p>',
         '</div>',
 
         '<div class="grid md:grid-cols-2 gap-6 mb-6">',

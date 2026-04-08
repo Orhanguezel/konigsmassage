@@ -39,6 +39,9 @@ SET @TESTIMONIAL_BUCKET := 'energetische-massage';
 SET @REV_TEST_1 := '55550101-5555-4444-8555-555555550101';
 SET @REV_TEST_2 := '55550102-5555-4444-8555-555555550102';
 SET @REV_TEST_3 := '55550103-5555-4444-8555-555555550103';
+SET @REV_TEST_4 := '55550104-5555-4444-8555-555555550104';
+SET @REV_TEST_5 := '55550105-5555-4444-8555-555555550105';
+SET @REV_TEST_6 := '55550106-5555-4444-8555-555555550106';
 
 -- ---------------------------
 -- Insert parents (reviews)
@@ -54,7 +57,10 @@ SET @SQL_REVIEWS := IF(@HAS_REVIEWS > 0,
 VALUES
   (@REV_TEST_1, ''testimonial'', @TESTIMONIAL_BUCKET, ''Ayşe T.'',   ''ayse.t@example.com'',   5, 1, 1, 10,  8, 0, 7, ''tr'', NOW(3), NOW(3)),
   (@REV_TEST_2, ''testimonial'', @TESTIMONIAL_BUCKET, ''Michael R.'',''michael.r@example.com'',5, 1, 1, 20,  5, 0, 5, ''en'', NOW(3), NOW(3)),
-  (@REV_TEST_3, ''testimonial'', @TESTIMONIAL_BUCKET, ''Laura K.'',  ''laura.k@example.com'',  5, 1, 1, 30,  4, 0, 4, ''de'', NOW(3), NOW(3))
+  (@REV_TEST_3, ''testimonial'', @TESTIMONIAL_BUCKET, ''Laura K.'',  ''laura.k@example.com'',  5, 1, 1, 30,  4, 0, 4, ''de'', NOW(3), NOW(3)),
+  (@REV_TEST_4, ''testimonial'', @TESTIMONIAL_BUCKET, ''Sandra K.'', ''sandra.k@example.com'', 5, 1, 1, 40,  6, 0, 5, ''de'', NOW(3), NOW(3)),
+  (@REV_TEST_5, ''testimonial'', @TESTIMONIAL_BUCKET, ''Markus R.'', ''markus.r@example.com'', 5, 1, 1, 50,  3, 0, 3, ''de'', NOW(3), NOW(3)),
+  (@REV_TEST_6, ''testimonial'', @TESTIMONIAL_BUCKET, ''Lisa T.'',   ''lisa.t@example.com'',   5, 1, 1, 60,  4, 0, 4, ''de'', NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `target_type`      = VALUES(`target_type`),
   `target_id`        = VALUES(`target_id`),
@@ -125,6 +131,48 @@ VALUES
   (''55550103-5555-4444-8555-555555553303'', @REV_TEST_3, ''de'',
    ''Hygiene und Wohlbefinden auf hohem Niveau'',
    ''Alles war sehr gut vorbereitet; klare Kommunikation und eine sanfte, ruhige Sitzung. Ich habe mich sicher und wohl gefühlt.'',
+   NULL, NOW(3), NOW(3)),
+
+  -- TESTIMONIAL #4 (Sandra K. — Hausbesuch)
+  (''55550104-5555-4444-8555-555555554401'', @REV_TEST_4, ''tr'',
+   ''Ev ziyareti harika bir deneyimdi'',
+   ''Kendi evimde masaj yaptirmak studyoya gitmekten cok daha rahatlaticiydi. Her sey ozenle hazirlanmisti. Kesinlikle tavsiye ederim.'',
+   NULL, NOW(3), NOW(3)),
+  (''55550104-5555-4444-8555-555555554402'', @REV_TEST_4, ''en'',
+   ''The home visit was a wonderful experience'',
+   ''Having the massage at home was so much more relaxing than going to a studio. Everything was carefully prepared. Absolutely recommended.'',
+   NULL, NOW(3), NOW(3)),
+  (''55550104-5555-4444-8555-555555554403'', @REV_TEST_4, ''de'',
+   ''Der Hausbesuch war ein wunderbares Erlebnis'',
+   ''Die Massage zu Hause war viel entspannender als im Studio. Alles war sorgfaeltig vorbereitet. Absolute Empfehlung.'',
+   NULL, NOW(3), NOW(3)),
+
+  -- TESTIMONIAL #5 (Markus R. — Wirkung)
+  (''55550105-5555-4444-8555-555555555501'', @REV_TEST_5, ''tr'',
+   ''Profesyonel ve etkili'',
+   ''Enerjetik masaj sonrasi kendimi yenilenmis gibi hissettim. Ev ziyareti mukemmel organize edilmisti. Cok memnunum.'',
+   NULL, NOW(3), NOW(3)),
+  (''55550105-5555-4444-8555-555555555502'', @REV_TEST_5, ''en'',
+   ''Professional and deeply effective'',
+   ''After the energetic massage I felt completely renewed. The home visit was perfectly organized. Very satisfied.'',
+   NULL, NOW(3), NOW(3)),
+  (''55550105-5555-4444-8555-555555555503'', @REV_TEST_5, ''de'',
+   ''Professionell und wirkungsvoll'',
+   ''Nach der energetischen Massage fuehlte ich mich wie neugeboren. Der Hausbesuch war perfekt organisiert. Sehr zufrieden.'',
+   NULL, NOW(3), NOW(3)),
+
+  -- TESTIMONIAL #6 (Lisa T. — Paar)
+  (''55550106-5555-4444-8555-555555556601'', @REV_TEST_6, ''tr'',
+   ''Harika bir hediye fikiriydi'',
+   ''Esimle birlikte ev masaji yaptik. Cok ozel ve rahatlatici bir deneyimdi. Hicbir seyle ilgilenmek zorunda kalmadik.'',
+   NULL, NOW(3), NOW(3)),
+  (''55550106-5555-4444-8555-555555556602'', @REV_TEST_6, ''en'',
+   ''A perfect gift idea'',
+   ''We had the massage at home together. It was a very special and relaxing experience. We did not have to worry about anything.'',
+   NULL, NOW(3), NOW(3)),
+  (''55550106-5555-4444-8555-555555556603'', @REV_TEST_6, ''de'',
+   ''Ein perfektes Geschenk'',
+   ''Wir haben die Massage zusammen zu Hause genossen. Ein sehr besonderes und entspannendes Erlebnis. Wir mussten uns um nichts kuemmern.'',
    NULL, NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `title`       = VALUES(`title`),

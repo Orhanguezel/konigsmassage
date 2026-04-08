@@ -1,8 +1,3 @@
-// =============================================================
-// FILE: src/components/containers/about/AboutSection.tsx
-// Public About – Custom Pages (module_key="about") + UI i18n
-// =============================================================
-
 'use client';
 
 import React, { useMemo } from 'react';
@@ -11,23 +6,24 @@ import Link from 'next/link';
 
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
 import { downgradeH1ToH2, safeStr, isRemoteUrl, excerpt, toCdnSrc } from '@/integrations/shared';
-
 import { useLocaleShort, useUiSection } from '@/i18n';
-import { isValidUiText } from '@/integrations/shared';
-import { localizePath } from '@/integrations/shared';
+import { isValidUiText, localizePath } from '@/integrations/shared';
 
-const SUMMARY_LEN = 260;
+const SUMMARY_LEN = 320;
+
+const STAT_FALLBACKS: Record<string, { s1: string; l1: string; s2: string; l2: string; s3: string; l3: string }> = {
+  de: { s1: '5+', l1: 'Jahre Erfahrung', s2: '100%', l2: 'Hausbesuch', s3: '∞', l3: 'Individuelle Sitzungen' },
+  en: { s1: '5+', l1: 'Years Experience', s2: '100%', l2: 'Home Visit', s3: '∞', l3: 'Individual Sessions' },
+  tr: { s1: '5+', l1: 'Yil Deneyim', s2: '100%', l2: 'Ev Ziyareti', s3: '∞', l3: 'Bireysel Seanslar' },
+};
 
 const AboutSection: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
   const locale = useLocaleShort(explicitLocale);
   const { ui } = useUiSection('ui_about', locale as any);
+  const sf = STAT_FALLBACKS[locale || 'de'] || STAT_FALLBACKS.de;
 
   const { data, isLoading } = useListCustomPagesPublicQuery({
-    module_key: 'about',
-    locale,
-    limit: 10,
-    sort: 'created_at',
-    orderDir: 'asc',
+    module_key: 'about', locale, limit: 10, sort: 'created_at', orderDir: 'asc',
   });
 
   const first = useMemo(() => {
@@ -54,169 +50,91 @@ const AboutSection: React.FC<{ locale?: string }> = ({ locale: explicitLocale })
 
   const hasFirstSummary = !!safeStr(firstSummary);
 
-  const isTruncated = useMemo(() => {
-    const plain = safeStr(firstSummaryRaw)
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    return plain.length > SUMMARY_LEN + 20;
-  }, [firstSummaryRaw]);
-
   const heroSrc = useMemo(() => {
     const raw = safeStr(first?.featured_image);
     if (!raw) return '';
-
-    const cdn = toCdnSrc(raw, 720, 520, 'fill');
+    const cdn = toCdnSrc(raw, 720, 960, 'fill');
     return (cdn || raw) as any;
   }, [first]);
 
   const heroAlt = useMemo(() => {
-    const alt = safeStr(first?.featured_image_alt);
-    return alt || firstTitle || 'about';
+    return safeStr(first?.featured_image_alt) || firstTitle || 'about';
   }, [first, firstTitle]);
-
-  const subPrefix = useMemo(() => {
-    const key = 'ui_about_subprefix';
-    const v = safeStr(ui(key, ''));
-    return isValidUiText(v, key) ? v : 'Energetische Massage';
-  }, [ui]);
 
   const subLabel = useMemo(() => {
     const key = 'ui_about_sublabel';
     const v = safeStr(ui(key, ''));
     if (isValidUiText(v, key)) return v;
-    if (locale === 'de') return 'Über mich';
-    if (locale === 'tr') return 'Hakkımda';
+    if (locale === 'de') return 'Über Mich';
+    if (locale === 'tr') return 'Hakkimda';
     return 'About';
-  }, [ui, locale]);
-
-  const viewAllText = useMemo(() => {
-    const key = 'ui_about_view_all';
-    const v = safeStr(ui(key, ''));
-    if (isValidUiText(v, key)) return v;
-
-    if (locale === 'de') return 'Alle anzeigen';
-    if (locale === 'tr') return 'Tümünü Gör';
-    return 'View all';
   }, [ui, locale]);
 
   const readMoreText = useMemo(() => {
     const key = 'ui_about_read_more';
     const v = safeStr(ui(key, ''));
     if (isValidUiText(v, key)) return v;
-
     if (locale === 'de') return 'Mehr lesen';
-    if (locale === 'tr') return 'Devamı';
+    if (locale === 'tr') return 'Devami';
     return 'Read more';
   }, [ui, locale]);
 
-  const emptyText = useMemo(() => {
-    const key = 'ui_about_empty_text';
-    const v = safeStr(ui(key, ''));
-    if (isValidUiText(v, key)) return v;
-
-    if (locale === 'de') return 'Der Über-mich-Inhalt wird bald hier veröffentlicht.';
-    if (locale === 'tr') return 'İçerik yakında burada yayınlanacaktır.';
-    return 'Content will be published here soon.';
-  }, [ui, locale]);
-
   return (
-    <div className="bg-bg-primary relative py-20 lg:py-32">
-      <div className="container mx-auto px-4">
-        <div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center"
-          data-aos="fade-up"
-          data-aos-delay="300"
-        >
-          {/* Left */}
-          <div className="w-full">
-            <div className="relative mb-12 lg:mb-0">
-              <div className="w-full relative h-100 sm:h-125 lg:h-150 rounded-sm overflow-hidden shadow-medium">
-                {heroSrc ? (
-                  <Image
-                    src={heroSrc as any}
-                    alt={heroAlt}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 hover:scale-105"
-                    unoptimized={isRemoteUrl(heroSrc)}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-sand-200 flex items-center justify-center text-text-muted">
-                    <span className="text-sm">(No Image)</span>
-                  </div>
-                )}
+    <section className="py-28 lg:py-36" style={{ padding: '7rem 4%' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center max-w-[1300px] mx-auto">
+        {/* Image */}
+        <div className="relative reveal">
+          <div className="relative overflow-hidden" style={{ aspectRatio: '3/4' }}>
+            {heroSrc ? (
+              <Image
+                src={heroSrc as any}
+                alt={heroAlt}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover brightness-[0.85] contrast-[1.05] transition-transform duration-700 hover:scale-[1.04]"
+                unoptimized={isRemoteUrl(heroSrc)}
+              />
+            ) : isLoading ? (
+              <div className="w-full h-full bg-bg-card animate-pulse" />
+            ) : (
+              <div className="w-full h-full bg-bg-card flex items-center justify-center text-text-muted">
+                <span className="text-sm">(No Image)</span>
               </div>
-            </div>
+            )}
           </div>
+          {/* Decorative accents */}
+          <div className="absolute -top-6 -right-6 w-[120px] h-[120px] border border-brand-primary opacity-30 pointer-events-none" />
+          <div className="absolute -bottom-6 -left-6 w-[80px] h-[80px] border border-brand-primary opacity-15 pointer-events-none" />
+        </div>
 
-          {/* Right */}
-          <div className="w-full">
-            <div className="flex flex-col">
-              <div className="mb-8">
-                <span className="block text-brand-primary font-bold uppercase tracking-widest text-sm mb-2">
-                  <span>{subPrefix}</span> {subLabel}
-                </span>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-text-primary leading-tight mb-6">
-                  {firstTitle}
-                </h2>
-              </div>
+        {/* Content */}
+        <div className="py-4 reveal reveal-delay-2">
+          <span className="section-label">{subLabel}</span>
 
-              {/* Summary */}
-              {isLoading ? (
-                <div className="space-y-4 mb-8">
-                  <div className="h-4 bg-gray-200 rounded w-full animate-pulse" aria-hidden />
-                  <div className="h-4 bg-gray-200 rounded w-full animate-pulse" aria-hidden />
-                  <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" aria-hidden />
-                </div>
-              ) : hasFirstSummary ? (
-                <div className="mb-8">
-                  <p className="text-text-secondary text-lg leading-relaxed mb-6">{firstSummary}</p>
+          <h2 className="font-serif text-[clamp(2rem,4vw,3.4rem)] font-light leading-[1.2] mb-5 tracking-[-0.01em]">
+            {firstTitle}
+          </h2>
 
-                  {isTruncated ? (
-                    <Link
-                      href={aboutHref}
-                      className="text-brand-primary font-bold hover:text-brand-hover transition-colors inline-flex items-center gap-1"
-                      aria-label={readMoreText}
-                    >
-                      {readMoreText}{' '}
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  ) : null}
-                </div>
-              ) : (
-                <p className="text-text-muted mb-8">{emptyText}</p>
-              )}
-
-              {/* Hata durumunda görünür metin yok — Google indekslememeli */}
-
-              {/* CTA */}
-              <div className="mt-4">
-                <Link
-                  href={aboutHref}
-                  className="inline-flex items-center justify-center px-8 py-4 bg-brand-primary text-text-on-dark font-bold uppercase tracking-widest hover:bg-brand-hover transition-all duration-300 shadow-soft rounded-sm"
-                  aria-label={viewAllText}
-                >
-                  {viewAllText}
-                </Link>
-              </div>
+          {isLoading ? (
+            <div className="space-y-4 mb-8">
+              <div className="h-4 bg-bg-card rounded w-full animate-pulse" />
+              <div className="h-4 bg-bg-card rounded w-full animate-pulse" />
+              <div className="h-4 bg-bg-card rounded w-3/4 animate-pulse" />
             </div>
-          </div>
+          ) : hasFirstSummary ? (
+            <p className="text-text-secondary font-light leading-[1.9] mb-6">{firstSummary}</p>
+          ) : null}
+
+          <Link
+            href={aboutHref}
+            className="btn-premium inline-flex"
+          >
+            <span>{readMoreText}</span>
+          </Link>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

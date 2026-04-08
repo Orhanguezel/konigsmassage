@@ -1,6 +1,6 @@
 -- =============================================================
 -- 049-1.8_site_settings_ui_cookie.sql
--- Energetische Massage – UI Cookie + Cookie Policy (site_settings)
+-- Energetische Massage - UI Cookie + Cookie Policy (site_settings)
 --  - Value: JSON (stored as TEXT)
 --  - Localized: tr / en / de
 --  - Re-runnable: ON DUPLICATE KEY UPDATE (requires UNIQUE(key, locale))
