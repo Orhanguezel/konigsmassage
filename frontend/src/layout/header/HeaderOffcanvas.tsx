@@ -102,7 +102,7 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
     const rawUrl = item.url || (item as any).href || '#';
     const href = localizePath(resolvedLocale, rawUrl);
     const hasChildren = !!item.children && item.children.length > 0;
-    const id = String(item.id ?? rawUrl ?? Math.random());
+    const id = String(item.id ?? rawUrl ?? `menu-${depth}-${href}`);
     const isOpen = !!openSubmenus[id];
 
     if (!hasChildren) {

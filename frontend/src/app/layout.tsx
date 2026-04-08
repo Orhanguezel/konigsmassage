@@ -47,7 +47,6 @@ export async function generateMetadata(): Promise<Metadata> {
       default: 'Energetische Massage Bonn',
       template: '%s | Energetische Massage Bonn',
     },
-    description: 'Energetische Massage in Bonn von Anastasia König — achtsame Berührung, tiefe Entspannung und Körperwahrnehmung. Termine nach Vereinbarung. Jetzt buchen!',
     manifest: '/manifest.webmanifest',
     icons: {
       icon: faviconUrl,
