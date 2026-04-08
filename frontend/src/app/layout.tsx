@@ -70,6 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={lang} data-theme="dark" suppressHydrationWarning>
       <head>
+        <meta name="description" content="Energetische Massage in Bonn von Anastasia König — achtsame Berührung, tiefe Entspannung und Körperwahrnehmung. Termine nach Vereinbarung. Jetzt buchen!" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
