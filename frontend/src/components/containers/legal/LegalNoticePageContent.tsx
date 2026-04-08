@@ -15,7 +15,7 @@ const LegalNoticePageContent: React.FC = () => {
   const { ui } = useUiSection('ui_legal_notice', locale as any);
 
   const { data, isLoading, isError } = useListCustomPagesPublicQuery({
-    module_key: 'imprint',
+    module_key: 'legal_notice',
     locale,
     limit: 10,
     sort: 'created_at',

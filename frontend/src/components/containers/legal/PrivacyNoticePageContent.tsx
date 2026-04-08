@@ -15,7 +15,7 @@ const PrivacyNoticePageContent: React.FC = () => {
   const { ui } = useUiSection('ui_privacy_notice', locale as any);
 
   const { data, isLoading, isError } = useListCustomPagesPublicQuery({
-    module_key: 'privacy-notice',
+    module_key: 'privacy_notice',
     locale,
     limit: 10,
     sort: 'created_at',

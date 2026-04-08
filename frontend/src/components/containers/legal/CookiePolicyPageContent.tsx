@@ -15,7 +15,7 @@ const CookiePolicyPageContent: React.FC = () => {
   const { ui } = useUiSection('ui_cookie_policy', locale as any);
 
   const { data, isLoading, isError } = useListCustomPagesPublicQuery({
-    module_key: 'cookie-policy',
+    module_key: 'cookies',
     locale,
     limit: 10,
     sort: 'created_at',
