@@ -146,7 +146,7 @@ function SidebarPopupCard({
       ) : null}
 
       <div className="p-4 space-y-3">
-        {popup.title ? <h3 className="text-base font-semibold leading-tight">{popup.title}</h3> : null}
+        {popup.title ? <h3 className="text-base font-semibold leading-tight" style={{ color: 'inherit' }}>{popup.title}</h3> : null}
         {popup.content ? <p className="text-sm whitespace-pre-wrap opacity-95">{popup.content}</p> : null}
 
         <div className="flex items-center gap-2">
