@@ -84,7 +84,6 @@ const BlogPageContent: React.FC = () => {
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                         loading="lazy"
-                        unoptimized
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full text-text-muted text-sm">(No image)</div>
@@ -112,6 +111,7 @@ const BlogPageContent: React.FC = () => {
                         className="text-[0.78rem] tracking-[0.15em] uppercase text-brand-primary hover:text-brand-hover transition-colors inline-flex items-center gap-2 no-underline"
                       >
                         {readMore}
+                        <span className="sr-only">: {title}</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                           strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
                           className="transition-transform group-hover:translate-x-1">

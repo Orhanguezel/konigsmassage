@@ -122,7 +122,7 @@ const HeaderClient: React.FC<Props> = ({ brand, locale: localeProp }) => {
           style={{ paddingLeft: '4%', paddingRight: '4%' }}
         >
           {/* Brand */}
-          <Link href={homeHref} className="flex items-center gap-3 no-underline" aria-label={resolvedBrand.name}>
+          <Link href={homeHref} className="flex items-center gap-3 no-underline">
             <SiteLogo
               variant="light"
               alt={resolvedBrand.name}

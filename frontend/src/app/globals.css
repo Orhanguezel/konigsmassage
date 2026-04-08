@@ -41,7 +41,7 @@
 
   --color-text-primary: var(--color-sand-50);
   --color-text-secondary: var(--color-sand-300);
-  --color-text-muted: var(--color-sand-600);
+  --color-text-muted: var(--color-sand-400);
   --color-text-on-dark: var(--color-sand-50);
 
   --color-brand-primary: var(--color-gold-400);
@@ -82,16 +82,16 @@
 
   --color-text-primary: #2d2520;
   --color-text-secondary: #4a4139;
-  --color-text-muted: #7b6f63;
+  --color-text-muted: #635849;
   --color-text-on-dark: #fdfcfb;
 
-  --color-brand-primary: #A88B4A;
-  --color-brand-hover: #8A7039;
-  --color-brand-dark: #6B5628;
-  --color-brand-light: rgba(168, 139, 74, 0.08);
+  --color-brand-primary: #7A6530;
+  --color-brand-hover: #63511F;
+  --color-brand-dark: #4D3D18;
+  --color-brand-light: rgba(122, 101, 48, 0.08);
 
-  --color-primary: #A88B4A;
-  --color-primary-hover: #8A7039;
+  --color-primary: #7A6530;
+  --color-primary-hover: #63511F;
 
   --color-border-light: rgba(168, 139, 74, 0.15);
   --color-border-medium: rgba(168, 139, 74, 0.25);

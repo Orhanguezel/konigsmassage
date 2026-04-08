@@ -152,7 +152,7 @@ const HeaderOffcanvas: React.FC<HeaderOffcanvasProps> = ({ open, onClose, brand,
       {/* Panel */}
       <div
         className={`fixed right-0 top-0 h-full w-full max-w-md bg-bg-primary z-[10001] shadow-medium transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto border-l border-border-light`}
-        tabIndex={-1} aria-modal="true" role="dialog"
+        tabIndex={-1} aria-modal="true" role="dialog" aria-label="Navigation"
       >
         <div className="h-full overflow-y-auto p-8">
           <div className="flex flex-col h-full">

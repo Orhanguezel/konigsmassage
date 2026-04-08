@@ -111,7 +111,7 @@ const Hero: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => {
           fill
           priority
           fetchPriority="high"
-          unoptimized
+          quality={65}
           sizes="100vw"
           className="object-cover"
         />

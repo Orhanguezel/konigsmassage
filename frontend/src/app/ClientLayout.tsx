@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Fragment, useMemo, useEffect } from 'react';
+import React, { Fragment, useMemo, useEffect, lazy, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Header from '../layout/header/Header';
 import FooterTwo from '../layout/footer/Footer';
@@ -9,10 +9,11 @@ import ScrollProgress from '../layout/ScrollProgress';
 import AnalyticsScripts from '../features/analytics/AnalyticsScripts';
 import GAViewPages from '../features/analytics/GAViewPages';
 import CookieConsentBanner from '../layout/banner/CookieConsentBanner';
-import SitePopups from '../layout/banner/SitePopups';
-import SupportBotWidget from '../components/containers/chat/SupportBotWidget';
 import PwaRegistration from '../components/system/PwaRegistration';
 import { resetLayoutSeo } from '../seo';
+
+const SitePopups = lazy(() => import('../layout/banner/SitePopups'));
+const SupportBotWidget = lazy(() => import('../components/containers/chat/SupportBotWidget'));
 
 
 export default function ClientLayout({
@@ -59,10 +60,14 @@ export default function ClientLayout({
     };
 
     scan();
-    const mo = new MutationObserver(scan);
+    let debounceTimer: ReturnType<typeof setTimeout>;
+    const mo = new MutationObserver(() => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(scan, 100);
+    });
     mo.observe(document.body, { childList: true, subtree: true });
 
-    return () => { io.disconnect(); mo.disconnect(); };
+    return () => { io.disconnect(); mo.disconnect(); clearTimeout(debounceTimer); };
   }, [pathname]);
 
   return (
@@ -72,7 +77,6 @@ export default function ClientLayout({
       <GAViewPages />
       
       <Header brand={brand} locale={locale} />
-      <SitePopups />
       <main className="min-h-screen bg-bg-primary">
         {children}
       </main>
@@ -81,7 +85,12 @@ export default function ClientLayout({
       <ScrollProgress />
 
       <CookieConsentBanner />
-      <SupportBotWidget />
+      <Suspense fallback={null}>
+        <SitePopups />
+      </Suspense>
+      <Suspense fallback={null}>
+        <SupportBotWidget />
+      </Suspense>
     </Fragment>
   );
 }

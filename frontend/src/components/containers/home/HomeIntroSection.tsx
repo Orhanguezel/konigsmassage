@@ -70,9 +70,9 @@ export default function HomeIntroSection({ locale: explicitLocale }: { locale?: 
                 {String(i + 1).padStart(2, '0')}
               </div>
 
-              <h4 className="font-serif text-[1.2rem] font-normal mb-2.5">
+              <h3 className="font-serif text-[1.2rem] font-normal mb-2.5">
                 {ui(`ui_home_intro_step${i + 1}_title`, step.title)}
-              </h4>
+              </h3>
               <p className="text-[0.85rem] text-text-muted leading-[1.7] font-light">
                 {ui(`ui_home_intro_step${i + 1}_desc`, step.desc)}
               </p>

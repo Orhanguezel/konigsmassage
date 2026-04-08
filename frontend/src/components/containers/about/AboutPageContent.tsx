@@ -11,7 +11,7 @@ import Image from 'next/image';
 // RTK – Custom Pages Public
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
 import type { CustomPageDto } from '@/integrations/shared';
-import { downgradeH1ToH2, isRemoteUrl, pickPage, toCdnSrc } from '@/integrations/shared';
+import { downgradeH1ToH2, pickPage, toCdnSrc } from '@/integrations/shared';
 
 // Helpers
 import { useLocaleShort, useUiSection } from '@/i18n';
@@ -150,7 +150,7 @@ const AboutPageContent: React.FC = () => {
                       alt={imgAlt}
                       fill
                       className="object-cover"
-                      unoptimized={isRemoteUrl(imgSrc)}
+
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1100px"
                       priority
                     />
@@ -213,7 +213,7 @@ const AboutPageContent: React.FC = () => {
                           alt={`${imgAlt} ${i + 1}`}
                           fill
                           className="object-cover"
-                          unoptimized={isRemoteUrl(src)}
+    
                           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 350px"
                         />
                       </div>

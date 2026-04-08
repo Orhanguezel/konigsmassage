@@ -75,9 +75,9 @@ const Footer: React.FC<FooterProps> = ({ locale: localeProp }) => {
     const items = itemsBySectionId.get(sec.id) ?? [];
     return (
       <div>
-        <h5 className="text-[0.72rem] tracking-[0.15em] uppercase text-brand-primary mb-4">
+        <h3 className="text-[0.72rem] tracking-[0.15em] uppercase text-brand-primary mb-4">
           {sec.title || sec.slug || 'Links'}
-        </h5>
+        </h3>
         <ul className="list-none p-0 m-0">
           {items.map((item) => {
             const rawUrl = (item.url || (item as any).href || '#') as string;

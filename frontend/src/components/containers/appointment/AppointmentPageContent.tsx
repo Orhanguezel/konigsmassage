@@ -426,7 +426,6 @@ export const AppointmentPageContent: React.FC = () => {
               sizes="(max-width: 1024px) 100vw, 45vw"
               className="object-cover"
               loading="lazy"
-              unoptimized
             />
             <div
               className="absolute inset-0 bg-linear-to-t from-bg-dark/35 via-transparent to-transparent"

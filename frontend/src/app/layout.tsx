@@ -1,8 +1,14 @@
 import './globals.css';
 import React from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import { fetchSetting } from '@/i18n/server';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0C0B09',
+};
 
 function extractUrl(val: unknown): string {
   if (!val) return '';
@@ -36,7 +42,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const gscCode = String(gscVerification?.value || '').trim();
 
   const metadata: Metadata = {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://koenigsmassage.com'),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://energetische-massage-bonn.de'),
+    title: {
+      default: 'Energetische Massage Bonn',
+      template: '%s | Energetische Massage Bonn',
+    },
+    description: 'Energetische Massage in Bonn von Anastasia König — achtsame Berührung, tiefe Entspannung und Körperwahrnehmung. Termine nach Vereinbarung. Jetzt buchen!',
     manifest: '/manifest.webmanifest',
     icons: {
       icon: faviconUrl,
@@ -58,6 +69,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = await resolveHtmlLang();
   return (
     <html lang={lang} data-theme="dark" suppressHydrationWarning>
+      <head>
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body suppressHydrationWarning>{children}</body>
     </html>
   );

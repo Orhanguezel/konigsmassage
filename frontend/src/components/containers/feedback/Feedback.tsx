@@ -116,7 +116,7 @@ const Feedback: React.FC<{ locale?: string }> = ({ locale: explicitLocale }) => 
 
                 {/* Title */}
                 {slide.title && (
-                  <h4 className="font-serif text-lg font-normal text-text-primary mb-3">{slide.title}</h4>
+                  <h3 className="font-serif text-lg font-normal text-text-primary mb-3">{slide.title}</h3>
                 )}
 
                 {/* Quote */}

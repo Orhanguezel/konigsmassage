@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useListCustomPagesPublicQuery } from '@/integrations/rtk/hooks';
-import { downgradeH1ToH2, safeStr, isRemoteUrl, excerpt, toCdnSrc } from '@/integrations/shared';
+import { downgradeH1ToH2, safeStr, excerpt, toCdnSrc } from '@/integrations/shared';
 import { useLocaleShort, useUiSection } from '@/i18n';
 import { isValidUiText, localizePath } from '@/integrations/shared';
 
@@ -93,7 +93,7 @@ const AboutSection: React.FC<{ locale?: string }> = ({ locale: explicitLocale })
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover brightness-[0.85] contrast-[1.05] transition-transform duration-700 hover:scale-[1.04]"
-                unoptimized={isRemoteUrl(heroSrc)}
+
               />
             ) : isLoading ? (
               <div className="w-full h-full bg-bg-card animate-pulse" />
