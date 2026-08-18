@@ -1,8 +1,12 @@
 name: Konigsmassage Deploy
 
+# NOT: Backend artik @vps/shared-backend workspace paketine bagimli (bkz. a761fe1).
+# Bu paket konigsmassage repo'sunda degil, vps-guezel monorepo'sunda yasiyor —
+# bu yuzden standalone CI build'i calisamaz. Deploy, VPS'teki monorepo'dan
+# yapilir (diger vps-guezel siteleriyle ayni sekilde).
+# Otomatik tetik kapatildi; elle calistirilabilir halde birakildi.
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
