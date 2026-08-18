@@ -27,7 +27,13 @@ CREATE TABLE IF NOT EXISTS `audit_request_logs` (
   `ip`               VARCHAR(64)  NOT NULL,
   `user_agent`       LONGTEXT     DEFAULT NULL,
   `referer`          LONGTEXT     DEFAULT NULL,
-  `body_snapshot`    LONGTEXT     DEFAULT NULL,
+  -- @vps/shared-backend audit semasinin bekledigi kolonlar. Eskiden burada
+  -- `body_snapshot` vardi ama hicbir yerde okunup yazilmiyordu; paylasilan
+  -- sema `request_body` seciyor ve eksikligi /admin/audit/request-logs'u
+  -- 500'e dusuruyordu.
+  `request_body`     LONGTEXT     DEFAULT NULL,
+  `error_message`    VARCHAR(512) DEFAULT NULL,
+  `error_code`       VARCHAR(64)  DEFAULT NULL,
 
   `user_id`          VARCHAR(64)  DEFAULT NULL,
   `is_admin`         INT          NOT NULL DEFAULT 0,
