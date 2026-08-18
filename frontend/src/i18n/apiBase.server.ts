@@ -23,6 +23,7 @@ export function getServerApiBase(): string {
   const base = trimSlash(raw);
   if (!base) return '';
 
-  if (!/\/api$/i.test(base)) return `${base}/api`;
+  // Zaten bir /api segmenti varsa (or. .../api/v1) tekrar ekleme.
+  if (!/\/api(\/|$)/i.test(base)) return `${base}/api`;
   return base;
 }
