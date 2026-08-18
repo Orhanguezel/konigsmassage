@@ -6,7 +6,7 @@
     "summary": "Multi-language massage and wellness booking platform with customer site, admin panel and Fastify backend.",
     "description": "Multi-language massage and wellness booking platform with customer site, admin panel and Fastify backend.",
     "category": "web-ecommerce",
-    "status": "completed",
+    "status": "active",
     "ownership": "own",
     "owner": {
       "id": "orhan-guzel",
@@ -57,7 +57,7 @@
   "links": {
     "website": "https://energetische-massage-bonn.de",
     "demo": null,
-    "repository": null
+    "repository": "https://github.com/Orhanguezel/konigsmassage"
   },
   "media": [
     {
@@ -89,5 +89,5 @@
     "controlPlane": "gzl-gelir-crm",
     "lastChangedBy": "orhan"
   },
-  "updatedAt": "2026-08-16T13:31:13.107Z"
+  "updatedAt": "2026-08-18T18:20:00.000Z"
 }
