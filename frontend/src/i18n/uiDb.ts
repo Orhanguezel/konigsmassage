@@ -3,7 +3,7 @@
 // =============================================================
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useListSiteSettingsQuery } from '@/integrations/rtk/hooks';
 import { useResolvedLocale,UI_FALLBACK_EN } from '@/i18n';
 import type { SiteSettingRow } from '@/integrations/shared';
@@ -533,14 +533,24 @@ export function useUiSection(section: UiSectionKey, localeOverride?: string): Ui
     locale ? { prefix: 'ui_', locale } : undefined,
   );
 
+  // Hydration guvenligi: SSR ve ILK istemci render'i ayni metni uretmeli.
+  // DB degerleri mount'tan once kullanilirsa, Suspense ile ertelenmis
+  // agaclarda (or. ServiceSection) sunucu fallback'i basarken istemci DB
+  // degerini basiyor -> React #418 "server rendered text didn't match" ve
+  // React o alt agaci bastan render ediyor. Fallback'i DB ile esitlemek
+  // cozum degil: fallback tek, DB degeri locale basina farkli (de "Massage",
+  // tr "Masaj"). Bu yuzden dogru cozum SSR ile ilk render'i esitlemek.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
   // Hızlı lookup Map (tüm ui_* satırları)
   const allUiMap = useMemo(() => {
     const m = new Map<string, SiteSettingRow>();
-    if (allUiSettings) {
+    if (hydrated && allUiSettings) {
       for (const row of allUiSettings) m.set(row.key, row);
     }
     return m;
-  }, [allUiSettings]);
+  }, [allUiSettings, hydrated]);
 
   // 1) Section bazlı JSON override (ui_header, ui_footer, ...)
   const json = useMemo<Record<string, unknown>>(() => {
@@ -559,7 +569,11 @@ export function useUiSection(section: UiSectionKey, localeOverride?: string): Ui
     return out;
   }, [allUiMap, keys]);
 
-  const ui = (key: string, hardFallback = ''): string => {
+  const ui = (key: string, hardFallback?: string): string => {
+    // Cagiran acikca bir fallback verdiyse (bos string dahil) son care olarak
+    // anahtarin KENDISI dondurulmez: 'ui_appointment_cover_image' gibi bir
+    // anahtar <Image src> icine dusup /_next/image'i 400'e sokuyordu.
+    const explicitFallback = hardFallback !== undefined;
     const k = String(key || '').trim();
     if (!k) return '';
 
@@ -590,8 +604,9 @@ export function useUiSection(section: UiSectionKey, localeOverride?: string): Ui
     const fromConst = (UI_FALLBACK_EN as any)[k];
     if (typeof fromConst === 'string' && fromConst.trim()) return fromConst.trim();
 
-    // E) key
-    return k;
+    // E) fallback acikca verilmisse bos don; verilmemisse anahtari don
+    //    (anahtari dondurmek eksik ceviriyi ekranda gorunur kilmak icin).
+    return explicitFallback ? '' : k;
   };
 
   return { ui, raw: json, locale };
