@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 # Sync conflict artifacts
 *.sync-conflict-*
+
+# GZL private project manifest
+project.portfolio.private.json

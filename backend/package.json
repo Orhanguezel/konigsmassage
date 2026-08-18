@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun --hot src/index.ts",
-    "build": "bun x tsc -p tsconfig.json && bun x tsc-alias -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node --experimental-specifier-resolution=node dist/index.js",
     "start:bun": "bun dist/index.js",
     "db:seed": "bun src/db/index.ts",
@@ -42,6 +42,6 @@
     "esbuild": "0.25.11",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.20.6",
-    "typescript": "5"
+    "typescript": "^5.9.3"
   }
 }

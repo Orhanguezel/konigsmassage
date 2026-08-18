@@ -1,15 +1,31 @@
 {
-  "title": "Konig Massage",
-  "slug": "konig-massage",
-  "summary": "Multi-language massage and wellness booking platform with customer site, admin panel and Fastify backend.",
-  "category": "BOOKING PLATFORM",
+  "schemaVersion": 2,
+  "project": {
+    "key": "konig-massage",
+    "title": "Konig Massage",
+    "summary": "Multi-language massage and wellness booking platform with customer site, admin panel and Fastify backend.",
+    "description": "Multi-language massage and wellness booking platform with customer site, admin panel and Fastify backend.",
+    "category": "web-ecommerce",
+    "status": "completed",
+    "ownership": "own",
+    "owner": {
+      "id": "orhan-guzel",
+      "name": "Orhan Güzel",
+      "kind": "person"
+    },
+    "group": {
+      "id": "independent",
+      "name": "Bağımsız Projeler"
+    },
+    "productType": "owned-product"
+  },
   "services": [
     "Frontend Development",
     "Backend Development",
     "Admin Panel",
     "Architecture & Optimization"
   ],
-  "techs": [
+  "technologies": [
     "Next.js",
     "React",
     "TypeScript",
@@ -32,24 +48,46 @@
     "SEO optimization",
     "Cloudinary media management"
   ],
-  "designHighlights": [
-    "Service and booking focused UX",
-    "Headless architecture",
-    "Operational admin tooling"
+  "timeline": {
+    "startedAt": "2025-01-01",
+    "targetEndAt": null,
+    "completedAt": null,
+    "progressPercent": null
+  },
+  "links": {
+    "website": "https://energetische-massage-bonn.de",
+    "demo": null,
+    "repository": null
+  },
+  "media": [
+    {
+      "id": "cover",
+      "role": "cover",
+      "src": "/assets/imgs/work/projects/konigsmassage.png",
+      "alt": "Konig Massage web sitesi portfolyo gorseli",
+      "caption": "Kaynak: kendi uretimimiz. Kullanim hakki onaylandi (2026-08-16); Dis yayin izni acildi (2026-08-16).",
+      "displayPermission": true,
+      "rightsConfirmed": true
+    }
   ],
-  "featured": true,
-  "displayOrder": 3,
-  "clientName": "Own Project",
-  "status": "live",
-  "startDate": "2025-01-01",
-  "completeDate": null,
-  "completionTimeLabel": "Ongoing",
-  "repoUrl": null,
-  "websiteUrl": "https://energetische-massage-bonn.de",
-  "demoUrl": null,
-  "featuredImage": "/assets/imgs/work/projects/konigsmassage.png",
-  "featuredImageAlt": "Konig Massage cover image",
-  "resumeTitle": "Konig Massage",
-  "resumeSubtitle": "Booking Platform",
-  "excludeFromPortfolio": false
+  "channels": {
+    "website": {
+      "enabled": false,
+      "disabledReason": "CRM v2 geçişinde web yayın içeriği ve izinleri kullanıcı onayı bekliyor"
+    },
+    "bionluk": {
+      "enabled": false,
+      "disabledReason": "CRM v2 geçişinde Bionluk içeriği ve ticari uygunluk kullanıcı onayı bekliyor"
+    }
+  },
+  "publication": {
+    "privacy": "public",
+    "displayPermission": true
+  },
+  "management": {
+    "priority": "normal",
+    "controlPlane": "gzl-gelir-crm",
+    "lastChangedBy": "orhan"
+  },
+  "updatedAt": "2026-08-16T13:31:13.107Z"
 }

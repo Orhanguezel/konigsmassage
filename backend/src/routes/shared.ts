@@ -21,7 +21,7 @@ import { registerMenuItems } from '@vps/shared-backend/modules/menuItems/router'
 import { registerSlider } from '@vps/shared-backend/modules/slider/router';
 import { registerFooterSections } from '@vps/shared-backend/modules/footerSections/router';
 import { registerReviews } from '@vps/shared-backend/modules/review/router';
-import { registerBookings } from '@vps/shared-backend/modules/bookings/router';
+import { registerBookings } from '@/modules/bookings/router';
 import { registerAvailability } from '@vps/shared-backend/modules/availability/router';
 import { registerResources } from '@vps/shared-backend/modules/resources/router';
 import { registerSupport } from '@vps/shared-backend/modules/support/router';
@@ -47,7 +47,7 @@ import { registerMenuItemsAdmin } from '@vps/shared-backend/modules/menuItems/ad
 import { registerSliderAdmin } from '@vps/shared-backend/modules/slider/admin.routes';
 import { registerFooterSectionsAdmin } from '@vps/shared-backend/modules/footerSections/admin.routes';
 import { registerReviewsAdmin } from '@vps/shared-backend/modules/review/admin.routes';
-import { registerBookingsAdmin } from '@vps/shared-backend/modules/bookings/admin.routes';
+import { registerBookingsAdmin } from '@/modules/bookings/admin.routes';
 import { registerAvailabilityAdmin } from '@vps/shared-backend/modules/availability/admin.routes';
 import { registerResourcesAdmin } from '@vps/shared-backend/modules/resources/admin.routes';
 import { registerSupportAdmin } from '@vps/shared-backend/modules/support/admin.routes';

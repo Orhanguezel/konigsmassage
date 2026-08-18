@@ -1,5 +1,5 @@
 {
-  "name": "react",
+  "name": "konigsmassage-frontend",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -46,7 +46,7 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^0.555.0",
-    "next": "^16.1.6",
+    "next": "^16.3.1",
     "node-fetch": "2",
     "nprogress": "^0.2.0",
     "react": "^19.2.4",
@@ -69,7 +69,7 @@
     "@lhci/cli": "^0.15.1",
     "@next/bundle-analyzer": "^15.5.12",
     "@playwright/test": "^1.55.0",
-    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/postcss": "^4.3.3",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/aos": "^3.0.7",
@@ -83,7 +83,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.35",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.18",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.4.5"
   },
   "browserslist": [

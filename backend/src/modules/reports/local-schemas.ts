@@ -5,7 +5,7 @@ import { mysqlTable, char, varchar, datetime, uniqueIndex, index } from 'drizzle
 import { sql } from 'drizzle-orm';
 
 export { resources } from '@vps/shared-backend/modules/resources/schema';
-export { bookings } from '@vps/shared-backend/modules/bookings/schema';
+export { bookings } from '@/modules/bookings/schema';
 
 export const resourcesI18n = mysqlTable(
   'resources_i18n',
