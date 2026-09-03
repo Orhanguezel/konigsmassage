@@ -5,9 +5,15 @@ module.exports = {
       name: 'konigsmassage-backend',
       cwd: '/var/www/konigsmassage/backend',
 
-      // Bun runtime
-      interpreter: '/home/orhan/.bun/bin/bun',
-      script: 'dist/index.js',
+      // Bun runtime — DIKKAT: `interpreter: <bun yolu>` KULLANMA.
+      // PM2 o durumda uygulamayi kendi ProcessContainerForkBun sarmalayicisi
+      // icinde calistirir; sarmalayici surekli /proc/self/stat orneklemesi
+      // yapip bellek ayirir ve bosta bile ~5-7% CPU yakar (2026-09-03 olcumu).
+      // Bun'i dogrudan script olarak calistirmak bu yuku tamamen ortadan kaldirir
+      // (kamanilan-backend bu sekilde ve bostayken %0.4).
+      interpreter: 'none',
+      script: '/home/orhan/.bun/bin/bun',
+      args: 'dist/index.js',
 
       exec_mode: 'fork',
       instances: 1,
