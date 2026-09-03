@@ -1,9 +1,16 @@
 /** @type {import('next').NextConfig} */
 
 // ✅ Bundle Analyzer (ANALYZE=true için)
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
+// DIKKAT: require KOSULSUZ yapilmamali. `@next/bundle-analyzer` bir
+// devDependency; production install'da budanir ve kosulsuz require
+// next.config.js'i tamamen yuklenemez hale getirir.
+// 2026-09-03: bu satir konigsmassage-frontend'i 4.260 kez crash dongusune
+// soktu, tek cekirdekli VPS'te CPU'yu doldurdu ve TUM siteleri dusurdu.
+// Detay: vps-guezel/docs/CPU-KRIZI-2026-09-03.md
+const withBundleAnalyzer =
+  process.env.ANALYZE === 'true'
+    ? require('@next/bundle-analyzer')({ enabled: true })
+    : (config) => config;
 
 
 const nextConfig = {
