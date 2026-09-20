@@ -90,7 +90,20 @@ const AboutPageContent: React.FC = () => {
   }, [page]);
 
   const galleryThumbs = useMemo(() => {
-    const images = page?.images ?? [];
+    // API bazi kurulumlarda images'i JSON string olarak donebiliyor
+    // (LONGTEXT kolon). Dizi olmayan degerde .filter patlamasin.
+    const raw = page?.images;
+    let images: string[] = [];
+    if (Array.isArray(raw)) {
+      images = raw as string[];
+    } else if (typeof raw === 'string' && raw.trim()) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) images = parsed.map((x) => String(x ?? ''));
+      } catch {
+        images = [];
+      }
+    }
     const unique = Array.from(new Set(images.filter(Boolean)));
     return unique.filter((x) => x !== featuredImageRaw).slice(0, 3);
   }, [page, featuredImageRaw]);
