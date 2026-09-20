@@ -21,6 +21,9 @@ CREATE TABLE IF NOT EXISTS `custom_pages` (
   `display_order`            INT           NOT NULL DEFAULT 0,
   `order_num`                INT           NOT NULL DEFAULT 0,
 
+  -- author (optional) — public/admin listelerinde users+profiles join'i icin
+  `author_id`                CHAR(36)      DEFAULT NULL,
+
   `featured_image`           VARCHAR(500)  DEFAULT NULL,
   `featured_image_asset_id`  CHAR(36)      DEFAULT NULL,
 
@@ -42,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `custom_pages` (
   KEY `custom_pages_featured_idx`       (`featured`),
   KEY `custom_pages_display_order_idx`  (`display_order`),
   KEY `custom_pages_order_num_idx`      (`order_num`),
+  KEY `custom_pages_author_idx`         (`author_id`),
   KEY `custom_pages_featured_asset_idx` (`featured_image_asset_id`),
   KEY `custom_pages_storage_asset_idx`  (`storage_asset_id`),
   KEY `custom_pages_created_idx`        (`created_at`),
